@@ -4,7 +4,7 @@ import { base44 } from '@/api/base44Client';
 import { Sparkles, Star, TrendingUp, Package } from 'lucide-react';
 import StatCard from '@/components/stats/StatCard';
 import CategoryChart from '@/components/stats/CategoryChart';
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import EmptyState from '@/components/EmptyState';
 
 export default function StatsTab() {
@@ -13,7 +13,6 @@ export default function StatsTab() {
     queryFn: () => base44.entities.AiTool.list(),
   });
 
-  // חישוב סטטיסטיקות
   const stats = useMemo(() => {
     if (!tools.length) return null;
 
@@ -22,7 +21,6 @@ export default function StatsTab() {
     const avgRating = tools.reduce((sum, t) => sum + (t.rating || 0), 0) / totalTools;
     const categories = new Set(tools.map(t => t.category)).size;
 
-    // כלים לפי תמחור
     const pricingData = tools.reduce((acc, tool) => {
       const pricing = tool.pricing || 'אחר';
       acc[pricing] = (acc[pricing] || 0) + 1;
@@ -34,12 +32,10 @@ export default function StatsTab() {
       value,
     }));
 
-    // כלים פופולריים
     const topTools = [...tools]
       .sort((a, b) => (b.popularity || 0) - (a.popularity || 0))
       .slice(0, 5);
 
-    // כלים אחרונים
     const recentTools = [...tools]
       .sort((a, b) => new Date(b.created_date) - new Date(a.created_date))
       .slice(0, 5);
@@ -83,7 +79,6 @@ export default function StatsTab() {
 
   return (
     <div className="space-y-8">
-      {/* כותרת */}
       <div>
         <h1 className="text-3xl md:text-4xl font-bold gradient-text mb-2">
           סטטיסטיקות ותובנות
@@ -93,7 +88,6 @@ export default function StatsTab() {
         </p>
       </div>
 
-      {/* KPIs */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
           title="סך הכל כלים"
@@ -123,12 +117,9 @@ export default function StatsTab() {
         />
       </div>
 
-      {/* גרפים */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* גרף עמודות - קטגוריות */}
         <CategoryChart tools={tools} />
 
-        {/* גרף עוגה - תמחור */}
         <div className="glass-effect rounded-2xl p-6">
           <h3 className="text-lg font-bold mb-6 text-gray-900 dark:text-white">
             פילוח לפי תמחור
@@ -162,9 +153,7 @@ export default function StatsTab() {
         </div>
       </div>
 
-      {/* רשימות */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* כלים פופולריים */}
         <div className="glass-effect rounded-2xl p-6">
           <h3 className="text-lg font-bold mb-6 text-gray-900 dark:text-white flex items-center gap-2">
             <TrendingUp className="w-5 h-5 text-green-500" />
@@ -199,7 +188,6 @@ export default function StatsTab() {
           </div>
         </div>
 
-        {/* כלים שנוספו לאחרונה */}
         <div className="glass-effect rounded-2xl p-6">
           <h3 className="text-lg font-bold mb-6 text-gray-900 dark:text-white flex items-center gap-2">
             <Package className="w-5 h-5 text-blue-500" />
@@ -233,7 +221,6 @@ export default function StatsTab() {
         </div>
       </div>
 
-      {/* תובנות AI */}
       <div className="glass-effect rounded-2xl p-6 bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-950 dark:to-purple-950 border-2 border-indigo-200 dark:border-indigo-800">
         <h3 className="text-lg font-bold mb-4 text-gray-900 dark:text-white flex items-center gap-2">
           <Sparkles className="w-5 h-5 text-indigo-500" />

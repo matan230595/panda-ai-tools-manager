@@ -27,27 +27,22 @@ export default function AssistantTab() {
   const [showClearDialog, setShowClearDialog] = useState(false);
   const [isSending, setIsSending] = useState(false);
 
-  // טעינת שיחות
   const { data: conversations = [] } = useQuery({
     queryKey: ['conversations'],
     queryFn: () => base44.entities.Conversation.list('-updated_date'),
   });
 
-  // טעינת כלים (לקונטקסט)
   const { data: tools = [] } = useQuery({
     queryKey: ['tools'],
     queryFn: () => base44.entities.AiTool.list(),
   });
 
-  // שיחה נוכחית
   const currentConversation = conversations.find(c => c.id === currentConversationId);
 
-  // גלילה אוטומטית
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [currentConversation?.messages]);
 
-  // יצירת שיחה חדשה
   const createConversation = useMutation({
     mutationFn: (title) => base44.entities.Conversation.create({
       title,
@@ -60,7 +55,6 @@ export default function AssistantTab() {
     },
   });
 
-  // עדכון שיחה
   const updateConversation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.Conversation.update(id, data),
     onSuccess: () => {
@@ -68,7 +62,6 @@ export default function AssistantTab() {
     },
   });
 
-  // מחיקת שיחה
   const deleteConversation = useMutation({
     mutationFn: (id) => base44.entities.Conversation.delete(id),
     onSuccess: () => {
@@ -78,7 +71,6 @@ export default function AssistantTab() {
     },
   });
 
-  // שליחת הודעה
   const handleSend = async () => {
     if (!input.trim()) return;
 
@@ -88,7 +80,6 @@ export default function AssistantTab() {
       timestamp: new Date().toISOString(),
     };
 
-    // יצירת שיחה חדשה אם צריך
     let conversationId = currentConversationId;
     if (!conversationId) {
       const newConv = await createConversation.mutateAsync(
@@ -100,7 +91,6 @@ export default function AssistantTab() {
     const conv = conversations.find(c => c.id === conversationId);
     const updatedMessages = [...(conv?.messages || []), userMessage];
 
-    // עדכון עם הודעת המשתמש
     await updateConversation.mutateAsync({
       id: conversationId,
       data: { messages: updatedMessages }
@@ -110,7 +100,6 @@ export default function AssistantTab() {
     setIsSending(true);
 
     try {
-      // בניית קונטקסט
       const context = `
 רשימת כלי AI זמינים במערכת (${tools.length} כלים):
 ${tools.map(t => `- ${t.name} (${t.category}): ${t.description || 'ללא תיאור'}`).join('\n')}
@@ -142,7 +131,6 @@ ${context}
         timestamp: new Date().toISOString(),
       };
 
-      // עדכון עם תשובת העוזר
       await updateConversation.mutateAsync({
         id: conversationId,
         data: { messages: [...updatedMessages, assistantMessage] }
@@ -170,7 +158,6 @@ ${context}
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-[calc(100vh-12rem)]">
-      {/* Sidebar - היסטוריה */}
       <div className="hidden lg:block glass-effect rounded-2xl p-4 overflow-y-auto">
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-bold text-gray-900 dark:text-white">שיחות קודמות</h3>
@@ -210,9 +197,7 @@ ${context}
         </div>
       </div>
 
-      {/* צ'אט ראשי */}
       <div className="lg:col-span-3 glass-effect rounded-2xl flex flex-col overflow-hidden">
-        {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
           <div>
             <h2 className="text-xl font-bold gradient-text">עוזר AI</h2>
@@ -232,7 +217,6 @@ ${context}
           )}
         </div>
 
-        {/* הודעות */}
         <div className="flex-1 overflow-y-auto p-6 space-y-4">
           {!currentConversation || currentConversation.messages?.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center">
@@ -269,7 +253,6 @@ ${context}
           )}
         </div>
 
-        {/* Input */}
         <div className="p-4 border-t border-gray-200 dark:border-gray-700">
           <div className="flex gap-3">
             <Textarea
@@ -303,7 +286,6 @@ ${context}
         </div>
       </div>
 
-      {/* דיאלוג מחיקה */}
       <AlertDialog open={showClearDialog} onOpenChange={setShowClearDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>

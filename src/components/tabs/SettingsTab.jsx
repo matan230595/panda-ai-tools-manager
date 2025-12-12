@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { Key, Palette, Download, Upload, Trash2, Save, AlertCircle, CheckCircle } from 'lucide-react';
+import { Key, Palette, Download, Trash2, Save, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -84,13 +84,11 @@ export default function SettingsTab({ settings }) {
 
   const handleResetAll = async () => {
     try {
-      // מחיקת כל הכלים
       const tools = await base44.entities.AiTool.list();
       for (const tool of tools) {
         await base44.entities.AiTool.delete(tool.id);
       }
 
-      // מחיקת כל השיחות
       const conversations = await base44.entities.Conversation.list();
       for (const conv of conversations) {
         await base44.entities.Conversation.delete(conv.id);
@@ -106,7 +104,6 @@ export default function SettingsTab({ settings }) {
 
   return (
     <div className="max-w-4xl mx-auto space-y-8">
-      {/* כותרת */}
       <div>
         <h1 className="text-3xl md:text-4xl font-bold gradient-text mb-2">
           הגדרות
@@ -116,7 +113,6 @@ export default function SettingsTab({ settings }) {
         </p>
       </div>
 
-      {/* מפתחות API */}
       <div className="glass-effect rounded-2xl p-6 space-y-6">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
@@ -163,7 +159,6 @@ export default function SettingsTab({ settings }) {
         </div>
       </div>
 
-      {/* העדפות ממשק */}
       <div className="glass-effect rounded-2xl p-6 space-y-6">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center">
@@ -241,7 +236,6 @@ export default function SettingsTab({ settings }) {
         </div>
       </div>
 
-      {/* ניהול נתונים */}
       <div className="glass-effect rounded-2xl p-6 space-y-6">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center">
@@ -280,7 +274,6 @@ export default function SettingsTab({ settings }) {
         </div>
       </div>
 
-      {/* קיצורי מקלדת */}
       {formData.enableKeyboardShortcuts && (
         <div className="glass-effect rounded-2xl p-6">
           <h3 className="text-lg font-bold mb-4 text-gray-900 dark:text-white">
@@ -307,7 +300,6 @@ export default function SettingsTab({ settings }) {
         </div>
       )}
 
-      {/* כפתור שמירה */}
       <div className="flex justify-end">
         <Button
           onClick={handleSave}
@@ -318,23 +310,14 @@ export default function SettingsTab({ settings }) {
         </Button>
       </div>
 
-      {/* דיאלוג איפוס */}
       <AlertDialog open={showResetDialog} onOpenChange={setShowResetDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>⚠️ אזהרה: איפוס מלא</AlertDialogTitle>
             <AlertDialogDescription className="space-y-2">
-              <p>פעולה זו תמחק לצמיתות:</p>
-              <ul className="list-disc list-inside mr-4 space-y-1">
-                <li>את כל כלי ה-AI שלך</li>
-                <li>את כל השיחות עם העוזר</li>
-                <li>את כל ההעדפות וההגדרות</li>
-              </ul>
-              <p className="font-bold text-red-600 dark:text-red-400 mt-4">
+              <p>פעולה זו תמחק לצמיתות את כל הנתונים במערכת.</p>
+              <p className="font-bold text-red-600 dark:text-red-400">
                 לא ניתן לבטל פעולה זו!
-              </p>
-              <p className="text-sm">
-                מומלץ לייצא גיבוי לפני ביצוע איפוס.
               </p>
             </AlertDialogDescription>
           </AlertDialogHeader>
