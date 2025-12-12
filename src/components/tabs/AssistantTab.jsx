@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { Send, Loader2, Trash2, Plus, History } from 'lucide-react';
+import { Send, Loader2, Trash2, Plus, History, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import ChatMessage from '@/components/assistant/ChatMessage';
 import SuggestedQuestions from '@/components/assistant/SuggestedQuestions';
 import EmptyState from '@/components/EmptyState';
@@ -26,6 +27,7 @@ export default function AssistantTab() {
   const [currentConversationId, setCurrentConversationId] = useState(null);
   const [showClearDialog, setShowClearDialog] = useState(false);
   const [isSending, setIsSending] = useState(false);
+  const [selectedModel, setSelectedModel] = useState('gemini');
 
   const { data: conversations = [] } = useQuery({
     queryKey: ['conversations'],
@@ -35,6 +37,14 @@ export default function AssistantTab() {
   const { data: tools = [] } = useQuery({
     queryKey: ['tools'],
     queryFn: () => base44.entities.AiTool.list(),
+  });
+
+  const { data: settings } = useQuery({
+    queryKey: ['settings'],
+    queryFn: async () => {
+      const list = await base44.entities.Settings.list();
+      return list[0];
+    },
   });
 
   const currentConversation = conversations.find(c => c.id === currentConversationId);
@@ -109,20 +119,33 @@ ${updatedMessages.slice(-5).map(m => `${m.role === 'user' ? 'משתמש' : 'עו
       `;
 
       const prompt = `
-אתה עוזר AI מומחה שעוזר למשתמשים לנהל ולגלות כלי AI.
-יש לך גישה לרשימת הכלים שהמשתמש שמר במערכת.
+אתה עוזר AI מומחה ומתקדם בשם "AI Tools Assistant" שעוזר למשתמשים לנהל, לגלות ולהשוות כלי AI.
+
+🎯 **התפקיד שלך:**
+- לעזור למשתמשים למצוא את הכלים המתאימים ביותר לצרכיהם
+- להשוות בין כלים שונים ולהציג יתרונות וחסרונות
+- לתת המלצות מבוססות נתונים וניסיון
+- להסביר מושגים טכניים בצורה פשוטה ומובנת
 
 ${context}
 
-שאלת המשתמש: ${input}
+💬 **שאלת המשתמש:** ${input}
 
-ענה בעברית, בצורה ידידותית ומועילה. אם השאלה קשורה לכלים ספציפיים, התייחס לכלים שבמערכת.
-אם המשתמש שואל המלצה על כלי שלא נמצא ברשימה, תן המלצות כלליות.
+📝 **הנחיות מיוחדות:**
+1. תן תשובות מפורטות ומעמיקות עם דוגמאות
+2. אם יש כלים רלוונטיים במערכת - התייחס אליהם ישירות
+3. השווה בין כלים כשרלוונטי (מחיר, תכונות, קלות שימוש)
+4. הוסף טיפים מקצועיים ו-best practices
+5. השתמש באימוג'ים לנקודות חשובות 💡 ⭐ 🚀
+6. אם השאלה לא ברורה - בקש הבהרות
+7. תמיד ענה בעברית תקנית וברורה
+
+ענה עכשיו:
       `;
 
       const response = await base44.integrations.Core.InvokeLLM({
         prompt,
-        add_context_from_internet: false,
+        add_context_from_internet: input.includes('חדש') || input.includes('עדכני') || input.includes('2024') || input.includes('2025'),
       });
 
       const assistantMessage = {
@@ -199,22 +222,38 @@ ${context}
 
       <div className="lg:col-span-3 glass-effect rounded-2xl flex flex-col overflow-hidden">
         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-          <div>
-            <h2 className="text-xl font-bold gradient-text">עוזר AI</h2>
+          <div className="flex-1">
+            <h2 className="text-xl font-bold gradient-text flex items-center gap-2">
+              <Sparkles className="w-5 h-5" />
+              עוזר AI
+            </h2>
             <p className="text-sm text-gray-600 dark:text-gray-400">
               שאל אותי כל שאלה על כלי AI
             </p>
           </div>
-          {currentConversationId && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowClearDialog(true)}
-            >
-              <Trash2 className="w-4 h-4 ml-2" />
-              נקה שיחה
-            </Button>
-          )}
+          <div className="flex items-center gap-2">
+            <Select value={selectedModel} onValueChange={setSelectedModel}>
+              <SelectTrigger className="w-32">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="gemini">Gemini</SelectItem>
+                <SelectItem value="groq">Groq</SelectItem>
+                <SelectItem value="mistral">Mistral</SelectItem>
+                <SelectItem value="cohere">Cohere</SelectItem>
+              </SelectContent>
+            </Select>
+            {currentConversationId && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowClearDialog(true)}
+              >
+                <Trash2 className="w-4 h-4 ml-2" />
+                נקה
+              </Button>
+            )}
+          </div>
         </div>
 
         <div className="flex-1 overflow-y-auto p-6 space-y-4">
@@ -280,9 +319,10 @@ ${context}
               )}
             </Button>
           </div>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-            💡 העוזר יכול לעזור לך למצוא כלים, להשוות ביניהם ולתת המלצות מבוססות על הכלים שלך
-          </p>
+          <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 mt-2">
+            <span>💡 העוזר יכול לעזור לך למצוא כלים, להשוות ביניהם ולתת המלצות מבוססות</span>
+            <span className="text-indigo-600 dark:text-indigo-400">מודל: {selectedModel.toUpperCase()}</span>
+          </div>
         </div>
       </div>
 

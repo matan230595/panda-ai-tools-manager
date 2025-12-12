@@ -7,6 +7,7 @@ import AssistantTab from '@/components/tabs/AssistantTab';
 import StatsTab from '@/components/tabs/StatsTab';
 import SettingsTab from '@/components/tabs/SettingsTab';
 import ThemeToggle from '@/components/ThemeToggle';
+import NotificationCenter from '@/components/NotificationCenter';
 import { Toaster } from 'sonner';
 
 export default function Home() {
@@ -47,6 +48,22 @@ export default function Home() {
       setActiveTab(settings.lastActiveTab);
     }
   }, [settings?.lastActiveTab]);
+
+  // ניהול התראות
+  const handleMarkAsRead = (notificationId) => {
+    if (!settings) return;
+    const updatedNotifications = settings.notifications.map(n =>
+      n.id === notificationId ? { ...n, read: true } : n
+    );
+    base44.entities.Settings.update(settings.id, { notifications: updatedNotifications });
+    queryClient.invalidateQueries(['settings']);
+  };
+
+  const handleClearAllNotifications = () => {
+    if (!settings) return;
+    base44.entities.Settings.update(settings.id, { notifications: [] });
+    queryClient.invalidateQueries(['settings']);
+  };
 
   // קיצורי מקלדת
   useEffect(() => {
@@ -95,8 +112,13 @@ export default function Home() {
       {/* ניווט */}
       <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
       
-      {/* כפתור ערכת נושא - desktop */}
-      <div className="hidden md:block fixed top-6 left-6 z-40">
+      {/* כפתורים - desktop */}
+      <div className="hidden md:flex fixed top-6 left-6 z-40 gap-2">
+        <NotificationCenter 
+          notifications={settings?.notifications || []}
+          onMarkAsRead={handleMarkAsRead}
+          onClearAll={handleClearAllNotifications}
+        />
         <ThemeToggle />
       </div>
       

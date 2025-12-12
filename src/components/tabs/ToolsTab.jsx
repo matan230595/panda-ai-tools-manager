@@ -1,11 +1,13 @@
 import React, { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { Plus, Download, Upload, Trash2 } from 'lucide-react';
+import { Plus, Download, Upload, Trash2, GitCompare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import SearchAndFilters from '@/components/tools/SearchAndFilters';
 import ToolCard from '@/components/tools/ToolCard';
 import ToolForm from '@/components/tools/ToolForm';
+import CompareTools from '@/components/tools/CompareTools';
 import EmptyState from '@/components/EmptyState';
 import { toast } from 'sonner';
 import {
@@ -33,6 +35,8 @@ export default function ToolsTab({ settings }) {
   const [showForm, setShowForm] = useState(false);
   const [editingTool, setEditingTool] = useState(null);
   const [deletingTool, setDeletingTool] = useState(null);
+  const [compareMode, setCompareMode] = useState(false);
+  const [selectedForCompare, setSelectedForCompare] = useState([]);
 
   // טעינת כלים
   const { data: tools = [], isLoading } = useQuery({
@@ -195,6 +199,20 @@ export default function ToolsTab({ settings }) {
     setShowFavoritesOnly(false);
   };
 
+  const toggleCompareSelection = (tool) => {
+    setSelectedForCompare(prev => {
+      const exists = prev.find(t => t.id === tool.id);
+      if (exists) {
+        return prev.filter(t => t.id !== tool.id);
+      }
+      if (prev.length >= 4) {
+        toast.error('ניתן להשוות עד 4 כלים בו זמנית');
+        return prev;
+      }
+      return [...prev, tool];
+    });
+  };
+
   // Grid classes
   const gridClasses = {
     grid: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6',
@@ -226,38 +244,70 @@ export default function ToolsTab({ settings }) {
         </div>
         
         <div className="flex gap-2 flex-wrap">
-          <Button
-            variant="outline"
-            onClick={handleExport}
-            disabled={tools.length === 0}
-          >
-            <Download className="w-4 h-4 ml-2" />
-            ייצא
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => document.getElementById('import-file').click()}
-          >
-            <Upload className="w-4 h-4 ml-2" />
-            ייבא
-          </Button>
-          <input
-            id="import-file"
-            type="file"
-            accept=".json"
-            onChange={handleImport}
-            className="hidden"
-          />
-          <Button
-            onClick={() => {
-              setEditingTool(null);
-              setShowForm(true);
-            }}
-            className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700"
-          >
-            <Plus className="w-5 h-5 ml-2" />
-            הוסף כלי
-          </Button>
+          {compareMode ? (
+            <>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setCompareMode(false);
+                  setSelectedForCompare([]);
+                }}
+              >
+                ביטול
+              </Button>
+              <Button
+                onClick={() => setCompareMode(false)}
+                disabled={selectedForCompare.length < 2}
+                className="bg-gradient-to-r from-green-500 to-emerald-600"
+              >
+                <GitCompare className="w-4 h-4 ml-2" />
+                השווה ({selectedForCompare.length})
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button
+                variant="outline"
+                onClick={() => setCompareMode(true)}
+                disabled={tools.length < 2}
+              >
+                <GitCompare className="w-4 h-4 ml-2" />
+                השווה כלים
+              </Button>
+              <Button
+                variant="outline"
+                onClick={handleExport}
+                disabled={tools.length === 0}
+              >
+                <Download className="w-4 h-4 ml-2" />
+                ייצא
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => document.getElementById('import-file').click()}
+              >
+                <Upload className="w-4 h-4 ml-2" />
+                ייבא
+              </Button>
+              <input
+                id="import-file"
+                type="file"
+                accept=".json"
+                onChange={handleImport}
+                className="hidden"
+              />
+              <Button
+                onClick={() => {
+                  setEditingTool(null);
+                  setShowForm(true);
+                }}
+                className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700"
+              >
+                <Plus className="w-5 h-5 ml-2" />
+                הוסף כלי
+              </Button>
+            </>
+          )}
         </div>
       </div>
 
@@ -292,15 +342,33 @@ export default function ToolsTab({ settings }) {
       ) : (
         <div className={gridClasses[viewMode]}>
           {filteredAndSortedTools.map((tool) => (
-            <ToolCard
-              key={tool.id}
-              tool={tool}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-              onToggleFavorite={handleToggleFavorite}
-            />
+            <div key={tool.id} className="relative">
+              {compareMode && (
+                <div className="absolute top-2 left-2 z-10">
+                  <Checkbox
+                    checked={selectedForCompare.some(t => t.id === tool.id)}
+                    onCheckedChange={() => toggleCompareSelection(tool)}
+                    className="w-6 h-6 bg-white dark:bg-gray-800 border-2"
+                  />
+                </div>
+              )}
+              <ToolCard
+                tool={tool}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                onToggleFavorite={handleToggleFavorite}
+              />
+            </div>
           ))}
         </div>
+      )}
+
+      {/* מודל השוואה */}
+      {!compareMode && selectedForCompare.length >= 2 && (
+        <CompareTools 
+          tools={selectedForCompare}
+          onClose={() => setSelectedForCompare([])}
+        />
       )}
 
       {/* טופס */}
