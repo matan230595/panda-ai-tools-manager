@@ -22,16 +22,22 @@ export default function ToolForm({ tool, onClose, onSave }) {
     description: '',
     category: 'אחר',
     pricing: 'חינם',
+    subscriptionType: 'חינמי',
+    priceUSD: 0,
+    priceILS: 0,
     features: [],
     integrations: [],
     tags: [],
     rating: 0,
     popularity: 3,
     isFavorite: false,
+    hasSubscription: false,
     logo: '',
     screenshots: [],
     videoDemo: '',
+    useCases: [],
     notes: '',
+    aiGenerated: false,
     ...tool
   });
 
@@ -42,8 +48,28 @@ export default function ToolForm({ tool, onClose, onSave }) {
 
   const categories = [
     'עיבוד_שפה', 'יצירת_תמונות', 'וידאו', 'קוד', 'עיצוב', 
-    'מחקר', 'פרודוקטיביות', 'אוטומציה', 'אנליטיקה', 'שיווק', 'אחר'
+    'מחקר', 'פרודוקטיביות', 'אוטומציה', 'אנליטיקה', 'שיווק', 'כתיבה',
+    'אודיו', 'נתונים', 'חינוך', 'אחר'
   ];
+
+  // חישוב אוטומטי של המחיר בשקלים
+  useEffect(() => {
+    const calculateILS = async () => {
+      if (formData.priceUSD > 0) {
+        try {
+          // קבלת שער דולר נוכחי
+          const response = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+          const data = await response.json();
+          const ilsRate = data.rates.ILS;
+          handleChange('priceILS', Math.round(formData.priceUSD * ilsRate));
+        } catch (error) {
+          // אם נכשל, השתמש בשער ברירת מחדל
+          handleChange('priceILS', Math.round(formData.priceUSD * 3.7));
+        }
+      }
+    };
+    calculateILS();
+  }, [formData.priceUSD]);
 
   const handleChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -69,22 +95,28 @@ export default function ToolForm({ tool, onClose, onSave }) {
     
     try {
       const prompt = `
-אתה עוזר AI שמספק מידע מדויק ומובנה על כלי AI.
+אתה עוזר AI מתקדם שמספק מידע מדויק, מפורט ומובנה על כלי AI.
 ${formData.name ? `שם הכלי: ${formData.name}` : ''}
 ${formData.url ? `URL: ${formData.url}` : ''}
 
-ספק מידע מפורט בפורמט JSON עם השדות הבאים:
-- name: שם מלא של הכלי
-- description: תיאור מפורט (2-3 משפטים)
-- category: אחת מהקטגוריות הבאות: עיבוד_שפה, יצירת_תמונות, וידאו, קוד, עיצוב, מחקר, פרודוקטיביות, אוטומציה, אנליטיקה, שיווק, אחר
+חפש מידע עדכני מהאינטרנט וספק נתונים מפורטים בפורמט JSON:
+
+**שדות חובה:**
+- name: שם מלא בעברית (תרגם אם באנגלית)
+- description: תיאור מפורט בעברית (2-3 משפטים)
+- category: אחת מהקטגוריות: עיבוד_שפה, יצירת_תמונות, וידאו, קוד, עיצוב, מחקר, פרודוקטיביות, אוטומציה, אנליטיקה, שיווק, כתיבה, אודיו, נתונים, חינוך, אחר
 - pricing: חינם / בתשלום / פרימיום / פרימיום_מוגבל
-- features: מערך של 3-5 תכונות עיקריות
+- subscriptionType: חינמי / פרימיום / גולד
+- priceUSD: מחיר חודשי בדולר (0 אם חינמי, שאב מדף המחירים)
+- features: מערך של 4-6 תכונות עיקריות בעברית
 - integrations: מערך של אינטגרציות זמינות
-- tags: מערך של 3-7 תגיות רלוונטיות בעברית
+- tags: מערך של 5-8 תגיות חיפוש רלוונטיות בעברית
 - rating: דירוג משוער (0-5)
 - popularity: רמת פופולריות (1-5)
-- logo: URL ללוגו (אם ידוע)
+- logo: URL ללוגו (חפש את הלוגו האמיתי)
+- useCases: מערך של 2-3 דוגמאות שימוש, כל אחת עם title ו-description בעברית
 
+**חשוב:** כל הטקסטים צריכים להיות בעברית תקנית ומקצועית.
 השב רק בפורמט JSON תקין, ללא טקסט נוסף.
       `;
 
@@ -98,12 +130,24 @@ ${formData.url ? `URL: ${formData.url}` : ''}
             description: { type: 'string' },
             category: { type: 'string' },
             pricing: { type: 'string' },
+            subscriptionType: { type: 'string' },
+            priceUSD: { type: 'number' },
             features: { type: 'array', items: { type: 'string' } },
             integrations: { type: 'array', items: { type: 'string' } },
             tags: { type: 'array', items: { type: 'string' } },
             rating: { type: 'number' },
             popularity: { type: 'number' },
-            logo: { type: 'string' }
+            logo: { type: 'string' },
+            useCases: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  title: { type: 'string' },
+                  description: { type: 'string' }
+                }
+              }
+            }
           }
         }
       });
@@ -111,10 +155,11 @@ ${formData.url ? `URL: ${formData.url}` : ''}
       setFormData(prev => ({
         ...prev,
         ...response,
-        url: prev.url || response.url || prev.url
+        url: prev.url || response.url || prev.url,
+        aiGenerated: true
       }));
 
-      toast.success('המידע מולא בהצלחה! 🎉');
+      toast.success('המידע מולא בהצלחה עם תרגום אוטומטי! 🎉');
     } catch (error) {
       console.error('שגיאה במילוי אוטומטי:', error);
       toast.error('שגיאה במילוי אוטומטי. אנא בדוק את הגדרות ה-API.');
@@ -152,7 +197,7 @@ ${formData.url ? `URL: ${formData.url}` : ''}
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+        <form onSubmit={handleSubmit} className="p-6 space-y-6 max-h-[calc(100vh-12rem)] overflow-y-auto">
           {/* שורה ראשונה: שם ו-URL */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
@@ -210,8 +255,8 @@ ${formData.url ? `URL: ${formData.url}` : ''}
             />
           </div>
 
-          {/* קטגוריה ותמחור */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* קטגוריה, תמחור וסוג מנוי */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label htmlFor="category">קטגוריה</Label>
               <Select value={formData.category} onValueChange={(val) => handleChange('category', val)}>
@@ -240,6 +285,45 @@ ${formData.url ? `URL: ${formData.url}` : ''}
                   <SelectItem value="פרימיום_מוגבל">פרימיום מוגבל</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="subscriptionType">סוג מנוי</Label>
+              <Select value={formData.subscriptionType} onValueChange={(val) => handleChange('subscriptionType', val)}>
+                <SelectTrigger id="subscriptionType">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="חינמי">חינמי</SelectItem>
+                  <SelectItem value="פרימיום">פרימיום</SelectItem>
+                  <SelectItem value="גולד">גולד</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          {/* מחירים */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="priceUSD">מחיר חודשי ($)</Label>
+              <Input
+                id="priceUSD"
+                type="number"
+                min="0"
+                step="0.01"
+                value={formData.priceUSD}
+                onChange={(e) => handleChange('priceUSD', parseFloat(e.target.value) || 0)}
+                placeholder="0.00"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="priceILS">מחיר בשקלים (₪) - מחושב אוטומטית</Label>
+              <Input
+                id="priceILS"
+                type="number"
+                value={formData.priceILS}
+                disabled
+                className="bg-gray-100 dark:bg-gray-800"
+              />
             </div>
           </div>
 

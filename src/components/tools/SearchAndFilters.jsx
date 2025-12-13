@@ -164,7 +164,7 @@ export default function SearchAndFilters({
         <div className="flex-1" />
 
         {/* תצוגה */}
-        <div className="hidden md:flex items-center gap-1 bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+        <div className="flex items-center gap-1 bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
           <Button
             size="sm"
             variant={viewMode === 'grid' ? 'default' : 'ghost'}
@@ -191,6 +191,15 @@ export default function SearchAndFilters({
             aria-label="תצוגה צפופה"
           >
             <LayoutGrid className="w-4 h-4" />
+          </Button>
+          <Button
+            size="sm"
+            variant={viewMode === 'table' ? 'default' : 'ghost'}
+            onClick={() => onViewModeChange('table')}
+            className="h-8 px-2"
+            aria-label="תצוגת טבלה"
+          >
+            📊
           </Button>
         </div>
       </div>
