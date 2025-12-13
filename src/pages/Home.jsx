@@ -13,7 +13,29 @@ import { Toaster } from 'sonner';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState('tools');
+  const [toolsFilter, setToolsFilter] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [password, setPassword] = useState('');
   const queryClient = useQueryClient();
+
+  // בדיקת אימות
+  useEffect(() => {
+    const savedAuth = localStorage.getItem('ai_tools_auth');
+    if (savedAuth === 'true') {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
+  const handleLogin = () => {
+    const savedPassword = localStorage.getItem('ai_tools_password') || '123456';
+    if (password === savedPassword) {
+      setIsAuthenticated(true);
+      localStorage.setItem('ai_tools_auth', 'true');
+      toast.success('התחברת בהצלחה! 🎉');
+    } else {
+      toast.error('סיסמה שגויה');
+    }
+  };
 
   // טעינת הגדרות משתמש
   const { data: settings } = useQuery({
@@ -102,6 +124,49 @@ export default function Home() {
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [settings?.enableKeyboardShortcuts]);
 
+  const handleNavigateToTools = (filter) => {
+    setToolsFilter(filter);
+    setActiveTab('tools');
+  };
+
+  // אם לא מאומת - הצג מסך התחברות
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center p-4">
+        <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl p-8 w-full max-w-md">
+          <div className="text-center mb-8">
+            <div className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+              <span className="text-4xl">🔐</span>
+            </div>
+            <h1 className="text-3xl font-bold gradient-text mb-2">AI Tools Manager</h1>
+            <p className="text-gray-600 dark:text-gray-400">הזן סיסמה להמשך</p>
+          </div>
+          
+          <div className="space-y-4">
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
+              placeholder="הזן סיסמה..."
+              className="w-full px-4 py-3 rounded-xl border-2 border-gray-300 dark:border-gray-600 focus:border-indigo-500 outline-none text-center text-lg tracking-widest"
+              autoFocus
+            />
+            <button
+              onClick={handleLogin}
+              className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold py-3 rounded-xl hover:shadow-lg transition-all"
+            >
+              התחבר
+            </button>
+            <p className="text-xs text-center text-gray-500">
+              💡 סיסמת ברירת מחדל: 123456
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-indigo-50 dark:from-gray-900 dark:via-slate-900 dark:to-indigo-950">
       <Toaster 
@@ -130,11 +195,14 @@ export default function Home() {
       {/* תוכן הטאב */}
       <main className="max-w-7xl mx-auto px-4 py-6 md:py-8">
         <div className="animate-slide-in">
-          {activeTab === 'tools' && <ToolsTab settings={settings} />}
+          {activeTab === 'tools' && <ToolsTab settings={settings} initialFilter={toolsFilter} />}
           {activeTab === 'assistant' && <AssistantTab />}
           {activeTab === 'subscriptions' && <SubscriptionsTab />}
-          {activeTab === 'stats' && <StatsTab />}
-          {activeTab === 'settings' && <SettingsTab settings={settings} />}
+          {activeTab === 'stats' && <StatsTab onNavigateToTools={handleNavigateToTools} />}
+          {activeTab === 'settings' && <SettingsTab settings={settings} onLogout={() => {
+            setIsAuthenticated(false);
+            localStorage.removeItem('ai_tools_auth');
+          }} />}
         </div>
       </main>
       

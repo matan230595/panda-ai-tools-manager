@@ -7,7 +7,7 @@ import CategoryChart from '@/components/stats/CategoryChart';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import EmptyState from '@/components/EmptyState';
 
-export default function StatsTab() {
+export default function StatsTab({ onNavigateToTools }) {
   const { data: tools = [], isLoading } = useQuery({
     queryKey: ['tools'],
     queryFn: () => base44.entities.AiTool.list(),
@@ -89,32 +89,40 @@ export default function StatsTab() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard
-          title="סך הכל כלים"
-          value={stats.totalTools}
-          icon={Package}
-          gradient="from-indigo-500 to-purple-600"
-          trend="up"
-          trendValue="+12%"
-        />
-        <StatCard
-          title="מועדפים"
-          value={stats.favorites}
-          icon={Star}
-          gradient="from-yellow-500 to-orange-600"
-        />
-        <StatCard
-          title="דירוג ממוצע"
-          value={stats.avgRating.toFixed(1)}
-          icon={TrendingUp}
-          gradient="from-green-500 to-emerald-600"
-        />
-        <StatCard
-          title="קטגוריות"
-          value={stats.categories}
-          icon={Sparkles}
-          gradient="from-pink-500 to-rose-600"
-        />
+        <div onClick={() => onNavigateToTools?.({ filter: 'all' })} className="cursor-pointer">
+          <StatCard
+            title="סך הכל כלים"
+            value={stats.totalTools}
+            icon={Package}
+            gradient="from-indigo-500 to-purple-600"
+            trend="up"
+            trendValue="+12%"
+          />
+        </div>
+        <div onClick={() => onNavigateToTools?.({ filter: 'favorites' })} className="cursor-pointer">
+          <StatCard
+            title="מועדפים"
+            value={stats.favorites}
+            icon={Star}
+            gradient="from-yellow-500 to-orange-600"
+          />
+        </div>
+        <div onClick={() => onNavigateToTools?.({ filter: 'highRated' })} className="cursor-pointer">
+          <StatCard
+            title="דירוג ממוצע"
+            value={stats.avgRating.toFixed(1)}
+            icon={TrendingUp}
+            gradient="from-green-500 to-emerald-600"
+          />
+        </div>
+        <div onClick={() => onNavigateToTools?.({ filter: 'categories' })} className="cursor-pointer">
+          <StatCard
+            title="קטגוריות"
+            value={stats.categories}
+            icon={Sparkles}
+            gradient="from-pink-500 to-rose-600"
+          />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

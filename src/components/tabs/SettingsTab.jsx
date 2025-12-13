@@ -12,7 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 
-export default function SettingsTab({ settings }) {
+export default function SettingsTab({ settings, onLogout }) {
   const queryClient = useQueryClient();
   const [formData, setFormData] = useState({
     geminiApiKey: settings?.geminiApiKey || '',
@@ -177,9 +177,10 @@ export default function SettingsTab({ settings }) {
       </div>
 
       <Tabs defaultValue="api" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="api">🔑 מפתחות API</TabsTrigger>
           <TabsTrigger value="preferences">🎨 העדפות</TabsTrigger>
+          <TabsTrigger value="security">🔐 אבטחה</TabsTrigger>
           <TabsTrigger value="data">💾 נתונים</TabsTrigger>
         </TabsList>
 
@@ -324,6 +325,49 @@ export default function SettingsTab({ settings }) {
               </div>
             </div>
           )}
+        </TabsContent>
+
+        <TabsContent value="security" className="space-y-6 mt-6">
+          <div className="glass-effect rounded-2xl p-6">
+            <h3 className="text-lg font-bold mb-4">🔐 שינוי סיסמה</h3>
+            <div className="space-y-4 max-w-md">
+              <div className="space-y-2">
+                <Label>סיסמה נוכחית</Label>
+                <Input type="password" placeholder="הזן סיסמה נוכחית" />
+              </div>
+              <div className="space-y-2">
+                <Label>סיסמה חדשה</Label>
+                <Input type="password" placeholder="הזן סיסמה חדשה" />
+              </div>
+              <div className="space-y-2">
+                <Label>אימות סיסמה</Label>
+                <Input type="password" placeholder="הזן שוב" />
+              </div>
+              <Button 
+                onClick={() => {
+                  const newPassword = prompt('הזן סיסמה חדשה:');
+                  if (newPassword) {
+                    localStorage.setItem('ai_tools_password', newPassword);
+                    toast.success('הסיסמה שונתה בהצלחה!');
+                  }
+                }}
+                className="w-full"
+              >
+                שמור סיסמה חדשה
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={() => {
+                  if (confirm('האם להתנתק?')) {
+                    onLogout?.();
+                  }
+                }}
+                className="w-full text-red-600"
+              >
+                התנתק מהמערכת
+              </Button>
+            </div>
+          </div>
         </TabsContent>
 
         <TabsContent value="data" className="space-y-6 mt-6">

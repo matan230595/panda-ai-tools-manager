@@ -10,6 +10,7 @@ import ToolForm from '@/components/tools/ToolForm';
 import CompareTools from '@/components/tools/CompareTools';
 import TableView from '@/components/tools/TableView';
 import SubscriptionDialog from '@/components/subscription/SubscriptionDialog';
+import SmartRecommendations from '@/components/recommendations/SmartRecommendations';
 import EmptyState from '@/components/EmptyState';
 import { toast } from 'sonner';
 import {
@@ -23,11 +24,12 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 
-export default function ToolsTab({ settings }) {
+export default function ToolsTab({ settings, initialFilter }) {
   const queryClient = useQueryClient();
   
   // State management
   const [searchTerm, setSearchTerm] = useState('');
+  const [showRecommendations, setShowRecommendations] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedPricing, setSelectedPricing] = useState('all');
   const [selectedRating, setSelectedRating] = useState(0);
@@ -46,6 +48,17 @@ export default function ToolsTab({ settings }) {
     queryKey: ['tools'],
     queryFn: () => base44.entities.AiTool.list(),
   });
+
+  // החל פילטר ראשוני
+  React.useEffect(() => {
+    if (initialFilter) {
+      if (initialFilter.filter === 'favorites') {
+        setShowFavoritesOnly(true);
+      } else if (initialFilter.filter === 'highRated') {
+        setSelectedRating(4);
+      }
+    }
+  }, [initialFilter]);
 
   // מוטציות
   const createMutation = useMutation({
@@ -301,6 +314,13 @@ export default function ToolsTab({ settings }) {
                 className="hidden"
               />
               <Button
+                variant="outline"
+                onClick={() => setShowRecommendations(!showRecommendations)}
+              >
+                <Sparkles className="w-4 h-4 ml-2" />
+                המלצות
+              </Button>
+              <Button
                 onClick={() => {
                   setEditingTool(null);
                   setShowForm(true);
@@ -314,6 +334,16 @@ export default function ToolsTab({ settings }) {
           )}
         </div>
       </div>
+
+      {/* המלצות חכמות */}
+      {showRecommendations && (
+        <div className="glass-effect rounded-2xl p-6">
+          <SmartRecommendations onSelectTool={(tool) => {
+            setShowRecommendations(false);
+            handleEdit(tool);
+          }} />
+        </div>
+      )}
 
       {/* חיפוש וסינון */}
       <SearchAndFilters

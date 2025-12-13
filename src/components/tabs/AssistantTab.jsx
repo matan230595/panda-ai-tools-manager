@@ -119,7 +119,14 @@ ${updatedMessages.slice(-5).map(m => `${m.role === 'user' ? 'משתמש' : 'עו
       `;
 
       const prompt = `
-אתה עוזר AI מומחה ומתקדם בשם "AI Tools Assistant" שעוזר למשתמשים לנהל, לגלות ולהשוות כלי AI.
+אתה עוזר AI מתקדם ורב-תכליתי בשם "AI Tools Assistant".
+
+**תפקידך הכפול:**
+1. **מומחה לכלי AI** - עוזר למשתמש לנהל, לגלות ולהשוות את כלי ה-AI שלו
+2. **עוזר אישי כללי** - יכול לשוחח, לענות על שאלות כלליות, לעזור במשימות שונות
+
+**אם השאלה קשורה לכלי AI שבמערכת** - התייחס לכלים הספציפיים שיש למשתמש.
+**אם השאלה כללית** - תן תשובה מקיפה ומועילה כמו מודל שפה רגיל.
 
 🎯 **התפקיד שלך:**
 - לעזור למשתמשים למצוא את הכלים המתאימים ביותר לצרכיהם
@@ -143,9 +150,20 @@ ${context}
 ענה עכשיו:
       `;
 
+      // קבע אם צריך חיפוש באינטרנט
+      const needsInternet = 
+        input.includes('חדש') || 
+        input.includes('עדכני') || 
+        input.includes('2024') || 
+        input.includes('2025') ||
+        input.includes('מה קורה') ||
+        input.includes('חדשות') ||
+        input.length > 100 || // שאלות ארוכות בדרך כלל צריכות מידע
+        !tools.some(t => input.toLowerCase().includes(t.name.toLowerCase())); // אם לא מזכיר כלים ספציפיים
+
       const response = await base44.integrations.Core.InvokeLLM({
         prompt,
-        add_context_from_internet: input.includes('חדש') || input.includes('עדכני') || input.includes('2024') || input.includes('2025'),
+        add_context_from_internet: needsInternet,
       });
 
       const assistantMessage = {
@@ -220,7 +238,7 @@ ${context}
         </div>
       </div>
 
-      <div className="lg:col-span-3 glass-effect rounded-2xl flex flex-col overflow-hidden">
+      <div className="lg:col-span-3 glass-effect rounded-2xl flex flex-col overflow-hidden h-[calc(100vh-10rem)]">
         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
           <div className="flex-1">
             <h2 className="text-xl font-bold gradient-text flex items-center gap-2">
