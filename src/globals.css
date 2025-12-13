@@ -268,13 +268,37 @@ p {
   body {
     padding-bottom: 80px; /* מקום לניווט תחתון */
   }
-  
+
   .mobile-bottom-nav {
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
     z-index: 1000;
+  }
+
+  /* שיפור טפסים במובייל */
+  input, textarea, select {
+    font-size: 16px !important; /* מונע זום אוטומטי ב-iOS */
+  }
+
+  /* שיפור כרטיסים במובייל */
+  .glass-effect {
+    backdrop-filter: blur(8px);
+  }
+
+  /* שיפור דיאלוגים במובייל */
+  [role="dialog"] {
+    max-height: 95vh;
+    margin: 0.5rem;
+  }
+}
+
+/* טאבלט */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
   }
 }
 

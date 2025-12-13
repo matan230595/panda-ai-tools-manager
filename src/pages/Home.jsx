@@ -4,6 +4,7 @@ import { base44 } from '@/api/base44Client';
 import TabNavigation from '@/components/TabNavigation';
 import ToolsTab from '@/components/tabs/ToolsTab';
 import AssistantTab from '@/components/tabs/AssistantTab';
+import SubscriptionsTab from '@/components/tabs/SubscriptionsTab';
 import StatsTab from '@/components/tabs/StatsTab';
 import SettingsTab from '@/components/tabs/SettingsTab';
 import ThemeToggle from '@/components/ThemeToggle';
@@ -82,10 +83,14 @@ export default function Home() {
             e.preventDefault();
             break;
           case '3':
-            setActiveTab('stats');
+            setActiveTab('subscriptions');
             e.preventDefault();
             break;
           case '4':
+            setActiveTab('stats');
+            e.preventDefault();
+            break;
+          case '5':
             setActiveTab('settings');
             e.preventDefault();
             break;
@@ -127,6 +132,7 @@ export default function Home() {
         <div className="animate-slide-in">
           {activeTab === 'tools' && <ToolsTab settings={settings} />}
           {activeTab === 'assistant' && <AssistantTab />}
+          {activeTab === 'subscriptions' && <SubscriptionsTab />}
           {activeTab === 'stats' && <StatsTab />}
           {activeTab === 'settings' && <SettingsTab settings={settings} />}
         </div>

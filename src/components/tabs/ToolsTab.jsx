@@ -1,13 +1,15 @@
 import React, { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { Plus, Download, Upload, Trash2, GitCompare } from 'lucide-react';
+import { Plus, Download, Upload, Trash2, GitCompare, Key } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import SearchAndFilters from '@/components/tools/SearchAndFilters';
 import ToolCard from '@/components/tools/ToolCard';
 import ToolForm from '@/components/tools/ToolForm';
 import CompareTools from '@/components/tools/CompareTools';
+import TableView from '@/components/tools/TableView';
+import SubscriptionDialog from '@/components/subscription/SubscriptionDialog';
 import EmptyState from '@/components/EmptyState';
 import { toast } from 'sonner';
 import {
@@ -37,6 +39,7 @@ export default function ToolsTab({ settings }) {
   const [deletingTool, setDeletingTool] = useState(null);
   const [compareMode, setCompareMode] = useState(false);
   const [selectedForCompare, setSelectedForCompare] = useState([]);
+  const [managingSubscription, setManagingSubscription] = useState(null);
 
   // טעינת כלים
   const { data: tools = [], isLoading } = useQuery({
@@ -218,6 +221,7 @@ export default function ToolsTab({ settings }) {
     grid: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6',
     list: 'flex flex-col gap-4',
     compact: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4',
+    table: '',
   };
 
   if (isLoading) {
@@ -339,6 +343,14 @@ export default function ToolsTab({ settings }) {
           actionLabel={tools.length === 0 ? 'הוסף כלי ראשון' : undefined}
           onAction={tools.length === 0 ? () => setShowForm(true) : undefined}
         />
+      ) : viewMode === 'table' ? (
+        <TableView
+          tools={filteredAndSortedTools}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          onToggleFavorite={handleToggleFavorite}
+          onManageSubscription={setManagingSubscription}
+        />
       ) : (
         <div className={gridClasses[viewMode]}>
           {filteredAndSortedTools.map((tool) => (
@@ -357,6 +369,7 @@ export default function ToolsTab({ settings }) {
                 onEdit={handleEdit}
                 onDelete={handleDelete}
                 onToggleFavorite={handleToggleFavorite}
+                onManageSubscription={setManagingSubscription}
               />
             </div>
           ))}
@@ -368,6 +381,14 @@ export default function ToolsTab({ settings }) {
         <CompareTools 
           tools={selectedForCompare}
           onClose={() => setSelectedForCompare([])}
+        />
+      )}
+
+      {/* ניהול מנוי */}
+      {managingSubscription && (
+        <SubscriptionDialog
+          tool={managingSubscription}
+          onClose={() => setManagingSubscription(null)}
         />
       )}
 

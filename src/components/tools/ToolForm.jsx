@@ -180,10 +180,10 @@ ${formData.url ? `URL: ${formData.url}` : ''}
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-3xl my-8 animate-slide-in">
+    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-start md:items-center justify-center p-2 md:p-4 overflow-y-auto">
+      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-3xl my-2 md:my-8 animate-slide-in max-h-[98vh] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex items-center justify-between p-4 md:p-6 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
           <h2 className="text-2xl font-bold gradient-text">
             {tool ? 'עריכת כלי' : 'הוספת כלי חדש'}
           </h2>
@@ -197,7 +197,7 @@ ${formData.url ? `URL: ${formData.url}` : ''}
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-6 max-h-[calc(100vh-12rem)] overflow-y-auto">
+        <form onSubmit={handleSubmit} className="p-4 md:p-6 space-y-4 md:space-y-6 overflow-y-auto flex-1">
           {/* שורה ראשונה: שם ו-URL */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
@@ -456,16 +456,17 @@ ${formData.url ? `URL: ${formData.url}` : ''}
             />
           </div>
 
-          {/* כפתורי פעולה */}
-          <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
-            <Button type="submit" className="flex-1 bg-gradient-to-r from-indigo-500 to-purple-600">
-              {tool ? 'שמור שינויים' : 'הוסף כלי'}
-            </Button>
-            <Button type="button" variant="outline" onClick={onClose} className="flex-1">
-              ביטול
-            </Button>
-          </div>
         </form>
+        
+        {/* כפתורי פעולה - מחוץ לטופס */}
+        <div className="flex gap-3 p-4 md:p-6 pt-4 border-t border-gray-200 dark:border-gray-700 flex-shrink-0">
+          <Button type="submit" onClick={handleSubmit} className="flex-1 bg-gradient-to-r from-indigo-500 to-purple-600">
+            {tool ? 'שמור שינויים' : 'הוסף כלי'}
+          </Button>
+          <Button type="button" variant="outline" onClick={onClose} className="flex-1">
+            ביטול
+          </Button>
+        </div>
       </div>
     </div>
   );
