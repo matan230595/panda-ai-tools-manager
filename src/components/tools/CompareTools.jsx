@@ -6,6 +6,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 export default function CompareTools({ tools, onClose }) {
+  const getColorForValue = (value, max) => {
+    const percentage = (value / max) * 100;
+    if (percentage >= 80) return 'bg-green-500';
+    if (percentage >= 60) return 'bg-blue-500';
+    if (percentage >= 40) return 'bg-yellow-500';
+    return 'bg-red-500';
+  };
   if (!tools || tools.length === 0) return null;
 
   const compareRows = [

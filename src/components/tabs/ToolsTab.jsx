@@ -14,7 +14,7 @@ import SubscriptionDialog from '@/components/subscription/SubscriptionDialog';
 import SmartRecommendations from '@/components/recommendations/SmartRecommendations';
 import EmptyState from '@/components/EmptyState';
 import ToolDetailDialog from '@/components/tools/ToolDetailDialog';
-import DuplicateDetector from '@/components/tools/DuplicateDetector';
+import DuplicateDetectorDialog from '@/components/tools/DuplicateDetectorDialog';
 import { toast } from 'sonner';
 import {
   AlertDialog,
@@ -46,7 +46,7 @@ export default function ToolsTab({ settings, initialFilter }) {
   const [selectedForCompare, setSelectedForCompare] = useState([]);
   const [managingSubscription, setManagingSubscription] = useState(null);
   const [selectedTool, setSelectedTool] = useState(null);
-  const [showDuplicates, setShowDuplicates] = useState(true);
+  const [showDuplicatesDialog, setShowDuplicatesDialog] = useState(false);
 
   // טעינת כלים
   const { data: tools = [], isLoading } = useQuery({
@@ -327,6 +327,12 @@ export default function ToolsTab({ settings, initialFilter }) {
                 המלצות
               </Button>
               <Button
+                variant="outline"
+                onClick={() => setShowDuplicatesDialog(true)}
+              >
+                🔍 בדוק כפילויות
+              </Button>
+              <Button
                 onClick={() => {
                   setEditingTool(null);
                   setShowForm(true);
@@ -349,15 +355,6 @@ export default function ToolsTab({ settings, initialFilter }) {
             handleEdit(tool);
           }} />
         </div>
-      )}
-
-      {/* זיהוי כפילויות */}
-      {showDuplicates && (
-        <DuplicateDetector
-          tools={tools}
-          onDelete={handleDelete}
-          onClose={() => setShowDuplicates(false)}
-        />
       )}
 
       {/* חיפוש וסינון */}
@@ -430,6 +427,15 @@ export default function ToolsTab({ settings, initialFilter }) {
             </div>
           ))}
         </div>
+      )}
+
+      {/* זיהוי כפילויות */}
+      {showDuplicatesDialog && (
+        <DuplicateDetectorDialog
+          tools={tools}
+          onDelete={handleDelete}
+          onClose={() => setShowDuplicatesDialog(false)}
+        />
       )}
 
       {/* פרטי כלי */}
