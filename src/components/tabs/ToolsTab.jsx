@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { Plus, Download, Upload, Trash2, GitCompare, Key } from 'lucide-react';
+import { Plus, Download, Upload, Trash2, GitCompare, Key, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import SearchAndFilters from '@/components/tools/SearchAndFilters';
