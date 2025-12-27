@@ -192,5 +192,6 @@ export default function TableView({ tools, onEdit, onDelete, onToggleFavorite, o
         </Table>
       </div>
     </div>
+    </div>
   );
 }
