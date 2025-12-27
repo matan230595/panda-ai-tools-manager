@@ -7,6 +7,8 @@ export default function TabNavigation({ activeTab, onTabChange }) {
     { id: 'assistant', label: 'עוזר AI', icon: MessageSquare, gradient: 'from-pink-500 to-rose-500' },
     { id: 'stats', label: 'סטטיסטיקות', icon: BarChart3, gradient: 'from-green-500 to-emerald-500' },
     { id: 'insights', label: 'תובנות AI', icon: '🧠', gradient: 'from-purple-500 to-pink-500' },
+    { id: 'integrations', label: 'אינטגרציות', icon: '🔗', gradient: 'from-cyan-500 to-blue-500' },
+    { id: 'collaboration', label: 'שיתוף פעולה', icon: '👥', gradient: 'from-teal-500 to-green-500' },
     { id: 'settings', label: 'הגדרות', icon: Settings, gradient: 'from-orange-500 to-amber-500' },
   ];
 

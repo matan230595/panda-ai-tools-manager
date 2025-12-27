@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 export default function ToolLogo({ tool, size = 'md' }) {
-  const [currentSource, setCurrentSource] = useState(0);
-  const [error, setError] = useState(false);
+  const [imgError, setImgError] = useState(true); // מתחיל עם fallback
+  const [logoUrl, setLogoUrl] = useState(null);
   
   const sizes = {
     sm: 'w-10 h-10 text-base',
@@ -11,40 +11,6 @@ export default function ToolLogo({ tool, size = 'md' }) {
     xl: 'w-20 h-20 text-2xl',
   };
   
-  // מקורות לוגו מרובים - fallback cascade
-  const logoSources = React.useMemo(() => {
-    const sources = [];
-    
-    // נסה קודם את ה-logo שהוגדר
-    if (tool.logo) sources.push(tool.logo);
-    
-    // אם יש URL, נסה מספר מקורות
-    if (tool.url) {
-      try {
-        const urlObj = new URL(tool.url);
-        const domain = urlObj.hostname.replace('www.', '');
-        
-        // Google Favicon API - הכי אמין
-        sources.push(`https://www.google.com/s2/favicons?domain=${domain}&sz=128`);
-        
-        // Favicon ישיר מהאתר
-        sources.push(`${urlObj.protocol}//${urlObj.hostname}/favicon.ico`);
-        
-        // Apple Touch Icon
-        sources.push(`${urlObj.protocol}//${urlObj.hostname}/apple-touch-icon.png`);
-        
-        // Clearbit
-        sources.push(`https://logo.clearbit.com/${domain}`);
-      } catch (e) {
-        // אם ה-URL לא תקין, התעלם
-      }
-    }
-    
-    return sources;
-  }, [tool.logo, tool.url]);
-
-  const logoUrl = logoSources[currentSource];
-
   // צבעי fallback מגוונים
   const initial = tool.name?.charAt(0)?.toUpperCase() || '?';
   const colorClasses = [
@@ -61,32 +27,68 @@ export default function ToolLogo({ tool, size = 'md' }) {
   ];
   const colorClass = colorClasses[initial.charCodeAt(0) % colorClasses.length];
 
-  // אם יש URL תמונה ועדיין לא הייתה שגיאה סופית
-  if (logoUrl && !error) {
+  useEffect(() => {
+    // ניסיון לטעון לוגו
+    const tryLoadLogo = async () => {
+      // 1. נסה לוגו ישיר
+      if (tool.logo) {
+        const img = new Image();
+        img.onload = () => {
+          setLogoUrl(tool.logo);
+          setImgError(false);
+        };
+        img.onerror = () => tryFaviconFallback();
+        img.src = tool.logo;
+      } else {
+        tryFaviconFallback();
+      }
+    };
+
+    const tryFaviconFallback = () => {
+      if (tool.url) {
+        try {
+          const urlObj = new URL(tool.url);
+          const domain = urlObj.hostname.replace('www.', '');
+          const faviconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
+          
+          const img = new Image();
+          img.onload = () => {
+            setLogoUrl(faviconUrl);
+            setImgError(false);
+          };
+          img.onerror = () => {
+            // שומר על fallback
+            setImgError(true);
+          };
+          img.src = faviconUrl;
+        } catch (e) {
+          // שומר על fallback
+          setImgError(true);
+        }
+      }
+    };
+
+    tryLoadLogo();
+  }, [tool.logo, tool.url]);
+
+  // תמיד מציג את ה-fallback אם אין לוגו תקין
+  if (imgError || !logoUrl) {
     return (
-      <div className={`${sizes[size]} rounded-xl overflow-hidden flex items-center justify-center bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700`}>
-        <img
-          src={logoUrl}
-          alt={tool.name}
-          className="w-full h-full object-contain p-1"
-          onError={() => {
-            // נסה את המקור הבא
-            if (currentSource < logoSources.length - 1) {
-              setCurrentSource(currentSource + 1);
-            } else {
-              // אין עוד מקורות, עבור ל-fallback
-              setError(true);
-            }
-          }}
-        />
+      <div className={`${sizes[size]} bg-gradient-to-br ${colorClass} rounded-xl flex items-center justify-center text-white font-bold shadow-md ring-2 ring-white dark:ring-gray-800`}>
+        <span className="drop-shadow-md">{initial}</span>
       </div>
     );
   }
 
-  // Fallback - אייקון צבעוני עם התו הראשון
+  // מציג תמונה רק אם נטענה בהצלחה
   return (
-    <div className={`${sizes[size]} bg-gradient-to-br ${colorClass} rounded-xl flex items-center justify-center text-white font-bold shadow-md ring-2 ring-white dark:ring-gray-800`}>
-      <span className="drop-shadow-md">{initial}</span>
+    <div className={`${sizes[size]} rounded-xl overflow-hidden flex items-center justify-center bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700`}>
+      <img
+        src={logoUrl}
+        alt={tool.name}
+        className="w-full h-full object-contain p-1"
+        onError={() => setImgError(true)}
+      />
     </div>
   );
 }

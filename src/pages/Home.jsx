@@ -12,6 +12,8 @@ import NotificationCenter from '@/components/NotificationCenter';
 import { Toaster, toast } from 'sonner';
 
 const InsightsTab = React.lazy(() => import('@/components/tabs/InsightsTab'));
+const IntegrationsTab = React.lazy(() => import('@/components/tabs/IntegrationsTab'));
+const CollaborationTab = React.lazy(() => import('@/components/tabs/CollaborationTab'));
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState('tools');
@@ -227,6 +229,16 @@ export default function Home() {
           {activeTab === 'insights' && (
             <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="animate-spin w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full" /></div>}>
               <InsightsTab />
+            </Suspense>
+          )}
+          {activeTab === 'integrations' && (
+            <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="animate-spin w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full" /></div>}>
+              <IntegrationsTab />
+            </Suspense>
+          )}
+          {activeTab === 'collaboration' && (
+            <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="animate-spin w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full" /></div>}>
+              <CollaborationTab />
             </Suspense>
           )}
           {activeTab === 'settings' && <SettingsTab settings={settings} onLogout={() => {
