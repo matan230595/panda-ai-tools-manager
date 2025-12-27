@@ -20,9 +20,11 @@ export default function ToolForm({ tool, onClose, onSave }) {
     name: '',
     url: '',
     description: '',
+    detailedDescription: '',
     category: 'אחר',
     pricing: 'חינם',
     subscriptionType: 'חינמי',
+    subscriptionPlans: [],
     priceUSD: 0,
     priceILS: 0,
     features: [],
@@ -36,6 +38,10 @@ export default function ToolForm({ tool, onClose, onSave }) {
     screenshots: [],
     videoDemo: '',
     useCases: [],
+    prosAndCons: { pros: [], cons: [] },
+    targetAudience: '',
+    languagesSupported: [],
+    platforms: [],
     notes: '',
     aiGenerated: false,
     ...tool
@@ -95,29 +101,53 @@ export default function ToolForm({ tool, onClose, onSave }) {
     
     try {
       const prompt = `
-אתה עוזר AI מתקדם שמספק מידע מדויק, מפורט ומובנה על כלי AI.
+אתה עוזר AI מומחה לכלי בינה מלאכותית. תפקידך לספק מידע מקצועי, מפורט ומדויק בעברית.
 ${formData.name ? `שם הכלי: ${formData.name}` : ''}
 ${formData.url ? `URL: ${formData.url}` : ''}
 
-חפש מידע עדכני מהאינטרנט וספק נתונים מפורטים בפורמט JSON:
+🔍 **חקור את הכלי ביסודיות** - גש לאתר הרשמי, קרא דוחות, ביקורות, דפי מחירים ותיעוד.
 
-**שדות חובה:**
+📋 **ספק JSON מלא עם השדות הבאים:**
+
+**מידע בסיסי:**
 - name: שם מלא בעברית (תרגם אם באנגלית)
-- description: תיאור מפורט בעברית (2-3 משפטים)
-- category: אחת מהקטגוריות: עיבוד_שפה, יצירת_תמונות, וידאו, קוד, עיצוב, מחקר, פרודוקטיביות, אוטומציה, אנליטיקה, שיווק, כתיבה, אודיו, נתונים, חינוך, אחר
-- pricing: חינם / בתשלום / פרימיום / פרימיום_מוגבל
-- subscriptionType: חינמי / פרימיום / גולד
-- priceUSD: מחיר חודשי בדולר (0 אם חינמי, שאב מדף המחירים)
-- features: מערך של 4-6 תכונות עיקריות בעברית
-- integrations: מערך של אינטגרציות זמינות
-- tags: מערך של 5-8 תגיות חיפוש רלוונטיות בעברית
-- rating: דירוג משוער (0-5)
-- popularity: רמת פופולריות (1-5)
-- logo: URL ללוגו (חפש את הלוגו האמיתי)
-- useCases: מערך של 2-3 דוגמאות שימוש, כל אחת עם title ו-description בעברית
+- description: תיאור קצר ותמציתי (1-2 משפטים)
+- detailedDescription: תיאור מקיף ומפורט (4-6 פסקאות) כולל:
+  * מהו הכלי ומה הוא עושה בדיוק
+  * למי הוא מיועד (קהל יעד)
+  * דוגמאות קונקרטיות לשימוש
+  * מה ייחודי בו לעומת מתחרים
+  * המלצות מקצועיות מתי להשתמש בו
+- category: עיבוד_שפה / יצירת_תמונות / וידאו / קוד / עיצוב / מחקר / פרודוקטיביות / אוטומציה / אנליטיקה / שיווק / כתיבה / אודיו / נתונים / חינוך / אחר
 
-**חשוב:** כל הטקסטים צריכים להיות בעברית תקנית ומקצועית.
-השב רק בפורמט JSON תקין, ללא טקסט נוסף.
+**תמחור ומנויים:**
+- pricing: חינם / בתשלום / פרימיום / פרימיום_מוגבל
+- subscriptionType: חינמי / פרימיום / גולד (בהתאם למחיר)
+- subscriptionPlans: מערך של תוכניות מנוי עם:
+  * name (שם התוכנית)
+  * priceUSD (מחיר חודשי בדולר)
+  * features (תכונות ספציפיות לתוכנית זו)
+  * limits (מגבלות שימוש)
+- priceUSD: מחיר בסיסי בדולר (0 אם חינמי לחלוטין)
+
+**תכונות ומאפיינים:**
+- features: 5-8 תכונות מרכזיות בעברית
+- integrations: אינטגרציות זמינות (Google, Slack, API וכו')
+- tags: 6-10 תגיות חיפוש רלוונטיות
+- prosAndCons: אובייקט עם pros (יתרונות) ו-cons (חסרונות) - מערכים של 3-5 נקודות כל אחד
+- targetAudience: תיאור קהל היעד (למשל: "מעצבים, משווקים דיגיטליים, יזמים")
+- languagesSupported: מערך של שפות (עברית, אנגלית, ערבית וכו')
+- platforms: מערך פלטפורמות (Web, iOS, Android, Desktop, Chrome Extension)
+
+**דירוגים:**
+- rating: דירוג (0-5) מבוסס על ביקורות אמיתיות
+- popularity: פופולריות (1-5)
+
+**מדיה:**
+- logo: URL מדויק ללוגו הרשמי
+- useCases: 3-4 דוגמאות שימוש מפורטות, כל אחת עם title ו-description ברור
+
+**חשוב:** כל הטקסטים בעברית תקנית ומקצועית. חקור לעומק ואל תמציא מידע!
       `;
 
       const response = await base44.integrations.Core.InvokeLLM({
@@ -128,13 +158,36 @@ ${formData.url ? `URL: ${formData.url}` : ''}
           properties: {
             name: { type: 'string' },
             description: { type: 'string' },
+            detailedDescription: { type: 'string' },
             category: { type: 'string' },
             pricing: { type: 'string' },
             subscriptionType: { type: 'string' },
+            subscriptionPlans: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  name: { type: 'string' },
+                  priceUSD: { type: 'number' },
+                  features: { type: 'array', items: { type: 'string' } },
+                  limits: { type: 'string' }
+                }
+              }
+            },
             priceUSD: { type: 'number' },
             features: { type: 'array', items: { type: 'string' } },
             integrations: { type: 'array', items: { type: 'string' } },
             tags: { type: 'array', items: { type: 'string' } },
+            prosAndCons: {
+              type: 'object',
+              properties: {
+                pros: { type: 'array', items: { type: 'string' } },
+                cons: { type: 'array', items: { type: 'string' } }
+              }
+            },
+            targetAudience: { type: 'string' },
+            languagesSupported: { type: 'array', items: { type: 'string' } },
+            platforms: { type: 'array', items: { type: 'string' } },
             rating: { type: 'number' },
             popularity: { type: 'number' },
             logo: { type: 'string' },
@@ -243,15 +296,28 @@ ${formData.url ? `URL: ${formData.url}` : ''}
             )}
           </Button>
 
-          {/* תיאור */}
+          {/* תיאור קצר */}
           <div className="space-y-2">
-            <Label htmlFor="description">תיאור</Label>
+            <Label htmlFor="description">תיאור קצר</Label>
             <Textarea
               id="description"
               value={formData.description}
               onChange={(e) => handleChange('description', e.target.value)}
-              placeholder="תאר את הכלי במספר משפטים..."
-              rows={3}
+              placeholder="תיאור תמציתי (1-2 משפטים)..."
+              rows={2}
+            />
+          </div>
+
+          {/* תיאור מפורט */}
+          <div className="space-y-2">
+            <Label htmlFor="detailedDescription">תיאור מפורט</Label>
+            <Textarea
+              id="detailedDescription"
+              value={formData.detailedDescription}
+              onChange={(e) => handleChange('detailedDescription', e.target.value)}
+              placeholder="תיאור מקיף עם דוגמאות שימוש, קהל יעד, יתרונות והמלצות..."
+              rows={6}
+              className="font-mono text-sm"
             />
           </div>
 
