@@ -69,46 +69,33 @@ export default function SearchAndFilters({
 
   return (
     <div className="space-y-3 md:space-y-4">
-      {/* שורה ראשונה: חיפוש ומועדפים */}
-      <div className="flex flex-col sm:flex-row gap-2 md:gap-3">
+      {/* חיפוש ומועדפים */}
+      <div className="flex gap-2">
         <div className="relative flex-1">
-          <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-400" />
           <Input
             type="text"
-            placeholder="חפש כלי לפי שם, תיאור או תגיות..."
+            placeholder="חפש כלי..."
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="pr-10 h-11 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600"
-            aria-label="חיפוש כלים"
+            className="pr-10 h-10 md:h-12 bg-white dark:bg-gray-800 text-sm md:text-base"
           />
-          {searchTerm && (
-            <button
-              onClick={() => onSearchChange('')}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-              aria-label="נקה חיפוש"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          )}
         </div>
-
         <Button
           variant={showFavoritesOnly ? 'default' : 'outline'}
           onClick={onToggleFavorites}
-          className="h-11 px-6"
-          aria-pressed={showFavoritesOnly}
-          aria-label="הצג רק מועדפים"
+          className="h-10 md:h-12 w-10 md:w-auto md:px-6 p-0 md:gap-2"
         >
-          ⭐ {showFavoritesOnly ? 'כל הכלים' : 'מועדפים בלבד'}
+          ⭐
+          <span className="hidden md:inline">{showFavoritesOnly ? 'כל הכלים' : 'מועדפים'}</span>
         </Button>
       </div>
 
-      {/* שורה שנייה: פילטרים */}
-      <div className="flex flex-wrap items-center gap-2 md:gap-3">
+      {/* פילטרים - גלילה אופקית במובייל */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0 scrollbar-hide">
         {/* קטגוריה */}
         <Select value={selectedCategory} onValueChange={onCategoryChange}>
-          <SelectTrigger className="w-full sm:w-[180px] h-9 md:h-10 bg-white dark:bg-gray-800 text-sm">
-            <Filter className="w-3 h-3 md:w-4 md:h-4 ml-1 md:ml-2" />
+          <SelectTrigger className="w-[140px] h-9 bg-white dark:bg-gray-800 text-sm flex-shrink-0">
             <SelectValue placeholder="קטגוריה" />
           </SelectTrigger>
           <SelectContent>
@@ -161,8 +148,6 @@ export default function SearchAndFilters({
           </SelectContent>
         </Select>
 
-        <div className="flex-1" />
-
         {/* תצוגה */}
         <div className="flex items-center gap-0.5 bg-gray-100 dark:bg-gray-800 rounded-lg p-0.5 flex-shrink-0 mr-auto">
           <Button
@@ -211,44 +196,25 @@ export default function SearchAndFilters({
             🗂️
           </Button>
         </div>
-        </div>
+      </div>
 
-      {/* מידע על תוצאות ואפשרות לנקות */}
-      {hasActiveFilters && (
-        <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-          <div className="flex items-center gap-2 flex-wrap">
-            <Badge variant="secondary" className="bg-blue-100 dark:bg-blue-900">
-              {resultsCount} תוצאות
-            </Badge>
-            {searchTerm && (
-              <Badge variant="outline">חיפוש: {searchTerm}</Badge>
-            )}
-            {selectedCategory !== 'all' && (
-              <Badge variant="outline">
-                {categories.find(c => c.value === selectedCategory)?.label}
-              </Badge>
-            )}
-            {selectedPricing !== 'all' && (
-              <Badge variant="outline">{selectedPricing}</Badge>
-            )}
-            {selectedRating > 0 && (
-              <Badge variant="outline">⭐ {selectedRating}+</Badge>
-            )}
-            {showFavoritesOnly && (
-              <Badge variant="outline">מועדפים בלבד</Badge>
-            )}
-          </div>
+      {/* פילטרים פעילים ומונה תוצאות */}
+      <div className="flex items-center justify-between flex-wrap gap-2">
+        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          {resultsCount} כלים
+        </span>
+        {(selectedCategory !== 'all' || selectedPricing !== 'all' || selectedRating > 0 || showFavoritesOnly) && (
           <Button
-            size="sm"
             variant="ghost"
+            size="sm"
             onClick={onClearFilters}
-            className="text-blue-600 dark:text-blue-400 hover:text-blue-700"
+            className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950 h-8"
           >
-            <X className="w-4 h-4 ml-1" />
-            נקה הכל
+            <X className="w-3 h-3 ml-1" />
+            נקה
           </Button>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
