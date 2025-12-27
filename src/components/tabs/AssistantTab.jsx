@@ -238,7 +238,7 @@ ${context}
         </div>
       </div>
 
-      <div className="lg:col-span-3 glass-effect rounded-2xl flex flex-col overflow-hidden h-[calc(100vh-10rem)]">
+      <div className="lg:col-span-3 glass-effect rounded-xl md:rounded-2xl flex flex-col overflow-hidden h-[calc(100vh-8rem)] md:h-[calc(100vh-10rem)]">
         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
           <div className="flex-1">
             <h2 className="text-xl font-bold gradient-text flex items-center gap-2">

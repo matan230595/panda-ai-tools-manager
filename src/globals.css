@@ -267,6 +267,7 @@ p {
 @media (max-width: 768px) {
   body {
     padding-bottom: 80px; /* מקום לניווט תחתון */
+    overscroll-behavior: contain;
   }
 
   .mobile-bottom-nav {
@@ -280,6 +281,8 @@ p {
   /* שיפור טפסים במובייל */
   input, textarea, select {
     font-size: 16px !important; /* מונע זום אוטומטי ב-iOS */
+    -webkit-appearance: none;
+    appearance: none;
   }
 
   /* שיפור כרטיסים במובייל */
@@ -287,10 +290,16 @@ p {
     backdrop-filter: blur(8px);
   }
 
-  /* שיפור דיאלוגים במובייל */
-  [role="dialog"] {
-    max-height: 95vh;
-    margin: 0.5rem;
+  /* מניעת גלילה כפולה */
+  .overscroll-contain {
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* תיקון גובה מסך מלא במובייל */
+  .mobile-full-screen {
+    height: 100vh;
+    height: -webkit-fill-available;
   }
 }
 

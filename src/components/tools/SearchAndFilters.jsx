@@ -68,9 +68,9 @@ export default function SearchAndFilters({
     searchTerm.length > 0;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3 md:space-y-4">
       {/* שורה ראשונה: חיפוש ומועדפים */}
-      <div className="flex flex-col md:flex-row gap-3">
+      <div className="flex flex-col sm:flex-row gap-2 md:gap-3">
         <div className="relative flex-1">
           <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
           <Input
@@ -104,11 +104,11 @@ export default function SearchAndFilters({
       </div>
 
       {/* שורה שנייה: פילטרים */}
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex flex-wrap items-center gap-2 md:gap-3">
         {/* קטגוריה */}
         <Select value={selectedCategory} onValueChange={onCategoryChange}>
-          <SelectTrigger className="w-full sm:w-[200px] h-10 bg-white dark:bg-gray-800">
-            <Filter className="w-4 h-4 ml-2" />
+          <SelectTrigger className="w-full sm:w-[180px] h-9 md:h-10 bg-white dark:bg-gray-800 text-sm">
+            <Filter className="w-3 h-3 md:w-4 md:h-4 ml-1 md:ml-2" />
             <SelectValue placeholder="קטגוריה" />
           </SelectTrigger>
           <SelectContent>
@@ -122,7 +122,7 @@ export default function SearchAndFilters({
 
         {/* תמחור */}
         <Select value={selectedPricing} onValueChange={onPricingChange}>
-          <SelectTrigger className="w-full sm:w-[180px] h-10 bg-white dark:bg-gray-800">
+          <SelectTrigger className="w-full sm:w-[160px] h-9 md:h-10 bg-white dark:bg-gray-800 text-sm">
             <SelectValue placeholder="תמחור" />
           </SelectTrigger>
           <SelectContent>
@@ -136,8 +136,8 @@ export default function SearchAndFilters({
 
         {/* דירוג מינימלי */}
         <Select value={selectedRating.toString()} onValueChange={(val) => onRatingChange(Number(val))}>
-          <SelectTrigger className="w-full sm:w-[160px] h-10 bg-white dark:bg-gray-800">
-            <SelectValue placeholder="דירוג מינימלי" />
+          <SelectTrigger className="w-full sm:w-[140px] h-9 md:h-10 bg-white dark:bg-gray-800 text-sm">
+            <SelectValue placeholder="דירוג" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="0">כל הדירוגים</SelectItem>
@@ -149,8 +149,8 @@ export default function SearchAndFilters({
 
         {/* מיון */}
         <Select value={sortBy} onValueChange={onSortChange}>
-          <SelectTrigger className="w-full sm:w-[180px] h-10 bg-white dark:bg-gray-800">
-            <SelectValue placeholder="מיין לפי" />
+          <SelectTrigger className="w-full sm:w-[160px] h-9 md:h-10 bg-white dark:bg-gray-800 text-sm">
+            <SelectValue placeholder="מיין" />
           </SelectTrigger>
           <SelectContent>
             {sortOptions.map((opt) => (
@@ -164,40 +164,40 @@ export default function SearchAndFilters({
         <div className="flex-1" />
 
         {/* תצוגה */}
-        <div className="flex items-center gap-1 bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+        <div className="hidden sm:flex items-center gap-0.5 bg-gray-100 dark:bg-gray-800 rounded-lg p-0.5">
           <Button
             size="sm"
             variant={viewMode === 'grid' ? 'default' : 'ghost'}
             onClick={() => onViewModeChange('grid')}
-            className="h-8 w-8 p-0"
-            aria-label="תצוגת רשת"
+            className="h-7 w-7 p-0"
+            aria-label="רשת"
           >
-            <Grid3x3 className="w-4 h-4" />
+            <Grid3x3 className="w-3.5 h-3.5" />
           </Button>
           <Button
             size="sm"
             variant={viewMode === 'list' ? 'default' : 'ghost'}
             onClick={() => onViewModeChange('list')}
-            className="h-8 w-8 p-0"
-            aria-label="תצוגת רשימה"
+            className="h-7 w-7 p-0"
+            aria-label="רשימה"
           >
-            <List className="w-4 h-4" />
+            <List className="w-3.5 h-3.5" />
           </Button>
           <Button
             size="sm"
             variant={viewMode === 'compact' ? 'default' : 'ghost'}
             onClick={() => onViewModeChange('compact')}
-            className="h-8 w-8 p-0"
-            aria-label="תצוגה צפופה"
+            className="h-7 w-7 p-0"
+            aria-label="צפוף"
           >
-            <LayoutGrid className="w-4 h-4" />
+            <LayoutGrid className="w-3.5 h-3.5" />
           </Button>
           <Button
             size="sm"
             variant={viewMode === 'table' ? 'default' : 'ghost'}
             onClick={() => onViewModeChange('table')}
-            className="h-8 px-2"
-            aria-label="תצוגת טבלה"
+            className="h-7 w-7 p-0 text-xs"
+            aria-label="טבלה"
           >
             📊
           </Button>
