@@ -14,6 +14,9 @@ import { Toaster, toast } from 'sonner';
 const InsightsTab = React.lazy(() => import('@/components/tabs/InsightsTab'));
 const IntegrationsTab = React.lazy(() => import('@/components/tabs/IntegrationsTab'));
 const CollaborationTab = React.lazy(() => import('@/components/tabs/CollaborationTab'));
+const BudgetTab = React.lazy(() => import('@/components/tabs/BudgetTab'));
+const RemindersTab = React.lazy(() => import('@/components/tabs/RemindersTab'));
+const TemplatesTab = React.lazy(() => import('@/components/tabs/TemplatesTab'));
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState('tools');
@@ -239,6 +242,21 @@ export default function Home() {
           {activeTab === 'collaboration' && (
             <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="animate-spin w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full" /></div>}>
               <CollaborationTab />
+            </Suspense>
+          )}
+          {activeTab === 'budget' && (
+            <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="animate-spin w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full" /></div>}>
+              <BudgetTab />
+            </Suspense>
+          )}
+          {activeTab === 'reminders' && (
+            <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="animate-spin w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full" /></div>}>
+              <RemindersTab />
+            </Suspense>
+          )}
+          {activeTab === 'templates' && (
+            <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="animate-spin w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full" /></div>}>
+              <TemplatesTab />
             </Suspense>
           )}
           {activeTab === 'settings' && <SettingsTab settings={settings} onLogout={() => {

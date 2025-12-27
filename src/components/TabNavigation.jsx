@@ -3,13 +3,13 @@ import { Sparkles, MessageSquare, Settings, BarChart3 } from 'lucide-react';
 
 export default function TabNavigation({ activeTab, onTabChange }) {
   const tabs = [
-    { id: 'tools', label: 'כלי AI שלי', icon: Sparkles, gradient: 'from-indigo-500 to-purple-500' },
-    { id: 'assistant', label: 'עוזר AI', icon: MessageSquare, gradient: 'from-pink-500 to-rose-500' },
-    { id: 'stats', label: 'סטטיסטיקות', icon: BarChart3, gradient: 'from-green-500 to-emerald-500' },
-    { id: 'insights', label: 'תובנות AI', icon: '🧠', gradient: 'from-purple-500 to-pink-500' },
-    { id: 'integrations', label: 'אינטגרציות', icon: '🔗', gradient: 'from-cyan-500 to-blue-500' },
-    { id: 'collaboration', label: 'שיתוף פעולה', icon: '👥', gradient: 'from-teal-500 to-green-500' },
-    { id: 'settings', label: 'הגדרות', icon: Settings, gradient: 'from-orange-500 to-amber-500' },
+    { id: 'tools', label: 'כלים', icon: Sparkles, gradient: 'from-indigo-500 to-purple-500' },
+    { id: 'budget', label: 'תקציב', icon: '💰', gradient: 'from-green-500 to-emerald-500' },
+    { id: 'reminders', label: 'תזכורות', icon: '⏰', gradient: 'from-orange-500 to-red-500' },
+    { id: 'templates', label: 'תבניות', icon: '📦', gradient: 'from-purple-500 to-pink-500' },
+    { id: 'insights', label: 'תובנות', icon: '🧠', gradient: 'from-cyan-500 to-blue-500' },
+    { id: 'integrations', label: 'אינטגרציות', icon: '🔗', gradient: 'from-teal-500 to-green-500' },
+    { id: 'settings', label: 'הגדרות', icon: Settings, gradient: 'from-gray-500 to-slate-500' },
   ];
 
   return (
