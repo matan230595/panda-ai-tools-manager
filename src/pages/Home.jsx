@@ -9,7 +9,7 @@ import StatsTab from '@/components/tabs/StatsTab';
 import SettingsTab from '@/components/tabs/SettingsTab';
 import ThemeToggle from '@/components/ThemeToggle';
 import NotificationCenter from '@/components/NotificationCenter';
-import { Toaster } from 'sonner';
+import { Toaster, toast } from 'sonner';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState('tools');
