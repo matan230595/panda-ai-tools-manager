@@ -19,6 +19,7 @@ export default function ToolCard({
   onEdit, 
   onDelete, 
   onToggleFavorite,
+  onClick,
   isDragging = false,
   dragHandleProps = {}
 }) {
@@ -65,12 +66,13 @@ export default function ToolCard({
     <div 
       className={`
         group relative glass-effect rounded-2xl p-5 
-        transition-all duration-300 hover-lift
+        transition-all duration-300 hover-lift cursor-pointer
         ${isDragging ? 'opacity-50 scale-95' : 'opacity-100'}
         ${tool.isFavorite ? 'ring-2 ring-yellow-400 dark:ring-yellow-500' : ''}
       `}
       role="article"
       aria-label={`כרטיס כלי: ${tool.name}`}
+      onClick={() => onClick?.(tool)}
     >
       {/* Drag Handle */}
       <div 
@@ -83,7 +85,10 @@ export default function ToolCard({
 
       {/* כוכב מועדפים */}
       <button
-        onClick={() => onToggleFavorite(tool)}
+        onClick={(e) => {
+          e.stopPropagation();
+          onToggleFavorite(tool);
+        }}
         className="absolute top-3 right-3 z-10 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
         aria-label={tool.isFavorite ? 'הסר ממועדפים' : 'הוסף למועדפים'}
       >
@@ -186,7 +191,10 @@ export default function ToolCard({
             <Button
               size="sm"
               variant="ghost"
-              onClick={handleVisit}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleVisit();
+              }}
               className="h-8 px-3"
               aria-label={`בקר באתר ${tool.name}`}
             >
@@ -196,17 +204,28 @@ export default function ToolCard({
             
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button size="sm" variant="ghost" className="h-8 px-2">
+                <Button 
+                  size="sm" 
+                  variant="ghost" 
+                  className="h-8 px-2"
+                  onClick={(e) => e.stopPropagation()}
+                >
                   <span className="sr-only">פתח תפריט</span>
                   ⋮
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem onClick={() => onEdit(tool)}>
+                <DropdownMenuItem onClick={(e) => {
+                  e.stopPropagation();
+                  onEdit(tool);
+                }}>
                   <Edit className="w-4 h-4 ml-2" />
                   עריכה
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleShare}>
+                <DropdownMenuItem onClick={(e) => {
+                  e.stopPropagation();
+                  handleShare();
+                }}>
                   {copied ? (
                     <>
                       <Check className="w-4 h-4 ml-2 text-green-500" />
@@ -219,13 +238,19 @@ export default function ToolCard({
                     </>
                   )}
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleVisit}>
+                <DropdownMenuItem onClick={(e) => {
+                  e.stopPropagation();
+                  handleVisit();
+                }}>
                   <ExternalLink className="w-4 h-4 ml-2" />
                   פתח באתר
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem 
-                  onClick={() => onDelete(tool)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDelete(tool);
+                  }}
                   className="text-red-600 dark:text-red-400"
                 >
                   <Trash2 className="w-4 h-4 ml-2" />
