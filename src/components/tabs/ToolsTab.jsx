@@ -15,6 +15,8 @@ import SmartRecommendations from '@/components/recommendations/SmartRecommendati
 import EmptyState from '@/components/EmptyState';
 import ToolDetailDialog from '@/components/tools/ToolDetailDialog';
 import DuplicateDetectorDialog from '@/components/tools/DuplicateDetectorDialog';
+import AdvancedFilters from '@/components/tools/AdvancedFilters';
+import ExportImportDialog from '@/components/tools/ExportImportDialog';
 import { toast } from 'sonner';
 import {
   AlertDialog,
@@ -47,6 +49,17 @@ export default function ToolsTab({ settings, initialFilter }) {
   const [managingSubscription, setManagingSubscription] = useState(null);
   const [selectedTool, setSelectedTool] = useState(null);
   const [showDuplicatesDialog, setShowDuplicatesDialog] = useState(false);
+  const [advancedFilters, setAdvancedFilters] = useState({
+    categories: [],
+    pricing: [],
+    subscriptionTypes: [],
+    ratingRange: [0, 5],
+    popularityRange: [1, 5],
+    hasTags: [],
+    hasSubscription: null,
+    isFavorite: null,
+    aiGenerated: null,
+  });
 
   // טעינת כלים
   const { data: tools = [], isLoading } = useQuery({
@@ -98,7 +111,7 @@ export default function ToolsTab({ settings, initialFilter }) {
     onError: () => toast.error('שגיאה במחיקת הכלי'),
   });
 
-  // סינון ומיון
+  // סינון ומיון מתקדם
   const filteredAndSortedTools = useMemo(() => {
     let filtered = [...tools];
 
@@ -108,28 +121,78 @@ export default function ToolsTab({ settings, initialFilter }) {
       filtered = filtered.filter(tool => 
         tool.name?.toLowerCase().includes(search) ||
         tool.description?.toLowerCase().includes(search) ||
-        tool.tags?.some(tag => tag.toLowerCase().includes(search))
+        tool.tags?.some(tag => tag.toLowerCase().includes(search)) ||
+        tool.features?.some(f => f.toLowerCase().includes(search))
       );
     }
 
-    // קטגוריה
+    // קטגוריה בסיסית
     if (selectedCategory !== 'all') {
       filtered = filtered.filter(tool => tool.category === selectedCategory);
     }
 
-    // תמחור
+    // תמחור בסיסי
     if (selectedPricing !== 'all') {
       filtered = filtered.filter(tool => tool.pricing === selectedPricing);
     }
 
-    // דירוג
+    // דירוג בסיסי
     if (selectedRating > 0) {
       filtered = filtered.filter(tool => (tool.rating || 0) >= selectedRating);
     }
 
-    // מועדפים
+    // מועדפים בסיסי
     if (showFavoritesOnly) {
       filtered = filtered.filter(tool => tool.isFavorite);
+    }
+
+    // סינון מתקדם - קטגוריות
+    if (advancedFilters.categories.length > 0) {
+      filtered = filtered.filter(tool => advancedFilters.categories.includes(tool.category));
+    }
+
+    // סינון מתקדם - תמחור
+    if (advancedFilters.pricing.length > 0) {
+      filtered = filtered.filter(tool => advancedFilters.pricing.includes(tool.pricing));
+    }
+
+    // סינון מתקדם - סוג מנוי
+    if (advancedFilters.subscriptionTypes.length > 0) {
+      filtered = filtered.filter(tool => advancedFilters.subscriptionTypes.includes(tool.subscriptionType));
+    }
+
+    // סינון מתקדם - טווח דירוג
+    filtered = filtered.filter(tool => {
+      const rating = tool.rating || 0;
+      return rating >= advancedFilters.ratingRange[0] && rating <= advancedFilters.ratingRange[1];
+    });
+
+    // סינון מתקדם - טווח פופולריות
+    filtered = filtered.filter(tool => {
+      const popularity = tool.popularity || 1;
+      return popularity >= advancedFilters.popularityRange[0] && popularity <= advancedFilters.popularityRange[1];
+    });
+
+    // סינון מתקדם - תגיות
+    if (advancedFilters.hasTags.length > 0) {
+      filtered = filtered.filter(tool => 
+        tool.tags?.some(tag => advancedFilters.hasTags.includes(tag))
+      );
+    }
+
+    // סינון מתקדם - יש מנוי
+    if (advancedFilters.hasSubscription !== null) {
+      filtered = filtered.filter(tool => tool.hasSubscription === advancedFilters.hasSubscription);
+    }
+
+    // סינון מתקדם - מועדפים
+    if (advancedFilters.isFavorite !== null) {
+      filtered = filtered.filter(tool => tool.isFavorite === advancedFilters.isFavorite);
+    }
+
+    // סינון מתקדם - נוצר ב-AI
+    if (advancedFilters.aiGenerated !== null) {
+      filtered = filtered.filter(tool => tool.aiGenerated === advancedFilters.aiGenerated);
     }
 
     // מיון
@@ -151,7 +214,7 @@ export default function ToolsTab({ settings, initialFilter }) {
     });
 
     return filtered;
-  }, [tools, searchTerm, selectedCategory, selectedPricing, selectedRating, showFavoritesOnly, sortBy]);
+  }, [tools, searchTerm, selectedCategory, selectedPricing, selectedRating, showFavoritesOnly, sortBy, advancedFilters]);
 
   // פעולות
   const handleSave = (data) => {
@@ -218,7 +281,34 @@ export default function ToolsTab({ settings, initialFilter }) {
     setSelectedPricing('all');
     setSelectedRating(0);
     setShowFavoritesOnly(false);
+    setAdvancedFilters({
+      categories: [],
+      pricing: [],
+      subscriptionTypes: [],
+      ratingRange: [0, 5],
+      popularityRange: [1, 5],
+      hasTags: [],
+      hasSubscription: null,
+      isFavorite: null,
+      aiGenerated: null,
+    });
   };
+
+  // חישוב פילטרים פעילים
+  const activeAdvancedFiltersCount = 
+    advancedFilters.categories.length +
+    advancedFilters.pricing.length +
+    advancedFilters.subscriptionTypes.length +
+    advancedFilters.hasTags.length +
+    (advancedFilters.hasSubscription !== null ? 1 : 0) +
+    (advancedFilters.isFavorite !== null ? 1 : 0) +
+    (advancedFilters.aiGenerated !== null ? 1 : 0) +
+    (advancedFilters.ratingRange[0] > 0 || advancedFilters.ratingRange[1] < 5 ? 1 : 0) +
+    (advancedFilters.popularityRange[0] > 1 || advancedFilters.popularityRange[1] < 5 ? 1 : 0);
+
+  // כל התגיות והקטגוריות
+  const allCategories = [...new Set(tools.map(t => t.category))].sort();
+  const allTags = [...new Set(tools.flatMap(t => t.tags || []))].sort();
 
   const toggleCompareSelection = (tool) => {
     setSelectedForCompare(prev => {
@@ -266,7 +356,18 @@ export default function ToolsTab({ settings, initialFilter }) {
           </p>
         </div>
         
-        <div className="flex gap-2 flex-wrap">
+        <div className="flex gap-2 flex-wrap items-center">
+          <AdvancedFilters
+            filters={advancedFilters}
+            onFiltersChange={setAdvancedFilters}
+            activeFiltersCount={activeAdvancedFiltersCount}
+            categories={allCategories}
+            tags={allTags}
+          />
+          <ExportImportDialog
+            tools={tools}
+            onImportComplete={() => queryClient.invalidateQueries(['tools'])}
+          />
           {compareMode ? (
             <>
               <Button

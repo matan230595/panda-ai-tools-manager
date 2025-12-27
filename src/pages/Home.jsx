@@ -90,7 +90,7 @@ export default function Home() {
     queryClient.invalidateQueries(['settings']);
   };
 
-  // קיצורי מקלדת
+  // קיצורי מקלדת מתקדמים
   useEffect(() => {
     if (!settings?.enableKeyboardShortcuts) return;
 
@@ -115,16 +115,42 @@ export default function Home() {
             e.preventDefault();
             break;
           case '5':
+            setActiveTab('insights');
+            e.preventDefault();
+            break;
+          case '6':
             setActiveTab('settings');
             e.preventDefault();
             break;
+        }
+      }
+      
+      // Ctrl + K - חיפוש מהיר (יעבוד רק בטאב כלים)
+      if (e.ctrlKey && e.key === 'k' && !e.shiftKey && !e.altKey) {
+        if (activeTab === 'tools') {
+          const searchInput = document.querySelector('input[type="search"]');
+          if (searchInput) {
+            searchInput.focus();
+            e.preventDefault();
+          }
+        }
+      }
+      
+      // ? - הצג עזרת קיצורי מקלדת
+      if (e.key === '?' && !e.ctrlKey && !e.altKey && !e.shiftKey) {
+        const target = e.target;
+        if (target.tagName !== 'INPUT' && target.tagName !== 'TEXTAREA') {
+          toast.info('⌨️ קיצורי מקלדת: Alt+1-6 למעבר בין טאבים, Ctrl+K לחיפוש', {
+            duration: 5000
+          });
+          e.preventDefault();
         }
       }
     };
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [settings?.enableKeyboardShortcuts]);
+  }, [settings?.enableKeyboardShortcuts, activeTab]);
 
   const handleNavigateToTools = (filter) => {
     setToolsFilter(filter);
