@@ -13,7 +13,7 @@ import {
 import TableColumnSelector from './TableColumnSelector';
 import ToolLogo from '@/components/ToolLogo';
 
-export default function TableView({ tools, onEdit, onDelete, onToggleFavorite, onManageSubscription }) {
+export default function TableView({ tools, onEdit, onDelete, onToggleFavorite, onManageSubscription, onToolClick }) {
   const [selectedColumns, setSelectedColumns] = useState([
     { id: 'name', label: 'שם הכלי' },
     { id: 'category', label: 'קטגוריה' },
@@ -137,10 +137,17 @@ export default function TableView({ tools, onEdit, onDelete, onToggleFavorite, o
             </TableHeader>
           <TableBody>
             {tools.map((tool) => (
-              <TableRow key={tool.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+              <TableRow 
+                key={tool.id} 
+                className="hover:bg-gray-50 dark:hover:bg-gray-800/50 cursor-pointer"
+                onClick={() => onToolClick?.(tool)}
+              >
                 <TableCell>
                   <button
-                    onClick={() => onToggleFavorite(tool)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onToggleFavorite(tool);
+                    }}
                     className="p-1 hover:scale-110 transition-transform"
                   >
                     <Star
@@ -162,7 +169,10 @@ export default function TableView({ tools, onEdit, onDelete, onToggleFavorite, o
                     <Button
                       size="icon"
                       variant="ghost"
-                      onClick={() => window.open(tool.url, '_blank')}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        window.open(tool.url, '_blank');
+                      }}
                       title="בקר באתר"
                     >
                       <ExternalLink className="w-4 h-4" />
@@ -170,7 +180,10 @@ export default function TableView({ tools, onEdit, onDelete, onToggleFavorite, o
                     <Button
                       size="icon"
                       variant="ghost"
-                      onClick={() => onEdit(tool)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onEdit(tool);
+                      }}
                       title="ערוך"
                     >
                       <Edit className="w-4 h-4" />
@@ -178,7 +191,10 @@ export default function TableView({ tools, onEdit, onDelete, onToggleFavorite, o
                     <Button
                       size="icon"
                       variant="ghost"
-                      onClick={() => onDelete(tool)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDelete(tool);
+                      }}
                       title="מחק"
                       className="text-red-500 hover:text-red-700"
                     >

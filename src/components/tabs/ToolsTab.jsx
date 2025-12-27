@@ -13,6 +13,8 @@ import KanbanView from '@/components/tools/KanbanView';
 import SubscriptionDialog from '@/components/subscription/SubscriptionDialog';
 import SmartRecommendations from '@/components/recommendations/SmartRecommendations';
 import EmptyState from '@/components/EmptyState';
+import ToolDetailDialog from '@/components/tools/ToolDetailDialog';
+import DuplicateDetector from '@/components/tools/DuplicateDetector';
 import { toast } from 'sonner';
 import {
   AlertDialog,
@@ -43,6 +45,8 @@ export default function ToolsTab({ settings, initialFilter }) {
   const [compareMode, setCompareMode] = useState(false);
   const [selectedForCompare, setSelectedForCompare] = useState([]);
   const [managingSubscription, setManagingSubscription] = useState(null);
+  const [selectedTool, setSelectedTool] = useState(null);
+  const [showDuplicates, setShowDuplicates] = useState(true);
 
   // טעינת כלים
   const { data: tools = [], isLoading } = useQuery({
@@ -347,6 +351,15 @@ export default function ToolsTab({ settings, initialFilter }) {
         </div>
       )}
 
+      {/* זיהוי כפילויות */}
+      {showDuplicates && (
+        <DuplicateDetector
+          tools={tools}
+          onDelete={handleDelete}
+          onClose={() => setShowDuplicates(false)}
+        />
+      )}
+
       {/* חיפוש וסינון */}
       <SearchAndFilters
         searchTerm={searchTerm}
@@ -382,6 +395,7 @@ export default function ToolsTab({ settings, initialFilter }) {
           onDelete={handleDelete}
           onToggleFavorite={handleToggleFavorite}
           onManageSubscription={setManagingSubscription}
+          onToolClick={setSelectedTool}
         />
       ) : viewMode === 'kanban' ? (
         <KanbanView
@@ -390,6 +404,7 @@ export default function ToolsTab({ settings, initialFilter }) {
           onDelete={handleDelete}
           onToggleFavorite={handleToggleFavorite}
           onManageSubscription={setManagingSubscription}
+          onToolClick={setSelectedTool}
         />
       ) : (
         <div className={gridClasses[viewMode]}>
@@ -410,10 +425,23 @@ export default function ToolsTab({ settings, initialFilter }) {
                 onDelete={handleDelete}
                 onToggleFavorite={handleToggleFavorite}
                 onManageSubscription={setManagingSubscription}
+                onClick={setSelectedTool}
               />
             </div>
           ))}
         </div>
+      )}
+
+      {/* פרטי כלי */}
+      {selectedTool && (
+        <ToolDetailDialog
+          tool={selectedTool}
+          onClose={() => setSelectedTool(null)}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          onToggleFavorite={handleToggleFavorite}
+          onManageSubscription={setManagingSubscription}
+        />
       )}
 
       {/* מודל השוואה */}
