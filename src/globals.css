@@ -225,6 +225,16 @@ body {
   background-size: 200% 100%;
 }
 
+/* הסתרת scrollbar בגלילה אופקית */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* טקסט נבחר */
 ::selection {
   background: var(--primary-indigo);

@@ -122,7 +122,7 @@ export default function SearchAndFilters({
 
         {/* תמחור */}
         <Select value={selectedPricing} onValueChange={onPricingChange}>
-          <SelectTrigger className="w-full sm:w-[160px] h-9 md:h-10 bg-white dark:bg-gray-800 text-sm">
+          <SelectTrigger className="w-[120px] h-9 bg-white dark:bg-gray-800 text-sm flex-shrink-0">
             <SelectValue placeholder="תמחור" />
           </SelectTrigger>
           <SelectContent>
@@ -134,9 +134,9 @@ export default function SearchAndFilters({
           </SelectContent>
         </Select>
 
-        {/* דירוג מינימלי */}
+        {/* דירוג */}
         <Select value={selectedRating.toString()} onValueChange={(val) => onRatingChange(Number(val))}>
-          <SelectTrigger className="w-full sm:w-[140px] h-9 md:h-10 bg-white dark:bg-gray-800 text-sm">
+          <SelectTrigger className="w-[110px] h-9 bg-white dark:bg-gray-800 text-sm flex-shrink-0">
             <SelectValue placeholder="דירוג" />
           </SelectTrigger>
           <SelectContent>
@@ -149,7 +149,7 @@ export default function SearchAndFilters({
 
         {/* מיון */}
         <Select value={sortBy} onValueChange={onSortChange}>
-          <SelectTrigger className="w-full sm:w-[160px] h-9 md:h-10 bg-white dark:bg-gray-800 text-sm">
+          <SelectTrigger className="w-[130px] h-9 bg-white dark:bg-gray-800 text-sm flex-shrink-0">
             <SelectValue placeholder="מיין" />
           </SelectTrigger>
           <SelectContent>
@@ -164,12 +164,12 @@ export default function SearchAndFilters({
         <div className="flex-1" />
 
         {/* תצוגה */}
-        <div className="hidden sm:flex items-center gap-0.5 bg-gray-100 dark:bg-gray-800 rounded-lg p-0.5">
+        <div className="flex items-center gap-0.5 bg-gray-100 dark:bg-gray-800 rounded-lg p-0.5 flex-shrink-0 mr-auto">
           <Button
             size="sm"
             variant={viewMode === 'grid' ? 'default' : 'ghost'}
             onClick={() => onViewModeChange('grid')}
-            className="h-7 w-7 p-0"
+            className="h-8 w-8 p-0"
             aria-label="רשת"
           >
             <Grid3x3 className="w-3.5 h-3.5" />
@@ -178,7 +178,7 @@ export default function SearchAndFilters({
             size="sm"
             variant={viewMode === 'list' ? 'default' : 'ghost'}
             onClick={() => onViewModeChange('list')}
-            className="h-7 w-7 p-0"
+            className="h-8 w-8 p-0"
             aria-label="רשימה"
           >
             <List className="w-3.5 h-3.5" />
@@ -187,7 +187,7 @@ export default function SearchAndFilters({
             size="sm"
             variant={viewMode === 'compact' ? 'default' : 'ghost'}
             onClick={() => onViewModeChange('compact')}
-            className="h-7 w-7 p-0"
+            className="h-8 w-8 p-0"
             aria-label="צפוף"
           >
             <LayoutGrid className="w-3.5 h-3.5" />
@@ -196,13 +196,22 @@ export default function SearchAndFilters({
             size="sm"
             variant={viewMode === 'table' ? 'default' : 'ghost'}
             onClick={() => onViewModeChange('table')}
-            className="h-7 w-7 p-0 text-xs"
+            className="h-8 w-8 p-0"
             aria-label="טבלה"
           >
             📊
           </Button>
+          <Button
+            size="sm"
+            variant={viewMode === 'kanban' ? 'default' : 'ghost'}
+            onClick={() => onViewModeChange('kanban')}
+            className="h-8 w-8 p-0"
+            aria-label="קאנבן"
+          >
+            🗂️
+          </Button>
         </div>
-      </div>
+        </div>
 
       {/* מידע על תוצאות ואפשרות לנקות */}
       {hasActiveFilters && (

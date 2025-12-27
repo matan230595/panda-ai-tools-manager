@@ -9,6 +9,7 @@ import ToolCard from '@/components/tools/ToolCard';
 import ToolForm from '@/components/tools/ToolForm';
 import CompareTools from '@/components/tools/CompareTools';
 import TableView from '@/components/tools/TableView';
+import KanbanView from '@/components/tools/KanbanView';
 import SubscriptionDialog from '@/components/subscription/SubscriptionDialog';
 import SmartRecommendations from '@/components/recommendations/SmartRecommendations';
 import EmptyState from '@/components/EmptyState';
@@ -231,10 +232,11 @@ export default function ToolsTab({ settings, initialFilter }) {
 
   // Grid classes
   const gridClasses = {
-    grid: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6',
-    list: 'flex flex-col gap-4',
-    compact: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4',
+    grid: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6',
+    list: 'flex flex-col gap-3 md:gap-4',
+    compact: 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4',
     table: '',
+    kanban: '',
   };
 
   if (isLoading) {
@@ -375,6 +377,14 @@ export default function ToolsTab({ settings, initialFilter }) {
         />
       ) : viewMode === 'table' ? (
         <TableView
+          tools={filteredAndSortedTools}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          onToggleFavorite={handleToggleFavorite}
+          onManageSubscription={setManagingSubscription}
+        />
+      ) : viewMode === 'kanban' ? (
+        <KanbanView
           tools={filteredAndSortedTools}
           onEdit={handleEdit}
           onDelete={handleDelete}
