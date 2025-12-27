@@ -6,6 +6,7 @@ export default function TabNavigation({ activeTab, onTabChange }) {
     { id: 'tools', label: 'כלי AI שלי', icon: Sparkles, gradient: 'from-indigo-500 to-purple-500' },
     { id: 'assistant', label: 'עוזר AI', icon: MessageSquare, gradient: 'from-pink-500 to-rose-500' },
     { id: 'stats', label: 'סטטיסטיקות', icon: BarChart3, gradient: 'from-green-500 to-emerald-500' },
+    { id: 'insights', label: 'תובנות AI', icon: '🧠', gradient: 'from-purple-500 to-pink-500' },
     { id: 'settings', label: 'הגדרות', icon: Settings, gradient: 'from-orange-500 to-amber-500' },
   ];
 
@@ -52,9 +53,13 @@ export default function TabNavigation({ activeTab, onTabChange }) {
                     } : {}}
                   >
                     {isActive && (
-                      <div className={`absolute inset-0 bg-gradient-to-r ${tab.gradient} rounded-xl opacity-100`} />
+                     <div className={`absolute inset-0 bg-gradient-to-r ${tab.gradient} rounded-xl opacity-100`} />
                     )}
-                    <Icon className={`w-5 h-5 relative z-10 ${isActive ? 'animate-pulse' : ''}`} />
+                    {typeof tab.icon === 'string' ? (
+                     <span className="text-xl relative z-10">{tab.icon}</span>
+                    ) : (
+                     <Icon className={`w-5 h-5 relative z-10 ${isActive ? 'animate-pulse' : ''}`} />
+                    )}
                     <span className="relative z-10 hidden lg:inline">{tab.label}</span>
                     
                     {isActive && (
@@ -92,7 +97,11 @@ export default function TabNavigation({ activeTab, onTabChange }) {
                   {isActive && (
                     <div className={`absolute inset-0 bg-gradient-to-br ${tab.gradient} rounded-2xl opacity-20 animate-pulse`} />
                   )}
-                  <Icon className={`w-6 h-6 relative z-10 ${isActive ? `bg-gradient-to-br ${tab.gradient} bg-clip-text text-transparent` : 'text-gray-600 dark:text-gray-400'}`} />
+                  {typeof tab.icon === 'string' ? (
+                    <span className="text-2xl relative z-10">{tab.icon}</span>
+                  ) : (
+                    <Icon className={`w-6 h-6 relative z-10 ${isActive ? `bg-gradient-to-br ${tab.gradient} bg-clip-text text-transparent` : 'text-gray-600 dark:text-gray-400'}`} />
+                  )}
                 </div>
                 <span className={`text-xs font-medium transition-all duration-300 ${isActive ? `bg-gradient-to-br ${tab.gradient} bg-clip-text text-transparent` : 'text-gray-600 dark:text-gray-400'}`}>
                   {tab.label}

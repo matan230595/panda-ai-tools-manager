@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import TabNavigation from '@/components/TabNavigation';
@@ -10,6 +10,8 @@ import SettingsTab from '@/components/tabs/SettingsTab';
 import ThemeToggle from '@/components/ThemeToggle';
 import NotificationCenter from '@/components/NotificationCenter';
 import { Toaster, toast } from 'sonner';
+
+const InsightsTab = React.lazy(() => import('@/components/tabs/InsightsTab'));
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState('tools');
@@ -196,6 +198,11 @@ export default function Home() {
           {activeTab === 'assistant' && <AssistantTab />}
           {activeTab === 'subscriptions' && <SubscriptionsTab />}
           {activeTab === 'stats' && <StatsTab onNavigateToTools={handleNavigateToTools} />}
+          {activeTab === 'insights' && (
+            <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="animate-spin w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full" /></div>}>
+              <InsightsTab />
+            </Suspense>
+          )}
           {activeTab === 'settings' && <SettingsTab settings={settings} onLogout={() => {
             setIsAuthenticated(false);
             localStorage.removeItem('ai_tools_auth');
