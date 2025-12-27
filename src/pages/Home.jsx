@@ -158,9 +158,6 @@ export default function Home() {
             >
               התחבר
             </button>
-            <p className="text-xs text-center text-gray-500">
-              💡 סיסמת ברירת מחדל: 123456
-            </p>
           </div>
         </div>
       </div>
