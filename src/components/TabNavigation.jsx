@@ -40,24 +40,11 @@ export default function TabNavigation({ activeTab, onTabChange }) {
   return (
     <>
       {/* Desktop & Tablet - Top Navigation */}
-      <div className="hidden md:block sticky top-0 z-50 bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-gray-700">
+      <div className="hidden md:block sticky top-0 z-50 bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-gray-700" dir="rtl">
         <div className="max-w-7xl mx-auto px-4 lg:px-6">
-          <div className="flex items-center justify-between py-3 lg:py-4">
-            <div className="flex items-center gap-2 lg:gap-3 min-w-0">
-              <div className="w-12 lg:w-16 h-12 lg:h-16 rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0">
-                {userLogo ? (
-                  <img src={userLogo} alt="Logo" className="w-full h-full object-contain" />
-                ) : (
-                  <Sparkles className="w-6 lg:w-8 h-6 lg:h-8 text-indigo-500" />
-                )}
-              </div>
-              <div className="min-w-0">
-                <h1 className="text-lg lg:text-xl font-bold gradient-text truncate">{appName}</h1>
-                <p className="text-xs text-gray-500 dark:text-gray-400 hidden lg:block">מערכת ניהול כלי AI מתקדמת</p>
-              </div>
-            </div>
-            
-            <nav className="flex gap-1 lg:gap-2" role="tablist" className="overflow-x-auto">
+          <div className="flex items-center justify-between py-3 lg:py-4 gap-4">
+            {/* Tabs - Left Side (ימין בעברית) */}
+            <nav className="flex gap-1 lg:gap-2 overflow-x-auto flex-1 min-w-0" role="tablist">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
                 const isActive = activeTab === tab.id;
@@ -100,12 +87,27 @@ export default function TabNavigation({ activeTab, onTabChange }) {
                 );
               })}
             </nav>
+
+            {/* Logo & App Name - Right Side (שמאל בעברית) */}
+            <div className="flex items-center gap-2 lg:gap-3 min-w-0 flex-shrink-0">
+              <div className="min-w-0 text-right">
+                <h1 className="text-lg lg:text-xl font-bold gradient-text truncate">{appName}</h1>
+                <p className="text-xs text-gray-500 dark:text-gray-400 hidden lg:block">מערכת ניהול כלי AI</p>
+              </div>
+              <div className="w-12 lg:w-16 h-12 lg:h-16 rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0 bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30">
+                {userLogo ? (
+                  <img src={userLogo} alt="Logo" className="w-full h-full object-contain" />
+                ) : (
+                  <Sparkles className="w-6 lg:w-8 h-6 lg:h-8 text-indigo-500" />
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Mobile - Bottom Navigation */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border-t border-gray-200 dark:border-gray-700 safe-area-bottom">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border-t border-gray-200 dark:border-gray-700 safe-area-bottom" dir="rtl">
         <nav className="flex justify-around items-center h-16 px-1" role="tablist">
           {tabs.map((tab) => {
             const Icon = tab.icon;
@@ -148,16 +150,16 @@ export default function TabNavigation({ activeTab, onTabChange }) {
       </div>
 
       {/* Mobile - Header */}
-      <div className="md:hidden sticky top-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-gray-200 dark:border-gray-700 px-3 sm:px-4 py-2.5">
-        <div className="flex items-center gap-2 sm:gap-3">
-          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0">
+      <div className="md:hidden sticky top-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-gray-200 dark:border-gray-700 px-3 sm:px-4 py-2.5" dir="rtl">
+        <div className="flex items-center gap-2 sm:gap-3 justify-between">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0 bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30">
             {userLogo ? (
               <img src={userLogo} alt="Logo" className="w-full h-full object-contain" />
             ) : (
               <Sparkles className="w-5 sm:w-6 h-5 sm:h-6 text-indigo-500" />
             )}
           </div>
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-0 text-right">
             <h1 className="text-base sm:text-lg font-bold gradient-text truncate">{appName}</h1>
           </div>
         </div>
