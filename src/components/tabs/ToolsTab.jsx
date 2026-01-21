@@ -54,6 +54,40 @@ export default function ToolsTab({ settings, initialFilter }) {
       setAppName(appSettings.appName);
     }
   }, [appSettings]);
+
+  // בדוק התראות חכמות
+  useEffect(() => {
+    if (!appSettings?.enableNotifications) return;
+
+    const checkSmartNotifications = () => {
+      if (tools.length === 0) return;
+
+      // התראה על כלים פופולריים חדשים
+      const popularNew = tools
+        .filter(t => t.popularity >= 4 && new Date(t.created_date) > new Date(Date.now() - 7*24*60*60*1000))
+        .slice(0, 1);
+      
+      if (popularNew.length > 0 && !sessionStorage.getItem(`notified-popular-${popularNew[0].id}`)) {
+        toast.success(`🌟 כלי פופולרי חדש: ${popularNew[0].name}`);
+        sessionStorage.setItem(`notified-popular-${popularNew[0].id}`, 'true');
+      }
+
+      // התראה על כלים חדשים בקטגוריה שאתה משתמש בה
+      const toolsByCategory = {};
+      tools.forEach(t => {
+        if (!toolsByCategory[t.category]) toolsByCategory[t.category] = [];
+        toolsByCategory[t.category].push(t);
+      });
+      
+      const categoriesWithTools = Object.keys(toolsByCategory).filter(cat => toolsByCategory[cat].length > 3);
+      if (categoriesWithTools.length > 0 && !sessionStorage.getItem('notified-category')) {
+        toast.info(`📊 יש לך ${categoriesWithTools.length} קטגוריות עם כלים רבים`);
+        sessionStorage.setItem('notified-category', 'true');
+      }
+    };
+
+    checkSmartNotifications();
+  }, [tools, appSettings?.enableNotifications]);
   
   // State management
   const [searchTerm, setSearchTerm] = useState('');
@@ -138,14 +172,18 @@ export default function ToolsTab({ settings, initialFilter }) {
   const filteredAndSortedTools = useMemo(() => {
     let filtered = [...tools];
 
-    // חיפוש טקסט
+    // חיפוש טקסט מתקדם
     if (searchTerm) {
       const search = searchTerm.toLowerCase();
       filtered = filtered.filter(tool => 
         tool.name?.toLowerCase().includes(search) ||
         tool.description?.toLowerCase().includes(search) ||
+        tool.detailedDescription?.toLowerCase().includes(search) ||
         tool.tags?.some(tag => tag.toLowerCase().includes(search)) ||
-        tool.features?.some(f => f.toLowerCase().includes(search))
+        tool.features?.some(f => f.toLowerCase().includes(search)) ||
+        tool.category?.toLowerCase().includes(search) ||
+        tool.integrations?.some(i => i.toLowerCase().includes(search)) ||
+        tool.platforms?.some(p => p.toLowerCase().includes(search))
       );
     }
 
