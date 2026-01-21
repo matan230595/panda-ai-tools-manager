@@ -375,7 +375,24 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
             </TabsContent>
           </Tabs>
         </div>
-      </div>
-    </div>
-  );
-}
+
+        {/* כלים דומים */}
+        <div className="border-t pt-6">
+          <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-purple-500" />
+            כלים דומים והמלצות
+          </h3>
+          <Suspense fallback={<div className="text-center py-4">טוען המלצות...</div>}>
+            <PersonalizedRecommendations 
+              currentTool={tool}
+              onSelectTool={(selectedTool) => {
+                onClose();
+                // כאן יכול להיות onToolClick callback
+              }}
+            />
+          </Suspense>
+        </div>
+        </div>
+        </div>
+        );
+        }

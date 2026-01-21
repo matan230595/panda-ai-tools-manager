@@ -173,6 +173,7 @@ export default function Home() {
             </div>
             <h1 className="text-3xl font-bold gradient-text mb-2">AI Tools Manager</h1>
             <p className="text-gray-600 dark:text-gray-400">הזן סיסמה להמשך</p>
+            <p className="text-xs text-gray-500 mt-2">💡 סיסמה ראשונית: <span className="font-mono bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">123456</span></p>
           </div>
           
           <div className="space-y-4">
