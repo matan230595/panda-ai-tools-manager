@@ -372,7 +372,7 @@ export default function ToolsTab({ settings, initialFilter }) {
       <div className="text-right">
         <div className="flex items-center gap-4 mb-4">
           {userLogo && (
-            <img src={userLogo} alt={appName} className="w-16 h-16 object-contain rounded-xl border-2 border-indigo-200 dark:border-indigo-800 p-2 bg-white dark:bg-gray-800" />
+            <img src={userLogo} alt={appName} className="w-16 h-16 object-contain" />
           )}
           <div>
             <h1 className="text-4xl md:text-5xl font-bold gradient-text mb-3">
