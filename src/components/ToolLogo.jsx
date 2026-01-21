@@ -74,15 +74,15 @@ export default function ToolLogo({ tool, size = 'md' }) {
   // תמיד מציג את ה-fallback אם אין לוגו תקין
   if (imgError || !logoUrl) {
     return (
-      <div className={`${sizes[size]} bg-gradient-to-br ${colorClass} rounded-xl flex items-center justify-center text-white font-bold shadow-md ring-2 ring-white dark:ring-gray-800`}>
-        <span className="drop-shadow-md">{initial}</span>
+      <div className={`${sizes[size]} bg-gradient-to-br ${colorClass} rounded-lg flex items-center justify-center text-white font-bold shadow-lg transition-all duration-200 hover:shadow-xl`}>
+        <span className="drop-shadow-lg">{initial}</span>
       </div>
     );
   }
 
   // מציג תמונה רק אם נטענה בהצלחה
   return (
-    <div className={`${sizes[size]} rounded-xl overflow-hidden flex items-center justify-center bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700`}>
+    <div className={`${sizes[size]} rounded-lg overflow-hidden flex items-center justify-center bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-md transition-shadow duration-200 hover:shadow-lg`}>
       <img
         src={logoUrl}
         alt={tool.name}
