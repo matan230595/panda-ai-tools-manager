@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import OllamaIntegration from '@/components/integrations/OllamaIntegration';
+import BrandingTab from '@/components/tabs/BrandingTab';
 
 export default function SettingsTab({ settings, onLogout }) {
   const queryClient = useQueryClient();
@@ -252,13 +253,18 @@ export default function SettingsTab({ settings, onLogout }) {
       </div>
 
       <Tabs defaultValue="api" className="w-full">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-6">
+          <TabsTrigger value="branding">🎨 ברנדינג</TabsTrigger>
           <TabsTrigger value="api">🔑 מפתחות API</TabsTrigger>
           <TabsTrigger value="ollama">🆓 Ollama</TabsTrigger>
-          <TabsTrigger value="preferences">🎨 העדפות</TabsTrigger>
+          <TabsTrigger value="preferences">⚙️ העדפות</TabsTrigger>
           <TabsTrigger value="security">🔐 אבטחה</TabsTrigger>
           <TabsTrigger value="data">💾 נתונים</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="branding" className="mt-6">
+          <BrandingTab settings={settings} />
+        </TabsContent>
 
         <TabsContent value="api" className="space-y-4 mt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
