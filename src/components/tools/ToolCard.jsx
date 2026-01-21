@@ -65,7 +65,7 @@ export default function ToolCard({
   return (
     <div 
       className={`
-        group relative glass-effect rounded-2xl p-5 
+        group relative glass-effect rounded-2xl p-4 sm:p-5 md:p-6
         transition-all duration-300 hover-lift cursor-pointer
         ${isDragging ? 'opacity-50 scale-95' : 'opacity-100'}
         ${tool.isFavorite ? 'ring-2 ring-yellow-400 dark:ring-yellow-500' : ''}
@@ -77,10 +77,10 @@ export default function ToolCard({
       {/* Drag Handle */}
       <div 
         {...dragHandleProps}
-        className="absolute top-3 left-3 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing"
+        className="absolute top-3 right-3 sm:top-4 sm:right-4 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing md:flex hidden"
         aria-label="גרור לסידור מחדש"
       >
-        <GripVertical className="w-5 h-5 text-gray-400" />
+        <GripVertical className="w-4 sm:w-5 h-4 sm:h-5 text-gray-400" />
       </div>
 
       {/* כוכב מועדפים */}
@@ -89,11 +89,11 @@ export default function ToolCard({
           e.stopPropagation();
           onToggleFavorite(tool);
         }}
-        className="absolute top-3 right-3 z-10 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+        className="absolute top-2 left-2 sm:top-3 sm:left-3 z-10 p-2 sm:p-2.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors touch-target"
         aria-label={tool.isFavorite ? 'הסר ממועדפים' : 'הוסף למועדפים'}
       >
         <Star 
-          className={`w-5 h-5 transition-all ${
+          className={`w-4 sm:w-5 h-4 sm:h-5 transition-all ${
             tool.isFavorite 
               ? 'fill-yellow-400 text-yellow-400 scale-110' 
               : 'text-gray-400 hover:text-yellow-400'
@@ -102,26 +102,26 @@ export default function ToolCard({
       </button>
 
       {/* תוכן הכרטיס */}
-      <div className="space-y-4 mt-8">
+      <div className="space-y-3 sm:space-y-4 mt-6 sm:mt-8">
         {/* לוגו ושם */}
-        <div className="flex items-start gap-3">
+        <div className="flex items-start gap-2 sm:gap-3">
           {tool.logo ? (
             <img 
               src={tool.logo} 
               alt={`${tool.name} logo`}
-              className="w-12 h-12 rounded-xl object-cover shadow-md"
+              className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl object-cover shadow-md flex-shrink-0"
               loading="lazy"
             />
           ) : (
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-md">
-              <span className="text-white font-bold text-lg">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-md flex-shrink-0">
+              <span className="text-white font-bold text-base sm:text-lg">
                 {tool.name.charAt(0)}
               </span>
             </div>
           )}
           
           <div className="flex-1 min-w-0">
-            <h3 className="font-bold text-lg text-gray-900 dark:text-white truncate">
+            <h3 className="font-bold text-base sm:text-lg text-gray-900 dark:text-white truncate">
               {tool.name}
             </h3>
             <div className="flex items-center gap-2 mt-1">
@@ -139,13 +139,13 @@ export default function ToolCard({
         </div>
 
         {/* תיאור */}
-        <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-3 leading-relaxed">
+        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 line-clamp-2 sm:line-clamp-3 leading-relaxed">
           {tool.description || 'אין תיאור זמין'}
         </p>
 
         {/* תגיות */}
         {tool.tags && tool.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-wrap gap-1 sm:gap-1.5">
             {tool.tags.slice(0, 3).map((tag, index) => (
               <Badge 
                 key={index} 
@@ -165,20 +165,20 @@ export default function ToolCard({
         )}
 
         {/* מידע נוסף */}
-        <div className="flex items-center justify-between pt-3 border-t border-gray-200 dark:border-gray-700">
-          <div className="flex items-center gap-3">
+        <div className="flex items-center justify-between pt-2 sm:pt-3 border-t border-gray-200 dark:border-gray-700 gap-2">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
             {/* תמחור */}
-            <div className="flex items-center gap-1.5">
-              <div className={`w-2 h-2 rounded-full ${pricingColors[tool.pricing]}`} />
-              <span className="text-xs text-gray-600 dark:text-gray-400">
+            <div className="flex items-center gap-1">
+              <div className={`w-2 h-2 rounded-full ${pricingColors[tool.pricing]} flex-shrink-0`} />
+              <span className="text-xs text-gray-600 dark:text-gray-400 truncate">
                 {tool.pricing}
               </span>
             </div>
             
             {/* פופולריות */}
             {tool.popularity > 0 && (
-              <div className="flex items-center gap-1">
-                <TrendingUp className="w-4 h-4 text-green-500" />
+              <div className="flex items-center gap-0.5 flex-shrink-0">
+                <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 text-green-500" />
                 <span className="text-xs text-gray-600 dark:text-gray-400">
                   {tool.popularity}/5
                 </span>
@@ -187,7 +187,7 @@ export default function ToolCard({
           </div>
 
           {/* כפתורי פעולה */}
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 flex-shrink-0">
             <Button
               size="sm"
               variant="ghost"
@@ -195,11 +195,11 @@ export default function ToolCard({
                 e.stopPropagation();
                 handleVisit();
               }}
-              className="h-8 px-3"
+              className="h-9 sm:h-10 w-9 sm:w-10 p-0 touch-target"
               aria-label={`בקר באתר ${tool.name}`}
+              title="בקר באתר"
             >
-              <Eye className="w-4 h-4 ml-1" />
-              <span className="text-xs">ביקור</span>
+              <Eye className="w-4 sm:w-5 h-4 sm:h-5" />
             </Button>
             
             <DropdownMenu>
@@ -207,14 +207,15 @@ export default function ToolCard({
                 <Button 
                   size="sm" 
                   variant="ghost" 
-                  className="h-8 px-2"
+                  className="h-9 sm:h-10 w-9 sm:w-10 p-0 touch-target"
                   onClick={(e) => e.stopPropagation()}
+                  title="עוד אפשרויות"
                 >
                   <span className="sr-only">פתח תפריט</span>
-                  ⋮
+                  <span className="text-lg">⋮</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuContent align="end" className="w-44 sm:w-48">
                 <DropdownMenuItem onClick={(e) => {
                   e.stopPropagation();
                   onEdit(tool);
