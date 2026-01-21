@@ -10,6 +10,9 @@ import StatsTab from '@/components/tabs/StatsTab';
 import SettingsTab from '@/components/tabs/SettingsTab';
 import ThemeToggle from '@/components/ThemeToggle';
 import NotificationCenter from '@/components/NotificationCenter';
+import KeyboardShortcutsHelp from '@/components/KeyboardShortcutsHelp';
+import { useSmartNotifications } from '@/components/hooks/useSmartNotifications';
+import { useKeyboardShortcuts } from '@/components/hooks/useKeyboardShortcuts';
 import { Toaster, toast } from 'sonner';
 
 const InsightsTab = React.lazy(() => import('@/components/tabs/InsightsTab'));
@@ -24,6 +27,7 @@ export default function Home() {
   const [toolsFilter, setToolsFilter] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
+  const [showKeyboardHelp, setShowKeyboardHelp] = useState(false);
   const queryClient = useQueryClient();
 
   const navigate = useNavigate();
@@ -112,67 +116,20 @@ export default function Home() {
     queryClient.invalidateQueries(['settings']);
   };
 
-  // קיצורי מקלדת מתקדמים
-  useEffect(() => {
-    if (!settings?.enableKeyboardShortcuts) return;
+  // קיצורי מקלדת חכמים
+  useKeyboardShortcuts(settings, {
+    onTabChange: setActiveTab,
+    onSearch: () => {
+      if (activeTab === 'tools') {
+        const searchInput = document.querySelector('input[type="search"]');
+        searchInput?.focus();
+      }
+    },
+    onHelp: () => setShowKeyboardHelp(true),
+  });
 
-    const handleKeyPress = (e) => {
-      // Alt + מספר למעבר בין טאבים
-      if (e.altKey && !e.ctrlKey && !e.shiftKey) {
-        switch(e.key) {
-          case '1':
-            setActiveTab('tools');
-            e.preventDefault();
-            break;
-          case '2':
-            setActiveTab('assistant');
-            e.preventDefault();
-            break;
-          case '3':
-            setActiveTab('subscriptions');
-            e.preventDefault();
-            break;
-          case '4':
-            setActiveTab('stats');
-            e.preventDefault();
-            break;
-          case '5':
-            setActiveTab('insights');
-            e.preventDefault();
-            break;
-          case '6':
-            setActiveTab('settings');
-            e.preventDefault();
-            break;
-        }
-      }
-      
-      // Ctrl + K - חיפוש מהיר (יעבוד רק בטאב כלים)
-      if (e.ctrlKey && e.key === 'k' && !e.shiftKey && !e.altKey) {
-        if (activeTab === 'tools') {
-          const searchInput = document.querySelector('input[type="search"]');
-          if (searchInput) {
-            searchInput.focus();
-            e.preventDefault();
-          }
-        }
-      }
-      
-      // ? - הצג עזרת קיצורי מקלדת
-      if (e.key === '?' && !e.ctrlKey && !e.altKey && !e.shiftKey) {
-        const target = e.target;
-        if (target.tagName !== 'INPUT' && target.tagName !== 'TEXTAREA') {
-          toast.info('⌨️ קיצורי מקלדת: Alt+1-6 למעבר בין טאבים, Ctrl+K לחיפוש', {
-            duration: 5000
-          });
-          e.preventDefault();
-        }
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [settings?.enableKeyboardShortcuts, activeTab]);
+  // התראות חכמות
+  useSmartNotifications(settings, queryClient);
 
   const handleNavigateToTools = (filter) => {
     setToolsFilter(filter);
@@ -287,6 +244,9 @@ export default function Home() {
       
       {/* מקום לניווט תחתון במובייל */}
       <div className="h-20 md:hidden" />
+
+      {/* עזרת קיצורי מקלדת */}
+      <KeyboardShortcutsHelp open={showKeyboardHelp} onOpenChange={setShowKeyboardHelp} />
     </div>
   );
 }
