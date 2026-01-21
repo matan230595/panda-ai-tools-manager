@@ -44,7 +44,7 @@ export default function TabNavigation({ activeTab, onTabChange }) {
         <div className="max-w-7xl mx-auto px-4 lg:px-6">
           <div className="flex items-center justify-between py-3 lg:py-4 gap-4">
             {/* Tabs - Left Side (ימין בעברית) */}
-            <nav className="flex gap-1 lg:gap-2 overflow-x-auto flex-1 min-w-0" role="tablist">
+            <nav className="flex gap-1 lg:gap-2 flex-wrap flex-1 min-w-0" role="tablist">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
                 const isActive = activeTab === tab.id;
