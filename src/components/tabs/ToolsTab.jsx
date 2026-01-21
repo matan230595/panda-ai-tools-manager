@@ -263,6 +263,10 @@ export default function ToolsTab({ settings, initialFilter }) {
           return (b.rating || 0) - (a.rating || 0);
         case 'popularity':
           return (b.popularity || 0) - (a.popularity || 0);
+        case 'usage':
+          return (b.usageStats?.timesUsed || 0) - (a.usageStats?.timesUsed || 0);
+        case 'cost':
+          return (b.usageStats?.totalCostPerMonth || 0) - (a.usageStats?.totalCostPerMonth || 0);
         default:
           return 0;
       }
