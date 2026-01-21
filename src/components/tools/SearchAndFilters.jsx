@@ -106,7 +106,7 @@ export default function SearchAndFilters({
 
         {/* תמחור */}
         <Select value={selectedPricing} onValueChange={onPricingChange}>
-          <SelectTrigger className="w-[140px] h-11 bg-white dark:bg-gray-800 shadow-sm">
+          <SelectTrigger className="h-9 md:h-11 bg-white dark:bg-gray-800 shadow-sm text-sm flex-shrink-0">
             <SelectValue placeholder="תמחור" />
           </SelectTrigger>
           <SelectContent>
