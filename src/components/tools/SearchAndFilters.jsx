@@ -120,7 +120,7 @@ export default function SearchAndFilters({
 
         {/* דירוג */}
         <Select value={selectedRating.toString()} onValueChange={(val) => onRatingChange(Number(val))}>
-          <SelectTrigger className="w-[140px] h-11 bg-white dark:bg-gray-800 shadow-sm">
+          <SelectTrigger className="h-9 md:h-11 bg-white dark:bg-gray-800 shadow-sm text-sm flex-shrink-0">
             <SelectValue placeholder="דירוג" />
           </SelectTrigger>
           <SelectContent>
