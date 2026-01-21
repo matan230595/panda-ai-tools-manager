@@ -333,6 +333,184 @@ p {
   }
 }
 
+/* ============================================
+   RESPONSIVE BREAKPOINTS & TOUCH TARGETS
+   ============================================ */
+
+:root {
+  /* Touch Targets */
+  --touch-target-min: 48px;
+  --touch-target-spacing: 8px;
+}
+
+/* MOBILE FIRST - 320px+ */
+@media (max-width: 479px) {
+  main {
+    padding: 0.75rem !important;
+  }
+
+  .grid-cols-1 { grid-template-columns: 1fr; }
+  .grid-cols-2, .grid-cols-3, .grid-cols-4 { grid-template-columns: 1fr; }
+
+  button, [role="button"] {
+    min-height: 44px !important;
+    min-width: 44px !important;
+  }
+
+  /* Table to Card Stack */
+  table {
+    display: block !important;
+  }
+
+  tbody, thead {
+    display: block !important;
+  }
+
+  tr {
+    display: block !important;
+    margin-bottom: 1rem !important;
+    border: 1px solid rgba(229, 231, 235, 0.5) !important;
+    border-radius: 0.5rem !important;
+    padding: 1rem !important;
+  }
+
+  td, th {
+    display: flex !important;
+    justify-content: space-between !important;
+    padding: 0.5rem 0 !important;
+    border: none !important;
+  }
+
+  .p-4 { padding: 0.75rem !important; }
+  .px-4, .px-6 { padding-left: 0.75rem !important; padding-right: 0.75rem !important; }
+
+  h1 { font-size: clamp(1.5rem, 5vw, 1.875rem) !important; }
+  h2 { font-size: clamp(1.25rem, 4vw, 1.5rem) !important; }
+  h3 { font-size: clamp(1rem, 3vw, 1.25rem) !important; }
+
+  body {
+    padding-bottom: 80px !important;
+  }
+
+  .hidden-mobile { display: none !important; }
+}
+
+/* TABLET - 480px to 767px */
+@media (min-width: 480px) and (max-width: 767px) {
+  main {
+    padding: 1.25rem !important;
+  }
+
+  .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+  .grid-cols-3, .grid-cols-4 { grid-template-columns: repeat(2, 1fr); }
+
+  button {
+    min-height: 44px !important;
+  }
+
+  h1 { font-size: clamp(1.5rem, 4vw, 2rem) !important; }
+  h2 { font-size: clamp(1.25rem, 3.5vw, 1.5rem) !important; }
+}
+
+/* TABLET LANDSCAPE - 768px to 1023px */
+@media (min-width: 768px) and (max-width: 1023px) {
+  main {
+    padding: 1.5rem !important;
+  }
+
+  .grid-cols-3 { grid-template-columns: repeat(2, 1fr); }
+  .grid-cols-4 { grid-template-columns: repeat(3, 1fr); }
+
+  button {
+    min-height: 40px !important;
+  }
+
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+}
+
+/* DESKTOP - 1024px+ */
+@media (min-width: 1024px) {
+  main {
+    padding: 2rem !important;
+  }
+
+  .grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+
+  button {
+    min-height: 36px !important;
+  }
+}
+
+/* 2K+ SCREENS */
+@media (min-width: 1920px) {
+  main {
+    padding: clamp(2rem, 3vw, 2.5rem) !important;
+  }
+
+  .max-w-7xl {
+    max-width: 90rem !important;
+  }
+}
+
+/* 4K SCREENS */
+@media (min-width: 3840px) {
+  main {
+    padding: 3rem !important;
+  }
+
+  html {
+    font-size: 18px;
+  }
+}
+
+/* ACCESSIBILITY */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* LANDSCAPE ORIENTATION */
+@media (max-height: 500px) and (orientation: landscape) {
+  main {
+    padding: 0.5rem !important;
+  }
+
+  body {
+    padding-bottom: 60px !important;
+  }
+
+  h1 { font-size: 1.25rem !important; }
+}
+
+/* NOTCH SUPPORT */
+@supports (padding: max(0px)) {
+  body {
+    padding-left: max(1rem, env(safe-area-inset-left)) !important;
+    padding-right: max(1rem, env(safe-area-inset-right)) !important;
+  }
+
+  main {
+    padding-left: max(0.75rem, env(safe-area-inset-left)) !important;
+    padding-right: max(0.75rem, env(safe-area-inset-right)) !important;
+  }
+}
+
+/* Touch Target Utility */
+.touch-target {
+  min-height: 48px;
+  min-width: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+}
+
 /* תמיכה בתנועות מגע */
 @media (hover: none) and (pointer: coarse) {
   .hover-lift:active {
