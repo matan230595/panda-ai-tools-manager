@@ -356,7 +356,7 @@ export default function ToolsTab({ settings, initialFilter }) {
           </p>
         </div>
         
-        <div className="flex gap-2 flex-wrap items-center">
+        <div className="grid grid-cols-4 md:grid-cols-8 gap-2 w-full md:w-auto">
           <AdvancedFilters
             filters={advancedFilters}
             onFiltersChange={setAdvancedFilters}
@@ -376,13 +376,14 @@ export default function ToolsTab({ settings, initialFilter }) {
                   setCompareMode(false);
                   setSelectedForCompare([]);
                 }}
+                className="w-full h-10"
               >
                 ביטול
               </Button>
               <Button
                 onClick={() => setCompareMode(false)}
                 disabled={selectedForCompare.length < 2}
-                className="bg-gradient-to-r from-green-500 to-emerald-600"
+                className="bg-gradient-to-r from-green-500 to-emerald-600 w-full h-10"
               >
                 <GitCompare className="w-4 h-4 ml-2" />
                 השווה ({selectedForCompare.length})
@@ -394,14 +395,16 @@ export default function ToolsTab({ settings, initialFilter }) {
                 variant="outline"
                 onClick={() => setCompareMode(true)}
                 disabled={tools.length < 2}
+                className="w-full h-10"
               >
                 <GitCompare className="w-4 h-4 ml-2" />
-                השווה כלים
+                השווה
               </Button>
               <Button
                 variant="outline"
                 onClick={handleExport}
                 disabled={tools.length === 0}
+                className="w-full h-10"
               >
                 <Download className="w-4 h-4 ml-2" />
                 ייצא
@@ -409,6 +412,7 @@ export default function ToolsTab({ settings, initialFilter }) {
               <Button
                 variant="outline"
                 onClick={() => document.getElementById('import-file').click()}
+                className="w-full h-10"
               >
                 <Upload className="w-4 h-4 ml-2" />
                 ייבא
@@ -423,6 +427,7 @@ export default function ToolsTab({ settings, initialFilter }) {
               <Button
                 variant="outline"
                 onClick={() => setShowRecommendations(!showRecommendations)}
+                className="w-full h-10"
               >
                 <Sparkles className="w-4 h-4 ml-2" />
                 המלצות
@@ -430,18 +435,19 @@ export default function ToolsTab({ settings, initialFilter }) {
               <Button
                 variant="outline"
                 onClick={() => setShowDuplicatesDialog(true)}
+                className="w-full h-10"
               >
-                🔍 בדוק כפילויות
+                🔍 כפילויות
               </Button>
               <Button
                 onClick={() => {
                   setEditingTool(null);
                   setShowForm(true);
                 }}
-                className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700"
+                className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 w-full h-10"
               >
                 <Plus className="w-5 h-5 ml-2" />
-                הוסף כלי
+                הוסף
               </Button>
             </>
           )}
