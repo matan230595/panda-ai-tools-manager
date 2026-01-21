@@ -144,6 +144,22 @@ export default function ToolCard({
           {tool.description || 'אין תיאור זמין'}
         </p>
 
+        {/* סטטיסטיקות שימוש */}
+        {tool.usageStats && (
+          <div className="space-y-2">
+            <ToolStatsDisplay stats={tool.usageStats} personalRating={tool.personalRating} />
+          </div>
+        )}
+
+        {/* הערות אישיות */}
+        {tool.personalNotes && (
+          <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-2 sm:p-3">
+            <p className="text-xs text-gray-700 dark:text-gray-300 line-clamp-2">
+              <span className="font-semibold">הערות:</span> {tool.personalNotes}
+            </p>
+          </div>
+        )}
+
         {/* תגיות */}
         {tool.tags && tool.tags.length > 0 && (
           <div className="flex flex-wrap gap-1 sm:gap-1.5">
