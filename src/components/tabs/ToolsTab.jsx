@@ -1,7 +1,8 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { Plus, Download, Upload, Trash2, GitCompare, Key, Sparkles } from 'lucide-react';
+import { Plus, Download, Upload, Trash2, GitCompare, Key, Sparkles, Menu, X } from 'lucide-react';
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger, DrawerClose } from '@/components/ui/drawer';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import SearchAndFilters from '@/components/tools/SearchAndFilters';
@@ -83,6 +84,7 @@ export default function ToolsTab({ settings, initialFilter }) {
     isFavorite: null,
     aiGenerated: null,
   });
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   // טעינת כלים
   const { data: tools = [], isLoading } = useQuery({
@@ -403,25 +405,25 @@ export default function ToolsTab({ settings, initialFilter }) {
   }
 
   return (
-    <div className="space-y-6 md:space-y-8">
+    <div className="space-y-4 md:space-y-6">
       {/* כותרת ראשית */}
       <div className="text-right">
-        <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
+        <div className="flex items-center gap-2 md:gap-3 mb-2 md:mb-3">
           {userLogo && (
-            <img src={userLogo} alt={appName} className="w-12 md:w-16 h-12 md:h-16 object-contain flex-shrink-0" />
+            <img src={userLogo} alt={appName} className="w-10 md:w-14 h-10 md:h-14 object-contain flex-shrink-0" />
           )}
           <div className="min-w-0 flex-1">
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold gradient-text mb-1 md:mb-2 break-words">
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold gradient-text mb-0.5 md:mb-1 break-words">
               כלי AI שלי
             </h1>
           </div>
         </div>
-        <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 mb-4 md:mb-6">
+        <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400 mb-2 md:mb-4">
           נהל את כל כלי ה-AI שלך במקום אחד
         </p>
         
-        {/* כפתורי פעולה - מעולים למובייל */}
-        <div className="flex flex-wrap gap-2 md:gap-3 justify-end md:justify-end">
+        {/* כפתורי פעולה */}
+        <div className="flex flex-wrap gap-1.5 md:gap-2 justify-end md:justify-end items-center">
           <AdvancedFilters
             filters={advancedFilters}
             onFiltersChange={setAdvancedFilters}
@@ -435,42 +437,31 @@ export default function ToolsTab({ settings, initialFilter }) {
               onImportComplete={() => queryClient.invalidateQueries(['tools'])}
             />
           </div>
-          {compareMode ? (
-            <>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setCompareMode(false);
-                  setSelectedForCompare([]);
-                }}
-                size="sm"
-                className="text-xs md:text-sm"
-              >
-                ביטול
-              </Button>
-              <Button
-                onClick={() => setCompareMode(false)}
-                disabled={selectedForCompare.length < 2}
-                className="bg-gradient-to-r from-green-500 to-emerald-600 text-xs md:text-sm"
-                size="sm"
-              >
-                <GitCompare className="w-3 h-3 md:w-4 md:h-4 ml-1" />
-                <span className="hidden sm:inline">השווה ({selectedForCompare.length})</span>
-                <span className="sm:hidden">({selectedForCompare.length})</span>
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button
-                variant="outline"
-                onClick={() => setCompareMode(true)}
-                disabled={tools.length < 2}
-                className="text-xs md:text-sm"
-                size="sm"
-              >
-                <GitCompare className="w-3 h-3 md:w-4 md:h-4 ml-1" />
-                <span className="hidden sm:inline">השווה</span>
-              </Button>
+          {compareMode && (
+                 <div className="flex gap-1.5">
+                   <Button
+                     variant="outline"
+                     onClick={() => {
+                       setCompareMode(false);
+                       setSelectedForCompare([]);
+                     }}
+                     size="sm"
+                     className="text-xs"
+                   >
+                     ביטול
+                   </Button>
+                   <Button
+                     onClick={() => setCompareMode(false)}
+                     disabled={selectedForCompare.length < 2}
+                     className="bg-gradient-to-r from-green-500 to-emerald-600 text-xs"
+                     size="sm"
+                   >
+                     <GitCompare className="w-3 h-3 ml-1" />
+                     <span className="hidden sm:inline">השווה ({selectedForCompare.length})</span>
+                     <span className="sm:hidden">({selectedForCompare.length})</span>
+                   </Button>
+                 </div>
+               )}
               <Button
                 variant="outline"
                 onClick={handleExport}
