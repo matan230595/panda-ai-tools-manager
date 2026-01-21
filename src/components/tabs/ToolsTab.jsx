@@ -532,7 +532,7 @@ export default function ToolsTab({ settings, initialFilter }) {
 
       {/* המלצות חכמות */}
       {showRecommendations && (
-        <div className="glass-effect rounded-3xl p-8 shadow-xl border border-indigo-100 dark:border-indigo-900">
+        <div className="glass-effect rounded-2xl md:rounded-3xl p-4 md:p-8 shadow-lg md:shadow-xl border border-indigo-100 dark:border-indigo-900">
           <SmartRecommendations onSelectTool={(tool) => {
             setShowRecommendations(false);
             handleEdit(tool);
