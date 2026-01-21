@@ -71,25 +71,25 @@ export default function SearchAndFilters({
     searchTerm.length > 0;
 
   return (
-    <div className="glass-effect rounded-3xl p-6 space-y-4 shadow-xl border border-indigo-100 dark:border-indigo-900">
+    <div className="glass-effect rounded-2xl md:rounded-3xl p-4 md:p-6 space-y-3 md:space-y-4 shadow-lg md:shadow-xl border border-indigo-100 dark:border-indigo-900">
       {/* חיפוש חכם ומועדפים */}
-      <div className="flex gap-3">
+      <div className="flex gap-2 md:gap-3">
         <div className="flex-1">
           <SmartSearch onSearch={onSearchChange} tools={[]} />
         </div>
         <Button
           variant={showFavoritesOnly ? 'default' : 'outline'}
           onClick={onToggleFavorites}
-          size="lg"
-          className="shadow-md hover:shadow-lg transition-shadow"
+          size="sm"
+          className="md:size-lg shadow-md hover:shadow-lg transition-shadow flex-shrink-0"
         >
-          <span className="text-xl">⭐</span>
-          <span className="hidden md:inline mr-2">{showFavoritesOnly ? 'כל הכלים' : 'מועדפים'}</span>
+          <span className="text-lg md:text-xl">⭐</span>
+          <span className="hidden sm:inline mr-2 text-xs md:text-sm">{showFavoritesOnly ? 'הכל' : 'מועד'}</span>
         </Button>
       </div>
 
-      {/* פילטרים */}
-      <div className="flex items-center gap-3 flex-wrap">
+      {/* פילטרים - מתאים למובייל */}
+      <div className="flex items-center gap-2 md:gap-3 flex-wrap overflow-x-auto pb-2 md:pb-0">
         {/* קטגוריה */}
         <Select value={selectedCategory} onValueChange={onCategoryChange}>
           <SelectTrigger className="w-[160px] h-11 bg-white dark:bg-gray-800 shadow-sm">
