@@ -201,9 +201,9 @@ export default function SearchAndFilters({
       </div>
 
       {/* פילטרים פעילים ומונה תוצאות */}
-      <div className="flex items-center justify-between flex-wrap gap-3 pt-2 border-t border-gray-200 dark:border-gray-700">
-        <Badge variant="outline" className="text-base px-4 py-1.5">
-          {resultsCount} כלים נמצאו
+      <div className="flex items-center justify-between flex-wrap gap-2 md:gap-3 pt-2 md:pt-3 border-t border-gray-200 dark:border-gray-700">
+        <Badge variant="outline" className="text-xs md:text-base px-3 md:px-4 py-1">
+          {resultsCount} כלים
         </Badge>
         {(selectedCategory !== 'all' || selectedPricing !== 'all' || selectedRating > 0 || showFavoritesOnly) && (
           <Button
