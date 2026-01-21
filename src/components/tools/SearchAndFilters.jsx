@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, Filter, X, Grid3x3, List, LayoutGrid } from 'lucide-react';
+import { Search, Filter, X, Grid3x3, List, LayoutGrid, LayoutList, Columns3 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
@@ -144,53 +144,63 @@ export default function SearchAndFilters({
         </Select>
 
         {/* תצוגה */}
-        <div className="flex items-center gap-1 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-xl p-1 shadow-inner mr-auto">
-          <Button
-            size="sm"
-            variant={viewMode === 'grid' ? 'default' : 'ghost'}
-            onClick={() => onViewModeChange('grid')}
-            className="h-10 w-10 p-0"
-            aria-label="רשת"
-          >
-            <Grid3x3 className="w-4 h-4" />
-          </Button>
-          <Button
-            size="sm"
-            variant={viewMode === 'list' ? 'default' : 'ghost'}
-            onClick={() => onViewModeChange('list')}
-            className="h-10 w-10 p-0"
-            aria-label="רשימה"
-          >
-            <List className="w-4 h-4" />
-          </Button>
-          <Button
-            size="sm"
-            variant={viewMode === 'compact' ? 'default' : 'ghost'}
-            onClick={() => onViewModeChange('compact')}
-            className="h-10 w-10 p-0"
-            aria-label="צפוף"
-          >
-            <LayoutGrid className="w-4 h-4" />
-          </Button>
-          <Button
-            size="sm"
-            variant={viewMode === 'table' ? 'default' : 'ghost'}
-            onClick={() => onViewModeChange('table')}
-            className="h-10 w-10 p-0 text-lg"
-            aria-label="טבלה"
-          >
-            📊
-          </Button>
-          <Button
-            size="sm"
-            variant={viewMode === 'kanban' ? 'default' : 'ghost'}
-            onClick={() => onViewModeChange('kanban')}
-            className="h-10 w-10 p-0 text-lg"
-            aria-label="קאנבן"
-          >
-            🗂️
-          </Button>
-        </div>
+         <div className="flex items-center gap-1 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-xl p-1 shadow-inner mr-auto group" title="בחר מצב תצוגה (Alt+V)">
+           <Button
+             size="sm"
+             variant={viewMode === 'grid' ? 'default' : 'ghost'}
+             onClick={() => onViewModeChange('grid')}
+             className="h-10 px-2 flex items-center gap-1 text-xs"
+             aria-label="גריד (3 עמודות)"
+             title="גריד: 3 עמודות"
+           >
+             <LayoutGrid className="w-4 h-4" />
+             <span className="hidden md:inline">גריד</span>
+           </Button>
+           <Button
+             size="sm"
+             variant={viewMode === 'list' ? 'default' : 'ghost'}
+             onClick={() => onViewModeChange('list')}
+             className="h-10 px-2 flex items-center gap-1 text-xs"
+             aria-label="רשימה"
+             title="רשימה: רך קומפקטי"
+           >
+             <LayoutList className="w-4 h-4" />
+             <span className="hidden md:inline">רשימה</span>
+           </Button>
+           <Button
+             size="sm"
+             variant={viewMode === 'compact' ? 'default' : 'ghost'}
+             onClick={() => onViewModeChange('compact')}
+             className="h-10 px-2 flex items-center gap-1 text-xs"
+             aria-label="צפוף (4 עמודות)"
+             title="צפוף: 4 עמודות"
+           >
+             <Columns3 className="w-4 h-4" />
+             <span className="hidden md:inline">צפוף</span>
+           </Button>
+           <Button
+             size="sm"
+             variant={viewMode === 'table' ? 'default' : 'ghost'}
+             onClick={() => onViewModeChange('table')}
+             className="h-10 px-2 flex items-center gap-1 text-xs"
+             aria-label="טבלה"
+             title="טבלה: תצוגה עתירת נתונים"
+           >
+             📊
+             <span className="hidden md:inline">טבלה</span>
+           </Button>
+           <Button
+             size="sm"
+             variant={viewMode === 'kanban' ? 'default' : 'ghost'}
+             onClick={() => onViewModeChange('kanban')}
+             className="h-10 px-2 flex items-center gap-1 text-xs"
+             aria-label="קאנבן"
+             title="קאנבן: לפי קטגוריה"
+           >
+             🗂️
+             <span className="hidden md:inline">קאנבן</span>
+           </Button>
+         </div>
       </div>
 
       {/* פילטרים פעילים ומונה תוצאות */}
