@@ -443,18 +443,20 @@ export default function ToolsTab({ settings, initialFilter }) {
                   setCompareMode(false);
                   setSelectedForCompare([]);
                 }}
-                size="lg"
+                size="sm"
+                className="text-xs md:text-sm"
               >
                 ביטול
               </Button>
               <Button
                 onClick={() => setCompareMode(false)}
                 disabled={selectedForCompare.length < 2}
-                className="bg-gradient-to-r from-green-500 to-emerald-600"
-                size="lg"
+                className="bg-gradient-to-r from-green-500 to-emerald-600 text-xs md:text-sm"
+                size="sm"
               >
-                <GitCompare className="w-4 h-4 ml-2" />
-                השווה ({selectedForCompare.length})
+                <GitCompare className="w-3 h-3 md:w-4 md:h-4 ml-1" />
+                <span className="hidden sm:inline">השווה ({selectedForCompare.length})</span>
+                <span className="sm:hidden">({selectedForCompare.length})</span>
               </Button>
             </>
           ) : (
@@ -463,27 +465,30 @@ export default function ToolsTab({ settings, initialFilter }) {
                 variant="outline"
                 onClick={() => setCompareMode(true)}
                 disabled={tools.length < 2}
-                size="lg"
+                className="text-xs md:text-sm"
+                size="sm"
               >
-                <GitCompare className="w-4 h-4 ml-2" />
-                השווה כלים
+                <GitCompare className="w-3 h-3 md:w-4 md:h-4 ml-1" />
+                <span className="hidden sm:inline">השווה</span>
               </Button>
               <Button
                 variant="outline"
                 onClick={handleExport}
                 disabled={tools.length === 0}
-                size="lg"
+                className="text-xs md:text-sm"
+                size="sm"
               >
-                <Download className="w-4 h-4 ml-2" />
-                ייצא
+                <Download className="w-3 h-3 md:w-4 md:h-4 ml-1" />
+                <span className="hidden sm:inline">ייצא</span>
               </Button>
               <Button
                 variant="outline"
                 onClick={() => document.getElementById('import-file').click()}
-                size="lg"
+                className="text-xs md:text-sm"
+                size="sm"
               >
-                <Upload className="w-4 h-4 ml-2" />
-                ייבא
+                <Upload className="w-3 h-3 md:w-4 md:h-4 ml-1" />
+                <span className="hidden sm:inline">ייבא</span>
               </Button>
               <input
                 id="import-file"
@@ -495,28 +500,30 @@ export default function ToolsTab({ settings, initialFilter }) {
               <Button
                 variant="outline"
                 onClick={() => setShowRecommendations(!showRecommendations)}
-                size="lg"
+                className="text-xs md:text-sm"
+                size="sm"
               >
-                <Sparkles className="w-4 h-4 ml-2" />
-                המלצות
+                <Sparkles className="w-3 h-3 md:w-4 md:h-4 ml-1" />
+                <span className="hidden sm:inline">המלצות</span>
               </Button>
               <Button
                 variant="outline"
                 onClick={() => setShowDuplicatesDialog(true)}
-                size="lg"
+                className="text-xs md:text-sm"
+                size="sm"
               >
-                🔍 בדוק כפילויות
+                🔍 <span className="hidden sm:inline ml-1">כפילויות</span>
               </Button>
               <Button
                 onClick={() => {
                   setEditingTool(null);
                   setShowForm(true);
                 }}
-                className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 shadow-lg"
-                size="lg"
+                className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 shadow-lg text-xs md:text-sm"
+                size="sm"
               >
-                <Plus className="w-5 h-5 ml-2" />
-                הוסף כלי
+                <Plus className="w-4 h-4 md:w-5 md:h-5 ml-1" />
+                <span className="hidden xs:inline">הוסף</span>
               </Button>
             </>
           )}
