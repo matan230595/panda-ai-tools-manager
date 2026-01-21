@@ -145,48 +145,44 @@ export default function SearchAndFilters({
           </SelectContent>
         </Select>
 
-        {/* תצוגה */}
-         <div className="flex items-center gap-1 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-xl p-1 shadow-inner mr-auto group" title="בחר מצב תצוגה (Alt+V)">
+        {/* תצוגה - מוסתר במובייל קטן */}
+         <div className="hidden sm:flex items-center gap-1 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-lg md:rounded-xl p-1 shadow-inner ml-auto group flex-shrink-0" title="בחר מצב תצוגה">
            <Button
              size="sm"
              variant={viewMode === 'grid' ? 'default' : 'ghost'}
              onClick={() => onViewModeChange('grid')}
-             className="h-10 px-2 flex items-center gap-1 text-xs"
-             aria-label="גריד (3 עמודות)"
-             title="גריד: 3 עמודות"
+             className="h-9 md:h-10 px-1 md:px-2 flex items-center gap-1 text-xs"
+             title="גריד"
            >
-             <LayoutGrid className="w-4 h-4" />
+             <LayoutGrid className="w-3 h-3 md:w-4 md:h-4" />
              <span className="hidden md:inline">גריד</span>
            </Button>
            <Button
              size="sm"
              variant={viewMode === 'list' ? 'default' : 'ghost'}
              onClick={() => onViewModeChange('list')}
-             className="h-10 px-2 flex items-center gap-1 text-xs"
-             aria-label="רשימה"
-             title="רשימה: רך קומפקטי"
+             className="h-9 md:h-10 px-1 md:px-2 flex items-center gap-1 text-xs"
+             title="רשימה"
            >
-             <LayoutList className="w-4 h-4" />
+             <LayoutList className="w-3 h-3 md:w-4 md:h-4" />
              <span className="hidden md:inline">רשימה</span>
            </Button>
            <Button
              size="sm"
              variant={viewMode === 'compact' ? 'default' : 'ghost'}
              onClick={() => onViewModeChange('compact')}
-             className="h-10 px-2 flex items-center gap-1 text-xs"
-             aria-label="צפוף (4 עמודות)"
-             title="צפוף: 4 עמודות"
+             className="h-9 md:h-10 px-1 md:px-2 flex items-center gap-1 text-xs"
+             title="צפוף"
            >
-             <Columns3 className="w-4 h-4" />
+             <Columns3 className="w-3 h-3 md:w-4 md:h-4" />
              <span className="hidden md:inline">צפוף</span>
            </Button>
            <Button
              size="sm"
              variant={viewMode === 'table' ? 'default' : 'ghost'}
              onClick={() => onViewModeChange('table')}
-             className="h-10 px-2 flex items-center gap-1 text-xs"
-             aria-label="טבלה"
-             title="טבלה: תצוגה עתירת נתונים"
+             className="h-9 md:h-10 px-1 md:px-2 flex items-center gap-1 text-xs"
+             title="טבלה"
            >
              📊
              <span className="hidden md:inline">טבלה</span>
@@ -195,9 +191,8 @@ export default function SearchAndFilters({
              size="sm"
              variant={viewMode === 'kanban' ? 'default' : 'ghost'}
              onClick={() => onViewModeChange('kanban')}
-             className="h-10 px-2 flex items-center gap-1 text-xs"
-             aria-label="קאנבן"
-             title="קאנבן: לפי קטגוריה"
+             className="h-9 md:h-10 px-1 md:px-2 flex items-center gap-1 text-xs"
+             title="קאנבן"
            >
              🗂️
              <span className="hidden md:inline">קאנבן</span>
