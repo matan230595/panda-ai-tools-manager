@@ -1,7 +1,32 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { base44 } from '@/api/base44Client';
 import { Sparkles, MessageSquare, Settings, BarChart3 } from 'lucide-react';
 
 export default function TabNavigation({ activeTab, onTabChange }) {
+  const [userLogo, setUserLogo] = useState('');
+  const [appName, setAppName] = useState('AI Tools Manager');
+
+  const { data: settings } = useQuery({
+    queryKey: ['settings'],
+    queryFn: async () => {
+      try {
+        const list = await base44.entities.Settings.list();
+        return list[0];
+      } catch {
+        return null;
+      }
+    },
+  });
+
+  useEffect(() => {
+    if (settings?.userLogo) {
+      setUserLogo(settings.userLogo);
+    }
+    if (settings?.appName) {
+      setAppName(settings.appName);
+    }
+  }, [settings]);
   const tabs = [
     { id: 'tools', label: 'כלים', icon: Sparkles, gradient: 'from-indigo-500 to-purple-500' },
     { id: 'budget', label: 'תקציב', icon: '💰', gradient: 'from-green-500 to-emerald-500' },
@@ -19,11 +44,15 @@ export default function TabNavigation({ activeTab, onTabChange }) {
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between py-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg">
-                <Sparkles className="w-6 h-6 text-white" />
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg overflow-hidden">
+                {userLogo ? (
+                  <img src={userLogo} alt="Logo" className="w-full h-full object-contain" />
+                ) : (
+                  <Sparkles className="w-6 h-6 text-white" />
+                )}
               </div>
               <div>
-                <h1 className="text-xl font-bold gradient-text">AI Tools Manager</h1>
+                <h1 className="text-xl font-bold gradient-text">{appName}</h1>
                 <p className="text-xs text-gray-500 dark:text-gray-400">מערכת ניהול כלי AI מתקדמת</p>
               </div>
             </div>
@@ -121,11 +150,15 @@ export default function TabNavigation({ activeTab, onTabChange }) {
       {/* Mobile - Header */}
       <div className="md:hidden sticky top-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-gray-200 dark:border-gray-700 px-4 py-3">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
-            <Sparkles className="w-5 h-5 text-white" />
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center overflow-hidden">
+            {userLogo ? (
+              <img src={userLogo} alt="Logo" className="w-full h-full object-contain" />
+            ) : (
+              <Sparkles className="w-5 h-5 text-white" />
+            )}
           </div>
           <div className="flex-1">
-            <h1 className="text-lg font-bold gradient-text">AI Tools Manager</h1>
+            <h1 className="text-lg font-bold gradient-text">{appName}</h1>
           </div>
         </div>
       </div>
