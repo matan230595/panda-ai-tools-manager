@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   Star, ExternalLink, Edit, Trash2, Tag, TrendingUp, 
-  Copy, Check, GripVertical, Eye, Share2 
+  Copy, Check, GripVertical, Eye, Share2, BarChart3, DollarSign
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -13,6 +13,7 @@ import {
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import { toast } from 'sonner';
+import ToolStatsDisplay from '@/components/tools/ToolStatsDisplay';
 
 export default function ToolCard({ 
   tool, 
