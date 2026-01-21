@@ -92,7 +92,7 @@ export default function SearchAndFilters({
       <div className="flex items-center gap-2 md:gap-3 flex-wrap overflow-x-auto pb-2 md:pb-0">
         {/* קטגוריה */}
         <Select value={selectedCategory} onValueChange={onCategoryChange}>
-          <SelectTrigger className="w-[160px] h-11 bg-white dark:bg-gray-800 shadow-sm">
+          <SelectTrigger className="h-9 md:h-11 bg-white dark:bg-gray-800 shadow-sm text-sm flex-shrink-0">
             <SelectValue placeholder="קטגוריה" />
           </SelectTrigger>
           <SelectContent>
