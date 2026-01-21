@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { Sparkles, TrendingUp, DollarSign, Target, Calendar, Loader2, Download } from 'lucide-react';
+import { Sparkles, TrendingUp, DollarSign, Target, Calendar, Loader2, Download, BarChart3 } from 'lucide-react';
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -218,10 +219,11 @@ ${JSON.stringify(toolsSummary, null, 2)}
         </Card>
       ) : (
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="overview">סקירה</TabsTrigger>
             <TabsTrigger value="recommendations">המלצות</TabsTrigger>
             <TabsTrigger value="trends">מגמות</TabsTrigger>
+            <TabsTrigger value="comparison">השוואות</TabsTrigger>
             <TabsTrigger value="optimization">אופטימיזציה</TabsTrigger>
           </TabsList>
 
@@ -374,6 +376,98 @@ ${JSON.stringify(toolsSummary, null, 2)}
                       </li>
                     ))}
                   </ul>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="comparison" className="space-y-6 mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <BarChart3 className="w-5 h-5 text-blue-500" />
+                  השוואה בין כלים
+                </CardTitle>
+                <CardDescription>נתוני מחיר, דירוג ופופולריות</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={tools.slice(0, 10).map(t => ({
+                    name: t.name,
+                    price: t.priceILS || 0,
+                    rating: t.rating || 0,
+                    popularity: t.popularity || 0
+                  }))}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" angle={-45} textAnchor="end" height={120} />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="price" fill="#8884d8" name="מחיר (₪)" />
+                    <Bar dataKey="rating" fill="#82ca9d" name="דירוג" />
+                    <Bar dataKey="popularity" fill="#ffc658" name="פופולריות" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>מגמות שימוש</CardTitle>
+                  <CardDescription>כלים לפי קטגוריה</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ResponsiveContainer width="100%" height={250}>
+                    <PieChart>
+                      <Pie
+                        data={Object.entries(
+                          tools.reduce((acc, t) => {
+                            acc[t.category] = (acc[t.category] || 0) + 1;
+                            return acc;
+                          }, {})
+                        ).map(([category, count]) => ({ name: category, value: count }))}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                        outerRadius={80}
+                        fill="#8884d8"
+                        dataKey="value"
+                      >
+                        {['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#a4de6c', '#d0ed57', '#83a6ed', '#8dd1e1'].map((color, index) => (
+                          <Cell key={`cell-${index}`} fill={color} />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>ניתוח ROI</CardTitle>
+                  <CardDescription>תמורה מול מחיר</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {tools
+                      .filter(t => t.priceILS > 0 && t.rating > 0)
+                      .sort((a, b) => (b.rating / b.priceILS) - (a.rating / a.priceILS))
+                      .slice(0, 5)
+                      .map(tool => (
+                        <div key={tool.id} className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-800">
+                          <div>
+                            <div className="font-semibold text-sm">{tool.name}</div>
+                            <div className="text-xs text-gray-500">₪{tool.priceILS} • ⭐ {tool.rating}</div>
+                          </div>
+                          <Badge className="bg-green-100 text-green-800">
+                            ROI: {(tool.rating / tool.priceILS * 100).toFixed(0)}
+                          </Badge>
+                        </div>
+                      ))}
+                  </div>
                 </CardContent>
               </Card>
             </div>

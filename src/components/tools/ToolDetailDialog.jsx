@@ -1,10 +1,11 @@
-import React from 'react';
-import { X, ExternalLink, Star, Edit, Trash2, Key, Calendar, TrendingUp, Users, Globe, Zap, CheckCircle, XCircle } from 'lucide-react';
+import React, { Suspense } from 'react';
+import { X, ExternalLink, Star, Edit, Trash2, Key, Calendar, TrendingUp, Users, Globe, Zap, CheckCircle, XCircle, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ToolLogo from '@/components/ToolLogo';
+import SimilarTools from '@/components/tools/SimilarTools';
 
 export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onToggleFavorite, onManageSubscription }) {
   const categoryColors = {
@@ -377,22 +378,20 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
         </div>
 
         {/* כלים דומים */}
-        <div className="border-t pt-6">
+        <div className="border-t border-gray-200 dark:border-gray-700 p-6">
           <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-purple-500" />
             כלים דומים והמלצות
           </h3>
-          <Suspense fallback={<div className="text-center py-4">טוען המלצות...</div>}>
-            <PersonalizedRecommendations 
-              currentTool={tool}
-              onSelectTool={(selectedTool) => {
-                onClose();
-                // כאן יכול להיות onToolClick callback
-              }}
-            />
-          </Suspense>
+          <SimilarTools 
+            currentTool={tool}
+            onSelectTool={(selectedTool) => {
+              onClose();
+              // כאן יכול להיות onToolClick callback
+            }}
+          />
         </div>
-        </div>
-        </div>
-        );
-        }
+      </div>
+    </div>
+  );
+}

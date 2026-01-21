@@ -21,6 +21,7 @@ export default function SettingsTab({ settings, onLogout }) {
     cohereApiKey: settings?.cohereApiKey || '',
     huggingfaceApiKey: settings?.huggingfaceApiKey || '',
     togetherApiKey: settings?.togetherApiKey || '',
+    claudeApiKey: settings?.claudeApiKey || '',
     preferredModel: settings?.preferredModel || 'groq',
     theme: settings?.theme || 'light',
     viewMode: settings?.viewMode || 'grid',
@@ -114,11 +115,26 @@ export default function SettingsTab({ settings, onLogout }) {
       url: 'https://together.ai',
       description: 'פלטפורמה לריצת מודלים בענן',
       free: '$25 credit חינם',
-      models: 'Llama, Mistral, ועוד',
+      models: 'Llama 3, Mistral, ועוד',
       steps: [
         'הירשם ב-Together AI',
         'קבל $25 credit',
         'צור API Key',
+        'הדבק כאן'
+      ]
+    },
+    {
+      id: 'anthropic',
+      name: 'Anthropic Claude',
+      key: 'claudeApiKey',
+      url: 'https://console.anthropic.com',
+      description: 'Claude 3 - מתקדם ביותר לחשיבה מורכבת',
+      free: '$5 credit חינם',
+      models: 'Claude 3 Opus, Sonnet, Haiku',
+      steps: [
+        'הירשם ב-Anthropic Console',
+        'קבל $5 credit חינם',
+        'צור API Key חדש',
         'הדבק כאן'
       ]
     }
