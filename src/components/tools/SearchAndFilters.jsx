@@ -133,7 +133,7 @@ export default function SearchAndFilters({
 
         {/* מיון */}
         <Select value={sortBy} onValueChange={onSortChange}>
-          <SelectTrigger className="w-[150px] h-11 bg-white dark:bg-gray-800 shadow-sm">
+          <SelectTrigger className="h-9 md:h-11 bg-white dark:bg-gray-800 shadow-sm text-sm flex-shrink-0">
             <SelectValue placeholder="מיין" />
           </SelectTrigger>
           <SelectContent>
