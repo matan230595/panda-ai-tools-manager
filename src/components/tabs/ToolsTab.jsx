@@ -424,100 +424,155 @@ export default function ToolsTab({ settings, initialFilter }) {
         
         {/* כפתורי פעולה */}
         <div className="flex flex-wrap gap-1.5 md:gap-2 justify-end md:justify-end items-center">
-          <AdvancedFilters
-            filters={advancedFilters}
-            onFiltersChange={setAdvancedFilters}
-            activeFiltersCount={activeAdvancedFiltersCount}
-            categories={allCategories}
-            tags={allTags}
-          />
-          <div className="hidden lg:block">
-            <ExportImportDialog
-              tools={tools}
-              onImportComplete={() => queryClient.invalidateQueries(['tools'])}
-            />
-          </div>
-          {compareMode && (
-                 <div className="flex gap-1.5">
-                   <Button
-                     variant="outline"
-                     onClick={() => {
-                       setCompareMode(false);
-                       setSelectedForCompare([]);
-                     }}
-                     size="sm"
-                     className="text-xs"
-                   >
-                     ביטול
-                   </Button>
-                   <Button
-                     onClick={() => setCompareMode(false)}
-                     disabled={selectedForCompare.length < 2}
-                     className="bg-gradient-to-r from-green-500 to-emerald-600 text-xs"
-                     size="sm"
-                   >
-                     <GitCompare className="w-3 h-3 ml-1" />
-                     <span className="hidden sm:inline">השווה ({selectedForCompare.length})</span>
-                     <span className="sm:hidden">({selectedForCompare.length})</span>
-                   </Button>
-                 </div>
-               )}
-              <Button
-                variant="outline"
-                onClick={handleExport}
-                disabled={tools.length === 0}
-                className="text-xs md:text-sm"
-                size="sm"
-              >
-                <Download className="w-3 h-3 md:w-4 md:h-4 ml-1" />
-                <span className="hidden sm:inline">ייצא</span>
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => document.getElementById('import-file').click()}
-                className="text-xs md:text-sm"
-                size="sm"
-              >
-                <Upload className="w-3 h-3 md:w-4 md:h-4 ml-1" />
-                <span className="hidden sm:inline">ייבא</span>
-              </Button>
-              <input
-                id="import-file"
-                type="file"
-                accept=".json"
-                onChange={handleImport}
-                className="hidden"
-              />
-              <Button
-                variant="outline"
-                onClick={() => setShowRecommendations(!showRecommendations)}
-                className="text-xs md:text-sm"
-                size="sm"
-              >
-                <Sparkles className="w-3 h-3 md:w-4 md:h-4 ml-1" />
-                <span className="hidden sm:inline">המלצות</span>
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => setShowDuplicatesDialog(true)}
-                className="text-xs md:text-sm"
-                size="sm"
-              >
-                🔍 <span className="hidden sm:inline ml-1">כפילויות</span>
-              </Button>
-              <Button
-                onClick={() => {
-                  setEditingTool(null);
-                  setShowForm(true);
-                }}
-                className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 shadow-lg text-xs md:text-sm"
-                size="sm"
-              >
-                <Plus className="w-4 h-4 md:w-5 md:h-5 ml-1" />
-                <span className="hidden xs:inline">הוסף</span>
-              </Button>
-            </>
-          )}
+           {/* כפתור תפריט למובייל */}
+           <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+             <DrawerTrigger asChild>
+               <Button variant="default" size="sm" className="md:hidden">
+                 <Menu className="w-4 h-4" />
+               </Button>
+             </DrawerTrigger>
+             <DrawerContent className="bg-white dark:bg-gray-900">
+               <DrawerHeader>
+                 <DrawerTitle>אפשרויות נוספות</DrawerTitle>
+               </DrawerHeader>
+               <div className="grid grid-cols-2 gap-2 p-4 pb-8">
+                 <Button
+                   variant="outline"
+                   onClick={() => { setCompareMode(true); setIsDrawerOpen(false); }}
+                   disabled={tools.length < 2}
+                   className="w-full text-xs col-span-2"
+                   size="sm"
+                 >
+                   <GitCompare className="w-3 h-3 ml-1" />
+                   השווה כלים
+                 </Button>
+                 <Button
+                   variant="outline"
+                   onClick={() => { handleExport(); setIsDrawerOpen(false); }}
+                   disabled={tools.length === 0}
+                   className="w-full text-xs"
+                   size="sm"
+                 >
+                   <Download className="w-3 h-3 ml-1" />
+                   ייצא
+                 </Button>
+                 <Button
+                   variant="outline"
+                   onClick={() => document.getElementById('import-file').click()}
+                   className="w-full text-xs"
+                   size="sm"
+                 >
+                   <Upload className="w-3 h-3 ml-1" />
+                   ייבא
+                 </Button>
+                 <input
+                   id="import-file"
+                   type="file"
+                   accept=".json"
+                   onChange={handleImport}
+                   className="hidden"
+                 />
+                 <Button
+                   variant="outline"
+                   onClick={() => { setShowRecommendations(!showRecommendations); setIsDrawerOpen(false); }}
+                   className="w-full text-xs col-span-2"
+                   size="sm"
+                 >
+                   <Sparkles className="w-3 h-3 ml-1" />
+                   המלצות
+                 </Button>
+                 <Button
+                   variant="outline"
+                   onClick={() => { setShowDuplicatesDialog(true); setIsDrawerOpen(false); }}
+                   className="w-full text-xs col-span-2"
+                   size="sm"
+                 >
+                   🔍 בדוק כפילויות
+                 </Button>
+               </div>
+             </DrawerContent>
+           </Drawer>
+
+           {/* כפתורים - מוסתרים במובייל */}
+           <div className="hidden md:flex gap-1.5 items-center flex-wrap">
+             <AdvancedFilters
+               filters={advancedFilters}
+               onFiltersChange={setAdvancedFilters}
+               activeFiltersCount={activeAdvancedFiltersCount}
+               categories={allCategories}
+               tags={allTags}
+             />
+             <ExportImportDialog
+               tools={tools}
+               onImportComplete={() => queryClient.invalidateQueries(['tools'])}
+             />
+             <Button
+               variant="outline"
+               onClick={() => setCompareMode(true)}
+               disabled={tools.length < 2}
+               className="text-xs hidden lg:inline-flex"
+               size="sm"
+             >
+               <GitCompare className="w-3 h-3 ml-1" />
+               השווה
+             </Button>
+             <Button
+               variant="outline"
+               onClick={() => setShowRecommendations(!showRecommendations)}
+               className="text-xs hidden lg:inline-flex"
+               size="sm"
+             >
+               <Sparkles className="w-3 h-3 ml-1" />
+               המלצות
+             </Button>
+             <Button
+               variant="outline"
+               onClick={() => setShowDuplicatesDialog(true)}
+               className="text-xs hidden lg:inline-flex"
+               size="sm"
+             >
+               🔍 כפילויות
+             </Button>
+           </div>
+
+           {compareMode && (
+             <div className="flex gap-1.5">
+               <Button
+                 variant="outline"
+                 onClick={() => {
+                   setCompareMode(false);
+                   setSelectedForCompare([]);
+                 }}
+                 size="sm"
+                 className="text-xs"
+               >
+                 ביטול
+               </Button>
+               <Button
+                 onClick={() => setCompareMode(false)}
+                 disabled={selectedForCompare.length < 2}
+                 className="bg-gradient-to-r from-green-500 to-emerald-600 text-xs"
+                 size="sm"
+               >
+                 <GitCompare className="w-3 h-3 ml-1" />
+                 <span className="hidden sm:inline">השווה ({selectedForCompare.length})</span>
+                 <span className="sm:hidden">({selectedForCompare.length})</span>
+               </Button>
+             </div>
+           )}
+
+           {/* כפתור הוספה - תמיד גלוי */}
+           <Button
+             onClick={() => {
+               setEditingTool(null);
+               setShowForm(true);
+             }}
+             className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 shadow-lg text-xs"
+             size="sm"
+           >
+             <Plus className="w-4 h-4 ml-1" />
+             <span className="hidden sm:inline">הוסף</span>
+           </Button>
         </div>
       </div>
 
