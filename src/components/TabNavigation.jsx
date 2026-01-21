@@ -42,10 +42,10 @@ export default function TabNavigation({ activeTab, onTabChange }) {
       {/* Desktop & Tablet - Top Navigation */}
       <div className="hidden md:block sticky top-0 z-50 bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 lg:px-6">
-          <div className="flex items-center justify-between py-2 gap-3 h-16">
+          <div className="flex items-center justify-between py-3 gap-4 h-auto">
             {/* Logo & App Name - Right Side */}
-            <div className="flex items-center gap-1.5 min-w-0 flex-shrink-0">
-              <div className="w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0 bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30">
+            <div className="flex items-center gap-2 min-w-0 flex-shrink-0">
+              <div className="w-11 h-11 rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0 bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30">
                 {userLogo ? (
                   <img src={userLogo} alt="Logo" className="w-full h-full object-contain" />
                 ) : (
@@ -53,12 +53,12 @@ export default function TabNavigation({ activeTab, onTabChange }) {
                 )}
               </div>
               <div className="min-w-0 text-right hidden sm:block">
-                <h1 className="text-sm font-bold gradient-text truncate">{appName}</h1>
+                <h1 className="text-base font-bold gradient-text truncate">{appName}</h1>
               </div>
             </div>
 
             {/* Tabs - Center */}
-            <nav className="flex gap-0.5 flex-1 justify-center" role="tablist">
+            <nav className="flex gap-1 flex-1 justify-center" role="tablist">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
                 const isActive = activeTab === tab.id;
@@ -71,8 +71,8 @@ export default function TabNavigation({ activeTab, onTabChange }) {
                     aria-selected={isActive}
                     aria-label={tab.label}
                     className={`
-                      relative flex items-center gap-1 px-2.5 lg:px-4 py-2 rounded-lg font-medium text-xs lg:text-sm
-                      transition-all duration-300 ease-out whitespace-nowrap min-h-[40px]
+                      relative flex items-center gap-1.5 px-3 lg:px-4 py-2.5 rounded-lg font-medium text-sm
+                      transition-all duration-300 ease-out whitespace-nowrap
                       ${isActive 
                         ? 'text-white shadow-md' 
                         : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
