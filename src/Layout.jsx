@@ -22,7 +22,6 @@ export default function Layout({ currentPageName, children }) {
   useEffect(() => {
     if (settings?.userLogo) {
       setUserLogo(settings.userLogo);
-      // עדכן favicon
       let link = document.querySelector("link[rel*='icon']");
       if (!link) {
         link = document.createElement('link');
@@ -37,6 +36,23 @@ export default function Layout({ currentPageName, children }) {
     }
   }, [settings]);
 
+  const footer = settings?.footerContent;
+
+  const renderLink = (link) => {
+    if (link.url.startsWith('/')) {
+      return (
+        <Link to={link.url} className="text-indigo-600 hover:underline">
+          {link.label}
+        </Link>
+      );
+    }
+    return (
+      <a href={link.url} className="text-indigo-600 hover:underline">
+        {link.label}
+      </a>
+    );
+  };
+
   return (
     <div className="flex flex-col min-h-screen" dir="rtl">
       {/* Main Content */}
@@ -50,68 +66,58 @@ export default function Layout({ currentPageName, children }) {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             {/* About */}
             <div>
-              <h3 className="font-bold mb-4">אודותינו</h3>
+              <h3 className="font-bold mb-4">{footer?.aboutTitle || 'אודותינו'}</h3>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                AI Tools Manager - פתרון מתקדם לניהול כלי AI שלך.
+                {footer?.aboutText || 'AI Tools Manager - פתרון מתקדם לניהול כלי AI שלך.'}
               </p>
             </div>
 
             {/* Links */}
             <div>
-              <h3 className="font-bold mb-4">קישורים</h3>
+              <h3 className="font-bold mb-4">{footer?.linksTitle || 'קישורים'}</h3>
               <ul className="space-y-2 text-sm">
-                <li>
-                  <Link to="/" className="text-indigo-600 hover:underline">
-                    עמוד הבית
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/privacy" className="text-indigo-600 hover:underline">
-                    הצהרת פרטיות
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/terms" className="text-indigo-600 hover:underline">
-                    תנאי שימוש
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/accessibility" className="text-indigo-600 hover:underline">
-                    נגישות
-                  </Link>
-                </li>
+                {(footer?.links || [
+                  { label: 'עמוד הבית', url: '/' },
+                  { label: 'הצהרת פרטיות', url: '/privacy' },
+                  { label: 'תנאי שימוש', url: '/terms' },
+                  { label: 'נגישות', url: '/accessibility' }
+                ]).map((link, idx) => (
+                  <li key={idx}>
+                    {renderLink(link)}
+                  </li>
+                ))}
               </ul>
             </div>
 
             {/* Support */}
             <div>
-              <h3 className="font-bold mb-4">תמיכה</h3>
+              <h3 className="font-bold mb-4">{footer?.supportTitle || 'תמיכה'}</h3>
               <ul className="space-y-2 text-sm">
-                <li>
-                  <Link to="/contact" className="text-indigo-600 hover:underline">
-                    צור קשר
-                  </Link>
-                </li>
-                <li>
-                  <a href="mailto:support@pandavoice.com" className="text-indigo-600 hover:underline">
-                    תמיכה טכנית
-                  </a>
-                </li>
-                <li>
-                  <a href="tel:+972503000000" className="text-indigo-600 hover:underline">
-                    קול קטגוריה
-                  </a>
-                </li>
+                {(footer?.supportLinks || [
+                  { label: 'צור קשר', url: '/contact' },
+                  { label: 'תמיכה טכנית', url: 'mailto:support@pandavoice.com' },
+                  { label: 'קול קטגוריה', url: 'tel:+972503000000' }
+                ]).map((link, idx) => (
+                  <li key={idx}>
+                    {renderLink(link)}
+                  </li>
+                ))}
               </ul>
             </div>
 
-            {/* Follow Us */}
+            {/* Social */}
             <div>
-              <h3 className="font-bold mb-4">עקוב אחרינו</h3>
+              <h3 className="font-bold mb-4">{footer?.socialTitle || 'עקוב אחרינו'}</h3>
               <div className="flex gap-4 text-sm">
-                <a href="#" className="text-indigo-600 hover:underline">Twitter</a>
-                <a href="#" className="text-indigo-600 hover:underline">LinkedIn</a>
-                <a href="#" className="text-indigo-600 hover:underline">Facebook</a>
+                {(footer?.socialLinks || [
+                  { label: 'Twitter', url: '#' },
+                  { label: 'LinkedIn', url: '#' },
+                  { label: 'Facebook', url: '#' }
+                ]).map((link, idx) => (
+                  <div key={idx}>
+                    {renderLink(link)}
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -125,7 +131,7 @@ export default function Layout({ currentPageName, children }) {
               <span className="font-semibold">{appName}</span>
             </div>
             <p>
-              כל הזכויות שמורות © {new Date().getFullYear()}
+              {footer?.copyrightText || 'כל הזכויות שמורות'} © {new Date().getFullYear()}
             </p>
           </div>
         </div>

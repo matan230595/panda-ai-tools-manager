@@ -13,6 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import OllamaIntegration from '@/components/integrations/OllamaIntegration';
 import BrandingTab from '@/components/tabs/BrandingTab';
+import FooterSettingsTab from '@/components/tabs/FooterSettingsTab';
 
 export default function SettingsTab({ settings, onLogout }) {
   const queryClient = useQueryClient();
@@ -253,8 +254,9 @@ export default function SettingsTab({ settings, onLogout }) {
       </div>
 
       <Tabs defaultValue="api" className="w-full">
-        <TabsList className="grid w-full grid-cols-6">
+        <TabsList className="grid w-full grid-cols-7">
           <TabsTrigger value="branding">🎨 ברנדינג</TabsTrigger>
+          <TabsTrigger value="footer">🔗 Footer</TabsTrigger>
           <TabsTrigger value="api">🔑 מפתחות API</TabsTrigger>
           <TabsTrigger value="ollama">🆓 Ollama</TabsTrigger>
           <TabsTrigger value="preferences">⚙️ העדפות</TabsTrigger>
@@ -264,6 +266,10 @@ export default function SettingsTab({ settings, onLogout }) {
 
         <TabsContent value="branding" className="mt-6">
           <BrandingTab settings={settings} />
+        </TabsContent>
+
+        <TabsContent value="footer" className="mt-6">
+          <FooterSettingsTab settings={settings} />
         </TabsContent>
 
         <TabsContent value="api" className="space-y-4 mt-6">
