@@ -6,22 +6,29 @@ import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, 
 
 export default function AIModelMetrics({ settings, tools }) {
   const models = [
-    { id: 'gemini', name: 'Gemini', costPer1kTokens: 0.00075, usage: 2500, color: '#4285F4' },
-    { id: 'groq', name: 'Groq', costPer1kTokens: 0.0001, usage: 5000, color: '#FF6B35' },
-    { id: 'mistral', name: 'Mistral', costPer1kTokens: 0.00015, usage: 1800, color: '#FFB81C' },
-    { id: 'claude', name: 'Claude 3', costPer1kTokens: 0.001, usage: 1200, color: '#662E9B' },
-    { id: 'cohere', name: 'Cohere', costPer1kTokens: 0.0005, usage: 800, color: '#FF4500' }
+    // חינמיים (מומלץ!)
+    { id: 'ollama', name: 'Ollama (חינמי)', costPer1kTokens: 0, usage: 0, color: '#10b981', category: 'free' },
+    { id: 'localaib', name: 'LocalAI (חינמי)', costPer1kTokens: 0, usage: 0, color: '#059669', category: 'free' },
+    // בתשלום
+    { id: 'groq', name: 'Groq', costPer1kTokens: 0.0001, usage: 5000, color: '#FF6B35', category: 'paid' },
+    { id: 'gemini', name: 'Gemini', costPer1kTokens: 0.00075, usage: 2500, color: '#4285F4', category: 'paid' },
+    { id: 'mistral', name: 'Mistral', costPer1kTokens: 0.00015, usage: 1800, color: '#FFB81C', category: 'paid' },
+    { id: 'claude', name: 'Claude 3.5 Sonnet', costPer1kTokens: 0.003, usage: 1200, color: '#662E9B', category: 'paid' },
+    { id: 'openai', name: 'GPT-4o', costPer1kTokens: 0.005, usage: 800, color: '#00D084', category: 'paid' },
+    { id: 'cohere', name: 'Cohere Command R+', costPer1kTokens: 0.0005, usage: 600, color: '#FF4500', category: 'paid' }
   ];
 
   const modelCosts = models.map(m => ({
     name: m.name,
     cost: (m.usage * m.costPer1kTokens).toFixed(2),
     usage: m.usage,
-    efficiency: (m.usage / m.costPer1kTokens).toFixed(0)
+    efficiency: m.costPer1kTokens === 0 ? '∞' : (m.usage / m.costPer1kTokens).toFixed(0),
+    category: m.category
   }));
 
   const totalAPISpend = modelCosts.reduce((sum, m) => sum + parseFloat(m.cost), 0);
-  const costDistribution = models.map(m => ({
+  const freeModelsUsage = models.filter(m => m.category === 'free').reduce((sum, m) => sum + m.usage, 0);
+  const costDistribution = models.filter(m => m.costPer1kTokens > 0).map(m => ({
     name: m.name,
     value: parseFloat((m.usage * m.costPer1kTokens).toFixed(2))
   }));
@@ -29,12 +36,25 @@ export default function AIModelMetrics({ settings, tools }) {
   return (
     <div className="space-y-6">
       {/* Overview Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/10 dark:to-emerald-900/10 border-green-200">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium flex items-center gap-2 text-green-700">
+              <Zap className="w-4 h-4" />
+              שימוש חינמי
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-green-600">{freeModelsUsage.toLocaleString()}</div>
+            <p className="text-xs text-gray-600 mt-1">tokens בחודש (0₪)</p>
+          </CardContent>
+        </Card>
+
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
               <Zap className="w-4 h-4 text-yellow-500" />
-              סה"כ שימוש ב-API
+              סה"כ שימוש
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -46,7 +66,7 @@ export default function AIModelMetrics({ settings, tools }) {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <DollarSign className="w-4 h-4 text-green-500" />
+              <DollarSign className="w-4 h-4 text-orange-500" />
               הוצאה חודשית
             </CardTitle>
           </CardHeader>
@@ -64,7 +84,7 @@ export default function AIModelMetrics({ settings, tools }) {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{settings?.preferredModel || 'Groq'}</div>
+            <div className="text-3xl font-bold">{settings?.preferredModel || 'groq'}</div>
             <p className="text-xs text-gray-500 mt-1">ברירת מחדל</p>
           </CardContent>
         </Card>
@@ -121,60 +141,85 @@ export default function AIModelMetrics({ settings, tools }) {
         </CardContent>
       </Card>
 
-      {/* Model Details */}
-      <Card>
-        <CardHeader>
-          <CardTitle>פרטי דגמים</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {models.map(model => (
-              <div key={model.id} className="p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <div
-                      className="w-3 h-3 rounded-full"
-                      style={{ backgroundColor: model.color }}
-                    />
-                    <span className="font-semibold">{model.name}</span>
+      {/* Model Details - Separated by Category */}
+      <div className="space-y-6">
+        <Card className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/10 dark:to-emerald-900/10 border-green-200">
+          <CardHeader>
+            <CardTitle className="text-green-700">🆓 דגמים חינמיים (מומלץ!)</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {models.filter(m => m.category === 'free').map(model => (
+                <div key={model.id} className="p-4 rounded-lg border border-green-300 bg-white dark:bg-gray-800">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: model.color }} />
+                      <span className="font-semibold">{model.name}</span>
+                    </div>
+                    <Badge className="bg-green-100 text-green-800">
+                      0₪/חודש
+                    </Badge>
                   </div>
-                  <Badge variant="outline">
-                    ${(model.usage * model.costPer1kTokens).toFixed(2)}/חודש
-                  </Badge>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">רץ מקומית - אפס עלויות</p>
                 </div>
-                <div className="grid grid-cols-3 gap-4 text-sm">
-                  <div>
-                    <div className="text-gray-600 dark:text-gray-400">שימוש</div>
-                    <div className="font-semibold">{model.usage.toLocaleString()}</div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>💳 דגמים בתשלום</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {models.filter(m => m.category === 'paid').map(model => (
+                <div key={model.id} className="p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: model.color }} />
+                      <span className="font-semibold">{model.name}</span>
+                    </div>
+                    <Badge variant="outline">
+                      ${(model.usage * model.costPer1kTokens).toFixed(2)}/חודש
+                    </Badge>
                   </div>
-                  <div>
-                    <div className="text-gray-600 dark:text-gray-400">עלות/1K tokens</div>
-                    <div className="font-semibold">${model.costPer1kTokens}</div>
-                  </div>
-                  <div>
-                    <div className="text-gray-600 dark:text-gray-400">יעילות</div>
-                    <div className="font-semibold">{(model.usage / model.costPer1kTokens).toFixed(0)}</div>
+                  <div className="grid grid-cols-3 gap-4 text-sm">
+                    <div>
+                      <div className="text-gray-600 dark:text-gray-400">שימוש</div>
+                      <div className="font-semibold">{model.usage.toLocaleString()}</div>
+                    </div>
+                    <div>
+                      <div className="text-gray-600 dark:text-gray-400">עלות/1K</div>
+                      <div className="font-semibold">${model.costPer1kTokens}</div>
+                    </div>
+                    <div>
+                      <div className="text-gray-600 dark:text-gray-400">יעילות</div>
+                      <div className="font-semibold">{model.usage > 0 ? (model.usage / model.costPer1kTokens).toFixed(0) : '∞'}</div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Cost Optimization Tips */}
-      <Card className="bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800">
+      <Card className="bg-gradient-to-br from-emerald-50 to-green-50 dark:from-emerald-900/20 dark:to-green-900/20 border-emerald-200 dark:border-emerald-800">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-yellow-800 dark:text-yellow-300">
+          <CardTitle className="flex items-center gap-2 text-emerald-800 dark:text-emerald-300">
             <AlertCircle className="w-5 h-5" />
-            טיפים לאופטימיזציה
+            טיפים לחיסכון קרדיטים
           </CardTitle>
         </CardHeader>
-        <CardContent className="text-sm text-yellow-800 dark:text-yellow-300 space-y-2">
-          <p>✓ Groq הוא הטוב ביותר ליחס עלות-ביצועים</p>
-          <p>✓ Claude מומלץ לכלים עם דרישות גבוהות</p>
-          <p>✓ Mistral מצוין ליישומים עם תקציב מוגבל</p>
-          <p>✓ שקול batch processing לעומסים גבוהים</p>
+        <CardContent className="text-sm text-emerald-800 dark:text-emerald-300 space-y-3">
+          <p>✅ <strong>Ollama + LocalAI</strong> - חינמי 100%, אפס עלויות!</p>
+          <p>✓ Groq הוא הטוב ביותר ליחס עלות-ביצועים בין הבתשלום</p>
+          <p>✓ Claude 3.5 Sonnet מומלץ לכלים עם דרישות גבוהות</p>
+          <p>✓ GPT-4o טוב לראיית חזון והשוואה עם מודלים אחרים</p>
+          <p>✓ Mistral מצוין ליישומים בתקציב מוגבל</p>
+          <p>✓ הפעל מודלים מקומיים בשעות שיא לחיסכון!</p>
         </CardContent>
       </Card>
     </div>
