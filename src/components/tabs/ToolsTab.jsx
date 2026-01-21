@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Plus, Download, Upload, Trash2, GitCompare, Key, Sparkles } from 'lucide-react';
@@ -31,6 +31,29 @@ import {
 
 export default function ToolsTab({ settings, initialFilter }) {
   const queryClient = useQueryClient();
+  const [userLogo, setUserLogo] = useState('');
+  const [appName, setAppName] = useState('AI Tools Manager');
+
+  const { data: appSettings } = useQuery({
+    queryKey: ['settings'],
+    queryFn: async () => {
+      try {
+        const list = await base44.entities.Settings.list();
+        return list[0];
+      } catch {
+        return null;
+      }
+    },
+  });
+
+  useEffect(() => {
+    if (appSettings?.userLogo) {
+      setUserLogo(appSettings.userLogo);
+    }
+    if (appSettings?.appName) {
+      setAppName(appSettings.appName);
+    }
+  }, [appSettings]);
   
   // State management
   const [searchTerm, setSearchTerm] = useState('');
@@ -347,9 +370,16 @@ export default function ToolsTab({ settings, initialFilter }) {
     <div className="space-y-8">
       {/* כותרת ראשית */}
       <div className="text-right">
-        <h1 className="text-4xl md:text-5xl font-bold gradient-text mb-3">
-          כלי AI שלי
-        </h1>
+        <div className="flex items-center gap-4 mb-4">
+          {userLogo && (
+            <img src={userLogo} alt={appName} className="w-16 h-16 object-contain rounded-xl border-2 border-indigo-200 dark:border-indigo-800 p-2 bg-white dark:bg-gray-800" />
+          )}
+          <div>
+            <h1 className="text-4xl md:text-5xl font-bold gradient-text mb-3">
+              כלי AI שלי
+            </h1>
+          </div>
+        </div>
         <p className="text-lg text-gray-600 dark:text-gray-400 mb-6">
           נהל את כל כלי ה-AI שלך במקום אחד
         </p>

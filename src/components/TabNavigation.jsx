@@ -44,11 +44,11 @@ export default function TabNavigation({ activeTab, onTabChange }) {
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between py-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg overflow-hidden">
+              <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg overflow-hidden">
                 {userLogo ? (
-                  <img src={userLogo} alt="Logo" className="w-full h-full object-contain" />
+                  <img src={userLogo} alt="Logo" className="w-full h-full object-contain p-1" />
                 ) : (
-                  <Sparkles className="w-6 h-6 text-white" />
+                  <Sparkles className="w-8 h-8 text-white" />
                 )}
               </div>
               <div>
@@ -150,11 +150,11 @@ export default function TabNavigation({ activeTab, onTabChange }) {
       {/* Mobile - Header */}
       <div className="md:hidden sticky top-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-gray-200 dark:border-gray-700 px-4 py-3">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center overflow-hidden">
+          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center overflow-hidden">
             {userLogo ? (
-              <img src={userLogo} alt="Logo" className="w-full h-full object-contain" />
+              <img src={userLogo} alt="Logo" className="w-full h-full object-contain p-0.5" />
             ) : (
-              <Sparkles className="w-5 h-5 text-white" />
+              <Sparkles className="w-6 h-6 text-white" />
             )}
           </div>
           <div className="flex-1">
