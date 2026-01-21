@@ -1,9 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-export default function Layout({ children, currentPageName }) {
+export default function Layout({ currentPageName, children }) {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen" dir="rtl">
       {/* Main Content */}
       <main className="flex-1">
         {children}
