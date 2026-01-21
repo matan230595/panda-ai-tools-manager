@@ -344,19 +344,18 @@ export default function ToolsTab({ settings, initialFilter }) {
   }
 
   return (
-    <div className="space-y-6">
-      {/* כותרת וכפתורים */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h1 className="text-3xl md:text-4xl font-bold gradient-text mb-2">
-            כלי AI שלי
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            נהל את כל כלי ה-AI שלך במקום אחד
-          </p>
-        </div>
+    <div className="space-y-8">
+      {/* כותרת ראשית */}
+      <div className="text-right">
+        <h1 className="text-4xl md:text-5xl font-bold gradient-text mb-3">
+          כלי AI שלי
+        </h1>
+        <p className="text-lg text-gray-600 dark:text-gray-400 mb-6">
+          נהל את כל כלי ה-AI שלך במקום אחד
+        </p>
         
-        <div className="grid grid-cols-4 md:grid-cols-8 gap-2 w-full md:w-auto">
+        {/* כפתורי פעולה */}
+        <div className="flex flex-wrap gap-3 justify-end">
           <AdvancedFilters
             filters={advancedFilters}
             onFiltersChange={setAdvancedFilters}
@@ -376,14 +375,15 @@ export default function ToolsTab({ settings, initialFilter }) {
                   setCompareMode(false);
                   setSelectedForCompare([]);
                 }}
-                className="w-full h-10"
+                size="lg"
               >
                 ביטול
               </Button>
               <Button
                 onClick={() => setCompareMode(false)}
                 disabled={selectedForCompare.length < 2}
-                className="bg-gradient-to-r from-green-500 to-emerald-600 w-full h-10"
+                className="bg-gradient-to-r from-green-500 to-emerald-600"
+                size="lg"
               >
                 <GitCompare className="w-4 h-4 ml-2" />
                 השווה ({selectedForCompare.length})
@@ -395,16 +395,16 @@ export default function ToolsTab({ settings, initialFilter }) {
                 variant="outline"
                 onClick={() => setCompareMode(true)}
                 disabled={tools.length < 2}
-                className="w-full h-10"
+                size="lg"
               >
                 <GitCompare className="w-4 h-4 ml-2" />
-                השווה
+                השווה כלים
               </Button>
               <Button
                 variant="outline"
                 onClick={handleExport}
                 disabled={tools.length === 0}
-                className="w-full h-10"
+                size="lg"
               >
                 <Download className="w-4 h-4 ml-2" />
                 ייצא
@@ -412,7 +412,7 @@ export default function ToolsTab({ settings, initialFilter }) {
               <Button
                 variant="outline"
                 onClick={() => document.getElementById('import-file').click()}
-                className="w-full h-10"
+                size="lg"
               >
                 <Upload className="w-4 h-4 ml-2" />
                 ייבא
@@ -427,7 +427,7 @@ export default function ToolsTab({ settings, initialFilter }) {
               <Button
                 variant="outline"
                 onClick={() => setShowRecommendations(!showRecommendations)}
-                className="w-full h-10"
+                size="lg"
               >
                 <Sparkles className="w-4 h-4 ml-2" />
                 המלצות
@@ -435,19 +435,20 @@ export default function ToolsTab({ settings, initialFilter }) {
               <Button
                 variant="outline"
                 onClick={() => setShowDuplicatesDialog(true)}
-                className="w-full h-10"
+                size="lg"
               >
-                🔍 כפילויות
+                🔍 בדוק כפילויות
               </Button>
               <Button
                 onClick={() => {
                   setEditingTool(null);
                   setShowForm(true);
                 }}
-                className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 w-full h-10"
+                className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 shadow-lg"
+                size="lg"
               >
                 <Plus className="w-5 h-5 ml-2" />
-                הוסף
+                הוסף כלי
               </Button>
             </>
           )}
@@ -456,7 +457,7 @@ export default function ToolsTab({ settings, initialFilter }) {
 
       {/* המלצות חכמות */}
       {showRecommendations && (
-        <div className="glass-effect rounded-2xl p-6">
+        <div className="glass-effect rounded-3xl p-8 shadow-xl border border-indigo-100 dark:border-indigo-900">
           <SmartRecommendations onSelectTool={(tool) => {
             setShowRecommendations(false);
             handleEdit(tool);

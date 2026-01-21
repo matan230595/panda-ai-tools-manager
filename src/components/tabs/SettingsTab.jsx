@@ -21,7 +21,7 @@ export default function SettingsTab({ settings, onLogout }) {
     cohereApiKey: settings?.cohereApiKey || '',
     huggingfaceApiKey: settings?.huggingfaceApiKey || '',
     togetherApiKey: settings?.togetherApiKey || '',
-    preferredModel: settings?.preferredModel || 'gemini',
+    preferredModel: settings?.preferredModel || 'groq',
     theme: settings?.theme || 'light',
     viewMode: settings?.viewMode || 'grid',
     sortBy: settings?.sortBy || 'updated',

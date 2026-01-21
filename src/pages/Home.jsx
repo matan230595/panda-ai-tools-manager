@@ -60,7 +60,8 @@ export default function Home() {
         sortBy: 'updated',
         enableNotifications: true,
         enableKeyboardShortcuts: true,
-        lastActiveTab: 'tools'
+        lastActiveTab: 'tools',
+        preferredModel: 'groq'
       });
     }
   });
