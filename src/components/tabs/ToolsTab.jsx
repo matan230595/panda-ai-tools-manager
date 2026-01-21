@@ -57,36 +57,30 @@ export default function ToolsTab({ settings, initialFilter }) {
 
   // בדוק התראות חכמות
   useEffect(() => {
-    if (!appSettings?.enableNotifications) return;
+    if (!appSettings?.enableNotifications || !tools || tools.length === 0) return;
 
-    const checkSmartNotifications = () => {
-      if (tools.length === 0) return;
+    // התראה על כלים פופולריים חדשים
+    const popularNew = tools
+      .filter(t => t.popularity >= 4 && new Date(t.created_date) > new Date(Date.now() - 7*24*60*60*1000))
+      .slice(0, 1);
+    
+    if (popularNew.length > 0 && !sessionStorage.getItem(`notified-popular-${popularNew[0].id}`)) {
+      toast.success(`🌟 כלי פופולרי חדש: ${popularNew[0].name}`);
+      sessionStorage.setItem(`notified-popular-${popularNew[0].id}`, 'true');
+    }
 
-      // התראה על כלים פופולריים חדשים
-      const popularNew = tools
-        .filter(t => t.popularity >= 4 && new Date(t.created_date) > new Date(Date.now() - 7*24*60*60*1000))
-        .slice(0, 1);
-      
-      if (popularNew.length > 0 && !sessionStorage.getItem(`notified-popular-${popularNew[0].id}`)) {
-        toast.success(`🌟 כלי פופולרי חדש: ${popularNew[0].name}`);
-        sessionStorage.setItem(`notified-popular-${popularNew[0].id}`, 'true');
-      }
-
-      // התראה על כלים חדשים בקטגוריה שאתה משתמש בה
-      const toolsByCategory = {};
-      tools.forEach(t => {
-        if (!toolsByCategory[t.category]) toolsByCategory[t.category] = [];
-        toolsByCategory[t.category].push(t);
-      });
-      
-      const categoriesWithTools = Object.keys(toolsByCategory).filter(cat => toolsByCategory[cat].length > 3);
-      if (categoriesWithTools.length > 0 && !sessionStorage.getItem('notified-category')) {
-        toast.info(`📊 יש לך ${categoriesWithTools.length} קטגוריות עם כלים רבים`);
-        sessionStorage.setItem('notified-category', 'true');
-      }
-    };
-
-    checkSmartNotifications();
+    // התראה על כלים חדשים בקטגוריה שאתה משתמש בה
+    const toolsByCategory = {};
+    tools.forEach(t => {
+      if (!toolsByCategory[t.category]) toolsByCategory[t.category] = [];
+      toolsByCategory[t.category].push(t);
+    });
+    
+    const categoriesWithTools = Object.keys(toolsByCategory).filter(cat => toolsByCategory[cat].length > 3);
+    if (categoriesWithTools.length > 0 && !sessionStorage.getItem('notified-category')) {
+      toast.info(`📊 יש לך ${categoriesWithTools.length} קטגוריות עם כלים רבים`);
+      sessionStorage.setItem('notified-category', 'true');
+    }
   }, [tools, appSettings?.enableNotifications]);
   
   // State management
