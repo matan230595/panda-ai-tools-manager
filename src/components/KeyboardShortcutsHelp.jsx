@@ -37,14 +37,14 @@ export default function KeyboardShortcutsHelp({ open, onOpenChange }) {
                     <span className="text-sm">{shortcut.description}</span>
                     <div className="flex gap-1">
                       {shortcut.keys.map((key, keyIdx) => (
-                        <React.Fragment key={keyIdx}>
+                        <div key={keyIdx} className="flex items-center gap-1">
                           <kbd className="px-3 py-1 bg-white dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 text-xs font-medium">
                             {key}
                           </kbd>
                           {keyIdx < shortcut.keys.length - 1 && (
-                            <span className="text-gray-400 mx-1">+</span>
+                            <span className="text-gray-400">+</span>
                           )}
-                        </React.Fragment>
+                        </div>
                       ))}
                     </div>
                   </div>
