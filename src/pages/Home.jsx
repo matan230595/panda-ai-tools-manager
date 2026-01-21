@@ -139,30 +139,30 @@ export default function Home() {
   // אם לא מאומת - הצג מסך התחברות
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center p-4">
-        <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl p-8 w-full max-w-md">
-          <div className="text-center mb-8">
-            <div className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
-              <span className="text-4xl">🔐</span>
+      <div className="min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center p-3 sm:p-4">
+        <div className="bg-white dark:bg-gray-900 rounded-2xl sm:rounded-3xl shadow-2xl p-5 sm:p-8 w-full max-w-sm">
+          <div className="text-center mb-6 sm:mb-8">
+            <div className="w-16 sm:w-20 h-16 sm:h-20 mx-auto mb-3 sm:mb-4 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+              <span className="text-3xl sm:text-4xl">🔐</span>
             </div>
-            <h1 className="text-3xl font-bold gradient-text mb-2">AI Tools Manager</h1>
-            <p className="text-gray-600 dark:text-gray-400">הזן סיסמה להמשך</p>
-            <p className="text-xs text-gray-500 mt-2">💡 סיסמה ראשונית: <span className="font-mono bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">123456</span></p>
+            <h1 className="text-2xl sm:text-3xl font-bold gradient-text mb-2">AI Tools Manager</h1>
+            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">הזן סיסמה להמשך</p>
+            <p className="text-xs text-gray-500 mt-2">💡 סיסמה ראשונית: <span className="font-mono bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-xs">123456</span></p>
           </div>
-          
-          <div className="space-y-4">
+
+          <div className="space-y-3 sm:space-y-4">
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
               placeholder="הזן סיסמה..."
-              className="w-full px-4 py-3 rounded-xl border-2 border-gray-300 dark:border-gray-600 focus:border-indigo-500 outline-none text-center text-lg tracking-widest"
+              className="w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl border-2 border-gray-300 dark:border-gray-600 focus:border-indigo-500 outline-none text-center text-base sm:text-lg tracking-widest"
               autoFocus
             />
             <button
               onClick={handleLogin}
-              className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold py-3 rounded-xl hover:shadow-lg transition-all"
+              className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold py-2.5 sm:py-3 rounded-xl hover:shadow-lg transition-all active:scale-95 min-h-[44px] sm:min-h-[48px] touch-target"
             >
               התחבר
             </button>
@@ -188,7 +188,7 @@ export default function Home() {
       <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
       
       {/* כפתורים - desktop */}
-      <div className="hidden md:flex fixed top-6 left-6 z-40 gap-2">
+      <div className="hidden md:flex fixed top-4 right-4 z-40 gap-2">
         <NotificationCenter 
           notifications={settings?.notifications || []}
           onMarkAsRead={handleMarkAsRead}
@@ -198,7 +198,7 @@ export default function Home() {
       </div>
       
       {/* תוכן הטאב */}
-      <main className="max-w-7xl mx-auto px-4 py-6 md:py-8">
+      <main className="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-8">
         <div className="animate-slide-in">
           {activeTab === 'tools' && <ToolsTab settings={settings} initialFilter={toolsFilter} />}
           {activeTab === 'assistant' && <AssistantTab />}

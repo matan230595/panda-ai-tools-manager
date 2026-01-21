@@ -113,17 +113,18 @@ export default function TableView({ tools, onEdit, onDelete, onToggleFavorite, o
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-end">
+    <div className="space-y-3 sm:space-y-4">
+      <div className="flex justify-end px-2 sm:px-0">
         <TableColumnSelector
           selectedColumns={selectedColumns}
           onColumnsChange={setSelectedColumns}
         />
       </div>
 
-      <div className="glass-effect rounded-2xl overflow-hidden">
-        <div className="overflow-x-auto">
-          <Table>
+      <div className="glass-effect rounded-lg sm:rounded-2xl overflow-hidden">
+        <div className="overflow-x-auto -mx-2 sm:mx-0">
+          <div className="inline-block min-w-full sm:w-full">
+            <Table>
             <TableHeader>
               <TableRow className="bg-gray-50 dark:bg-gray-800">
                 <TableHead className="w-12"></TableHead>
@@ -139,19 +140,20 @@ export default function TableView({ tools, onEdit, onDelete, onToggleFavorite, o
             {tools.map((tool) => (
               <TableRow 
                 key={tool.id} 
-                className="hover:bg-gray-50 dark:hover:bg-gray-800/50 cursor-pointer"
+                className="hover:bg-gray-50 dark:hover:bg-gray-800/50 cursor-pointer text-xs sm:text-sm"
                 onClick={() => onToolClick?.(tool)}
               >
-                <TableCell>
+                <TableCell className="w-10 sm:w-12">
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       onToggleFavorite(tool);
                     }}
-                    className="p-1 hover:scale-110 transition-transform"
+                    className="p-1.5 sm:p-2 hover:scale-110 transition-transform touch-target"
+                    aria-label="toggle favorite"
                   >
                     <Star
-                      className={`w-5 h-5 ${
+                      className={`w-4 sm:w-5 h-4 sm:h-5 ${
                         tool.isFavorite
                           ? 'fill-yellow-400 text-yellow-400'
                           : 'text-gray-400'
@@ -160,12 +162,12 @@ export default function TableView({ tools, onEdit, onDelete, onToggleFavorite, o
                   </button>
                 </TableCell>
                 {selectedColumns.map((col) => (
-                  <TableCell key={col.id} className={col.id === 'name' ? 'font-medium' : ''}>
+                  <TableCell key={col.id} className={`${col.id === 'name' ? 'font-medium' : ''} p-2 sm:p-3`}>
                     {renderCell(tool, col.id)}
                   </TableCell>
                 ))}
-                <TableCell>
-                  <div className="flex items-center gap-1">
+                <TableCell className="w-28 sm:w-32 p-2 sm:p-3">
+                  <div className="flex items-center gap-0.5 sm:gap-1">
                     <Button
                       size="icon"
                       variant="ghost"
@@ -174,8 +176,9 @@ export default function TableView({ tools, onEdit, onDelete, onToggleFavorite, o
                         window.open(tool.url, '_blank');
                       }}
                       title="בקר באתר"
+                      className="h-8 sm:h-9 w-8 sm:w-9 p-0 touch-target"
                     >
-                      <ExternalLink className="w-4 h-4" />
+                      <ExternalLink className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
                     </Button>
                     <Button
                       size="icon"
@@ -185,8 +188,9 @@ export default function TableView({ tools, onEdit, onDelete, onToggleFavorite, o
                         onEdit(tool);
                       }}
                       title="ערוך"
+                      className="h-8 sm:h-9 w-8 sm:w-9 p-0 touch-target"
                     >
-                      <Edit className="w-4 h-4" />
+                      <Edit className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
                     </Button>
                     <Button
                       size="icon"
@@ -196,9 +200,9 @@ export default function TableView({ tools, onEdit, onDelete, onToggleFavorite, o
                         onDelete(tool);
                       }}
                       title="מחק"
-                      className="text-red-500 hover:text-red-700"
+                      className="text-red-500 hover:text-red-700 h-8 sm:h-9 w-8 sm:w-9 p-0 touch-target"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
                     </Button>
                   </div>
                 </TableCell>
@@ -206,8 +210,9 @@ export default function TableView({ tools, onEdit, onDelete, onToggleFavorite, o
             ))}
           </TableBody>
         </Table>
-      </div>
-    </div>
-    </div>
-  );
-}
+         </div>
+        </div>
+        </div>
+        </div>
+        );
+        }
