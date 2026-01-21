@@ -59,6 +59,8 @@ export default function SearchAndFilters({
     { value: 'name', label: 'שם (א-ת)' },
     { value: 'rating', label: 'דירוג גבוה' },
     { value: 'popularity', label: 'פופולריות' },
+    { value: 'usage', label: 'תדירות שימוש' },
+    { value: 'cost', label: 'עלות' },
   ];
 
   const hasActiveFilters = 
