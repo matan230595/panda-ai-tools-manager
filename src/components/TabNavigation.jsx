@@ -40,11 +40,25 @@ export default function TabNavigation({ activeTab, onTabChange }) {
   return (
     <>
       {/* Desktop & Tablet - Top Navigation */}
-      <div className="hidden md:block sticky top-0 z-50 bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-gray-700" dir="rtl">
+      <div className="hidden md:block sticky top-0 z-50 bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 lg:px-6">
-          <div className="flex items-center justify-between py-3 lg:py-4 gap-4">
-            {/* Tabs - Left Side (ימין בעברית) */}
-            <nav className="flex gap-1 lg:gap-2 flex-wrap flex-1 min-w-0" role="tablist">
+          <div className="flex items-center justify-between py-2 gap-3 h-16">
+            {/* Logo & App Name - Right Side */}
+            <div className="flex items-center gap-1.5 min-w-0 flex-shrink-0">
+              <div className="w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0 bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30">
+                {userLogo ? (
+                  <img src={userLogo} alt="Logo" className="w-full h-full object-contain" />
+                ) : (
+                  <Sparkles className="w-5 h-5 text-indigo-500" />
+                )}
+              </div>
+              <div className="min-w-0 text-right hidden sm:block">
+                <h1 className="text-sm font-bold gradient-text truncate">{appName}</h1>
+              </div>
+            </div>
+
+            {/* Tabs - Center */}
+            <nav className="flex gap-0.5 flex-1 justify-center" role="tablist">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
                 const isActive = activeTab === tab.id;
@@ -57,10 +71,10 @@ export default function TabNavigation({ activeTab, onTabChange }) {
                     aria-selected={isActive}
                     aria-label={tab.label}
                     className={`
-                      relative flex items-center gap-1 lg:gap-2 px-3 lg:px-6 py-2 lg:py-3 rounded-xl font-medium
-                      transition-all duration-300 ease-out whitespace-nowrap min-h-[44px] lg:min-h-[40px]
+                      relative flex items-center gap-1 px-2.5 lg:px-4 py-2 rounded-lg font-medium text-xs lg:text-sm
+                      transition-all duration-300 ease-out whitespace-nowrap min-h-[40px]
                       ${isActive 
-                        ? 'text-white shadow-lg lg:scale-105' 
+                        ? 'text-white shadow-md' 
                         : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
                       }
                     `}
@@ -71,37 +85,21 @@ export default function TabNavigation({ activeTab, onTabChange }) {
                     } : {}}
                   >
                     {isActive && (
-                     <div className={`absolute inset-0 bg-gradient-to-r ${tab.gradient} rounded-xl opacity-100`} />
+                     <div className={`absolute inset-0 bg-gradient-to-r ${tab.gradient} rounded-lg opacity-100`} />
                     )}
                     {typeof tab.icon === 'string' ? (
-                     <span className="text-lg lg:text-xl relative z-10">{tab.icon}</span>
+                     <span className="text-base relative z-10">{tab.icon}</span>
                     ) : (
-                     <Icon className={`w-4 lg:w-5 h-4 lg:h-5 relative z-10 ${isActive ? 'animate-pulse' : ''}`} />
+                     <Icon className={`w-3.5 h-3.5 lg:w-4 lg:h-4 relative z-10 ${isActive ? 'animate-pulse' : ''}`} />
                     )}
-                    <span className="relative z-10 hidden xl:inline text-sm lg:text-base">{tab.label}</span>
-                    
-                    {isActive && (
-                      <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-12 h-1 bg-gradient-to-r from-transparent via-white to-transparent rounded-full" />
-                    )}
+                    <span className="relative z-10 hidden lg:inline">{tab.label}</span>
                   </button>
                 );
               })}
             </nav>
 
-            {/* Logo & App Name - Right Side (שמאל בעברית) */}
-            <div className="flex items-center gap-2 lg:gap-3 min-w-0 flex-shrink-0">
-              <div className="min-w-0 text-right">
-                <h1 className="text-lg lg:text-xl font-bold gradient-text truncate">{appName}</h1>
-                <p className="text-xs text-gray-500 dark:text-gray-400 hidden lg:block">מערכת ניהול כלי AI</p>
-              </div>
-              <div className="w-12 lg:w-16 h-12 lg:h-16 rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0 bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30">
-                {userLogo ? (
-                  <img src={userLogo} alt="Logo" className="w-full h-full object-contain" />
-                ) : (
-                  <Sparkles className="w-6 lg:w-8 h-6 lg:h-8 text-indigo-500" />
-                )}
-              </div>
-            </div>
+            {/* Empty spacer */}
+            <div className="w-10 flex-shrink-0" />
           </div>
         </div>
       </div>
