@@ -429,10 +429,12 @@ export default function ToolsTab({ settings, initialFilter }) {
             categories={allCategories}
             tags={allTags}
           />
-          <ExportImportDialog
-            tools={tools}
-            onImportComplete={() => queryClient.invalidateQueries(['tools'])}
-          />
+          <div className="hidden lg:block">
+            <ExportImportDialog
+              tools={tools}
+              onImportComplete={() => queryClient.invalidateQueries(['tools'])}
+            />
+          </div>
           {compareMode ? (
             <>
               <Button
