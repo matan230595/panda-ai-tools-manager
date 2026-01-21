@@ -198,7 +198,7 @@ export default function Home() {
       </div>
       
       {/* תוכן הטאב */}
-      <main className="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-8">
+      <main className="max-w-7xl mx-auto px-2 sm:px-4 py-3 sm:py-6 md:py-8">
         <div className="animate-slide-in">
           {activeTab === 'tools' && <ToolsTab settings={settings} initialFilter={toolsFilter} />}
           {activeTab === 'assistant' && <AssistantTab />}
