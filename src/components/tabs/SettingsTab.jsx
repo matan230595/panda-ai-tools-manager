@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import OllamaIntegration from '@/components/integrations/OllamaIntegration';
 
 export default function SettingsTab({ settings, onLogout }) {
   const queryClient = useQueryClient();
@@ -251,8 +252,9 @@ export default function SettingsTab({ settings, onLogout }) {
       </div>
 
       <Tabs defaultValue="api" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="api">🔑 מפתחות API</TabsTrigger>
+          <TabsTrigger value="ollama">🆓 Ollama</TabsTrigger>
           <TabsTrigger value="preferences">🎨 העדפות</TabsTrigger>
           <TabsTrigger value="security">🔐 אבטחה</TabsTrigger>
           <TabsTrigger value="data">💾 נתונים</TabsTrigger>
@@ -439,6 +441,15 @@ export default function SettingsTab({ settings, onLogout }) {
               </div>
             </div>
           </div>
+        </TabsContent>
+
+        <TabsContent value="ollama" className="space-y-6 mt-6">
+          <OllamaIntegration
+            endpoint={formData.ollamaEndpoint}
+            onEndpointChange={(url) => handleChange('ollamaEndpoint', url)}
+            onModelSelect={(model) => handleChange('preferredModel', 'ollama')}
+            selectedModel={formData.preferredModel === 'ollama' ? formData.ollamaEndpoint : null}
+          />
         </TabsContent>
 
         <TabsContent value="preferences" className="space-y-6 mt-6">
