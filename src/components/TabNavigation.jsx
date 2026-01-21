@@ -40,7 +40,7 @@ export default function TabNavigation({ activeTab, onTabChange }) {
   return (
     <>
       {/* Desktop & Tablet - Top Navigation */}
-      <div className="hidden md:block sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-gray-200 dark:border-gray-700">
+      <div className="hidden md:block sticky top-0 z-50 bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between py-4">
             <div className="flex items-center gap-3">
