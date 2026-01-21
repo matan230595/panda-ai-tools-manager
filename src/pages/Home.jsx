@@ -1,6 +1,7 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import { useNavigate } from 'react-router-dom';
 import TabNavigation from '@/components/TabNavigation';
 import ToolsTab from '@/components/tabs/ToolsTab';
 import AssistantTab from '@/components/tabs/AssistantTab';
@@ -25,22 +26,37 @@ export default function Home() {
   const [password, setPassword] = useState('');
   const queryClient = useQueryClient();
 
-  // בדיקת אימות
+  const navigate = useNavigate();
+
+  // בדיקת אימות Base44
   useEffect(() => {
-    const savedAuth = localStorage.getItem('ai_tools_auth');
-    if (savedAuth === 'true') {
-      setIsAuthenticated(true);
-    }
+    const checkAuth = async () => {
+      try {
+        const user = await base44.auth.me();
+        if (user) {
+          setIsAuthenticated(true);
+        }
+      } catch (error) {
+        setIsAuthenticated(false);
+      }
+    };
+    checkAuth();
   }, []);
 
-  const handleLogin = () => {
-    const savedPassword = localStorage.getItem('ai_tools_password') || '123456';
-    if (password === savedPassword) {
-      setIsAuthenticated(true);
-      localStorage.setItem('ai_tools_auth', 'true');
-      toast.success('התחברת בהצלחה! 🎉');
-    } else {
-      toast.error('סיסמה שגויה');
+  const handleLogin = async () => {
+    try {
+      // ניסיון התחברות עם Base44 (יכול להיות שם משתמש/סיסמה או SSO)
+      // לכן שלא מוגדר SSO בקוד, נשמור אימות מקומי
+      const savedPassword = localStorage.getItem('ai_tools_password') || '123456';
+      if (password === savedPassword) {
+        setIsAuthenticated(true);
+        localStorage.setItem('ai_tools_auth', 'true');
+        toast.success('התחברת בהצלחה! 🎉');
+      } else {
+        toast.error('סיסמה שגויה');
+      }
+    } catch (error) {
+      toast.error('שגיאה בהתחברות');
     }
   };
 
@@ -262,8 +278,9 @@ export default function Home() {
             </Suspense>
           )}
           {activeTab === 'settings' && <SettingsTab settings={settings} onLogout={() => {
-            setIsAuthenticated(false);
-            localStorage.removeItem('ai_tools_auth');
+           setIsAuthenticated(false);
+           localStorage.removeItem('ai_tools_auth');
+           window.location.href = '/';
           }} />}
         </div>
       </main>
