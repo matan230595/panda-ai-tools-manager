@@ -403,25 +403,25 @@ export default function ToolsTab({ settings, initialFilter }) {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 md:space-y-8">
       {/* כותרת ראשית */}
       <div className="text-right">
-        <div className="flex items-center gap-4 mb-4">
+        <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
           {userLogo && (
-            <img src={userLogo} alt={appName} className="w-16 h-16 object-contain" />
+            <img src={userLogo} alt={appName} className="w-12 md:w-16 h-12 md:h-16 object-contain flex-shrink-0" />
           )}
-          <div>
-            <h1 className="text-4xl md:text-5xl font-bold gradient-text mb-3">
+          <div className="min-w-0 flex-1">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold gradient-text mb-1 md:mb-2 break-words">
               כלי AI שלי
             </h1>
           </div>
         </div>
-        <p className="text-lg text-gray-600 dark:text-gray-400 mb-6">
+        <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 mb-4 md:mb-6">
           נהל את כל כלי ה-AI שלך במקום אחד
         </p>
         
-        {/* כפתורי פעולה */}
-        <div className="flex flex-wrap gap-3 justify-end">
+        {/* כפתורי פעולה - מעולים למובייל */}
+        <div className="flex flex-wrap gap-2 md:gap-3 justify-end md:justify-end">
           <AdvancedFilters
             filters={advancedFilters}
             onFiltersChange={setAdvancedFilters}
