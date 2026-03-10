@@ -181,8 +181,8 @@ export default function ToolCard({
 
         {/* הערות אישיות */}
         {tool.personalNotes && (
-          <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-2 sm:p-3">
-            <p className="text-xs text-gray-700 dark:text-gray-300 line-clamp-2">
+          <div className="bg-gray-50 dark:bg-gray-800 rounded-md sm:rounded-lg p-1.5 sm:p-2 md:p-3">
+            <p className="text-xs text-gray-700 dark:text-gray-300 line-clamp-1 sm:line-clamp-2">
               <span className="font-semibold">הערות:</span> {tool.personalNotes}
             </p>
           </div>
