@@ -423,7 +423,7 @@ export default function ToolsTab({ settings, initialFilter }) {
          </p>
         
         {/* כפתורי פעולה - מסודרים: כפתור הוספה | export/import | advanced filters | (mobile menu) */}
-         <div className="flex gap-1.5 items-center">
+         <div className="flex gap-1.5 items-center flex-wrap">
             {/* כפתור הוספה - ימין */}
             <Button
               onClick={() => {
@@ -435,6 +435,16 @@ export default function ToolsTab({ settings, initialFilter }) {
             >
               <Plus className="w-4 h-4 ml-1" />
               <span className="hidden sm:inline">הוסף</span>
+            </Button>
+
+            <Button
+              variant={showRecommendations ? 'secondary' : 'outline'}
+              onClick={() => setShowRecommendations(prev => !prev)}
+              size="sm"
+              className="text-xs"
+            >
+              <Sparkles className="w-4 h-4 ml-1" />
+              המלצות
             </Button>
 
             {/* export/import - אמצע-ימין */}

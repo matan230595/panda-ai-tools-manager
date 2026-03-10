@@ -1,19 +1,48 @@
-import React, { useState, useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { DollarSign, TrendingUp, TrendingDown, AlertTriangle, Calendar, PieChart, Sparkles, Zap } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { LineChart, Line, PieChart as RePieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { toast } from 'sonner';
 
 export default function BudgetTab() {
+  const queryClient = useQueryClient();
   const [currency, setCurrency] = useState('ILS');
   const [monthlyBudget, setMonthlyBudget] = useState(1000);
   const [aiInsightsLoading, setAiInsightsLoading] = useState(false);
   const [aiInsights, setAiInsights] = useState(null);
+
+  const { data: settings } = useQuery({
+    queryKey: ['settings'],
+    queryFn: async () => {
+      const list = await base44.entities.Settings.list();
+      return list[0];
+    },
+  });
+
+  const saveBudgetMutation = useMutation({
+    mutationFn: async (value) => {
+      if (settings?.id) {
+        return base44.entities.Settings.update(settings.id, { monthlyApibudget: value });
+      }
+      return base44.entities.Settings.create({ monthlyApibudget: value });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['settings'] });
+      toast.success('התקציב נשמר');
+    },
+  });
+
+  useEffect(() => {
+    if (typeof settings?.monthlyApibudget === 'number') {
+      setMonthlyBudget(settings.monthlyApibudget);
+    }
+  }, [settings?.monthlyApibudget]);
 
   const { data: tools = [] } = useQuery({
     queryKey: ['tools'],
@@ -199,6 +228,26 @@ export default function BudgetTab() {
           )}
         </Button>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>תקציב חודשי</CardTitle>
+          <CardDescription>הגדר את תקרת ההוצאה שלך למעקב מדויק.</CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col sm:flex-row gap-3 items-start sm:items-end">
+          <div className="w-full sm:w-64">
+            <Input
+              type="number"
+              value={monthlyBudget}
+              onChange={(e) => setMonthlyBudget(parseFloat(e.target.value) || 0)}
+              placeholder="1000"
+            />
+          </div>
+          <Button onClick={() => saveBudgetMutation.mutate(monthlyBudget)} disabled={saveBudgetMutation.isPending}>
+            שמור תקציב
+          </Button>
+        </CardContent>
+      </Card>
 
       {/* סטטיסטיקות ראשיות */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
