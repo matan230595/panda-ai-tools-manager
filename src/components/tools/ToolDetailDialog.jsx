@@ -361,6 +361,15 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
               )}
             </TabsContent>
 
+            <TabsContent value="credentials" className="space-y-4 mt-6">
+              <UserCredentialsTab 
+                tool={tool} 
+                onUpdate={() => {
+                  // update logic handled by parent
+                }}
+              />
+            </TabsContent>
+
             <TabsContent value="notes" className="space-y-4 mt-6">
               {tool.notes ? (
                 <div className="p-4 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800">
