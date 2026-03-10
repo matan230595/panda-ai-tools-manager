@@ -587,6 +587,7 @@ export default function ToolsTab({ settings, initialFilter }) {
         <CompareTools 
           tools={selectedForCompare}
           onClose={() => setSelectedForCompare([])}
+          isMobile={window.innerWidth < 768}
         />
       )}
 
