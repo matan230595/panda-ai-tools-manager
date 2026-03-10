@@ -43,6 +43,10 @@ export default function ToolForm({ tool, onClose, onSave }) {
     languagesSupported: [],
     platforms: [],
     notes: '',
+    timeSavingsHours: 0,
+    directRevenue: 0,
+    roiPercentage: 0,
+    roiDisplay: '',
     aiGenerated: false,
     ...tool
   });
@@ -281,7 +285,20 @@ ${formData.url ? `URL: ${formData.url}` : ''}
       return;
     }
 
-    onSave(formData);
+    const monthlyValue = (formData.directRevenue || 0) + ((formData.timeSavingsHours || 0) * 100);
+    const monthlyCost = formData.priceILS || 0;
+    const roiPercentage = monthlyCost > 0 ? (((monthlyValue - monthlyCost) / monthlyCost) * 100) : (monthlyValue > 0 ? 100 : 0);
+
+    onSave({
+      ...formData,
+      roiPercentage: Math.round(roiPercentage),
+      roiDisplay: `ערך חודשי משוער ₪${monthlyValue} מול עלות ₪${monthlyCost}`,
+      usageStats: {
+        ...(formData.usageStats || {}),
+        totalCostPerMonth: monthlyCost,
+        roi: `ROI משוער: ${Math.round(roiPercentage)}%`,
+      },
+    });
   };
 
   return (
@@ -448,6 +465,41 @@ ${formData.url ? `URL: ${formData.url}` : ''}
                 id="priceILS"
                 type="number"
                 value={formData.priceILS}
+                disabled
+                className="bg-gray-100 dark:bg-gray-800"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="timeSavingsHours">חיסכון זמן חודשי (שעות)</Label>
+              <Input
+                id="timeSavingsHours"
+                type="number"
+                min="0"
+                step="0.5"
+                value={formData.timeSavingsHours || 0}
+                onChange={(e) => handleChange('timeSavingsHours', parseFloat(e.target.value) || 0)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="directRevenue">הכנסה ישירה חודשית (₪)</Label>
+              <Input
+                id="directRevenue"
+                type="number"
+                min="0"
+                step="1"
+                value={formData.directRevenue || 0}
+                onChange={(e) => handleChange('directRevenue', parseFloat(e.target.value) || 0)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="roiPercentage">ROI משוער</Label>
+              <Input
+                id="roiPercentage"
+                type="text"
+                value={`${formData.roiPercentage || 0}%`}
                 disabled
                 className="bg-gray-100 dark:bg-gray-800"
               />

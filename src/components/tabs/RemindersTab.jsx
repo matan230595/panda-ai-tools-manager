@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer';
 import { toast } from 'sonner';
+import ReminderCalendarView from '@/components/calendar/ReminderCalendarView';
 
 export default function RemindersTab() {
   const queryClient = useQueryClient();
@@ -39,6 +40,11 @@ export default function RemindersTab() {
   const { data: reminders = [], isLoading } = useQuery({
     queryKey: ['reminders'],
     queryFn: () => base44.entities.Reminder.list(),
+  });
+
+  const { data: subscriptions = [] } = useQuery({
+    queryKey: ['subscriptions'],
+    queryFn: () => base44.entities.Subscription.list(),
   });
 
   // יצירת תזכורת
@@ -171,6 +177,15 @@ export default function RemindersTab() {
 
   const activeReminders = reminders.filter(r => !r.isCompleted && r.isActive);
   const completedReminders = reminders.filter(r => r.isCompleted);
+
+  const handleMoveReminder = (reminderId, reminderDate) => {
+    const reminder = reminders.find((item) => item.id === reminderId);
+    if (!reminder) return;
+    updateMutation.mutate({
+      id: reminderId,
+      data: { ...reminder, reminderDate },
+    });
+  };
 
   const priorityColor = {
     low: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
@@ -354,6 +369,12 @@ export default function RemindersTab() {
            )}
          </div>
       </div>
+
+      <ReminderCalendarView
+        reminders={activeReminders}
+        subscriptions={subscriptions.filter((item) => item.isActive)}
+        onMoveReminder={handleMoveReminder}
+      />
 
       {/* Active Reminders */}
       {activeReminders.length > 0 && (

@@ -8,7 +8,7 @@ import ToolLogo from '@/components/ToolLogo';
 import SimilarTools from '@/components/tools/SimilarTools';
 import UserCredentialsTab from '@/components/tools/UserCredentialsTab';
 
-export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onToggleFavorite, onManageSubscription }) {
+export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onToggleFavorite, onManageSubscription, onQuickUpdate }) {
   const categoryColors = {
     'עיבוד_שפה': 'bg-blue-100 text-blue-800',
     'יצירת_תמונות': 'bg-purple-100 text-purple-800',
@@ -67,6 +67,9 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
                 <Badge variant="outline">{tool.subscriptionType || tool.pricing}</Badge>
                 {tool.priceILS > 0 && (
                   <Badge variant="secondary">₪{tool.priceILS.toFixed(0)}/חודש</Badge>
+                )}
+                {tool.roiPercentage !== undefined && (
+                  <Badge className="bg-green-100 text-green-800">ROI {tool.roiPercentage || 0}%</Badge>
                 )}
                 {tool.rating > 0 && (
                   <Badge className="bg-yellow-100 text-yellow-800">
@@ -211,6 +214,14 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
 
             <TabsContent value="details" className="space-y-6 mt-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
+                  <div className="font-semibold mb-1">חיסכון זמן</div>
+                  <div className="text-2xl font-bold text-indigo-600">{tool.timeSavingsHours || 0} שעות</div>
+                </div>
+                <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
+                  <div className="font-semibold mb-1">הכנסה ישירה</div>
+                  <div className="text-2xl font-bold text-green-600">₪{tool.directRevenue || 0}</div>
+                </div>
                 {/* Target Audience */}
                 {tool.targetAudience && (
                   <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
@@ -370,26 +381,21 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
             <TabsContent value="credentials" className="space-y-4 mt-6">
               <UserCredentialsTab 
                 tool={tool} 
-                onUpdate={() => {
-                  // update logic handled by parent
-                }}
+                onSave={(patch) => onQuickUpdate?.(tool.id, { userCredentials: patch.userCredentials })}
               />
             </TabsContent>
 
             <TabsContent value="notes" className="space-y-4 mt-6">
-              {tool.notes ? (
-                <div className="p-4 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800">
-                  <h3 className="font-semibold mb-2">הערות פרטיות</h3>
-                  <p className="whitespace-pre-wrap text-gray-700 dark:text-gray-300">{tool.notes}</p>
-                </div>
-              ) : (
-                <div className="text-center py-8 text-gray-500">
-                  <p>אין הערות עדיין</p>
-                  <Button variant="outline" onClick={() => onEdit(tool)} className="mt-3">
-                    הוסף הערות
-                  </Button>
-                </div>
-              )}
+              <div className="p-4 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800">
+                <h3 className="font-semibold mb-2">הערות פרטיות</h3>
+                <textarea
+                  defaultValue={tool.notes || tool.personalNotes || ''}
+                  onBlur={(e) => onQuickUpdate?.(tool.id, { notes: e.target.value, personalNotes: e.target.value })}
+                  placeholder="כתוב כאן הערות חופשיות על הכלי..."
+                  className="w-full min-h-[140px] rounded-lg border bg-white dark:bg-gray-900 p-3 text-sm"
+                />
+                <div className="text-xs text-gray-500 mt-2">השמירה מתבצעת כשיוצאים מהשדה.</div>
+              </div>
             </TabsContent>
           </Tabs>
         </div>
