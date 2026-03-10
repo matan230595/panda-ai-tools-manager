@@ -387,9 +387,9 @@ export default function ToolsTab({ settings, initialFilter }) {
 
   // Grid classes
   const gridClasses = {
-    grid: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6',
-    list: 'flex flex-col gap-3 md:gap-4',
-    compact: 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4',
+    grid: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3 md:gap-4 lg:gap-6',
+    list: 'flex flex-col gap-2 sm:gap-3 md:gap-4',
+    compact: 'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4',
     table: '',
     kanban: '',
   };
@@ -405,22 +405,22 @@ export default function ToolsTab({ settings, initialFilter }) {
   }
 
   return (
-    <div className="space-y-4 md:space-y-6">
+    <div className="space-y-3 sm:space-y-4 md:space-y-6">
       {/* כותרת ראשית */}
-      <div className="text-right">
-        <div className="flex items-center gap-2 md:gap-3 mb-2 md:mb-3">
-          {userLogo && (
-            <img src={userLogo} alt={appName} className="w-10 md:w-14 h-10 md:h-14 object-contain flex-shrink-0" />
-          )}
-          <div className="min-w-0 flex-1">
-            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold gradient-text mb-0.5 md:mb-1 break-words">
-              כלי AI שלי
-            </h1>
-          </div>
-        </div>
-        <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400 mb-2 md:mb-4">
-          נהל את כל כלי ה-AI שלך במקום אחד
-        </p>
+      <div className="text-right px-1 sm:px-0">
+         <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3 mb-1.5 sm:mb-2 md:mb-3">
+           {userLogo && (
+             <img src={userLogo} alt={appName} className="w-8 sm:w-10 md:w-12 lg:w-14 h-8 sm:h-10 md:h-12 lg:h-14 object-contain flex-shrink-0" />
+           )}
+           <div className="min-w-0 flex-1">
+             <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold gradient-text mb-0.5 md:mb-1 break-words">
+               כלי AI שלי
+             </h1>
+           </div>
+         </div>
+         <p className="text-xs sm:text-xs md:text-sm text-gray-600 dark:text-gray-400 mb-2 sm:mb-3 md:mb-4">
+           נהל את כל כלי ה-AI שלך במקום אחד
+         </p>
         
         {/* כפתורי פעולה - מסודרים: כפתור הוספה | export/import | advanced filters | (mobile menu) */}
          <div className="flex gap-1.5 items-center">
