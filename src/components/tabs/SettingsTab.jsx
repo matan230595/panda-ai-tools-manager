@@ -258,7 +258,7 @@ export default function SettingsTab({ settings, onLogout }) {
       </div>
 
       <Tabs defaultValue="api" className="w-full">
-        <TabsList className="grid w-full grid-cols-5 lg:grid-cols-10 gap-1 overflow-x-auto">
+        <TabsList className="grid w-full grid-cols-6 lg:grid-cols-11 gap-1 overflow-x-auto">
           <TabsTrigger value="branding">🎨</TabsTrigger>
           <TabsTrigger value="footer">🔗</TabsTrigger>
           <TabsTrigger value="api">🔑</TabsTrigger>
@@ -269,6 +269,7 @@ export default function SettingsTab({ settings, onLogout }) {
           <TabsTrigger value="language">🌐</TabsTrigger>
           <TabsTrigger value="collab">👥</TabsTrigger>
           <TabsTrigger value="calendar">📅</TabsTrigger>
+          <TabsTrigger value="analytics">📊</TabsTrigger>
         </TabsList>
 
         <TabsContent value="branding" className="mt-6">
@@ -593,6 +594,10 @@ export default function SettingsTab({ settings, onLogout }) {
 
         <TabsContent value="calendar" className="space-y-6 mt-6">
           <GoogleCalendarSync />
+        </TabsContent>
+
+        <TabsContent value="analytics" className="space-y-6 mt-6">
+          <AdvancedAnalytics />
         </TabsContent>
       </Tabs>
 

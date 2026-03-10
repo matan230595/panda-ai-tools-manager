@@ -29,6 +29,7 @@ export default function TabNavigation({ activeTab, onTabChange }) {
   }, [settings]);
   const tabs = [
     { id: 'tools', label: 'כלים', icon: Sparkles, gradient: 'from-indigo-500 to-purple-500' },
+    { id: 'assistant', label: 'עוזר', icon: MessageSquare, gradient: 'from-fuchsia-500 to-purple-500' },
     { id: 'dashboard', label: 'דשבורד', icon: BarChart3, gradient: 'from-blue-500 to-cyan-500' },
     { id: 'subscriptions-mgmt', label: 'מנויים', icon: DollarSign, gradient: 'from-green-500 to-emerald-500' },
     { id: 'budget', label: 'תקציב', icon: '💰', gradient: 'from-green-500 to-emerald-500' },
@@ -36,6 +37,7 @@ export default function TabNavigation({ activeTab, onTabChange }) {
     { id: 'templates', label: 'תבניות', icon: '📦', gradient: 'from-purple-500 to-pink-500' },
     { id: 'insights', label: 'תובנות', icon: '🧠', gradient: 'from-cyan-500 to-blue-500' },
     { id: 'integrations', label: 'אינטגרציות', icon: '🔗', gradient: 'from-teal-500 to-green-500' },
+    { id: 'collaboration', label: 'צוות', icon: TrendingUp, gradient: 'from-teal-500 to-cyan-500' },
     { id: 'settings', label: 'הגדרות', icon: Settings, gradient: 'from-gray-500 to-slate-500' },
   ];
 
@@ -60,7 +62,7 @@ export default function TabNavigation({ activeTab, onTabChange }) {
             </div>
 
             {/* Tabs - Center */}
-            <nav className="flex gap-1 flex-1 justify-center" role="tablist">
+            <nav className="flex gap-1 flex-1 justify-start overflow-x-auto scrollbar-hide px-1" role="tablist">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
                 const isActive = activeTab === tab.id;
@@ -108,7 +110,7 @@ export default function TabNavigation({ activeTab, onTabChange }) {
 
       {/* Mobile - Bottom Navigation */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border-t border-gray-200 dark:border-gray-700 safe-area-bottom" dir="rtl">
-        <nav className="flex justify-around items-center h-16 px-1" role="tablist">
+        <nav className="flex items-center h-16 px-1 overflow-x-auto scrollbar-hide" role="tablist">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -120,7 +122,7 @@ export default function TabNavigation({ activeTab, onTabChange }) {
                 role="tab"
                 aria-selected={isActive}
                 aria-label={tab.label}
-                className="flex-1 flex flex-col items-center justify-center gap-0.5 py-1 relative touch-target"
+                className="min-w-[72px] flex flex-col items-center justify-center gap-0.5 py-1 relative touch-target"
               >
                 <div className={`
                   relative flex items-center justify-center w-10 h-10 rounded-2xl
