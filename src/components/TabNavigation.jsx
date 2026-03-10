@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { Sparkles, MessageSquare, Settings, BarChart3 } from 'lucide-react';
+import { Sparkles, MessageSquare, Settings, BarChart3, TrendingUp, DollarSign } from 'lucide-react';
 
 export default function TabNavigation({ activeTab, onTabChange }) {
   const [userLogo, setUserLogo] = useState('');
@@ -29,6 +29,8 @@ export default function TabNavigation({ activeTab, onTabChange }) {
   }, [settings]);
   const tabs = [
     { id: 'tools', label: 'כלים', icon: Sparkles, gradient: 'from-indigo-500 to-purple-500' },
+    { id: 'dashboard', label: 'דשבורד', icon: BarChart3, gradient: 'from-blue-500 to-cyan-500' },
+    { id: 'subscriptions-mgmt', label: 'מנויים', icon: DollarSign, gradient: 'from-green-500 to-emerald-500' },
     { id: 'budget', label: 'תקציב', icon: '💰', gradient: 'from-green-500 to-emerald-500' },
     { id: 'reminders', label: 'תזכורות', icon: '⏰', gradient: 'from-orange-500 to-red-500' },
     { id: 'templates', label: 'תבניות', icon: '📦', gradient: 'from-purple-500 to-pink-500' },
