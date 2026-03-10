@@ -30,6 +30,17 @@ export default function GoogleCalendarSync() {
     },
   });
 
+  const { data: tasks = [] } = useQuery({
+    queryKey: ['calendar-tasks'],
+    queryFn: async () => {
+      const user = await getCurrentUser();
+      return base44.entities.ToolTask.filter({
+        created_by: user.email,
+        isCompleted: false,
+      });
+    },
+  });
+
   const calendarIntegration = integrations.find((item) => item.name === 'Google Calendar');
   const isEnabled = !!calendarIntegration?.isEnabled;
 
@@ -61,16 +72,25 @@ export default function GoogleCalendarSync() {
 
   const syncRemindersMutation = useMutation({
     mutationFn: async () => {
-      if (reminders.length === 0) {
-        throw new Error('אין תזכורות פעילות לסנכרון');
+      if (reminders.length === 0 && tasks.length === 0) {
+        throw new Error('אין תזכורות או משימות לסנכרון');
       }
 
-      const events = reminders.map((reminder) => ({
+      const reminderEvents = reminders.map((reminder) => ({
         title: `תזכורת: ${reminder.toolName}`,
         description: reminder.message,
         startTime: `${reminder.reminderDate}T${reminder.reminderTime || '09:00'}:00`,
         endTime: `${reminder.reminderDate}T${reminder.reminderTime || '09:00'}:30`,
       }));
+
+      const taskEvents = tasks.map((task) => ({
+        title: `משימה: ${task.title}`,
+        description: `${task.toolName}${task.description ? ` — ${task.description}` : ''}`,
+        startTime: `${task.dueDate}T${task.reminderTime || '09:00'}:00`,
+        endTime: `${task.dueDate}T${task.reminderTime || '09:00'}:30`,
+      }));
+
+      const events = [...reminderEvents, ...taskEvents];
 
       const response = await base44.functions.invoke('syncGoogleCalendar', { events });
 
@@ -105,7 +125,7 @@ export default function GoogleCalendarSync() {
       </CardHeader>
       <CardContent className="space-y-4">
         <p className="text-sm text-gray-600 dark:text-gray-400">
-          סנכרון מהיר של התזכורות הפעילות מהמערכת ליומן Google המחובר.
+          סנכרון אוטומטי ומהיר של תזכורות ומשימות מהמערכת ליומן Google המחובר.
         </p>
 
         <div className="grid grid-cols-2 gap-3 text-sm">
@@ -114,6 +134,10 @@ export default function GoogleCalendarSync() {
             <div className="text-xl font-bold text-blue-600">{reminders.length}</div>
           </div>
           <div className="rounded-lg bg-white/70 dark:bg-gray-900/50 p-3">
+            <div className="text-gray-500">משימות פתוחות</div>
+            <div className="text-xl font-bold text-purple-600">{tasks.length}</div>
+          </div>
+          <div className="rounded-lg bg-white/70 dark:bg-gray-900/50 p-3 col-span-2">
             <div className="text-gray-500">סנכרון אחרון</div>
             <div className="text-sm font-semibold text-gray-800 dark:text-gray-100">
               {calendarIntegration?.config?.lastSyncedAt
