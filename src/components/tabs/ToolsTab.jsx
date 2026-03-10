@@ -556,9 +556,8 @@ export default function ToolsTab({ settings, initialFilter }) {
                 onClick={setSelectedTool}
                 isSelected={selectedForCompare.some(t => t.id === tool.id)}
                 onToggleSelect={compareMode ? toggleCompareSelection : null}
-              />
-            </div>
-          ))}
+                />
+                ))}
         </div>
       )}
 
