@@ -26,16 +26,11 @@ export default function CompareTools({ tools, onClose, isMobile = false }) {
     { key: 'tags', label: 'תגיות', render: (t) => t.tags?.length || 0 },
   ];
 
-  return (
-    <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="max-w-6xl max-h-[90vh] p-0">
-        <DialogHeader className="p-6 pb-4 border-b">
-          <DialogTitle className="text-2xl font-bold">השוואת כלים</DialogTitle>
-        </DialogHeader>
-        
-        <ScrollArea className="h-[calc(90vh-8rem)]">
-          <div className="p-6">
-            <div className="grid gap-4" style={{ gridTemplateColumns: `200px repeat(${tools.length}, 1fr)` }}>
+  const ComparisonContent = () => (
+    <ScrollArea className="h-auto md:h-[calc(90vh-8rem)]">
+      <div className="p-3 md:p-6">
+        {/* Desktop Grid */}
+        <div className="hidden md:grid gap-4" style={{ gridTemplateColumns: `180px repeat(${tools.length}, 1fr)` }}>
               {/* Header Row */}
               <div className="font-bold text-gray-600 dark:text-gray-400"></div>
               {tools.map((tool) => (
