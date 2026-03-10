@@ -4,8 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerClose } from '@/components/ui/drawer';
 
-export default function CompareTools({ tools, onClose }) {
+export default function CompareTools({ tools, onClose, isMobile = false }) {
   const getColorForValue = (value, max) => {
     const percentage = (value / max) * 100;
     if (percentage >= 80) return 'bg-green-500';
