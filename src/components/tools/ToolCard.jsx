@@ -137,7 +137,7 @@ export default function ToolCard({
               <img 
                 src={tool.logo} 
                 alt={`${tool.name} logo`}
-                className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl object-cover shadow-md flex-shrink-0"
+                className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg sm:rounded-xl object-cover shadow-sm md:shadow-md flex-shrink-0"
                 loading="lazy"
                 onError={(e) => {
                   e.target.style.display = 'none';
@@ -145,8 +145,8 @@ export default function ToolCard({
                 }}
               />
             ) : null}
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-md flex-shrink-0" style={tool.logo ? {display: 'none'} : {}}>
-              <Package className="w-5 sm:w-6 h-5 sm:h-6 text-white" />
+            <div className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg sm:rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-sm md:shadow-md flex-shrink-0" style={tool.logo ? {display: 'none'} : {}}>
+              <Package className="w-4 sm:w-4.5 md:w-5 h-4 sm:h-4.5 md:h-5 text-white" />
             </div>
           
           <div className="flex-1 min-w-0">
