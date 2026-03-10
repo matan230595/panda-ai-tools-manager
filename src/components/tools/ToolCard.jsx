@@ -190,20 +190,20 @@ export default function ToolCard({
 
         {/* תגיות */}
         {tool.tags && tool.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1 sm:gap-1.5">
-            {tool.tags.slice(0, 3).map((tag, index) => (
+          <div className="flex flex-wrap gap-0.5 sm:gap-1 md:gap-1.5">
+            {tool.tags.slice(0, 2).map((tag, index) => (
               <Badge 
                 key={index} 
                 variant="outline" 
                 className="text-xs bg-gray-50 dark:bg-gray-800"
               >
-                <Tag className="w-3 h-3 ml-1" />
+                <Tag className="w-2.5 h-2.5 ml-0.5 md:ml-1" />
                 {tag}
               </Badge>
             ))}
-            {tool.tags.length > 3 && (
+            {tool.tags.length > 2 && (
               <Badge variant="outline" className="text-xs">
-                +{tool.tags.length - 3}
+                +{tool.tags.length - 2}
               </Badge>
             )}
           </div>
