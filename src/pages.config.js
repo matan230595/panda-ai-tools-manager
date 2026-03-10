@@ -49,20 +49,20 @@
  */
 import Accessibility from './pages/Accessibility';
 import Contact from './pages/Contact';
+import Dashboard from './pages/Dashboard';
 import Home from './pages/Home';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
-import Dashboard from './pages/Dashboard';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "Accessibility": Accessibility,
     "Contact": Contact,
+    "Dashboard": Dashboard,
     "Home": Home,
     "PrivacyPolicy": PrivacyPolicy,
     "TermsOfService": TermsOfService,
-    "Dashboard": Dashboard,
 }
 
 export const pagesConfig = {

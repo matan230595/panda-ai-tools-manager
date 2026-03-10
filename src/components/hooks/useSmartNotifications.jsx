@@ -29,28 +29,27 @@ export function useSmartNotifications(settings, queryClient) {
     }
   }, [settings, queryClient]);
 
-  // בדוק שימוש חריג ב-API
+  // בדוק שימוש חריג בתקציב
   const checkApiUsage = useCallback(async () => {
     if (!settings?.trackApiCosts) return;
 
     const monthlyBudget = settings.monthlyApibudget || 100;
-    const usedBudget = settings.currentMonthlyUsage || 0;
-    const usagePercentage = (usedBudget / monthlyBudget) * 100;
+    const subscriptions = await base44.entities.Subscription.list();
+    const usedBudget = subscriptions.filter(item => item.isActive).reduce((sum, item) => sum + (item.priceMonthly || 0), 0);
+    const usagePercentage = monthlyBudget > 0 ? (usedBudget / monthlyBudget) * 100 : 0;
 
-    // אזהרה ב-80%
     if (usagePercentage >= 80 && usagePercentage < 100) {
       await addNotification({
-        title: '⚠️ תשומת לב: שימוש גבוה ב-API',
-        message: `השתמשת ב-${usagePercentage.toFixed(0)}% מתקציב החודש (₪${usedBudget.toFixed(2)}/₪${monthlyBudget})`,
+        title: '⚠️ התקציב מתקרב לתקרה',
+        message: `נוצלו ${usagePercentage.toFixed(0)}% מהתקציב החודשי (₪${usedBudget.toFixed(0)} מתוך ₪${monthlyBudget})`,
         type: 'warning',
       });
     }
 
-    // שגיאה ב-100%+
     if (usagePercentage >= 100) {
       await addNotification({
-        title: '🚨 חרוג מתקציב ה-API',
-        message: `עברת את תקציב החודש! השתמשת ב-₪${usedBudget.toFixed(2)} מתקציב של ₪${monthlyBudget}`,
+        title: '🚨 חרגת מהתקציב החודשי',
+        message: `סך עלויות המנויים הוא ₪${usedBudget.toFixed(0)} מול תקציב של ₪${monthlyBudget}`,
         type: 'error',
       });
     }

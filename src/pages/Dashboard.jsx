@@ -4,12 +4,24 @@ import { base44 } from '@/api/base44Client';
 import { BarChart3, TrendingUp, DollarSign, Package, AlertCircle, Calendar } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import SmartRecommendations from '@/components/recommendations/SmartRecommendations';
+import ReminderCalendarView from '@/components/calendar/ReminderCalendarView';
 import moment from 'moment';
 
 export default function Dashboard() {
   const { data: tools = [] } = useQuery({
     queryKey: ['tools'],
     queryFn: () => base44.entities.AiTool.list(),
+  });
+
+  const { data: subscriptions = [] } = useQuery({
+    queryKey: ['subscriptions'],
+    queryFn: () => base44.entities.Subscription.list(),
+  });
+
+  const { data: reminders = [] } = useQuery({
+    queryKey: ['reminders'],
+    queryFn: () => base44.entities.Reminder.list(),
   });
 
   // חישוב סטטיסטיקות
@@ -54,6 +66,26 @@ export default function Dashboard() {
     .filter(t => t.usageStats?.timesUsed > 0)
     .sort((a, b) => (b.usageStats?.timesUsed || 0) - (a.usageStats?.timesUsed || 0))
     .slice(0, 5);
+
+  const roiData = tools
+    .filter(tool => (tool.roiPercentage || 0) !== 0 || (tool.directRevenue || 0) > 0 || (tool.timeSavingsHours || 0) > 0)
+    .sort((a, b) => (b.roiPercentage || 0) - (a.roiPercentage || 0))
+    .slice(0, 6)
+    .map((tool) => ({
+      name: tool.name,
+      roi: tool.roiPercentage || 0,
+      revenue: tool.directRevenue || 0,
+      timeSavings: tool.timeSavingsHours || 0,
+    }));
+
+  const usageTrendData = tools
+    .filter(tool => tool.usageStats?.timesUsed > 0)
+    .slice(0, 8)
+    .map((tool) => ({
+      name: tool.name,
+      usage: tool.usageStats?.timesUsed || 0,
+      duration: tool.usageStats?.averageSessionDuration || 0,
+    }));
 
   const COLORS = ['#6366f1', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981'];
 
@@ -164,6 +196,49 @@ export default function Dashboard() {
             </ResponsiveContainer>
           </div>
         )}
+      </div>
+
+      {roiData.length > 0 && (
+        <div className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border border-gray-200 dark:border-gray-700">
+          <h2 className="text-base sm:text-lg font-bold mb-3 sm:mb-4">ROI ורווחיות לפי כלי</h2>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={roiData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" angle={-30} textAnchor="end" height={90} />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="roi" fill="#10b981" name="ROI %" />
+              <Bar dataKey="revenue" fill="#6366f1" name="הכנסה ישירה" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      )}
+
+      {usageTrendData.length > 0 && (
+        <div className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border border-gray-200 dark:border-gray-700">
+          <h2 className="text-base sm:text-lg font-bold mb-3 sm:mb-4">טרנדי שימוש בזמן</h2>
+          <ResponsiveContainer width="100%" height={280}>
+            <LineChart data={usageTrendData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Line type="monotone" dataKey="usage" stroke="#6366f1" name="כמות שימושים" strokeWidth={2} />
+              <Line type="monotone" dataKey="duration" stroke="#f59e0b" name="משך שימוש בדקות" strokeWidth={2} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6">
+        <div className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border border-gray-200 dark:border-gray-700">
+          <h2 className="text-base sm:text-lg font-bold mb-4">המלצות חכמות</h2>
+          <SmartRecommendations />
+        </div>
+
+        <ReminderCalendarView reminders={reminders.filter(item => !item.isCompleted && item.isActive)} subscriptions={subscriptions.filter(item => item.isActive)} onMoveReminder={() => {}} />
       </div>
 
       {/* כלים בשימוש תדיר */}
