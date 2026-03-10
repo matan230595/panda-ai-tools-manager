@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Star, Check, Minus, ExternalLink, TrendingUp, DollarSign, Sparkles, Loader2 } from 'lucide-react';
+import { X, Star, Check, Minus, ExternalLink, DollarSign, Sparkles, Loader2, Users, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -23,13 +23,13 @@ export default function CompareTools({ tools, onClose, isMobile = false }) {
   if (!tools || tools.length === 0) return null;
 
   const compareRows = [
-    { key: 'category', label: 'קטגוריה', render: (t) => t.category?.replace(/_/g, ' ') },
-    { key: 'pricing', label: 'תמחור', icon: DollarSign, render: (t) => t.pricing },
-    { key: 'priceUSD', label: 'מחיר חודשי', icon: DollarSign, render: (t) => t.priceUSD ? `$${t.priceUSD}` : 'חינם' },
+    { key: 'category', label: 'קטגוריה', render: (t) => t.category?.replace(/_/g, ' ') || '-' },
+    { key: 'pricing', label: 'תמחור', icon: DollarSign, render: (t) => t.pricing || '-' },
+    { key: 'price', label: 'מחיר חודשי', icon: DollarSign, render: (t) => t.priceILS ? `₪${t.priceILS}` : (t.priceUSD ? `$${t.priceUSD}` : 'חינם') },
     { key: 'rating', label: 'דירוג', icon: Star, render: (t) => t.rating ? `${t.rating} ⭐` : 'ללא דירוג' },
-    { key: 'popularity', label: 'פופולריות', icon: TrendingUp, render: (t) => t.popularity ? `${t.popularity}/5` : '-' },
+    { key: 'targetAudience', label: 'קהל יעד', icon: Users, render: (t) => t.targetAudience || '-' },
+    { key: 'platforms', label: 'פלטפורמות', icon: Globe, render: (t) => t.platforms?.length ? t.platforms.join(', ') : '-' },
     { key: 'features', label: 'תכונות', render: (t) => t.features?.length || 0 },
-    { key: 'integrations', label: 'אינטגרציות', render: (t) => t.integrations?.length || 0 },
     { key: 'prosAndCons', label: 'יתרונות/חסרונות', render: (t) => {
       const pros = t.prosAndCons?.pros?.length || 0;
       const cons = t.prosAndCons?.cons?.length || 0;
@@ -45,22 +45,24 @@ export default function CompareTools({ tools, onClose, isMobile = false }) {
         name: t.name,
         pricing: t.pricing,
         priceUSD: t.priceUSD,
+        priceILS: t.priceILS,
         features: t.features?.slice(0, 5),
         rating: t.rating,
         pros: t.prosAndCons?.pros?.slice(0, 3),
         cons: t.prosAndCons?.cons?.slice(0, 3),
         targetAudience: t.targetAudience,
-        usageStats: t.usageStats
+        platforms: t.platforms,
+        description: t.description
       }));
 
-      const prompt = `אתה יועץ AI מומחה בבחירת כלים. השווה את הכלים הבאים וספק המלצה אישית:
+      const prompt = `אתה יועץ AI מומחה בבחירת כלים. השווה את הכלים הבאים לצורך קבלת החלטה מושכלת:
 ${JSON.stringify(toolsInfo, null, 2)}
 
-נתח את כל פרט (מחיר, תכונות, דירוג, שימוש) וספק:
-1. כלי מומלץ הטוב ביותר עבור רוב המשתמשים
-2. כלי מומלץ לשימוש עתיר (power users)
-3. כלי הטוב ביותר לתקציב מוגבל
-4. סיכום 1-2 משפטים על ההבדל המהותי בין הכלים
+נתח את הכלים לפי מחיר, תכונות, קהל יעד, פלטפורמות, יתרונות וחסרונות, וספק:
+1. הכלי הכי מאוזן לרוב המשתמשים
+2. הכלי הכי משתלם מבחינת מחיר
+3. הכלי הכי חזק מבחינת יכולות
+4. סיכום קצר וברור על ההבדלים המרכזיים
 
 תשובה בעברית תקנית.`;
 
@@ -132,7 +134,7 @@ ${JSON.stringify(toolsInfo, null, 2)}
               ) : (
                 <>
                   <Sparkles className="w-4 h-4 ml-2" />
-                  בחר המלצה של AI
+                  צור סיכום AI
                 </>
               )}
             </Button>
@@ -183,20 +185,17 @@ ${JSON.stringify(toolsInfo, null, 2)}
           ))}
 
           {/* Features Detail */}
-          <div className="font-semibold text-xs md:text-sm text-gray-700 dark:text-gray-300">תכונות</div>
+          <div className="font-semibold text-xs md:text-sm text-gray-700 dark:text-gray-300">תכונות עיקריות</div>
           {tools.map((tool) => (
             <div key={tool.id} className="glass-effect rounded-lg p-2 md:p-4">
               {tool.features?.length > 0 ? (
                 <ul className="space-y-0.5 md:space-y-1">
-                  {tool.features.slice(0, 3).map((feature, idx) => (
+                  {tool.features.slice(0, 5).map((feature, idx) => (
                     <li key={idx} className="text-xs flex items-start gap-1 md:gap-2">
                       <Check className="w-2 md:w-3 h-2 md:h-3 text-green-500 flex-shrink-0 mt-0.5" />
-                      <span className="line-clamp-1">{feature}</span>
+                      <span>{feature}</span>
                     </li>
                   ))}
-                  {tool.features.length > 3 && (
-                    <li className="text-xs text-gray-500">+{tool.features.length - 3}</li>
-                  )}
                 </ul>
               ) : (
                 <div className="flex items-center justify-center">
@@ -206,16 +205,33 @@ ${JSON.stringify(toolsInfo, null, 2)}
             </div>
           ))}
 
-          {/* Pros & Cons */}
           <div className="font-semibold text-xs md:text-sm text-gray-700 dark:text-gray-300">יתרונות</div>
           {tools.map((tool) => (
             <div key={tool.id} className="glass-effect rounded-lg p-2 md:p-4">
               {tool.prosAndCons?.pros?.length > 0 ? (
                 <ul className="space-y-0.5">
-                  {tool.prosAndCons.pros.slice(0, 2).map((pro, idx) => (
+                  {tool.prosAndCons.pros.slice(0, 4).map((pro, idx) => (
                     <li key={idx} className="text-xs flex items-start gap-1">
                       <Check className="w-2 h-2 text-green-500 flex-shrink-0 mt-1" />
-                      <span className="line-clamp-1">{pro}</span>
+                      <span>{pro}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <Minus className="w-3 h-3 text-gray-400" />
+              )}
+            </div>
+          ))}
+
+          <div className="font-semibold text-xs md:text-sm text-gray-700 dark:text-gray-300">חסרונות</div>
+          {tools.map((tool) => (
+            <div key={tool.id} className="glass-effect rounded-lg p-2 md:p-4">
+              {tool.prosAndCons?.cons?.length > 0 ? (
+                <ul className="space-y-0.5">
+                  {tool.prosAndCons.cons.slice(0, 4).map((con, idx) => (
+                    <li key={idx} className="text-xs flex items-start gap-1">
+                      <Minus className="w-2 h-2 text-red-500 flex-shrink-0 mt-1" />
+                      <span>{con}</span>
                     </li>
                   ))}
                 </ul>
@@ -267,16 +283,30 @@ ${JSON.stringify(toolsInfo, null, 2)}
                 </div>
                 <div className="flex justify-between text-xs">
                   <span className="text-gray-600 dark:text-gray-400">מחיר:</span>
-                  <span className="font-medium">{tool.priceUSD ? `$${tool.priceUSD}` : 'חינם'}</span>
+                  <span className="font-medium">{tool.priceILS ? `₪${tool.priceILS}` : (tool.priceUSD ? `$${tool.priceUSD}` : 'חינם')}</span>
                 </div>
                 <div className="flex justify-between text-xs">
                   <span className="text-gray-600 dark:text-gray-400">דירוג:</span>
                   <span className="font-medium">{tool.rating ? `${tool.rating} ⭐` : 'ללא'}</span>
                 </div>
-                <div className="flex justify-between text-xs">
-                  <span className="text-gray-600 dark:text-gray-400">תכונות:</span>
-                  <span className="font-medium">{tool.features?.length || 0}</span>
-                </div>
+              </div>
+              <div className="space-y-1 border-t pt-2">
+                <div className="text-xs font-semibold text-gray-700 dark:text-gray-300">תכונות</div>
+                {(tool.features || []).slice(0, 4).map((feature, idx) => (
+                  <div key={idx} className="text-xs text-gray-600 dark:text-gray-400">• {feature}</div>
+                ))}
+              </div>
+              <div className="space-y-1 border-t pt-2">
+                <div className="text-xs font-semibold text-green-700">יתרונות</div>
+                {(tool.prosAndCons?.pros || []).slice(0, 2).map((pro, idx) => (
+                  <div key={idx} className="text-xs text-gray-600 dark:text-gray-400">• {pro}</div>
+                ))}
+              </div>
+              <div className="space-y-1 border-t pt-2">
+                <div className="text-xs font-semibold text-red-700">חסרונות</div>
+                {(tool.prosAndCons?.cons || []).slice(0, 2).map((con, idx) => (
+                  <div key={idx} className="text-xs text-gray-600 dark:text-gray-400">• {con}</div>
+                ))}
               </div>
               <Button
                 variant="outline"

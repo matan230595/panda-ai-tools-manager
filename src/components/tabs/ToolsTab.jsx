@@ -549,7 +549,7 @@ export default function ToolsTab({ settings, initialFilter }) {
                 <Button variant="outline" onClick={() => { setCompareMode(false); setSelectedForCompare([]); }} size="sm" className="text-xs">ביטול</Button>
                 <Button onClick={() => setCompareMode(false)} disabled={selectedForCompare.length < 2} className="bg-gradient-to-r from-green-500 to-emerald-600 text-xs" size="sm">
                   <GitCompare className="w-3 h-3 ml-1" />
-                  <span className="hidden sm:inline">({selectedForCompare.length})</span>
+                  <span className="hidden sm:inline">השווה ({selectedForCompare.length}/4)</span>
                 </Button>
               </div>
             )}
