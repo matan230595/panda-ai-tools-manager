@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import { getCurrentUser } from '@/components/hooks/userScopedData';
 import { 
   Link as LinkIcon, 
   Zap, 
@@ -101,12 +102,18 @@ export default function IntegrationsTab() {
 
   const { data: integrations = [] } = useQuery({
     queryKey: ['integrations'],
-    queryFn: () => base44.entities.Integration.list(),
+    queryFn: async () => {
+      const user = await getCurrentUser();
+      return base44.entities.Integration.filter({ created_by: user.email });
+    },
   });
 
   const { data: subscriptions = [] } = useQuery({
     queryKey: ['subscriptions'],
-    queryFn: () => base44.entities.Subscription.list(),
+    queryFn: async () => {
+      const user = await getCurrentUser();
+      return base44.entities.Subscription.filter({ created_by: user.email });
+    },
   });
 
   const monthlyExpenses = useMemo(() => subscriptions.filter(item => item.isActive), [subscriptions]);

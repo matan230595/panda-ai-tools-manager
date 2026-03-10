@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import { getCurrentUser } from '@/components/hooks/userScopedData';
 import { Sparkles, TrendingUp, DollarSign, Target, Calendar, Loader2, Download, BarChart3 } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { Button } from '@/components/ui/button';
@@ -15,7 +16,10 @@ export default function InsightsTab() {
 
   const { data: tools = [] } = useQuery({
     queryKey: ['tools'],
-    queryFn: () => base44.entities.AiTool.list(),
+    queryFn: async () => {
+      const user = await getCurrentUser();
+      return base44.entities.AiTool.filter({ created_by: user.email });
+    },
   });
 
   const generateInsights = async () => {

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import { getCurrentUser } from '@/components/hooks/userScopedData';
 import { Key, Calendar, DollarSign, CreditCard, Plus, Edit, Trash2, Search, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -27,12 +28,18 @@ export default function SubscriptionsTab() {
 
   const { data: subscriptions = [], isLoading } = useQuery({
     queryKey: ['subscriptions'],
-    queryFn: () => base44.entities.Subscription.list('-updated_date'),
+    queryFn: async () => {
+      const user = await getCurrentUser();
+      return base44.entities.Subscription.filter({ created_by: user.email }, '-updated_date');
+    },
   });
 
   const { data: tools = [] } = useQuery({
     queryKey: ['tools'],
-    queryFn: () => base44.entities.AiTool.list(),
+    queryFn: async () => {
+      const user = await getCurrentUser();
+      return base44.entities.AiTool.filter({ created_by: user.email });
+    },
   });
 
   const deleteMutation = useMutation({
