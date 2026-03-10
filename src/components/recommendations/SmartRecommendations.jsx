@@ -13,7 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import ToolLogo from '@/components/ToolLogo';
+
 import { toast } from 'sonner';
 
 export default function SmartRecommendations({ onSelectTool }) {
@@ -144,11 +144,17 @@ export default function SmartRecommendations({ onSelectTool }) {
       <Card className="hover:shadow-lg transition-all cursor-pointer group">
         <CardContent className="p-4">
           <div
-            className="flex items-start gap-3"
-            onClick={() => onSelectTool?.(tool)}
-          >
-            <ToolLogo tool={tool} size="md" />
-            <div className="flex-1 min-w-0">
+             className="flex items-start gap-3"
+             onClick={() => onSelectTool?.(tool)}
+           >
+             {tool.logo ? (
+               <img src={tool.logo} alt={tool.name} className="w-10 h-10 rounded-lg object-contain flex-shrink-0" />
+             ) : (
+               <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+                 <span className="text-xs font-bold text-white">{tool.name.charAt(0)}</span>
+               </div>
+             )}
+             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
                 <h4 className="font-semibold text-sm truncate">{tool.name}</h4>
                 {Icon && <Icon className={`w-3 h-3 ${color}`} />}
