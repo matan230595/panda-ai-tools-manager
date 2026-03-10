@@ -315,7 +315,7 @@ ${formData.url ? `URL: ${formData.url}` : ''}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="url">כתובת URL *</Label>
+              <Label htmlFor="url">כתובת URL * {isAutoFetchingMeta && <span className="text-xs text-indigo-500 ml-1">⏳ חילוץ metadata...</span>}</Label>
               <Input
                 id="url"
                 type="url"
@@ -328,24 +328,33 @@ ${formData.url ? `URL: ${formData.url}` : ''}
           </div>
 
           {/* כפתור מילוי אוטומטי */}
-          <Button
-            type="button"
-            onClick={handleAutofill}
-            disabled={isAutofilling || (!formData.name && !formData.url)}
-            className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700"
-          >
-            {isAutofilling ? (
-              <>
-                <Loader2 className="w-5 h-5 ml-2 animate-spin" />
-                ממלא אוטומטית...
-              </>
-            ) : (
-              <>
-                <Sparkles className="w-5 h-5 ml-2" />
-                מלא אוטומטית עם AI
-              </>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <Button
+              type="button"
+              onClick={handleAutofill}
+              disabled={isAutofilling || (!formData.name && !formData.url)}
+              className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700"
+            >
+              {isAutofilling ? (
+                <>
+                  <Loader2 className="w-4 h-4 ml-2 animate-spin" />
+                  ממלא אוטומטית...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-4 h-4 ml-2" />
+                  מלא אוטומטית עם AI
+                </>
+              )}
+            </Button>
+
+            {formData.logo && (
+              <div className="flex items-center gap-2 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                <img src={formData.logo} alt="logo" className="w-8 h-8 rounded object-contain" />
+                <span className="text-xs text-green-700 dark:text-green-300">✓ לוגו חולץ אוטומטית</span>
+              </div>
             )}
-          </Button>
+          </div>
 
           {/* תיאור קצר */}
           <div className="space-y-2">
