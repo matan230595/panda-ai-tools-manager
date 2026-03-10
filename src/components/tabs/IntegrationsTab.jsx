@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { 
@@ -28,6 +28,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { toast } from 'sonner';
+import { jsPDF } from 'jspdf';
 
 const AVAILABLE_INTEGRATIONS = [
   {
@@ -103,6 +104,14 @@ export default function IntegrationsTab() {
     queryFn: () => base44.entities.Integration.list(),
   });
 
+  const { data: subscriptions = [] } = useQuery({
+    queryKey: ['subscriptions'],
+    queryFn: () => base44.entities.Subscription.list(),
+  });
+
+  const monthlyExpenses = useMemo(() => subscriptions.filter(item => item.isActive), [subscriptions]);
+  const monthlyTotal = monthlyExpenses.reduce((sum, item) => sum + (item.priceMonthly || 0), 0);
+
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.Integration.create(data),
     onSuccess: () => {
@@ -165,6 +174,41 @@ export default function IntegrationsTab() {
     return integrations.some(i => i.name === integrationName && i.isEnabled);
   };
 
+  const exportMonthlyReportPDF = () => {
+    const doc = new jsPDF();
+    doc.setFontSize(16);
+    doc.text('Monthly AI Expenses Report', 14, 20);
+    doc.setFontSize(11);
+    doc.text(`Generated: ${new Date().toLocaleDateString('en-GB')}`, 14, 28);
+    doc.text(`Total Monthly Cost: ILS ${monthlyTotal.toFixed(0)}`, 14, 36);
+
+    let y = 50;
+    monthlyExpenses.forEach((item) => {
+      doc.text(`${item.toolName} - ILS ${item.priceMonthly || 0} - ${item.subscriptionType}`, 14, y);
+      y += 8;
+      if (y > 270) {
+        doc.addPage();
+        y = 20;
+      }
+    });
+
+    doc.save(`monthly-expenses-${new Date().toISOString().split('T')[0]}.pdf`);
+    toast.success('דוח PDF יוצא בהצלחה');
+  };
+
+  const exportMonthlyReportCSV = () => {
+    const headers = ['Tool Name', 'Subscription Type', 'Monthly Cost', 'Renewal Date'];
+    const rows = monthlyExpenses.map((item) => [item.toolName, item.subscriptionType, item.priceMonthly || 0, item.renewalDate || '']);
+    const csv = [headers.join(','), ...rows.map((row) => row.map((cell) => `"${cell}"`).join(','))].join('\n');
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `monthly-expenses-${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+    toast.success('דוח Excel/CSV יוצא בהצלחה');
+  };
+
   const categories = [
     { id: 'automation', label: 'אוטומציה', icon: Zap },
     { id: 'communication', label: 'תקשורת', icon: MessageSquare },
@@ -221,6 +265,42 @@ export default function IntegrationsTab() {
             <div className="text-3xl font-bold text-purple-600">
               {integrations.filter(i => i.category === 'webhook').length}
             </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">דוחות הוצאות</CardTitle>
+            <CardDescription>ייצוא חודשי מדויק עם הסבר קצר לכל קובץ.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <div className="text-sm text-gray-500">סה״כ עלות חודשית נוכחית: ₪{monthlyTotal.toFixed(0)}</div>
+            <Button className="w-full" onClick={exportMonthlyReportPDF}>ייצוא PDF</Button>
+            <Button className="w-full" variant="outline" onClick={exportMonthlyReportCSV}>ייצוא Excel / CSV</Button>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">משיכת עלויות אוטומטית</CardTitle>
+            <CardDescription>Stripe / חשבוניות / שירותי סליקה.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-2 text-sm">
+            <Badge variant="outline">מוכן לחיבור API</Badge>
+            <p className="text-gray-500">החיבור האוטומטי דורש מפתח API או חיבור שירות חיצוני, ולכן כרגע המצב הוא ידני עם ייצוא מלא.</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">גיבוי ענן</CardTitle>
+            <CardDescription>Google Drive לגיבוי JSON יומי.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-2 text-sm">
+            <Badge className="bg-amber-100 text-amber-800">ממתין לאישור Drive</Badge>
+            <p className="text-gray-500">הממשק הוכן ברמת האפליקציה, והשלב הבא הוא אישור Google Drive כדי לאפשר גיבוי אוטומטי.</p>
           </CardContent>
         </Card>
       </div>
