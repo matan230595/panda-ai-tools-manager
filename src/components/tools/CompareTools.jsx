@@ -36,14 +36,14 @@ export default function CompareTools({ tools, onClose, isMobile = false }) {
               {tools.map((tool) => (
                 <div key={tool.id} className="glass-effect rounded-xl p-4 text-center">
                   {tool.logo ? (
-                    <img src={tool.logo} alt={tool.name} className="w-16 h-16 mx-auto rounded-lg mb-2" />
+                    <img src={tool.logo} alt={tool.name} className="w-12 h-12 md:w-16 md:h-16 mx-auto rounded-lg mb-2" />
                   ) : (
-                    <div className="w-16 h-16 mx-auto rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center mb-2">
-                      <span className="text-white font-bold text-xl">{tool.name.charAt(0)}</span>
+                    <div className="w-12 h-12 md:w-16 md:h-16 mx-auto rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center mb-2">
+                      <span className="text-white font-bold text-sm md:text-xl">{tool.name.charAt(0)}</span>
                     </div>
                   )}
-                  <h3 className="font-bold text-lg mb-1">{tool.name}</h3>
-                  {tool.isFavorite && <Star className="w-5 h-5 fill-yellow-400 text-yellow-400 mx-auto" />}
+                  <h3 className="font-bold text-base md:text-lg mb-1">{tool.name}</h3>
+                  {tool.isFavorite && <Star className="w-4 md:w-5 h-4 md:h-5 fill-yellow-400 text-yellow-400 mx-auto" />}
                 </div>
               ))}
 
