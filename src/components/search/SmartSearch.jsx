@@ -21,53 +21,52 @@ export default function SmartSearch({ onSearch, tools }) {
   }, []);
 
   useEffect(() => {
-    if (searchTerm.length > 2) {
+    if (searchTerm.length > 1) {
       generateSuggestions();
     } else {
       setSuggestions([]);
     }
-  }, [searchTerm]);
+  }, [searchTerm, tools]);
 
   const generateSuggestions = () => {
-    const lowerSearch = searchTerm.toLowerCase();
-    
-    // חיפוש ישיר
-    const directMatches = tools.filter(t => 
-      t.name.toLowerCase().includes(lowerSearch) ||
-      t.description?.toLowerCase().includes(lowerSearch) ||
-      t.tags?.some(tag => tag.toLowerCase().includes(lowerSearch))
-    ).slice(0, 3);
+    const lowerSearch = searchTerm.toLowerCase().trim();
 
-    // חיפוש סמנטי פשוט
-    const semanticMatches = [];
-    const keywords = {
-      'עיצוב': ['עיצוב', 'גרפיקה', 'תמונות', 'לוגו', 'UI', 'דיזיין'],
-      'כתיבה': ['כתיבה', 'טקסט', 'תוכן', 'מאמרים', 'בלוג'],
-      'קוד': ['קוד', 'תכנות', 'פיתוח', 'development', 'code'],
-      'וידאו': ['וידאו', 'סרטון', 'עריכה', 'אנימציה'],
+    const scoreTool = (tool) => {
+      const name = tool.name?.toLowerCase() || '';
+      const description = tool.description?.toLowerCase() || '';
+      const tags = (tool.tags || []).join(' ').toLowerCase();
+      const features = (tool.features || []).join(' ').toLowerCase();
+      const haystack = `${name} ${description} ${tags} ${features}`;
+
+      let score = 0;
+      if (name.includes(lowerSearch)) score += 8;
+      if (description.includes(lowerSearch)) score += 4;
+      if (tags.includes(lowerSearch)) score += 5;
+      if (features.includes(lowerSearch)) score += 3;
+
+      const terms = lowerSearch.split(/\s+/).filter(Boolean);
+      terms.forEach((term) => {
+        if (haystack.includes(term)) score += 2;
+      });
+
+      const similarityBase = new Set([...tags.split(/\s+/), ...features.split(/\s+/)]);
+      if (terms.some((term) => similarityBase.has(term))) score += 3;
+
+      return score;
     };
 
-    Object.entries(keywords).forEach(([category, words]) => {
-      if (words.some(w => lowerSearch.includes(w))) {
-        const categoryTools = tools.filter(t => 
-          t.category?.includes(category) || 
-          t.tags?.some(tag => words.includes(tag.toLowerCase()))
-        );
-        semanticMatches.push(...categoryTools.slice(0, 2));
-      }
-    });
+    const ranked = tools
+      .map((tool) => ({ data: tool, score: scoreTool(tool) }))
+      .filter((item) => item.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 6)
+      .map((item, index) => ({
+        type: index < 3 ? 'tool' : 'semantic',
+        data: item.data,
+        score: item.score,
+      }));
 
-    const allSuggestions = [
-      ...directMatches.map(t => ({ type: 'tool', data: t })),
-      ...semanticMatches.map(t => ({ type: 'semantic', data: t }))
-    ];
-
-    // הסרת כפילויות
-    const unique = allSuggestions.filter((item, index, self) =>
-      index === self.findIndex(t => t.data.id === item.data.id)
-    );
-
-    setSuggestions(unique.slice(0, 5));
+    setSuggestions(ranked);
     setShowSuggestions(true);
   };
 
@@ -177,6 +176,7 @@ export default function SmartSearch({ onSearch, tools }) {
                   <div className="flex-1 text-right">
                     <div className="font-medium">{suggestion.data.name}</div>
                     <div className="text-xs text-gray-500">{suggestion.data.description?.slice(0, 50)}...</div>
+                    {suggestion.type === 'semantic' && <div className="text-[11px] text-indigo-500 mt-1">כלי דומה שכבר קיים אצלך</div>}
                   </div>
                   {suggestion.type === 'semantic' && (
                     <Badge variant="outline" className="text-xs">
