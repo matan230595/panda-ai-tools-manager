@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import { getCurrentUser } from '@/components/hooks/userScopedData';
 import { Users, Plus, Settings, Trash2, UserPlus, Share2, Eye, Edit3, Crown, Check, Link2 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -27,12 +28,18 @@ export default function CollaborationTab() {
 
   const { data: workspaces = [], isLoading: isLoadingWorkspaces } = useQuery({
     queryKey: ['workspaces'],
-    queryFn: () => base44.entities.Workspace.list('-updated_date'),
+    queryFn: async () => {
+      const user = await getCurrentUser();
+      return base44.entities.Workspace.filter({ created_by: user.email }, '-updated_date');
+    },
   });
 
   const { data: tools = [] } = useQuery({
     queryKey: ['tools'],
-    queryFn: () => base44.entities.AiTool.list(),
+    queryFn: async () => {
+      const user = await getCurrentUser();
+      return base44.entities.AiTool.filter({ created_by: user.email });
+    },
   });
 
   const createWorkspaceMutation = useMutation({

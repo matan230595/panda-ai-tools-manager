@@ -1,6 +1,7 @@
 import React from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import { getCurrentUser } from '@/components/hooks/userScopedData';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Calendar, Loader2 } from 'lucide-react';
@@ -11,15 +12,22 @@ export default function GoogleCalendarSync() {
 
   const { data: reminders = [] } = useQuery({
     queryKey: ['calendar-reminders'],
-    queryFn: () => base44.entities.Reminder.filter({
-      isActive: true,
-      isCompleted: false,
-    }),
+    queryFn: async () => {
+      const user = await getCurrentUser();
+      return base44.entities.Reminder.filter({
+        created_by: user.email,
+        isActive: true,
+        isCompleted: false,
+      });
+    },
   });
 
   const { data: integrations = [] } = useQuery({
     queryKey: ['integrations'],
-    queryFn: () => base44.entities.Integration.list(),
+    queryFn: async () => {
+      const user = await getCurrentUser();
+      return base44.entities.Integration.filter({ created_by: user.email });
+    },
   });
 
   const calendarIntegration = integrations.find((item) => item.name === 'Google Calendar');

@@ -1,6 +1,7 @@
 import { useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
 import { base44 } from '@/api/base44Client';
+import { getCurrentUser } from '@/components/hooks/userScopedData';
 
 /**
  * Hook לניהול התראות חכמות על עדכונים חשובים ושימוש חריג ב-API
@@ -66,9 +67,10 @@ export function useSmartNotifications(settings, queryClient) {
   // בדוק עדכונים חשובים
   const checkImportantUpdates = useCallback(async () => {
     try {
-      const tools = await base44.entities.AiTool.list();
-      const subscriptions = await base44.entities.Subscription.list();
-      const toolTasks = await base44.entities.ToolTask.list().catch(() => []);
+      const user = await getCurrentUser();
+      const tools = await base44.entities.AiTool.filter({ created_by: user.email });
+      const subscriptions = await base44.entities.Subscription.filter({ created_by: user.email });
+      const toolTasks = await base44.entities.ToolTask.filter({ created_by: user.email }).catch(() => []);
 
       // בדוק מנויים שעומדים להסתיים תוך 7 ימים
       const soon = new Date();

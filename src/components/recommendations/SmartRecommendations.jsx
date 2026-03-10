@@ -24,12 +24,18 @@ export default function SmartRecommendations({ onSelectTool }) {
 
   const { data: tools = [] } = useQuery({
     queryKey: ['tools'],
-    queryFn: () => base44.entities.AiTool.list(),
+    queryFn: async () => {
+      const user = await base44.auth.me();
+      return base44.entities.AiTool.filter({ created_by: user.email });
+    },
   });
 
   const { data: ratings = [] } = useQuery({
     queryKey: ['toolRatings'],
-    queryFn: () => base44.entities.UserToolRating.list().catch(() => []),
+    queryFn: async () => {
+      const user = await base44.auth.me();
+      return base44.entities.UserToolRating.filter({ userEmail: user.email }).catch(() => []);
+    },
   });
 
   const { data: currentUser } = useQuery({

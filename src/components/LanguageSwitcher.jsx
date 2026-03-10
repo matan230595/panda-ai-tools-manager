@@ -1,6 +1,7 @@
 import React from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import { getCurrentUser } from '@/components/hooks/userScopedData';
 import { Button } from '@/components/ui/button';
 
 export default function LanguageSwitcher() {
@@ -9,8 +10,9 @@ export default function LanguageSwitcher() {
   const { data: settings } = useQuery({
     queryKey: ['settings'],
     queryFn: async () => {
-      const list = await base44.entities.Settings.list();
-      return list[0];
+      const user = await getCurrentUser();
+      const list = await base44.entities.Settings.filter({ created_by: user.email });
+      return list[0] || null;
     },
   });
 

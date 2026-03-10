@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import { getCurrentUser } from '@/components/hooks/userScopedData';
 import { Key, Palette, Download, Trash2, Save, AlertCircle, ExternalLink, CheckCircle, Zap, Coins } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -220,8 +221,9 @@ export default function SettingsTab({ settings, onLogout }) {
 
   const handleExportAll = async () => {
     try {
-      const tools = await base44.entities.AiTool.list();
-      const conversations = await base44.entities.Conversation.list();
+      const user = await getCurrentUser();
+      const tools = await base44.entities.AiTool.filter({ created_by: user.email });
+      const conversations = await base44.entities.Conversation.filter({ created_by: user.email });
       const exportData = { tools, conversations, settings: formData, exportDate: new Date().toISOString() };
       const dataStr = JSON.stringify(exportData, null, 2);
       const dataBlob = new Blob([dataStr], { type: 'application/json' });
@@ -238,9 +240,10 @@ export default function SettingsTab({ settings, onLogout }) {
 
   const handleResetAll = async () => {
     try {
-      const tools = await base44.entities.AiTool.list();
+      const user = await getCurrentUser();
+      const tools = await base44.entities.AiTool.filter({ created_by: user.email });
       for (const tool of tools) await base44.entities.AiTool.delete(tool.id);
-      const conversations = await base44.entities.Conversation.list();
+      const conversations = await base44.entities.Conversation.filter({ created_by: user.email });
       for (const conv of conversations) await base44.entities.Conversation.delete(conv.id);
       queryClient.invalidateQueries();
       toast.success('כל הנתונים נמחקו בהצלחה');
