@@ -132,7 +132,7 @@ export default function ToolCard({
       {/* תוכן הכרטיס */}
       <div className={`space-y-2 sm:space-y-3 md:space-y-4 ${onToggleSelect ? 'mt-8 sm:mt-8' : 'mt-5 sm:mt-6'}`}>
         {/* לוגו ושם */}
-          <div className="flex items-start gap-2 sm:gap-3">
+        <div className="flex items-start gap-2 sm:gap-2.5 md:gap-3">
             {tool.logo ? (
               <img 
                 src={tool.logo} 
