@@ -51,6 +51,7 @@ export default function ToolForm({ tool, onClose, onSave }) {
   const [newIntegration, setNewIntegration] = useState('');
   const [newTag, setNewTag] = useState('');
   const [isAutofilling, setIsAutofilling] = useState(false);
+  const [isAutoFetchingMeta, setIsAutoFetchingMeta] = useState(false);
 
   const categories = [
     'עיבוד_שפה', 'יצירת_תמונות', 'וידאו', 'קוד', 'עיצוב', 
@@ -63,19 +64,69 @@ export default function ToolForm({ tool, onClose, onSave }) {
     const calculateILS = async () => {
       if (formData.priceUSD > 0) {
         try {
-          // קבלת שער דולר נוכחי
           const response = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
           const data = await response.json();
           const ilsRate = data.rates.ILS;
           handleChange('priceILS', Math.round(formData.priceUSD * ilsRate));
         } catch (error) {
-          // אם נכשל, השתמש בשער ברירת מחדל
           handleChange('priceILS', Math.round(formData.priceUSD * 3.7));
         }
       }
     };
     calculateILS();
   }, [formData.priceUSD]);
+
+  // חילוץ Meta Data מ-URL (לוגו, תיאור)
+  useEffect(() => {
+    const extractMetadata = async () => {
+      if (!formData.url || formData.logo || isAutoFetchingMeta) return;
+
+      setIsAutoFetchingMeta(true);
+      try {
+        const url = new URL(formData.url);
+        const domain = url.hostname;
+        
+        // נסה לחלץ לוגו מ-favicon
+        const faviconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
+        
+        // נסה לקבל OG image ותיאור
+        const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(formData.url)}`);
+        const data = await response.json();
+        
+        if (data.contents) {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(data.contents, 'text/html');
+          
+          // חלץ OG image
+          const ogImage = doc.querySelector('meta[property="og:image"]')?.content;
+          if (ogImage && !formData.logo) {
+            handleChange('logo', ogImage);
+          }
+          
+          // חלץ תיאור אם לא קיים
+          if (!formData.description) {
+            const ogDescription = doc.querySelector('meta[property="og:description"]')?.content ||
+                                 doc.querySelector('meta[name="description"]')?.content;
+            if (ogDescription) {
+              handleChange('description', ogDescription.substring(0, 200));
+            }
+          }
+        }
+        
+        // תמיד הוסף favicon כגיבוי
+        if (!formData.logo) {
+          handleChange('logo', faviconUrl);
+        }
+      } catch (error) {
+        console.log('שגיאה בחילוץ metadata:', error);
+      } finally {
+        setIsAutoFetchingMeta(false);
+      }
+    };
+
+    const debounce = setTimeout(extractMetadata, 800);
+    return () => clearTimeout(debounce);
+  }, [formData.url]);
 
   const handleChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
