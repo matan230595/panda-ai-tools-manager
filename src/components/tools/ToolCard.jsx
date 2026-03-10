@@ -14,6 +14,7 @@ import {
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import { toast } from 'sonner';
+import { base44 } from '@/api/base44Client';
 import ToolStatsDisplay from '@/components/tools/ToolStatsDisplay';
 
 export default function ToolCard({ 
@@ -85,7 +86,10 @@ export default function ToolCard({
       `}
       role="article"
       aria-label={`כרטיס כלי: ${tool.name}`}
-      onClick={() => onClick?.(tool)}
+      onClick={() => {
+        base44.functions.invoke('trackToolUsage', { toolId: tool.id, actionType: 'click' }).catch(() => {});
+        onClick?.(tool);
+      }}
     >
       {/* Drag Handle */}
       <div 
