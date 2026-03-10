@@ -109,10 +109,11 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-6">
           <Tabs defaultValue="overview" className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-5">
               <TabsTrigger value="overview">סקירה</TabsTrigger>
               <TabsTrigger value="details">פרטים</TabsTrigger>
               <TabsTrigger value="pricing">מחירים</TabsTrigger>
+              <TabsTrigger value="credentials">👤 גישה</TabsTrigger>
               <TabsTrigger value="notes">הערות</TabsTrigger>
             </TabsList>
 
