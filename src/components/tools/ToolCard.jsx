@@ -105,21 +105,22 @@ export default function ToolCard({
       {/* תוכן הכרטיס */}
       <div className="space-y-3 sm:space-y-4 mt-6 sm:mt-8">
         {/* לוגו ושם */}
-        <div className="flex items-start gap-2 sm:gap-3">
-          {tool.logo ? (
-            <img 
-              src={tool.logo} 
-              alt={`${tool.name} logo`}
-              className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl object-cover shadow-md flex-shrink-0"
-              loading="lazy"
-            />
-          ) : (
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-md flex-shrink-0">
-              <span className="text-white font-bold text-base sm:text-lg">
-                {tool.name.charAt(0)}
-              </span>
+          <div className="flex items-start gap-2 sm:gap-3">
+            {tool.logo ? (
+              <img 
+                src={tool.logo} 
+                alt={`${tool.name} logo`}
+                className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl object-cover shadow-md flex-shrink-0"
+                loading="lazy"
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                  e.target.nextElementSibling.style.display = 'flex';
+                }}
+              />
+            ) : null}
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-md flex-shrink-0" style={tool.logo ? {display: 'none'} : {}}>
+              <Package className="w-5 sm:w-6 h-5 sm:h-6 text-white" />
             </div>
-          )}
           
           <div className="flex-1 min-w-0">
             <h3 className="font-bold text-base sm:text-lg text-gray-900 dark:text-white truncate">
