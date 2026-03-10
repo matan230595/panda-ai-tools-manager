@@ -385,6 +385,46 @@ export default function ToolsTab({ settings, initialFilter }) {
     });
   };
 
+  const handleQuickUpdate = async (toolId, patch) => {
+    await base44.entities.AiTool.update(toolId, patch);
+    queryClient.invalidateQueries(['tools']);
+    toast.success('הכלי עודכן');
+  };
+
+  const handleMergeTools = async (primaryTool, duplicateTool) => {
+    const mergedFeatures = [...new Set([...(primaryTool.features || []), ...(duplicateTool.features || [])])];
+    const mergedTags = [...new Set([...(primaryTool.tags || []), ...(duplicateTool.tags || [])])];
+    const mergedIntegrations = [...new Set([...(primaryTool.integrations || []), ...(duplicateTool.integrations || [])])];
+    const mergedNotes = [primaryTool.notes, duplicateTool.notes, primaryTool.personalNotes, duplicateTool.personalNotes].filter(Boolean).join('\n\n');
+    const mergedRevenue = (primaryTool.directRevenue || 0) + (duplicateTool.directRevenue || 0);
+    const mergedTimeSavings = (primaryTool.timeSavingsHours || 0) + (duplicateTool.timeSavingsHours || 0);
+    const mergedUsageStats = {
+      ...(primaryTool.usageStats || {}),
+      timesUsed: (primaryTool.usageStats?.timesUsed || 0) + (duplicateTool.usageStats?.timesUsed || 0),
+      totalCostPerMonth: Math.max(primaryTool.usageStats?.totalCostPerMonth || 0, duplicateTool.usageStats?.totalCostPerMonth || 0),
+      averageSessionDuration: Math.max(primaryTool.usageStats?.averageSessionDuration || 0, duplicateTool.usageStats?.averageSessionDuration || 0),
+      lastUsedDate: primaryTool.usageStats?.lastUsedDate || duplicateTool.usageStats?.lastUsedDate,
+    };
+
+    await base44.entities.AiTool.update(primaryTool.id, {
+      ...primaryTool,
+      description: primaryTool.description || duplicateTool.description,
+      detailedDescription: primaryTool.detailedDescription || duplicateTool.detailedDescription,
+      features: mergedFeatures,
+      tags: mergedTags,
+      integrations: mergedIntegrations,
+      notes: mergedNotes,
+      personalNotes: mergedNotes,
+      directRevenue: mergedRevenue,
+      timeSavingsHours: mergedTimeSavings,
+      usageStats: mergedUsageStats,
+    });
+
+    await base44.entities.AiTool.delete(duplicateTool.id);
+    queryClient.invalidateQueries(['tools']);
+    toast.success(`בוצע מיזוג של ${duplicateTool.name} לתוך ${primaryTool.name}`);
+  };
+
   // Grid classes
   const gridClasses = {
     grid: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3 md:gap-4 lg:gap-6',
@@ -445,6 +485,15 @@ export default function ToolsTab({ settings, initialFilter }) {
             >
               <Sparkles className="w-4 h-4 ml-1" />
               המלצות
+            </Button>
+
+            <Button
+              variant="outline"
+              onClick={() => setShowDuplicatesDialog(true)}
+              size="sm"
+              className="text-xs"
+            >
+              נקה כפילויות
             </Button>
 
             {/* export/import - אמצע-ימין */}
@@ -526,6 +575,7 @@ export default function ToolsTab({ settings, initialFilter }) {
         sortBy={sortBy}
         onSortChange={setSortBy}
         resultsCount={filteredAndSortedTools.length}
+        tools={tools}
       />
 
       {/* רשימת כלים */}
@@ -577,6 +627,7 @@ export default function ToolsTab({ settings, initialFilter }) {
         <DuplicateDetectorDialog
           tools={tools}
           onDelete={handleDelete}
+          onMerge={handleMergeTools}
           onClose={() => setShowDuplicatesDialog(false)}
         />
       )}
@@ -590,6 +641,7 @@ export default function ToolsTab({ settings, initialFilter }) {
           onDelete={handleDelete}
           onToggleFavorite={handleToggleFavorite}
           onManageSubscription={setManagingSubscription}
+          onQuickUpdate={handleQuickUpdate}
         />
       )}
 

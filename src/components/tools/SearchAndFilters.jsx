@@ -20,6 +20,7 @@ export default function SearchAndFilters({
   sortBy,
   onSortChange,
   resultsCount,
+  tools = [],
 }) {
   const sortOptions = [
     { value: 'updated', label: 'עדכון אחרון' },
@@ -35,7 +36,7 @@ export default function SearchAndFilters({
     <div className="glass-effect rounded-lg p-2 shadow-md border border-indigo-100 dark:border-indigo-900">
       <div className="flex items-center gap-1 flex-nowrap overflow-x-auto pb-1">
         <div className="flex-1 min-w-0">
-          <SmartSearch onSearch={onSearchChange} tools={[]} />
+          <SmartSearch onSearch={onSearchChange} tools={tools} />
         </div>
 
         <Select value={sortBy} onValueChange={onSortChange}>
