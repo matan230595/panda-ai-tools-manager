@@ -22,7 +22,9 @@ export default function ToolCard({
   onToggleFavorite,
   onClick,
   isDragging = false,
-  dragHandleProps = {}
+  dragHandleProps = {},
+  isSelected = false,
+  onToggleSelect
 }) {
   const [copied, setCopied] = useState(false);
 
