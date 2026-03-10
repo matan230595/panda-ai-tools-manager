@@ -1,298 +1,433 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { Bell, Plus, X, Calendar, AlertCircle, Check, Clock } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Bell, Plus, Trash2, Check, AlertCircle, Clock, Sparkles, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Switch } from '@/components/ui/switch';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer';
 import { toast } from 'sonner';
-import { format, addDays, isBefore, isToday } from 'date-fns';
-import { he } from 'date-fns/locale';
-
-/**
- * מודול תזכורות - מאופשר לניהול חידושי מנויים וכלים שלא בשימוש
- * אופציונלי: ניתן לבטל בהגדרות אם לא נחוץ
- * 
- * תכונות עיקריות:
- * - תזכורות אוטומטיות 7 ימים לפני חידוש מנוי
- * - זיהוי כלים שלא בשימוש (30+ ימים)
- * - דירוגי עדיפות (דחוף, בינוני, נמוך)
- * - סטטיסטיקות עיצוב
- */
 
 export default function RemindersTab() {
   const queryClient = useQueryClient();
-  const [autoReminders, setAutoReminders] = useState(true);
-
-  const { data: subscriptions = [] } = useQuery({
-    queryKey: ['subscriptions'],
-    queryFn: () => base44.entities.Subscription.list(),
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [showForm, setShowForm] = useState(false);
+  const [editingReminder, setEditingReminder] = useState(null);
+  const [formData, setFormData] = useState({
+    toolId: '',
+    toolName: '',
+    reminderType: 'subscription_expiry',
+    reminderDate: '',
+    reminderTime: '09:00',
+    message: '',
+    priority: 'medium',
+    daysBeforeAlert: 7,
+    subscriptionRenewalDate: ''
   });
 
+  // טעינת כלים
   const { data: tools = [] } = useQuery({
     queryKey: ['tools'],
     queryFn: () => base44.entities.AiTool.list(),
   });
 
-  const reminders = React.useMemo(() => {
-    const result = [];
+  // טעינת תזכורות
+  const { data: reminders = [], isLoading } = useQuery({
+    queryKey: ['reminders'],
+    queryFn: () => base44.entities.Reminder.list(),
+  });
 
-    // תזכורות חידוש מנוי
-    subscriptions.forEach(sub => {
-      if (!sub.renewalDate || !sub.isActive) return;
+  // יצירת תזכורת
+  const createMutation = useMutation({
+    mutationFn: (data) => base44.entities.Reminder.create(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['reminders']);
+      setShowForm(false);
+      resetForm();
+      toast.success('תזכורת נוספה בהצלחה! 🔔');
+    },
+    onError: () => toast.error('שגיאה בהוספת התזכורת'),
+  });
+
+  // עדכון תזכורת
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }) => base44.entities.Reminder.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['reminders']);
+      setShowForm(false);
+      setEditingReminder(null);
+      resetForm();
+      toast.success('התזכורת עודכנה בהצלחה! ✅');
+    },
+    onError: () => toast.error('שגיאה בעדכון התזכורת'),
+  });
+
+  // מחיקת תזכורת
+  const deleteMutation = useMutation({
+    mutationFn: (id) => base44.entities.Reminder.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['reminders']);
+      toast.success('התזכורת נמחקה');
+    },
+    onError: () => toast.error('שגיאה במחיקת התזכורת'),
+  });
+
+  // סימון כבוצע
+  const completeMutation = useMutation({
+    mutationFn: ({ id, reminder }) => base44.entities.Reminder.update(id, { ...reminder, isCompleted: !reminder.isCompleted, completedDate: !reminder.isCompleted ? new Date().toISOString() : null }),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['reminders']);
+      toast.success('התזכורת עודכנה! ✓');
+    }
+  });
+
+  const resetForm = () => {
+    setFormData({
+      toolId: '',
+      toolName: '',
+      reminderType: 'subscription_expiry',
+      reminderDate: '',
+      reminderTime: '09:00',
+      message: '',
+      priority: 'medium',
+      daysBeforeAlert: 7,
+      subscriptionRenewalDate: ''
+    });
+    setEditingReminder(null);
+  };
+
+  const handleSelectTool = (toolId) => {
+    const tool = tools.find(t => t.id === toolId);
+    if (tool) {
+      setFormData(prev => ({
+        ...prev,
+        toolId: tool.id,
+        toolName: tool.name
+      }));
+    }
+  };
+
+  const handleGenerateReminders = async () => {
+    try {
+      const subscriptionTools = tools.filter(t => t.subscriptionType && t.subscriptionType !== 'חינמי');
       
-      const renewalDate = new Date(sub.renewalDate);
-      const daysUntil = Math.ceil((renewalDate - new Date()) / (1000 * 60 * 60 * 24));
-
-      if (daysUntil <= 7 && daysUntil >= 0) {
-        result.push({
-          id: `renewal-${sub.id}`,
-          type: 'renewal',
-          title: `חידוש מנוי: ${sub.toolName}`,
-          description: `המנוי מתחדש בעוד ${daysUntil} ימים`,
-          date: renewalDate,
-          priority: daysUntil <= 1 ? 'high' : daysUntil <= 3 ? 'medium' : 'low',
-          tool: sub.toolName
-        });
-      }
-    });
-
-    // תזכורות לכלים שלא בשימוש
-    tools.forEach(tool => {
-      if (!tool.lastUsed || !tool.hasSubscription) return;
-      
-      const lastUsedDate = new Date(tool.lastUsed);
-      const daysSinceUse = Math.floor((Date.now() - lastUsedDate) / (1000 * 60 * 60 * 24));
-
-      if (daysSinceUse >= 30) {
-        result.push({
-          id: `unused-${tool.id}`,
-          type: 'unused',
-          title: `כלי לא בשימוש: ${tool.name}`,
-          description: `לא השתמשת ב-${daysSinceUse} ימים - שקול לבטל מנוי`,
-          date: addDays(lastUsedDate, 30),
-          priority: daysSinceUse >= 60 ? 'high' : 'medium',
-          tool: tool.name
-        });
-      }
-    });
-
-    // מיון לפי עדיפות ותאריך
-    return result.sort((a, b) => {
-      const priorityOrder = { high: 0, medium: 1, low: 2 };
-      if (priorityOrder[a.priority] !== priorityOrder[b.priority]) {
-        return priorityOrder[a.priority] - priorityOrder[b.priority];
-      }
-      return a.date - b.date;
-    });
-  }, [subscriptions, tools]);
-
-  const dismissReminder = (reminderId) => {
-    // TODO: שמור dismissed reminders ב-localStorage או DB
-    toast.success('התזכורת הוסרה');
-  };
-
-  const priorityColors = {
-    high: 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300',
-    medium: 'bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-300',
-    low: 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300'
-  };
-
-  const typeIcons = {
-    renewal: Calendar,
-    unused: AlertCircle
-  };
-
-  useEffect(() => {
-    // בדיקת תזכורות כל דקה
-    const interval = setInterval(() => {
-      reminders.forEach(reminder => {
-        if (isToday(reminder.date) && reminder.priority === 'high') {
-          toast.warning(reminder.title, {
-            description: reminder.description,
-            duration: 10000
+      for (const tool of subscriptionTools) {
+        const existingReminder = reminders.find(r => r.toolId === tool.id && r.reminderType === 'subscription_expiry' && !r.isCompleted);
+        
+        if (!existingReminder) {
+          const renewalDate = new Date();
+          renewalDate.setDate(renewalDate.getDate() + 30);
+          
+          await createMutation.mutateAsync({
+            toolId: tool.id,
+            toolName: tool.name,
+            reminderType: 'subscription_expiry',
+            reminderDate: renewalDate.toISOString().split('T')[0],
+            reminderTime: '09:00',
+            message: `חידוש מנוי עבור ${tool.name}`,
+            priority: 'high',
+            daysBeforeAlert: 7,
+            subscriptionRenewalDate: renewalDate.toISOString().split('T')[0]
           });
         }
+      }
+      
+      toast.success(`${subscriptionTools.length} תזכורות נוצרו אוטומטית! 🎯`);
+    } catch (error) {
+      toast.error('שגיאה בהנדסת התזכורות');
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!formData.toolId || !formData.reminderDate || !formData.message) {
+      toast.error('יש למלא את כל השדות הנדרשים');
+      return;
+    }
+
+    if (editingReminder) {
+      updateMutation.mutate({
+        id: editingReminder.id,
+        data: { ...editingReminder, ...formData }
       });
-    }, 60000);
+    } else {
+      createMutation.mutate(formData);
+    }
+  };
 
-    return () => clearInterval(interval);
-  }, [reminders]);
+  const activeReminders = reminders.filter(r => !r.isCompleted && r.isActive);
+  const completedReminders = reminders.filter(r => r.isCompleted);
 
-  return (
-    <div className="max-w-7xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl md:text-4xl font-bold gradient-text mb-2">
-            תזכורות אוטומטיות
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            אל תפספס חידושי מנויים וכלים שלא בשימוש
-          </p>
+  const priorityColor = {
+    low: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
+    medium: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
+    high: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
+  };
+
+  const ReminderForm = () => (
+    <div className="space-y-4 p-4 md:p-6">
+      <div className="space-y-2">
+        <Label htmlFor="tool">בחר כלי</Label>
+        <Select value={formData.toolId} onValueChange={handleSelectTool}>
+          <SelectTrigger id="tool">
+            <SelectValue placeholder="בחר כלי..." />
+          </SelectTrigger>
+          <SelectContent>
+            {tools.map(tool => (
+              <SelectItem key={tool.id} value={tool.id}>
+                {tool.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="reminderType">סוג התזכורת</Label>
+        <Select 
+          value={formData.reminderType} 
+          onValueChange={(val) => setFormData(prev => ({ ...prev, reminderType: val }))}
+        >
+          <SelectTrigger id="reminderType">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="subscription_expiry">תפוגת מנוי</SelectItem>
+            <SelectItem value="usage_check">בדיקת שימוש</SelectItem>
+            <SelectItem value="price_alert">התראת מחיר</SelectItem>
+            <SelectItem value="custom">מותאם אישית</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <div className="space-y-2">
+          <Label htmlFor="reminderDate">תאריך התזכורת</Label>
+          <Input
+            id="reminderDate"
+            type="date"
+            value={formData.reminderDate}
+            onChange={(e) => setFormData(prev => ({ ...prev, reminderDate: e.target.value }))}
+            required
+          />
         </div>
-
-        <div className="flex items-center gap-2">
-          <Label htmlFor="auto-reminders">תזכורות אוטומטיות</Label>
-          <Switch
-            id="auto-reminders"
-            checked={autoReminders}
-            onCheckedChange={setAutoReminders}
+        <div className="space-y-2">
+          <Label htmlFor="reminderTime">שעה</Label>
+          <Input
+            id="reminderTime"
+            type="time"
+            value={formData.reminderTime}
+            onChange={(e) => setFormData(prev => ({ ...prev, reminderTime: e.target.value }))}
           />
         </div>
       </div>
 
-      {/* סטטיסטיקות */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">
-              תזכורות פעילות
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-purple-600">
-              {reminders.length}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">
-              חידושים השבוע
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-orange-600">
-              {reminders.filter(r => r.type === 'renewal').length}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">
-              דחוף
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-red-600">
-              {reminders.filter(r => r.priority === 'high').length}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">
-              כלים לא בשימוש
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-blue-600">
-              {reminders.filter(r => r.type === 'unused').length}
-            </div>
-          </CardContent>
-        </Card>
+      <div className="space-y-2">
+        <Label htmlFor="message">הודעה</Label>
+        <Input
+          id="message"
+          value={formData.message}
+          onChange={(e) => setFormData(prev => ({ ...prev, message: e.target.value }))}
+          placeholder="הודעת התזכורת..."
+          required
+        />
       </div>
 
-      {/* רשימת תזכורות */}
-      <div className="space-y-3">
-        {reminders.length === 0 ? (
-          <Card>
-            <CardContent className="flex flex-col items-center justify-center py-12">
-              <Check className="w-16 h-16 text-green-500 mb-4" />
-              <h3 className="text-xl font-bold mb-2">מעולה!</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                אין תזכורות פעילות כרגע
-              </p>
-            </CardContent>
-          </Card>
-        ) : (
-          reminders.map(reminder => {
-            const Icon = typeIcons[reminder.type];
-            return (
-              <Card key={reminder.id} className={`border-r-4 ${
-                reminder.priority === 'high' ? 'border-r-red-500' :
-                reminder.priority === 'medium' ? 'border-r-orange-500' :
-                'border-r-blue-500'
-              }`}>
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-start gap-3">
-                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                        reminder.priority === 'high' ? 'bg-red-100 dark:bg-red-900/20' :
-                        reminder.priority === 'medium' ? 'bg-orange-100 dark:bg-orange-900/20' :
-                        'bg-blue-100 dark:bg-blue-900/20'
-                      }`}>
-                        <Icon className={`w-5 h-5 ${
-                          reminder.priority === 'high' ? 'text-red-600' :
-                          reminder.priority === 'medium' ? 'text-orange-600' :
-                          'text-blue-600'
-                        }`} />
+      <div className="space-y-2">
+        <Label htmlFor="priority">עדיפות</Label>
+        <Select 
+          value={formData.priority} 
+          onValueChange={(val) => setFormData(prev => ({ ...prev, priority: val }))}
+        >
+          <SelectTrigger id="priority">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="low">נמוכה</SelectItem>
+            <SelectItem value="medium">בינונית</SelectItem>
+            <SelectItem value="high">גבוהה</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="daysBeforeAlert">ימים לפני ההתראה</Label>
+        <Input
+          id="daysBeforeAlert"
+          type="number"
+          min="1"
+          value={formData.daysBeforeAlert}
+          onChange={(e) => setFormData(prev => ({ ...prev, daysBeforeAlert: parseInt(e.target.value) || 7 }))}
+        />
+      </div>
+
+      <div className="flex gap-2">
+        <Button type="submit" className="flex-1 bg-gradient-to-r from-indigo-500 to-purple-600" onClick={handleSubmit}>
+          {editingReminder ? 'עדכן תזכורת' : 'הוסף תזכורת'}
+        </Button>
+        <Button type="button" variant="outline" onClick={() => { setShowForm(false); resetForm(); }}>
+          ביטול
+        </Button>
+      </div>
+    </div>
+  );
+
+  if (isLoading) {
+    return <div className="flex items-center justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-indigo-600" /></div>;
+  }
+
+  const FormWrapper = isMobile ? (
+    <Drawer open={showForm} onOpenChange={setShowForm}>
+      <DrawerTrigger asChild>
+        <Button className="bg-gradient-to-r from-indigo-500 to-purple-600 w-full md:w-auto">
+          <Plus className="w-4 h-4 ml-2" />
+          תזכורת חדשה
+        </Button>
+      </DrawerTrigger>
+      <DrawerContent>
+        <DrawerHeader>
+          <DrawerTitle>{editingReminder ? 'ערוך תזכורת' : 'תזכורת חדשה'}</DrawerTitle>
+        </DrawerHeader>
+        <ReminderForm />
+      </DrawerContent>
+    </Drawer>
+  ) : (
+    <Dialog open={showForm} onOpenChange={setShowForm}>
+      <DialogTrigger asChild>
+        <Button className="bg-gradient-to-r from-indigo-500 to-purple-600">
+          <Plus className="w-4 h-4 ml-2" />
+          תזכורת חדשה
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle>{editingReminder ? 'ערוך תזכורת' : 'תזכורת חדשה'}</DialogTitle>
+        </DialogHeader>
+        <ReminderForm />
+      </DialogContent>
+    </Dialog>
+  );
+
+  return (
+    <div className="space-y-6">
+      {/* Header & Actions */}
+      <div className="flex flex-col sm:flex-row gap-2 justify-between items-start sm:items-center">
+        <div>
+          <h2 className="text-2xl md:text-3xl font-bold gradient-text mb-1">תזכורות</h2>
+          <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400">
+            {activeReminders.length} תזכורות פעילות
+          </p>
+        </div>
+        <div className="flex gap-2 w-full sm:w-auto">
+          {FormWrapper}
+          <Button 
+            variant="outline"
+            onClick={handleGenerateReminders}
+            className="flex-1 sm:flex-none"
+          >
+            <Sparkles className="w-4 h-4 ml-2" />
+            <span className="text-xs sm:text-sm">AI</span>
+          </Button>
+        </div>
+      </div>
+
+      {/* Active Reminders */}
+      {activeReminders.length > 0 && (
+        <div className="space-y-3">
+          <h3 className="font-semibold text-lg">תזכורות פעילות</h3>
+          <div className="grid gap-3 md:gap-4">
+            {activeReminders.map(reminder => (
+              <Card key={reminder.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                <CardContent className="p-3 md:p-4">
+                  <div className="flex flex-col sm:flex-row gap-3 items-start">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-wrap items-center gap-2 mb-2">
+                        <Bell className="w-4 h-4 text-indigo-600 dark:text-indigo-400 flex-shrink-0" />
+                        <h4 className="font-semibold text-sm md:text-base break-words">{reminder.toolName}</h4>
+                        <Badge className={priorityColor[reminder.priority]} variant="secondary" className="text-xs">
+                          {reminder.priority === 'high' ? '🔴 גבוהה' : reminder.priority === 'medium' ? '🟡 בינונית' : '🔵 נמוכה'}
+                        </Badge>
                       </div>
-                      <div className="flex-1">
-                        <CardTitle className="text-lg mb-1">{reminder.title}</CardTitle>
-                        <CardDescription>{reminder.description}</CardDescription>
-                        <div className="flex items-center gap-2 mt-3">
-                          <Badge className={priorityColors[reminder.priority]}>
-                            {reminder.priority === 'high' ? 'דחוף' : 
-                             reminder.priority === 'medium' ? 'בינוני' : 'נמוך'}
-                          </Badge>
-                          <Badge variant="outline">
-                            <Clock className="w-3 h-3 ml-1" />
-                            {format(reminder.date, 'dd/MM/yyyy', { locale: he })}
-                          </Badge>
-                        </div>
+                      <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400 mb-2">{reminder.message}</p>
+                      <div className="flex flex-wrap gap-2 text-xs text-gray-500 dark:text-gray-400">
+                        <span className="flex items-center gap-1">
+                          <Clock className="w-3 h-3" />
+                          {reminder.reminderDate} {reminder.reminderTime}
+                        </span>
+                        {reminder.reminderType === 'subscription_expiry' && (
+                          <Badge variant="outline" className="text-xs">תפוגת מנוי</Badge>
+                        )}
                       </div>
                     </div>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => dismissReminder(reminder.id)}
-                    >
-                      <X className="w-4 h-4" />
-                    </Button>
+                    <div className="flex gap-2 flex-shrink-0 w-full sm:w-auto">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => completeMutation.mutate({ id: reminder.id, reminder })}
+                        className="flex-1 sm:flex-none text-xs h-8"
+                      >
+                        <Check className="w-3 h-3" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => { setEditingReminder(reminder); setFormData(reminder); setShowForm(true); }}
+                        className="flex-1 sm:flex-none text-xs h-8"
+                      >
+                        ערוך
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => deleteMutation.mutate(reminder.id)}
+                        className="flex-1 sm:flex-none text-xs h-8 text-red-600"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </Button>
+                    </div>
                   </div>
-                </CardHeader>
+                </CardContent>
               </Card>
-            );
-          })
-        )}
-      </div>
+            ))}
+          </div>
+        </div>
+      )}
 
-      {/* הגדרות תזכורות */}
-      <Card>
-        <CardHeader>
-          <CardTitle>הגדרות תזכורות</CardTitle>
-          <CardDescription>התאם אישית את התזכורות שלך</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <Label htmlFor="renewal-7">תזכורת 7 ימים לפני חידוש</Label>
-              <p className="text-sm text-gray-500">קבל התראה שבוע לפני</p>
-            </div>
-            <Switch id="renewal-7" defaultChecked />
+      {/* No Active Reminders */}
+      {activeReminders.length === 0 && (
+        <div className="text-center py-8 md:py-12 bg-gray-50 dark:bg-gray-800/50 rounded-xl">
+          <AlertCircle className="w-8 md:w-12 h-8 md:h-12 text-gray-400 mx-auto mb-3" />
+          <p className="text-sm md:text-base text-gray-600 dark:text-gray-400">אין תזכורות פעילות</p>
+        </div>
+      )}
+
+      {/* Completed Reminders */}
+      {completedReminders.length > 0 && (
+        <details className="group border rounded-lg dark:border-gray-700">
+          <summary className="p-3 md:p-4 cursor-pointer font-semibold text-sm md:text-base flex items-center gap-2">
+            <span>✓ תזכורות הושלמו ({completedReminders.length})</span>
+          </summary>
+          <div className="p-3 md:p-4 border-t dark:border-gray-700 space-y-2">
+            {completedReminders.map(reminder => (
+              <div key={reminder.id} className="text-xs md:text-sm text-gray-600 dark:text-gray-400 flex justify-between">
+                <span>{reminder.toolName} - {reminder.message}</span>
+                <Button 
+                  size="sm" 
+                  variant="ghost"
+                  onClick={() => deleteMutation.mutate(reminder.id)}
+                  className="text-xs h-6"
+                >
+                  <Trash2 className="w-3 h-3" />
+                </Button>
+              </div>
+            ))}
           </div>
-          <div className="flex items-center justify-between">
-            <div>
-              <Label htmlFor="renewal-1">תזכורת יום לפני חידוש</Label>
-              <p className="text-sm text-gray-500">התראה ביום האחרון</p>
-            </div>
-            <Switch id="renewal-1" defaultChecked />
-          </div>
-          <div className="flex items-center justify-between">
-            <div>
-              <Label htmlFor="unused-30">תזכורת כלים שלא בשימוש (30 ימים)</Label>
-              <p className="text-sm text-gray-500">התראה על מנויים שלא נגעת בהם</p>
-            </div>
-            <Switch id="unused-30" defaultChecked />
-          </div>
-        </CardContent>
-      </Card>
+        </details>
+      )}
     </div>
   );
 }
