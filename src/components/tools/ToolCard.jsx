@@ -65,6 +65,12 @@ export default function ToolCard({
     window.open(tool.url, '_blank', 'noopener,noreferrer');
   };
 
+  const handleWhatsAppShare = () => {
+    const text = `${tool.name}\n${tool.description}\n${tool.url}`;
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
+    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+  };
+
   return (
     <div 
       className={`
