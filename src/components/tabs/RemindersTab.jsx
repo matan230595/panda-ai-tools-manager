@@ -11,6 +11,17 @@ import { toast } from 'sonner';
 import { format, addDays, isBefore, isToday } from 'date-fns';
 import { he } from 'date-fns/locale';
 
+/**
+ * מודול תזכורות - מאופשר לניהול חידושי מנויים וכלים שלא בשימוש
+ * אופציונלי: ניתן לבטל בהגדרות אם לא נחוץ
+ * 
+ * תכונות עיקריות:
+ * - תזכורות אוטומטיות 7 ימים לפני חידוש מנוי
+ * - זיהוי כלים שלא בשימוש (30+ ימים)
+ * - דירוגי עדיפות (דחוף, בינוני, נמוך)
+ * - סטטיסטיקות עיצוב
+ */
+
 export default function RemindersTab() {
   const queryClient = useQueryClient();
   const [autoReminders, setAutoReminders] = useState(true);
