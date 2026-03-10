@@ -47,6 +47,11 @@ export default function RemindersTab() {
     queryFn: () => base44.entities.Subscription.list(),
   });
 
+  const { data: toolTasks = [] } = useQuery({
+    queryKey: ['toolTasks'],
+    queryFn: () => base44.entities.ToolTask.list(),
+  });
+
   // יצירת תזכורת
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.Reminder.create(data),
@@ -185,6 +190,14 @@ export default function RemindersTab() {
       id: reminderId,
       data: { ...reminder, reminderDate },
     });
+  };
+
+  const handleMoveTask = async (taskId, dueDate) => {
+    const task = toolTasks.find((item) => item.id === taskId);
+    if (!task) return;
+    await base44.entities.ToolTask.update(taskId, { ...task, dueDate });
+    queryClient.invalidateQueries({ queryKey: ['toolTasks'] });
+    toast.success('המשימה הוזזה בלוח');
   };
 
   const priorityColor = {
@@ -373,7 +386,9 @@ export default function RemindersTab() {
       <ReminderCalendarView
         reminders={activeReminders}
         subscriptions={subscriptions.filter((item) => item.isActive)}
+        tasks={toolTasks.filter((item) => !item.isCompleted)}
         onMoveReminder={handleMoveReminder}
+        onMoveTask={handleMoveTask}
       />
 
       {/* Active Reminders */}

@@ -33,7 +33,7 @@ function buildWeekDays(currentDate) {
   });
 }
 
-export default function ReminderCalendarView({ reminders = [], subscriptions = [], onMoveReminder }) {
+export default function ReminderCalendarView({ reminders = [], subscriptions = [], tasks = [], onMoveReminder, onMoveTask }) {
   const [viewMode, setViewMode] = useState('month');
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDateKey, setSelectedDateKey] = useState(formatDateKey(new Date()));
@@ -64,8 +64,18 @@ export default function ReminderCalendarView({ reminders = [], subscriptions = [
       });
     });
 
+    tasks.forEach((task) => {
+      if (!task.dueDate) return;
+      const key = task.dueDate;
+      if (!grouped[key]) grouped[key] = [];
+      grouped[key].push({
+        ...task,
+        itemType: 'task',
+      });
+    });
+
     return grouped;
-  }, [reminders, subscriptions]);
+  }, [reminders, subscriptions, tasks]);
 
   const selectedItems = itemsByDate[selectedDateKey] || [];
 
@@ -121,7 +131,9 @@ export default function ReminderCalendarView({ reminders = [], subscriptions = [
                 onDragOver={(event) => event.preventDefault()}
                 onDrop={(event) => {
                   const reminderId = event.dataTransfer.getData('reminderId');
+                  const taskId = event.dataTransfer.getData('taskId');
                   if (reminderId) onMoveReminder?.(reminderId, dateKey);
+                  if (taskId) onMoveTask?.(taskId, dateKey);
                 }}
                 className={`min-h-[110px] rounded-xl border p-2 cursor-pointer transition ${selectedDateKey === dateKey ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/30' : 'border-gray-200 dark:border-gray-800'} ${!isCurrentMonth && viewMode === 'month' ? 'opacity-40' : ''}`}
               >
@@ -130,12 +142,15 @@ export default function ReminderCalendarView({ reminders = [], subscriptions = [
                   {dayItems.slice(0, 3).map((item) => (
                     <div
                       key={`${item.itemType}-${item.id}`}
-                      draggable={item.itemType === 'reminder'}
-                      onDragStart={(event) => event.dataTransfer.setData('reminderId', item.id)}
-                      className={`rounded-md px-2 py-1 text-[11px] flex items-center gap-1 ${item.itemType === 'subscription' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-200' : 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-200'}`}
+                      draggable={item.itemType !== 'subscription'}
+                      onDragStart={(event) => {
+                        if (item.itemType === 'reminder') event.dataTransfer.setData('reminderId', item.id);
+                        if (item.itemType === 'task') event.dataTransfer.setData('taskId', item.id);
+                      }}
+                      className={`rounded-md px-2 py-1 text-[11px] flex items-center gap-1 ${item.itemType === 'subscription' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-200' : item.itemType === 'task' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-200' : 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-200'}`}
                     >
-                      {item.itemType === 'reminder' && <GripVertical className="w-3 h-3 flex-shrink-0" />}
-                      <span className="truncate">{item.itemType === 'subscription' ? item.toolName : item.toolName}</span>
+                      {item.itemType !== 'subscription' && <GripVertical className="w-3 h-3 flex-shrink-0" />}
+                      <span className="truncate">{item.itemType === 'task' ? item.title : item.toolName}</span>
                     </div>
                   ))}
                   {dayItems.length > 3 && <div className="text-[11px] text-gray-500">+{dayItems.length - 3} נוספים</div>}
@@ -156,10 +171,14 @@ export default function ReminderCalendarView({ reminders = [], subscriptions = [
                   <div>
                     <div className="font-medium">{item.toolName}</div>
                     <div className="text-xs text-gray-500">
-                      {item.itemType === 'subscription' ? 'חידוש/תשלום מנוי' : `${item.message} • ${item.reminderTime || '09:00'}`}
+                      {item.itemType === 'subscription'
+                        ? 'חידוש/תשלום מנוי'
+                        : item.itemType === 'task'
+                          ? `${item.description || 'משימה מקושרת לכלי'} • ${item.reminderTime || '09:00'}`
+                          : `${item.message} • ${item.reminderTime || '09:00'}`}
                     </div>
                   </div>
-                  <Badge variant="outline">{item.itemType === 'subscription' ? 'מנוי' : 'תזכורת'}</Badge>
+                  <Badge variant="outline">{item.itemType === 'subscription' ? 'מנוי' : item.itemType === 'task' ? 'משימה' : 'תזכורת'}</Badge>
                 </div>
               ))}
             </div>

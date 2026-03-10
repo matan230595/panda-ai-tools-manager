@@ -24,6 +24,11 @@ export default function Dashboard() {
     queryFn: () => base44.entities.Reminder.list(),
   });
 
+  const { data: toolTasks = [] } = useQuery({
+    queryKey: ['toolTasks'],
+    queryFn: () => base44.entities.ToolTask.list(),
+  });
+
   // חישוב סטטיסטיקות
   const stats = {
     totalTools: tools.length,
@@ -238,7 +243,7 @@ export default function Dashboard() {
           <SmartRecommendations />
         </div>
 
-        <ReminderCalendarView reminders={reminders.filter(item => !item.isCompleted && item.isActive)} subscriptions={subscriptions.filter(item => item.isActive)} onMoveReminder={() => {}} />
+        <ReminderCalendarView reminders={reminders.filter(item => !item.isCompleted && item.isActive)} subscriptions={subscriptions.filter(item => item.isActive)} tasks={toolTasks.filter(item => !item.isCompleted)} onMoveReminder={() => {}} onMoveTask={() => {}} />
       </div>
 
       {/* כלים בשימוש תדיר */}

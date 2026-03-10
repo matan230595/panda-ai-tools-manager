@@ -9,6 +9,15 @@ export function useSmartNotifications(settings, queryClient) {
   const addNotification = useCallback(async (notification) => {
     if (!settings) return;
 
+    const existingNotifications = settings.notifications || [];
+    const duplicate = existingNotifications.some((item) => (
+      item.title === notification.title &&
+      item.message === notification.message &&
+      new Date(item.timestamp).getTime() > Date.now() - (12 * 60 * 60 * 1000)
+    ));
+
+    if (duplicate) return;
+
     const newNotification = {
       id: Date.now().toString(),
       ...notification,
@@ -16,14 +25,13 @@ export function useSmartNotifications(settings, queryClient) {
       read: false,
     };
 
-    const updatedNotifications = [...(settings.notifications || []), newNotification];
+    const updatedNotifications = [...existingNotifications, newNotification];
     await base44.entities.Settings.update(settings.id, {
       notifications: updatedNotifications,
     });
 
     queryClient.invalidateQueries(['settings']);
 
-    // הצג toast אם התראה חשובה
     if (notification.type === 'warning' || notification.type === 'error') {
       toast.warning(notification.message, { duration: 6000 });
     }
@@ -60,6 +68,7 @@ export function useSmartNotifications(settings, queryClient) {
     try {
       const tools = await base44.entities.AiTool.list();
       const subscriptions = await base44.entities.Subscription.list();
+      const toolTasks = await base44.entities.ToolTask.list().catch(() => []);
 
       // בדוק מנויים שעומדים להסתיים תוך 7 ימים
       const soon = new Date();
@@ -76,18 +85,20 @@ export function useSmartNotifications(settings, queryClient) {
         }
       });
 
-      // בדוק כלים שלא בשימוש זמן רב
-      const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-      tools.forEach(tool => {
-        const lastUsed = tool.lastUsed ? new Date(tool.lastUsed) : null;
-        if (lastUsed && lastUsed < thirtyDaysAgo) {
-          addNotification({
-            title: '💤 כלי לא בשימוש',
-            message: `${tool.name} לא שומש במשך יותר מ-30 ימים`,
-            type: 'info',
-          });
-        }
-      });
+      const fourteenDaysAgo = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000);
+      toolTasks
+        .filter(task => !task.isCompleted)
+        .forEach(task => {
+          const tool = tools.find(item => item.id === task.toolId);
+          const lastUsed = tool?.lastUsed ? new Date(tool.lastUsed) : null;
+          if (!lastUsed || lastUsed < fourteenDaysAgo) {
+            addNotification({
+              title: '📝 משימה ממתינה לכלי לא פעיל',
+              message: `יש משימה פתוחה עבור ${task.toolName} אך לא היה שימוש בכלי לאחרונה`,
+              type: 'warning',
+            });
+          }
+        });
     } catch (error) {
       console.error('Error checking for updates:', error);
     }
