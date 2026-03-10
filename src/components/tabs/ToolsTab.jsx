@@ -511,20 +511,11 @@ export default function ToolsTab({ settings, initialFilter }) {
       <SearchAndFilters
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
-        selectedCategory={selectedCategory}
-        onCategoryChange={setSelectedCategory}
-        selectedPricing={selectedPricing}
-        onPricingChange={setSelectedPricing}
-        selectedRating={selectedRating}
-        onRatingChange={setSelectedRating}
-        showFavoritesOnly={showFavoritesOnly}
-        onToggleFavorites={() => setShowFavoritesOnly(!showFavoritesOnly)}
         viewMode={viewMode}
         onViewModeChange={setViewMode}
         sortBy={sortBy}
         onSortChange={setSortBy}
         resultsCount={filteredAndSortedTools.length}
-        onClearFilters={clearFilters}
       />
 
       {/* רשימת כלים */}
