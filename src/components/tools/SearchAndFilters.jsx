@@ -71,39 +71,31 @@ export default function SearchAndFilters({
     searchTerm.length > 0;
 
   return (
-    <div className="glass-effect rounded-xl md:rounded-2xl p-2.5 md:p-3 space-y-2 shadow-md border border-indigo-100 dark:border-indigo-900">
-      {/* חיפוש ומועדפים */}
-      <div className="flex gap-1.5 md:gap-2">
-        <div className="flex-1">
+    <div className="glass-effect rounded-lg p-2 shadow-md border border-indigo-100 dark:border-indigo-900">
+      <div className="flex items-center gap-1 flex-nowrap overflow-x-auto pb-1">
+        {/* חיפוש */}
+        <div className="flex-1 min-w-0">
           <SmartSearch onSearch={onSearchChange} tools={[]} />
         </div>
-        <Button variant={showFavoritesOnly ? 'default' : 'outline'} onClick={onToggleFavorites} size="sm" className="h-9 w-9 flex-shrink-0" title="מועדפים">
-          ⭐
-        </Button>
-      </div>
 
-      {/* פילטרים */}
-      <div className="flex items-center gap-1 md:gap-2 flex-wrap overflow-x-auto">
+        {/* כפתור מועדפים */}
+        <Button variant={showFavoritesOnly ? 'default' : 'outline'} onClick={onToggleFavorites} size="sm" className="h-7 w-7 flex-shrink-0 p-0" title="מועדפים">⭐</Button>
+
+        {/* פילטרים */}
         <Select value={selectedCategory} onValueChange={onCategoryChange}>
-          <SelectTrigger className="h-8 text-xs flex-shrink-0">
-            <SelectValue placeholder="קטגוריה" />
-          </SelectTrigger>
+          <SelectTrigger className="h-7 text-xs w-24 flex-shrink-0"><SelectValue placeholder="קטגוריה" /></SelectTrigger>
           <SelectContent>{categories.map((cat) => <SelectItem key={cat.value} value={cat.value}>{cat.label}</SelectItem>)}</SelectContent>
         </Select>
 
         <Select value={selectedPricing} onValueChange={onPricingChange}>
-          <SelectTrigger className="h-8 text-xs flex-shrink-0">
-            <SelectValue placeholder="תמחור" />
-          </SelectTrigger>
+          <SelectTrigger className="h-7 text-xs w-20 flex-shrink-0"><SelectValue placeholder="תמחור" /></SelectTrigger>
           <SelectContent>{pricingOptions.map((opt) => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}</SelectContent>
         </Select>
 
         <Select value={selectedRating.toString()} onValueChange={(val) => onRatingChange(Number(val))}>
-          <SelectTrigger className="h-8 text-xs flex-shrink-0">
-            <SelectValue placeholder="דירוג" />
-          </SelectTrigger>
+          <SelectTrigger className="h-7 text-xs w-16 flex-shrink-0"><SelectValue placeholder="⭐" /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="0">כל הדירוגים</SelectItem>
+            <SelectItem value="0">כל</SelectItem>
             <SelectItem value="3">3+</SelectItem>
             <SelectItem value="4">4+</SelectItem>
             <SelectItem value="4.5">4.5+</SelectItem>
@@ -111,29 +103,26 @@ export default function SearchAndFilters({
         </Select>
 
         <Select value={sortBy} onValueChange={onSortChange}>
-          <SelectTrigger className="h-8 text-xs flex-shrink-0">
-            <SelectValue placeholder="מיין" />
-          </SelectTrigger>
+          <SelectTrigger className="h-7 text-xs w-20 flex-shrink-0"><SelectValue placeholder="מיין" /></SelectTrigger>
           <SelectContent>{sortOptions.map((opt) => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}</SelectContent>
         </Select>
 
-        <div className="hidden sm:flex items-center gap-0.5 ml-auto flex-shrink-0 bg-gray-100 dark:bg-gray-800 rounded p-0.5">
-          {[['grid', 'גריד', LayoutGrid], ['list', 'רשימה', LayoutList], ['compact', 'צפוף', Columns3], ['table', '📊', null], ['kanban', '🗂️', null]].map(([mode, label, Icon]) => (
-            <Button key={mode} size="sm" variant={viewMode === mode ? 'default' : 'ghost'} onClick={() => onViewModeChange(mode)} className="h-7 px-1.5 text-xs">
-              {Icon ? <Icon className="w-3 h-3" /> : label}
-              <span className="hidden md:inline ml-1">{Icon ? label : ''}</span>
+        {/* כפתורי תצוגה */}
+        <div className="hidden sm:flex gap-0.5 flex-shrink-0">
+          {[['grid', LayoutGrid], ['list', LayoutList], ['compact', Columns3]].map(([mode, Icon]) => (
+            <Button key={mode} size="sm" variant={viewMode === mode ? 'default' : 'ghost'} onClick={() => onViewModeChange(mode)} className="h-7 w-7 p-0" title={mode}>
+              <Icon className="w-3 h-3" />
             </Button>
           ))}
+          <Button size="sm" variant={viewMode === 'table' ? 'default' : 'ghost'} onClick={() => onViewModeChange('table')} className="h-7 w-7 p-0" title="טבלה">📊</Button>
+          <Button size="sm" variant={viewMode === 'kanban' ? 'default' : 'ghost'} onClick={() => onViewModeChange('kanban')} className="h-7 w-7 p-0" title="קאנבן">🗂️</Button>
         </div>
-      </div>
 
-      {/* תוצאות ופילטרים פעילים */}
-      <div className="flex items-center justify-between gap-2 pt-1.5 border-t border-gray-200 dark:border-gray-700">
-        <Badge variant="outline" className="text-xs px-2 py-0.5">{resultsCount} כלים</Badge>
+        {/* תוצאות ופילטר נקה */}
+        <Badge variant="outline" className="text-xs px-1.5 py-0 flex-shrink-0 text-nowrap">{resultsCount}</Badge>
         {(selectedCategory !== 'all' || selectedPricing !== 'all' || selectedRating > 0 || showFavoritesOnly) && (
-          <Button variant="ghost" onClick={onClearFilters} className="h-7 text-xs text-red-600">
-            <X className="w-3 h-3 ml-1" />
-            נקה
+          <Button variant="ghost" onClick={onClearFilters} className="h-7 px-1.5 text-xs text-red-600 flex-shrink-0">
+            <X className="w-3 h-3" />
           </Button>
         )}
       </div>
