@@ -38,8 +38,14 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
           </button>
 
           <div className="flex items-start gap-4 ml-12">
-            <ToolLogo tool={tool} size="lg" />
-            <div className="flex-1">
+             {tool.logo ? (
+               <img src={tool.logo} alt={tool.name} className="w-16 h-16 md:w-20 md:h-20 rounded-xl object-contain shadow-md flex-shrink-0" />
+             ) : (
+               <div className="w-16 h-16 md:w-20 md:h-20 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+                 <span className="text-2xl md:text-3xl font-bold text-white">{tool.name.charAt(0)}</span>
+               </div>
+             )}
+             <div className="flex-1">
               <div className="flex items-center gap-3 mb-2">
                 <h2 className="text-2xl font-bold">{tool.name}</h2>
                 <button
@@ -389,19 +395,20 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
         </div>
 
         {/* כלים דומים */}
-        <div className="border-t border-gray-200 dark:border-gray-700 p-6">
-          <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
+        <details className="border-t border-gray-200 dark:border-gray-700">
+          <summary className="p-6 font-bold text-lg cursor-pointer flex items-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-800">
             <Sparkles className="w-5 h-5 text-purple-500" />
             כלים דומים והמלצות
-          </h3>
-          <SimilarTools 
-            currentTool={tool}
-            onSelectTool={(selectedTool) => {
-              onClose();
-              // כאן יכול להיות onToolClick callback
-            }}
-          />
-        </div>
+          </summary>
+          <div className="p-6 bg-gray-50 dark:bg-gray-800/50">
+            <SimilarTools 
+              currentTool={tool}
+              onSelectTool={(selectedTool) => {
+                onClose();
+              }}
+            />
+          </div>
+        </details>
       </div>
     </div>
   );
