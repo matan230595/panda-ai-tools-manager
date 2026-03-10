@@ -81,6 +81,16 @@ const TEMPLATES = [
   }
 ];
 
+/**
+ * מודול תבניות - סטים מוכנים של כלים לייבוא במהלך
+ * אופציונלי: ניתן להוסיף תבניות משלך או להסתיר אם לא נחוץ
+ * 
+ * תכונות:
+ * - 5 תבניות מוכנות (שיווק, עיצוב, מפתחים, יוצרי תוכן, התחלה)
+ * - ייבוא מקבילי של כלים
+ * - זיהוי מחיר סה"כ
+ */
+
 export default function TemplatesTab() {
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState('');
