@@ -8,6 +8,7 @@ import ToolLogo from '@/components/ToolLogo';
 import SimilarTools from '@/components/tools/SimilarTools';
 import UserCredentialsTab from '@/components/tools/UserCredentialsTab';
 import ToolTasksPanel from '@/components/tools/ToolTasksPanel';
+import ToolLearningPlanPanel from '@/components/tools/ToolLearningPlanPanel';
 
 export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onToggleFavorite, onManageSubscription, onQuickUpdate }) {
   const categoryColors = {
@@ -119,12 +120,13 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-6">
           <Tabs defaultValue="overview" className="w-full">
-            <TabsList className="grid w-full grid-cols-6">
+            <TabsList className="grid w-full grid-cols-7">
               <TabsTrigger value="overview">סקירה</TabsTrigger>
               <TabsTrigger value="details">פרטים</TabsTrigger>
               <TabsTrigger value="pricing">מחירים</TabsTrigger>
               <TabsTrigger value="credentials">👤 גישה</TabsTrigger>
               <TabsTrigger value="tasks">משימות</TabsTrigger>
+              <TabsTrigger value="learning">למידה</TabsTrigger>
               <TabsTrigger value="notes">הערות</TabsTrigger>
             </TabsList>
 
@@ -389,6 +391,10 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
 
             <TabsContent value="tasks" className="space-y-4 mt-6">
               <ToolTasksPanel tool={tool} />
+            </TabsContent>
+
+            <TabsContent value="learning" className="space-y-4 mt-6">
+              <ToolLearningPlanPanel tool={tool} />
             </TabsContent>
 
             <TabsContent value="notes" className="space-y-4 mt-6">

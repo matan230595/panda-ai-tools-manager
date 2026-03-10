@@ -43,7 +43,8 @@ export function useSmartNotifications(settings, queryClient) {
     if (!settings?.trackApiCosts) return;
 
     const monthlyBudget = settings.monthlyApibudget || 100;
-    const subscriptions = await base44.entities.Subscription.list();
+    const user = await getCurrentUser();
+    const subscriptions = await base44.entities.Subscription.filter({ created_by: user.email });
     const usedBudget = subscriptions.filter(item => item.isActive).reduce((sum, item) => sum + (item.priceMonthly || 0), 0);
     const usagePercentage = monthlyBudget > 0 ? (usedBudget / monthlyBudget) * 100 : 0;
 
