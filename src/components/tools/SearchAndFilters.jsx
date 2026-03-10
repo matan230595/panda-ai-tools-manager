@@ -21,29 +21,6 @@ export default function SearchAndFilters({
   onSortChange,
   resultsCount,
 }) {
-  const categories = [
-    { value: 'all', label: 'כל הקטגוריות' },
-    { value: 'עיבוד_שפה', label: 'עיבוד שפה' },
-    { value: 'יצירת_תמונות', label: 'יצירת תמונות' },
-    { value: 'וידאו', label: 'וידאו' },
-    { value: 'קוד', label: 'קוד' },
-    { value: 'עיצוב', label: 'עיצוב' },
-    { value: 'מחקר', label: 'מחקר' },
-    { value: 'פרודוקטיביות', label: 'פרודוקטיביות' },
-    { value: 'אוטומציה', label: 'אוטומציה' },
-    { value: 'אנליטיקה', label: 'אנליטיקה' },
-    { value: 'שיווק', label: 'שיווק' },
-    { value: 'אחר', label: 'אחר' },
-  ];
-
-  const pricingOptions = [
-    { value: 'all', label: 'כל התמחורים' },
-    { value: 'חינם', label: 'חינם' },
-    { value: 'בתשלום', label: 'בתשלום' },
-    { value: 'פרימיום', label: 'פרימיום' },
-    { value: 'פרימיום_מוגבל', label: 'פרימיום מוגבל' },
-  ];
-
   const sortOptions = [
     { value: 'updated', label: 'עדכון אחרון' },
     { value: 'created', label: 'תאריך יצירה' },
@@ -53,13 +30,6 @@ export default function SearchAndFilters({
     { value: 'usage', label: 'תדירות שימוש' },
     { value: 'cost', label: 'עלות' },
   ];
-
-  const hasActiveFilters = 
-    selectedCategory !== 'all' || 
-    selectedPricing !== 'all' || 
-    selectedRating > 0 || 
-    showFavoritesOnly ||
-    searchTerm.length > 0;
 
   return (
     <div className="glass-effect rounded-lg p-2 shadow-md border border-indigo-100 dark:border-indigo-900">
