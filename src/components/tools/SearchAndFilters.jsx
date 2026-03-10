@@ -15,20 +15,11 @@ import SmartSearch from '@/components/search/SmartSearch';
 export default function SearchAndFilters({ 
   searchTerm, 
   onSearchChange,
-  selectedCategory,
-  onCategoryChange,
-  selectedPricing,
-  onPricingChange,
-  selectedRating,
-  onRatingChange,
-  showFavoritesOnly,
-  onToggleFavorites,
   viewMode,
   onViewModeChange,
   sortBy,
   onSortChange,
   resultsCount,
-  onClearFilters
 }) {
   const categories = [
     { value: 'all', label: 'כל הקטגוריות' },
