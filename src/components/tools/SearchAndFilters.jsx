@@ -71,148 +71,69 @@ export default function SearchAndFilters({
     searchTerm.length > 0;
 
   return (
-    <div className="glass-effect rounded-2xl md:rounded-3xl p-4 md:p-6 space-y-3 md:space-y-4 shadow-lg md:shadow-xl border border-indigo-100 dark:border-indigo-900">
-      {/* חיפוש חכם ומועדפים */}
-      <div className="flex gap-2 md:gap-3">
+    <div className="glass-effect rounded-xl md:rounded-2xl p-2.5 md:p-3 space-y-2 shadow-md border border-indigo-100 dark:border-indigo-900">
+      {/* חיפוש ומועדפים */}
+      <div className="flex gap-1.5 md:gap-2">
         <div className="flex-1">
           <SmartSearch onSearch={onSearchChange} tools={[]} />
         </div>
-        <Button
-          variant={showFavoritesOnly ? 'default' : 'outline'}
-          onClick={onToggleFavorites}
-          size="sm"
-          className="md:size-lg shadow-md hover:shadow-lg transition-shadow flex-shrink-0"
-        >
-          <span className="text-lg md:text-xl">⭐</span>
-          <span className="hidden sm:inline mr-2 text-xs md:text-sm">{showFavoritesOnly ? 'הכל' : 'מועד'}</span>
+        <Button variant={showFavoritesOnly ? 'default' : 'outline'} onClick={onToggleFavorites} size="sm" className="h-9 w-9 flex-shrink-0" title="מועדפים">
+          ⭐
         </Button>
       </div>
 
-      {/* פילטרים - מתאים למובייל */}
-      <div className="flex items-center gap-2 md:gap-3 flex-wrap overflow-x-auto pb-2 md:pb-0">
-        {/* קטגוריה */}
+      {/* פילטרים */}
+      <div className="flex items-center gap-1 md:gap-2 flex-wrap overflow-x-auto">
         <Select value={selectedCategory} onValueChange={onCategoryChange}>
-          <SelectTrigger className="h-9 md:h-11 bg-white dark:bg-gray-800 shadow-sm text-sm flex-shrink-0">
+          <SelectTrigger className="h-8 text-xs flex-shrink-0">
             <SelectValue placeholder="קטגוריה" />
           </SelectTrigger>
-          <SelectContent>
-            {categories.map((cat) => (
-              <SelectItem key={cat.value} value={cat.value}>
-                {cat.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
+          <SelectContent>{categories.map((cat) => <SelectItem key={cat.value} value={cat.value}>{cat.label}</SelectItem>)}</SelectContent>
         </Select>
 
-        {/* תמחור */}
         <Select value={selectedPricing} onValueChange={onPricingChange}>
-          <SelectTrigger className="h-9 md:h-11 bg-white dark:bg-gray-800 shadow-sm text-sm flex-shrink-0">
+          <SelectTrigger className="h-8 text-xs flex-shrink-0">
             <SelectValue placeholder="תמחור" />
           </SelectTrigger>
-          <SelectContent>
-            {pricingOptions.map((opt) => (
-              <SelectItem key={opt.value} value={opt.value}>
-                {opt.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
+          <SelectContent>{pricingOptions.map((opt) => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}</SelectContent>
         </Select>
 
-        {/* דירוג */}
         <Select value={selectedRating.toString()} onValueChange={(val) => onRatingChange(Number(val))}>
-          <SelectTrigger className="h-9 md:h-11 bg-white dark:bg-gray-800 shadow-sm text-sm flex-shrink-0">
+          <SelectTrigger className="h-8 text-xs flex-shrink-0">
             <SelectValue placeholder="דירוג" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="0">כל הדירוגים</SelectItem>
-            <SelectItem value="3">3+ כוכבים</SelectItem>
-            <SelectItem value="4">4+ כוכבים</SelectItem>
-            <SelectItem value="4.5">4.5+ כוכבים</SelectItem>
+            <SelectItem value="3">3+</SelectItem>
+            <SelectItem value="4">4+</SelectItem>
+            <SelectItem value="4.5">4.5+</SelectItem>
           </SelectContent>
         </Select>
 
-        {/* מיון */}
         <Select value={sortBy} onValueChange={onSortChange}>
-          <SelectTrigger className="h-9 md:h-11 bg-white dark:bg-gray-800 shadow-sm text-sm flex-shrink-0">
+          <SelectTrigger className="h-8 text-xs flex-shrink-0">
             <SelectValue placeholder="מיין" />
           </SelectTrigger>
-          <SelectContent>
-            {sortOptions.map((opt) => (
-              <SelectItem key={opt.value} value={opt.value}>
-                {opt.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
+          <SelectContent>{sortOptions.map((opt) => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}</SelectContent>
         </Select>
 
-        {/* תצוגה - מוסתר במובייל קטן */}
-         <div className="hidden sm:flex items-center gap-1 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-lg md:rounded-xl p-1 shadow-inner ml-auto group flex-shrink-0" title="בחר מצב תצוגה">
-           <Button
-             size="sm"
-             variant={viewMode === 'grid' ? 'default' : 'ghost'}
-             onClick={() => onViewModeChange('grid')}
-             className="h-9 md:h-10 px-1 md:px-2 flex items-center gap-1 text-xs"
-             title="גריד"
-           >
-             <LayoutGrid className="w-3 h-3 md:w-4 md:h-4" />
-             <span className="hidden md:inline">גריד</span>
-           </Button>
-           <Button
-             size="sm"
-             variant={viewMode === 'list' ? 'default' : 'ghost'}
-             onClick={() => onViewModeChange('list')}
-             className="h-9 md:h-10 px-1 md:px-2 flex items-center gap-1 text-xs"
-             title="רשימה"
-           >
-             <LayoutList className="w-3 h-3 md:w-4 md:h-4" />
-             <span className="hidden md:inline">רשימה</span>
-           </Button>
-           <Button
-             size="sm"
-             variant={viewMode === 'compact' ? 'default' : 'ghost'}
-             onClick={() => onViewModeChange('compact')}
-             className="h-9 md:h-10 px-1 md:px-2 flex items-center gap-1 text-xs"
-             title="צפוף"
-           >
-             <Columns3 className="w-3 h-3 md:w-4 md:h-4" />
-             <span className="hidden md:inline">צפוף</span>
-           </Button>
-           <Button
-             size="sm"
-             variant={viewMode === 'table' ? 'default' : 'ghost'}
-             onClick={() => onViewModeChange('table')}
-             className="h-9 md:h-10 px-1 md:px-2 flex items-center gap-1 text-xs"
-             title="טבלה"
-           >
-             📊
-             <span className="hidden md:inline">טבלה</span>
-           </Button>
-           <Button
-             size="sm"
-             variant={viewMode === 'kanban' ? 'default' : 'ghost'}
-             onClick={() => onViewModeChange('kanban')}
-             className="h-9 md:h-10 px-1 md:px-2 flex items-center gap-1 text-xs"
-             title="קאנבן"
-           >
-             🗂️
-             <span className="hidden md:inline">קאנבן</span>
-           </Button>
-         </div>
+        <div className="hidden sm:flex items-center gap-0.5 ml-auto flex-shrink-0 bg-gray-100 dark:bg-gray-800 rounded p-0.5">
+          {[['grid', 'גריד', LayoutGrid], ['list', 'רשימה', LayoutList], ['compact', 'צפוף', Columns3], ['table', '📊', null], ['kanban', '🗂️', null]].map(([mode, label, Icon]) => (
+            <Button key={mode} size="sm" variant={viewMode === mode ? 'default' : 'ghost'} onClick={() => onViewModeChange(mode)} className="h-7 px-1.5 text-xs">
+              {Icon ? <Icon className="w-3 h-3" /> : label}
+              <span className="hidden md:inline ml-1">{Icon ? label : ''}</span>
+            </Button>
+          ))}
+        </div>
       </div>
 
-      {/* פילטרים פעילים ומונה תוצאות */}
-      <div className="flex items-center justify-between flex-wrap gap-2 md:gap-3 pt-2 md:pt-3 border-t border-gray-200 dark:border-gray-700">
-        <Badge variant="outline" className="text-xs md:text-base px-3 md:px-4 py-1">
-          {resultsCount} כלים
-        </Badge>
+      {/* תוצאות ופילטרים פעילים */}
+      <div className="flex items-center justify-between gap-2 pt-1.5 border-t border-gray-200 dark:border-gray-700">
+        <Badge variant="outline" className="text-xs px-2 py-0.5">{resultsCount} כלים</Badge>
         {(selectedCategory !== 'all' || selectedPricing !== 'all' || selectedRating > 0 || showFavoritesOnly) && (
-          <Button
-            variant="ghost"
-            onClick={onClearFilters}
-            className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
-          >
-            <X className="w-4 h-4 ml-2" />
-            נקה פילטרים
+          <Button variant="ghost" onClick={onClearFilters} className="h-7 text-xs text-red-600">
+            <X className="w-3 h-3 ml-1" />
+            נקה
           </Button>
         )}
       </div>
