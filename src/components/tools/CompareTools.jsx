@@ -111,12 +111,79 @@ export default function CompareTools({ tools, onClose, isMobile = false }) {
                   </Button>
                 </div>
               ))}
-            </div>
-          </div>
-        </ScrollArea>
+        </div>
 
-        <div className="p-4 border-t flex justify-end">
-          <Button onClick={onClose}>סגור השוואה</Button>
+        {/* Mobile Stack View */}
+        <div className="md:hidden space-y-4 px-3 py-4">
+          {tools.map((tool) => (
+            <div key={tool.id} className="glass-effect rounded-lg p-4 space-y-3">
+              <div className="flex items-start gap-3">
+                {tool.logo ? (
+                  <img src={tool.logo} alt={tool.name} className="w-12 h-12 rounded-lg object-cover" />
+                ) : (
+                  <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                    <span className="text-white font-bold">{tool.name.charAt(0)}</span>
+                  </div>
+                )}
+                <div className="flex-1">
+                  <h3 className="font-bold text-sm">{tool.name}</h3>
+                  {tool.isFavorite && <Star className="w-4 h-4 fill-yellow-400 text-yellow-400 inline ml-1" />}
+                </div>
+              </div>
+              <p className="text-xs text-gray-600 dark:text-gray-400">{tool.description}</p>
+              <div className="space-y-2 border-t pt-2">
+                <div className="flex justify-between text-xs">
+                  <span className="text-gray-600 dark:text-gray-400">תמחור:</span>
+                  <span className="font-medium">{tool.pricing}</span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-gray-600 dark:text-gray-400">דירוג:</span>
+                  <span className="font-medium">{tool.rating ? `${tool.rating} ⭐` : 'ללא'}</span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-gray-600 dark:text-gray-400">תכונות:</span>
+                  <span className="font-medium">{tool.features?.length || 0}</span>
+                </div>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full text-xs"
+                onClick={() => window.open(tool.url, '_blank')}
+              >
+                <ExternalLink className="w-3 h-3 ml-1" />
+                בקר באתר
+              </Button>
+            </div>
+          ))}
+        </div>
+      </div>
+    </ScrollArea>
+  );
+
+  if (isMobile) {
+    return (
+      <Drawer open={true} onOpenChange={onClose}>
+        <DrawerContent className="max-h-[95vh]">
+          <DrawerHeader className="flex justify-between items-center">
+            <DrawerTitle>השוואת כלים</DrawerTitle>
+            <DrawerClose>✕</DrawerClose>
+          </DrawerHeader>
+          <ComparisonContent />
+        </DrawerContent>
+      </Drawer>
+    );
+  }
+
+  return (
+    <Dialog open={true} onOpenChange={onClose}>
+      <DialogContent className="max-w-7xl max-h-[90vh] p-0">
+        <DialogHeader className="p-4 md:p-6 pb-3 md:pb-4 border-b">
+          <DialogTitle className="text-xl md:text-2xl font-bold">השוואת כלים</DialogTitle>
+        </DialogHeader>
+        <ComparisonContent />
+        <div className="p-3 md:p-4 border-t flex justify-end">
+          <Button onClick={onClose} size="sm">סגור</Button>
         </div>
       </DialogContent>
     </Dialog>
