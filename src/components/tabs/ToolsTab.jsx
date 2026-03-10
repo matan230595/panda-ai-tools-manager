@@ -546,7 +546,8 @@ export default function ToolsTab({ settings, initialFilter }) {
         />
       ) : (
         <div className={gridClasses[viewMode]}>
-              <ToolCard
+          {filteredAndSortedTools.map((tool) => (
+            <ToolCard
                 tool={tool}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
