@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   Star, ExternalLink, Edit, Trash2, Tag, TrendingUp, 
-  Copy, Check, GripVertical, Eye, Share2, BarChart3, DollarSign
+  Copy, Check, GripVertical, Eye, Share2, BarChart3, DollarSign, Package
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
