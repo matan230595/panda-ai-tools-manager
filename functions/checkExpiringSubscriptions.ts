@@ -3,65 +3,57 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const user = await base44.auth.me();
-
-    if (!user) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    // קבל את כל הכלים עם מנוי
-    const tools = await base44.entities.AiTool.filter({
-      hasSubscription: true
+    const tools = await base44.asServiceRole.entities.AiTool.filter({
+      hasSubscription: true,
     });
+    const existingReminders = await base44.asServiceRole.entities.Reminder.list();
 
     const today = new Date();
-    const expiringTools = [];
+    const createdReminders = [];
 
     for (const tool of tools) {
-      // חפש תזכורת קיימת
-      const existingReminder = await base44.entities.Reminder.filter({
-        toolId: tool.id,
-        reminderType: 'subscription_expiry',
-        isCompleted: false
-      });
+      const hasOpenReminder = existingReminders.some((reminder) => (
+        reminder.toolId === tool.id &&
+        reminder.reminderType === 'subscription_expiry' &&
+        !reminder.isCompleted
+      ));
 
-      if (existingReminder.length === 0) {
-        // צור תזכורת חדשה
-        const renewalDate = new Date(today);
-        renewalDate.setDate(renewalDate.getDate() + 30);
+      if (hasOpenReminder) continue;
 
-        try {
-          await base44.entities.Reminder.create({
-            toolId: tool.id,
-            toolName: tool.name,
-            reminderType: 'subscription_expiry',
-            reminderDate: renewalDate.toISOString().split('T')[0],
-            reminderTime: '09:00',
-            message: `חידוש מנוי עבור ${tool.name}`,
-            priority: 'high',
-            daysBeforeAlert: 7,
-            subscriptionRenewalDate: renewalDate.toISOString().split('T')[0],
-            isActive: true
-          });
+      const renewalDate = new Date(today);
+      renewalDate.setDate(renewalDate.getDate() + 30);
 
-          expiringTools.push({
-            id: tool.id,
-            name: tool.name,
-            status: 'reminder_created'
-          });
-        } catch (err) {
-          console.error(`Failed to create reminder for ${tool.name}:`, err);
-        }
+      try {
+        await base44.asServiceRole.entities.Reminder.create({
+          toolId: tool.id,
+          toolName: tool.name,
+          recipientEmail: tool.created_by,
+          reminderType: 'subscription_expiry',
+          reminderDate: renewalDate.toISOString().split('T')[0],
+          reminderTime: '09:00',
+          message: `חידוש מנוי עבור ${tool.name}`,
+          priority: 'high',
+          daysBeforeAlert: 7,
+          subscriptionRenewalDate: renewalDate.toISOString().split('T')[0],
+          isActive: true,
+        });
+
+        createdReminders.push({
+          id: tool.id,
+          name: tool.name,
+          status: 'reminder_created',
+        });
+      } catch (error) {
+        console.error(`Failed to create reminder for ${tool.name}:`, error);
       }
     }
 
     return Response.json({
       success: true,
       checked: tools.length,
-      newReminders: expiringTools.length,
-      tools: expiringTools
+      newReminders: createdReminders.length,
+      tools: createdReminders,
     });
-
   } catch (error) {
     console.error('Error:', error);
     return Response.json({ error: error.message }, { status: 500 });
