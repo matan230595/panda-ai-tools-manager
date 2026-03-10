@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import { getCurrentUser } from '@/components/hooks/userScopedData';
 
 export default function Layout({ currentPageName, children }) {
   const [userLogo, setUserLogo] = useState('');
@@ -11,8 +12,9 @@ export default function Layout({ currentPageName, children }) {
     queryKey: ['settings'],
     queryFn: async () => {
       try {
-        const list = await base44.entities.Settings.list();
-        return list[0];
+        const user = await getCurrentUser();
+        const list = await base44.entities.Settings.filter({ created_by: user.email });
+        return list[0] || null;
       } catch {
         return null;
       }

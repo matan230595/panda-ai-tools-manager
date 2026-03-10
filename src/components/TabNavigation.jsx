@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import { getCurrentUser } from '@/components/hooks/userScopedData';
 import { Sparkles, MessageSquare, Settings, BarChart3, TrendingUp, DollarSign } from 'lucide-react';
 
 export default function TabNavigation({ activeTab, onTabChange }) {
@@ -11,8 +12,9 @@ export default function TabNavigation({ activeTab, onTabChange }) {
     queryKey: ['settings'],
     queryFn: async () => {
       try {
-        const list = await base44.entities.Settings.list();
-        return list[0];
+        const user = await getCurrentUser();
+        const list = await base44.entities.Settings.filter({ created_by: user.email });
+        return list[0] || null;
       } catch {
         return null;
       }

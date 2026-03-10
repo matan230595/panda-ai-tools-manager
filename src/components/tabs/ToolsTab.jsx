@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import { getCurrentUser } from '@/components/hooks/userScopedData';
 import { Plus, Download, Upload, Trash2, GitCompare, Key, Sparkles, Menu, X } from 'lucide-react';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger, DrawerClose } from '@/components/ui/drawer';
 import { Button } from '@/components/ui/button';
@@ -39,8 +40,9 @@ export default function ToolsTab({ settings, initialFilter }) {
     queryKey: ['settings'],
     queryFn: async () => {
       try {
-        const list = await base44.entities.Settings.list();
-        return list[0];
+        const user = await getCurrentUser();
+        const list = await base44.entities.Settings.filter({ created_by: user.email });
+        return list[0] || null;
       } catch {
         return null;
       }
@@ -89,7 +91,10 @@ export default function ToolsTab({ settings, initialFilter }) {
   // טעינת כלים
   const { data: tools = [], isLoading } = useQuery({
     queryKey: ['tools'],
-    queryFn: () => base44.entities.AiTool.list(),
+    queryFn: async () => {
+      const user = await getCurrentUser();
+      return base44.entities.AiTool.filter({ created_by: user.email });
+    },
   });
 
   // בדוק התראות חכמות

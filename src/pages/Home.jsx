@@ -1,6 +1,7 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import { getCurrentUser } from '@/components/hooks/userScopedData';
 import { useNavigate } from 'react-router-dom';
 import TabNavigation from '@/components/TabNavigation';
 import ToolsTab from '@/components/tabs/ToolsTab';
@@ -48,11 +49,11 @@ export default function Home() {
     queryKey: ['settings'],
     enabled: authStatus === 'authenticated',
     queryFn: async () => {
-      const settingsList = await base44.entities.Settings.list();
+      const user = await getCurrentUser();
+      const settingsList = await base44.entities.Settings.filter({ created_by: user.email });
       if (settingsList.length > 0) {
         return settingsList[0];
       }
-      // יצירת הגדרות ברירת מחדל
       return await base44.entities.Settings.create({
         theme: 'light',
         language: 'he',
