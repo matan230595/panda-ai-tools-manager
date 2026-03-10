@@ -564,6 +564,8 @@ export default function ToolsTab({ settings, initialFilter }) {
                 onToggleFavorite={handleToggleFavorite}
                 onManageSubscription={setManagingSubscription}
                 onClick={setSelectedTool}
+                isSelected={selectedForCompare.some(t => t.id === tool.id)}
+                onToggleSelect={compareMode ? toggleCompareSelection : null}
               />
             </div>
           ))}
