@@ -368,7 +368,7 @@ export default function RemindersTab() {
                       <div className="flex flex-wrap items-center gap-2 mb-2">
                         <Bell className="w-4 h-4 text-indigo-600 dark:text-indigo-400 flex-shrink-0" />
                         <h4 className="font-semibold text-sm md:text-base break-words">{reminder.toolName}</h4>
-                        <Badge className={priorityColor[reminder.priority]} variant="secondary" className="text-xs">
+                        <Badge className={`${priorityColor[reminder.priority]} text-xs`} variant="secondary">
                           {reminder.priority === 'high' ? '🔴 גבוהה' : reminder.priority === 'medium' ? '🟡 בינונית' : '🔵 נמוכה'}
                         </Badge>
                       </div>

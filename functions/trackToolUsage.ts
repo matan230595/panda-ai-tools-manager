@@ -44,7 +44,7 @@ Deno.serve(async (req) => {
         await base44.entities.UserToolRating.create({
           toolId,
           toolName: currentTool.name,
-          rating: 0, // לא דירוג, רק tracking
+          rating: 1,
           interactionType: 'click',
           userEmail: user.email
         });
