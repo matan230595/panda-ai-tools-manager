@@ -58,15 +58,15 @@ export default function Dashboard() {
   const COLORS = ['#6366f1', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981'];
 
   return (
-    <div className="space-y-6" dir="rtl">
+    <div className="space-y-3 sm:space-y-4 md:space-y-6" dir="rtl">
       {/* כותרת */}
-      <div className="text-right">
-        <h1 className="text-3xl md:text-4xl font-bold gradient-text mb-2">דשבורד</h1>
-        <p className="text-gray-600 dark:text-gray-400">סטטיסטיקות ואנליטיקה של כלי ה-AI שלך</p>
+      <div className="text-right px-1 sm:px-0">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text mb-1 sm:mb-2">דשבורד</h1>
+        <p className="text-xs sm:text-sm md:text-base text-gray-600 dark:text-gray-400">סטטיסטיקות ואנליטיקה של כלי ה-AI שלך</p>
       </div>
 
       {/* קרטיסים סטטיסטיקות עליונות */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-2 sm:gap-3 md:gap-4">
         <StatCard
           title="סך הכלים"
           value={stats.totalTools}
@@ -101,13 +101,13 @@ export default function Dashboard() {
 
       {/* טבלת כלים יקרים ביותר */}
       {topExpensiveTools.length > 0 && (
-        <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-            <DollarSign className="w-5 h-5 text-red-500" />
+        <div className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border border-gray-200 dark:border-gray-700">
+          <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 flex items-center gap-2">
+            <DollarSign className="w-4 sm:w-5 h-4 sm:h-5 text-red-500" />
             כלים יקרים ביותר
           </h2>
-          <div className="overflow-x-auto">
-            <table className="w-full text-right text-sm">
+          <div className="overflow-x-auto -mx-3 sm:mx-0 px-3 sm:px-0">
+            <table className="w-full text-right text-xs sm:text-sm">
               <thead className="border-b border-gray-200 dark:border-gray-700">
                 <tr>
                   <th className="py-2 px-4 font-semibold">כלי</th>
@@ -134,10 +134,10 @@ export default function Dashboard() {
       )}
 
       {/* תרשימים */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
         {/* תרשים כלים לפי קטגוריה */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-          <h2 className="text-lg font-bold mb-4">כלים לפי קטגוריה</h2>
+        <div className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border border-gray-200 dark:border-gray-700">
+          <h2 className="text-base sm:text-lg font-bold mb-3 sm:mb-4">כלים לפי קטגוריה</h2>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={categoriesData().slice(0, 5)}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -151,8 +151,8 @@ export default function Dashboard() {
 
         {/* תרשים עלויות */}
         {topExpensiveTools.length > 0 && (
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-            <h2 className="text-lg font-bold mb-4">עלויות חודשיות</h2>
+          <div className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border border-gray-200 dark:border-gray-700">
+            <h2 className="text-base sm:text-lg font-bold mb-3 sm:mb-4">עלויות חודשיות</h2>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={topExpensiveTools.slice(0, 5)}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -168,12 +168,12 @@ export default function Dashboard() {
 
       {/* כלים בשימוש תדיר */}
       {frequentlyUsed.length > 0 && (
-        <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-          <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-green-500" />
+        <div className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border border-gray-200 dark:border-gray-700">
+          <h2 className="text-base sm:text-lg font-bold mb-3 sm:mb-4 flex items-center gap-2">
+            <TrendingUp className="w-4 sm:w-5 h-4 sm:h-5 text-green-500" />
             כלים בשימוש תדיר
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-2 sm:gap-3 md:gap-4">
             {frequentlyUsed.map((tool, idx) => (
               <div key={idx} className="p-4 bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-lg">
                 <h3 className="font-semibold text-sm mb-2">{tool.name}</h3>
@@ -192,12 +192,12 @@ export default function Dashboard() {
 
 function StatCard({ title, value, icon, color }) {
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700">
-      <div className={`${color} w-10 h-10 rounded-lg flex items-center justify-center text-white mb-3`}>
-        {icon}
+    <div className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl p-2.5 sm:p-3 md:p-4 border border-gray-200 dark:border-gray-700">
+      <div className={`${color} w-8 sm:w-9 md:w-10 h-8 sm:h-9 md:h-10 rounded-lg flex items-center justify-center text-white mb-2 sm:mb-3`}>
+        <span className="text-sm sm:text-base">{icon}</span>
       </div>
-      <p className="text-gray-600 dark:text-gray-400 text-xs sm:text-sm mb-1">{title}</p>
-      <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">{value}</p>
+      <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-0.5 sm:mb-1">{title}</p>
+      <p className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white">{value}</p>
     </div>
   );
 }
