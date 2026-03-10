@@ -105,7 +105,7 @@ export default function ToolCard({
          <button
            onClick={(e) => {
              e.stopPropagation();
-             onToggleSelect(tool.id);
+             onToggleSelect(tool);
            }}
            className={`absolute top-2 right-2 sm:top-3 sm:right-3 w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all ${
              isSelected 
