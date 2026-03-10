@@ -14,10 +14,10 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import OllamaIntegration from '@/components/integrations/OllamaIntegration';
 import BrandingTab from '@/components/tabs/BrandingTab';
 import FooterSettingsTab from '@/components/tabs/FooterSettingsTab';
-import LanguageSwitcher from '../LanguageSwitcher';
-import CollaborationPanel from '../CollaborationPanel';
-import GoogleCalendarSync from '../GoogleCalendarSync';
-import AdvancedAnalytics from '../analytics/AdvancedAnalytics';
+import LanguageSwitcher from '../LanguageSwitcher.jsx';
+import CollaborationPanel from '../CollaborationPanel.jsx';
+import GoogleCalendarSync from '../GoogleCalendarSync.jsx';
+import AdvancedAnalytics from '../analytics/AdvancedAnalytics.jsx';
 
 export default function SettingsTab({ settings, onLogout }) {
   const queryClient = useQueryClient();
