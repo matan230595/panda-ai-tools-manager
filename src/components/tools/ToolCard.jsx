@@ -92,23 +92,35 @@ export default function ToolCard({
         <GripVertical className="w-4 sm:w-5 h-4 sm:h-5 text-gray-400" />
       </div>
 
-      {/* כוכב מועדפים */}
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          onToggleFavorite(tool);
-        }}
-        className="absolute top-2 left-2 sm:top-3 sm:left-3 z-10 p-2 sm:p-2.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors touch-target"
-        aria-label={tool.isFavorite ? 'הסר ממועדפים' : 'הוסף למועדפים'}
-      >
-        <Star 
-          className={`w-4 sm:w-5 h-4 sm:h-5 transition-all ${
-            tool.isFavorite 
-              ? 'fill-yellow-400 text-yellow-400 scale-110' 
-              : 'text-gray-400 hover:text-yellow-400'
-          }`}
-        />
-      </button>
+      {/* checkbox */}
+       {onToggleSelect && (
+         <input
+           type="checkbox"
+           checked={isSelected}
+           onChange={() => onToggleSelect(tool.id)}
+           onClick={(e) => e.stopPropagation()}
+           className="absolute top-2 right-2 sm:top-3 sm:right-3 w-5 h-5 cursor-pointer"
+           aria-label={`בחר ${tool.name}`}
+         />
+       )}
+
+       {/* כוכב מועדפים */}
+       <button
+         onClick={(e) => {
+           e.stopPropagation();
+           onToggleFavorite(tool);
+         }}
+         className={`absolute top-2 left-2 sm:top-3 sm:left-3 z-10 p-2 sm:p-2.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors touch-target ${onToggleSelect ? 'top-10 sm:top-12' : ''}`}
+         aria-label={tool.isFavorite ? 'הסר ממועדפים' : 'הוסף למועדפים'}
+       >
+         <Star 
+           className={`w-4 sm:w-5 h-4 sm:h-5 transition-all ${
+             tool.isFavorite 
+               ? 'fill-yellow-400 text-yellow-400 scale-110' 
+               : 'text-gray-400 hover:text-yellow-400'
+           }`}
+         />
+       </button>
 
       {/* תוכן הכרטיס */}
       <div className="space-y-3 sm:space-y-4 mt-6 sm:mt-8">
