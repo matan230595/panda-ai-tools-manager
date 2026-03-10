@@ -14,6 +14,10 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import OllamaIntegration from '@/components/integrations/OllamaIntegration';
 import BrandingTab from '@/components/tabs/BrandingTab';
 import FooterSettingsTab from '@/components/tabs/FooterSettingsTab';
+import LanguageSwitcher from '../LanguageSwitcher';
+import CollaborationPanel from '../CollaborationPanel';
+import GoogleCalendarSync from '../GoogleCalendarSync';
+import AdvancedAnalytics from '../analytics/AdvancedAnalytics';
 
 export default function SettingsTab({ settings, onLogout }) {
   const queryClient = useQueryClient();
@@ -254,14 +258,17 @@ export default function SettingsTab({ settings, onLogout }) {
       </div>
 
       <Tabs defaultValue="api" className="w-full">
-        <TabsList className="grid w-full grid-cols-7">
-          <TabsTrigger value="branding">🎨 ברנדינג</TabsTrigger>
-          <TabsTrigger value="footer">🔗 Footer</TabsTrigger>
-          <TabsTrigger value="api">🔑 מפתחות API</TabsTrigger>
-          <TabsTrigger value="ollama">🆓 Ollama</TabsTrigger>
-          <TabsTrigger value="preferences">⚙️ העדפות</TabsTrigger>
-          <TabsTrigger value="security">🔐 אבטחה</TabsTrigger>
-          <TabsTrigger value="data">💾 נתונים</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-5 lg:grid-cols-10 gap-1 overflow-x-auto">
+          <TabsTrigger value="branding">🎨</TabsTrigger>
+          <TabsTrigger value="footer">🔗</TabsTrigger>
+          <TabsTrigger value="api">🔑</TabsTrigger>
+          <TabsTrigger value="ollama">🆓</TabsTrigger>
+          <TabsTrigger value="preferences">⚙️</TabsTrigger>
+          <TabsTrigger value="security">🔐</TabsTrigger>
+          <TabsTrigger value="data">💾</TabsTrigger>
+          <TabsTrigger value="language">🌐</TabsTrigger>
+          <TabsTrigger value="collab">👥</TabsTrigger>
+          <TabsTrigger value="calendar">📅</TabsTrigger>
         </TabsList>
 
         <TabsContent value="branding" className="mt-6">
@@ -593,6 +600,21 @@ export default function SettingsTab({ settings, onLogout }) {
               </Button>
             </div>
           </div>
+        </TabsContent>
+
+        <TabsContent value="language" className="space-y-6 mt-6">
+          <div className="glass-effect rounded-2xl p-6">
+            <h3 className="text-lg font-bold mb-4">🌐 בחר שפה</h3>
+            <LanguageSwitcher />
+          </div>
+        </TabsContent>
+
+        <TabsContent value="collab" className="space-y-6 mt-6">
+          <CollaborationPanel />
+        </TabsContent>
+
+        <TabsContent value="calendar" className="space-y-6 mt-6">
+          <GoogleCalendarSync />
         </TabsContent>
       </Tabs>
 
