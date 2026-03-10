@@ -150,16 +150,16 @@ export default function ToolCard({
             </div>
           
           <div className="flex-1 min-w-0">
-            <h3 className="font-bold text-base sm:text-lg text-gray-900 dark:text-white truncate">
+            <h3 className="font-bold text-sm sm:text-base md:text-lg text-gray-900 dark:text-white truncate leading-tight">
               {tool.name}
             </h3>
-            <div className="flex items-center gap-2 mt-1">
-              <Badge className={categoryColors[tool.category]}>
+            <div className="flex items-center gap-1 sm:gap-2 mt-0.5 sm:mt-1 flex-wrap">
+              <Badge className={`${categoryColors[tool.category]} text-xs`}>
                 {tool.category.replace(/_/g, ' ')}
               </Badge>
               {tool.rating > 0 && (
-                <div className="flex items-center gap-1 text-sm text-amber-500">
-                  <Star className="w-4 h-4 fill-current" />
+                <div className="flex items-center gap-0.5 text-xs sm:text-sm text-amber-500">
+                  <Star className="w-3 h-3 sm:w-4 sm:h-4 fill-current" />
                   <span className="font-medium">{tool.rating.toFixed(1)}</span>
                 </div>
               )}
