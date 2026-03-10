@@ -93,16 +93,22 @@ export default function ToolCard({
         <GripVertical className="w-4 sm:w-5 h-4 sm:h-5 text-gray-400" />
       </div>
 
-      {/* checkbox */}
+      {/* checkbox - visible in compare mode */}
        {onToggleSelect && (
-         <input
-           type="checkbox"
-           checked={isSelected}
-           onChange={() => onToggleSelect(tool.id)}
-           onClick={(e) => e.stopPropagation()}
-           className="absolute top-2 right-2 sm:top-3 sm:right-3 w-5 h-5 cursor-pointer"
-           aria-label={`בחר ${tool.name}`}
-         />
+         <button
+           onClick={(e) => {
+             e.stopPropagation();
+             onToggleSelect(tool.id);
+           }}
+           className={`absolute top-2 right-2 sm:top-3 sm:right-3 w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all ${
+             isSelected 
+               ? 'bg-indigo-500 border-indigo-600' 
+               : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600'
+           }`}
+           aria-label={`${isSelected ? 'בטל בחירה' : 'בחר'} ${tool.name}`}
+         >
+           {isSelected && <Check className="w-4 h-4 text-white" />}
+         </button>
        )}
 
        {/* כוכב מועדפים */}
