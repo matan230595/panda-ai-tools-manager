@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { Bell, Plus, Trash2, Check, AlertCircle, Clock, Sparkles, Loader2 } from 'lucide-react';
+import { Bell, Plus, Trash2, Check, AlertCircle, Clock, Sparkles, Loader2, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -83,6 +83,16 @@ export default function RemindersTab() {
       queryClient.invalidateQueries(['reminders']);
       toast.success('התזכורת עודכנה! ✓');
     }
+  });
+
+  // שלח תזכורות
+  const sendRemindersMutation = useMutation({
+    mutationFn: (reminderIds) => base44.functions.invoke('sendReminderNotification', { reminderIds }),
+    onSuccess: (res) => {
+      queryClient.invalidateQueries(['reminders']);
+      toast.success(`נשלחו ${res.data.sent} תזכורות בדוא"ל ✉️`);
+    },
+    onError: () => toast.error('שגיאה בשליחת התזכורות')
   });
 
   const resetForm = () => {
@@ -322,17 +332,27 @@ export default function RemindersTab() {
             {activeReminders.length} תזכורות פעילות
           </p>
         </div>
-        <div className="flex gap-2 w-full sm:w-auto">
-          {FormWrapper}
-          <Button 
-            variant="outline"
-            onClick={handleGenerateReminders}
-            className="flex-1 sm:flex-none"
-          >
-            <Sparkles className="w-4 h-4 ml-2" />
-            <span className="text-xs sm:text-sm">AI</span>
-          </Button>
-        </div>
+        <div className="flex gap-2 w-full sm:w-auto flex-wrap">
+           {FormWrapper}
+           <Button 
+             variant="outline"
+             onClick={handleGenerateReminders}
+             className="flex-1 sm:flex-none text-xs sm:text-sm"
+           >
+             <Sparkles className="w-4 h-4 ml-2" />
+             AI
+           </Button>
+           {activeReminders.length > 0 && (
+             <Button
+               onClick={() => sendRemindersMutation.mutate(activeReminders.map(r => r.id))}
+               className="flex-1 sm:flex-none bg-green-600 hover:bg-green-700 text-xs sm:text-sm"
+               disabled={sendRemindersMutation.isPending}
+             >
+               <Mail className="w-4 h-4 ml-2" />
+               שלח דוא״ל
+             </Button>
+           )}
+         </div>
       </div>
 
       {/* Active Reminders */}
