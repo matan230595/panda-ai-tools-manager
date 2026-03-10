@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { 
   Star, ExternalLink, Edit, Trash2, Tag, TrendingUp, 
-  Copy, Check, GripVertical, Eye, Share2, BarChart3, DollarSign, Package, MessageCircle
+  Copy, Check, GripVertical, Eye, Share2, BarChart3, DollarSign, Package, MessageCircle,
+  MessageSquare
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -249,76 +250,85 @@ export default function ToolCard({
               <Eye className="w-3.5 sm:w-4 md:w-5 h-3.5 sm:h-4 md:h-5" />
             </Button>
             
+            {/* כפתור העתקת קישור */}
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleShare();
+              }}
+              className="h-8 sm:h-9 md:h-10 w-8 sm:w-9 md:w-10 p-0 touch-target"
+              title={copied ? 'הועתק!' : 'העתק קישור'}
+            >
+              {copied ? (
+                <Check className="w-3.5 sm:w-4 md:w-5 h-3.5 sm:h-4 md:h-5 text-green-500" />
+              ) : (
+                <Copy className="w-3.5 sm:w-4 md:w-5 h-3.5 sm:h-4 md:h-5" />
+              )}
+            </Button>
+
+            {/* כפתור שיתוף ב-WhatsApp */}
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleWhatsAppShare();
+              }}
+              className="h-8 sm:h-9 md:h-10 w-8 sm:w-9 md:w-10 p-0 touch-target text-green-600 dark:text-green-400"
+              title="שתף בוואטסאפ"
+            >
+              <MessageSquare className="w-3.5 sm:w-4 md:w-5 h-3.5 sm:h-4 md:h-5" />
+            </Button>
+
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button 
-                  size="sm" 
-                  variant="ghost" 
-                  className="h-8 sm:h-9 md:h-10 w-8 sm:w-9 md:w-10 p-0 touch-target"
-                  onClick={(e) => e.stopPropagation()}
-                  title="עוד אפשרויות"
-                >
-                  <span className="sr-only">פתח תפריט</span>
-                  <span className="text-base sm:text-lg">⋮</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-40 sm:w-44 md:w-48 text-sm">
-                <DropdownMenuItem onClick={(e) => {
-                  e.stopPropagation();
-                  onEdit(tool);
-                }}>
-                  <Edit className="w-4 h-4 ml-2" />
-                  עריכה
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={(e) => {
-                  e.stopPropagation();
-                  handleShare();
-                }}>
-                  {copied ? (
-                    <>
-                      <Check className="w-4 h-4 ml-2 text-green-500" />
-                      הועתק!
-                    </>
-                  ) : (
-                    <>
-                      <Share2 className="w-4 h-4 ml-2" />
-                      שיתוף
-                    </>
-                  )}
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={(e) => {
-                   e.stopPropagation();
-                   handleVisit();
-                 }}>
-                   <ExternalLink className="w-4 h-4 ml-2" />
-                   פתח באתר
-                 </DropdownMenuItem>
+               <DropdownMenuTrigger asChild>
+                 <Button 
+                   size="sm" 
+                   variant="ghost" 
+                   className="h-8 sm:h-9 md:h-10 w-8 sm:w-9 md:w-10 p-0 touch-target"
+                   onClick={(e) => e.stopPropagation()}
+                   title="עוד אפשרויות"
+                 >
+                   <span className="sr-only">פתח תפריט</span>
+                   <span className="text-base sm:text-lg">⋮</span>
+                 </Button>
+               </DropdownMenuTrigger>
+               <DropdownMenuContent align="end" className="w-40 sm:w-44 md:w-48 text-sm">
                  <DropdownMenuItem onClick={(e) => {
                    e.stopPropagation();
-                   handleWhatsAppShare();
+                   onEdit(tool);
                  }}>
-                   <MessageCircle className="w-4 h-4 ml-2" />
-                   שתף בוואטסאפ
+                   <Edit className="w-4 h-4 ml-2" />
+                   עריכה
                  </DropdownMenuItem>
-                 <DropdownMenuSeparator />
-                <DropdownMenuItem 
-                  onClick={(e) => {
+                 <DropdownMenuItem onClick={(e) => {
                     e.stopPropagation();
-                    onDelete(tool);
-                  }}
-                  className="text-red-600 dark:text-red-400"
-                >
-                  <Trash2 className="w-4 h-4 ml-2" />
-                  מחיקה
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                    handleVisit();
+                  }}>
+                    <ExternalLink className="w-4 h-4 ml-2" />
+                    פתח באתר
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                 <DropdownMenuItem 
+                   onClick={(e) => {
+                     e.stopPropagation();
+                     onDelete(tool);
+                   }}
+                   className="text-red-600 dark:text-red-400"
+                 >
+                   <Trash2 className="w-4 h-4 ml-2" />
+                   מחיקה
+                 </DropdownMenuItem>
+               </DropdownMenuContent>
+             </DropdownMenu>
           </div>
         </div>
       </div>
 
-      {/* אפקט hover */}
-      <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-indigo-500/0 to-purple-500/0 group-hover:from-indigo-500/5 group-hover:to-purple-500/5 transition-all duration-300 pointer-events-none" />
+      {/* אפקט hover - לא מסתיר תוכן */}
+      {/* אפקט hover הוסר כדי להימנע מהסתרת תוכן */}
     </div>
   );
 }
