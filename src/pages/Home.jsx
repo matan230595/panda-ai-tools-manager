@@ -21,6 +21,8 @@ const CollaborationTab = React.lazy(() => import('@/components/tabs/Collaboratio
 const BudgetTab = React.lazy(() => import('@/components/tabs/BudgetTab'));
 const RemindersTab = React.lazy(() => import('@/components/tabs/RemindersTab'));
 const TemplatesTab = React.lazy(() => import('@/components/tabs/TemplatesTab'));
+const DashboardTab = React.lazy(() => import('@/pages/Dashboard'));
+const SubscriptionMgmt = React.lazy(() => import('@/components/subscription/SubscriptionManagementPanel'));
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState('tools');
@@ -232,6 +234,16 @@ export default function Home() {
           {activeTab === 'templates' && (
             <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="animate-spin w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full" /></div>}>
               <TemplatesTab />
+            </Suspense>
+          )}
+          {activeTab === 'dashboard' && (
+            <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="animate-spin w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full" /></div>}>
+              <DashboardTab />
+            </Suspense>
+          )}
+          {activeTab === 'subscriptions-mgmt' && (
+            <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="animate-spin w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full" /></div>}>
+              <SubscriptionMgmt />
             </Suspense>
           )}
           {activeTab === 'settings' && <SettingsTab settings={settings} onLogout={() => {
