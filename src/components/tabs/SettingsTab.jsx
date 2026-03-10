@@ -545,39 +545,17 @@ export default function SettingsTab({ settings, onLogout }) {
 
         <TabsContent value="security" className="space-y-6 mt-6">
           <div className="glass-effect rounded-2xl p-6">
-            <h3 className="text-lg font-bold mb-4">🔐 שינוי סיסמה</h3>
-            <div className="space-y-4 max-w-md">
-              <div className="space-y-2">
-                <Label>סיסמה נוכחית</Label>
-                <Input type="password" placeholder="הזן סיסמה נוכחית" />
+            <h3 className="text-lg font-bold mb-4">🔐 אבטחה וגישה</h3>
+            <div className="space-y-4 max-w-xl">
+              <div className="rounded-xl border border-indigo-200 dark:border-indigo-900 bg-indigo-50 dark:bg-indigo-950/40 p-4">
+                <p className="font-semibold mb-1">המערכת משתמשת בהתחברות המובנית של Base44</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  אין סיסמה מקומית לניהול כאן — הגישה מנוהלת דרך חשבון המשתמש שלך.
+                </p>
               </div>
-              <div className="space-y-2">
-                <Label>סיסמה חדשה</Label>
-                <Input type="password" placeholder="הזן סיסמה חדשה" />
-              </div>
-              <div className="space-y-2">
-                <Label>אימות סיסמה</Label>
-                <Input type="password" placeholder="הזן שוב" />
-              </div>
-              <Button 
-                onClick={() => {
-                  const newPassword = prompt('הזן סיסמה חדשה:');
-                  if (newPassword) {
-                    localStorage.setItem('ai_tools_password', newPassword);
-                    toast.success('הסיסמה שונתה בהצלחה!');
-                  }
-                }}
-                className="w-full"
-              >
-                שמור סיסמה חדשה
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={() => {
-                  if (confirm('האם להתנתק?')) {
-                    onLogout?.();
-                  }
-                }}
+              <Button
+                variant="outline"
+                onClick={() => onLogout?.()}
                 className="w-full text-red-600"
               >
                 התנתק מהמערכת

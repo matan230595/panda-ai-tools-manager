@@ -27,7 +27,7 @@ export default function AssistantTab() {
   const [currentConversationId, setCurrentConversationId] = useState(null);
   const [showClearDialog, setShowClearDialog] = useState(false);
   const [isSending, setIsSending] = useState(false);
-  const [selectedModel, setSelectedModel] = useState('gemini');
+  const [selectedModel, setSelectedModel] = useState('automatic');
 
   const { data: conversations = [] } = useQuery({
     queryKey: ['conversations'],
@@ -161,9 +161,12 @@ ${context}
         input.length > 100 || // שאלות ארוכות בדרך כלל צריכות מידע
         !tools.some(t => input.toLowerCase().includes(t.name.toLowerCase())); // אם לא מזכיר כלים ספציפיים
 
+      const modelToUse = needsInternet ? 'gemini_3_flash' : selectedModel;
+
       const response = await base44.integrations.Core.InvokeLLM({
         prompt,
         add_context_from_internet: needsInternet,
+        model: modelToUse,
       });
 
       const assistantMessage = {
@@ -251,14 +254,13 @@ ${context}
           </div>
           <div className="flex items-center gap-2">
             <Select value={selectedModel} onValueChange={setSelectedModel}>
-              <SelectTrigger className="w-32">
+              <SelectTrigger className="w-40">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="gemini">Gemini</SelectItem>
-                <SelectItem value="groq">Groq</SelectItem>
-                <SelectItem value="mistral">Mistral</SelectItem>
-                <SelectItem value="cohere">Cohere</SelectItem>
+                <SelectItem value="automatic">אוטומטי</SelectItem>
+                <SelectItem value="gpt_5_mini">מהיר</SelectItem>
+                <SelectItem value="gemini_3_flash">עם חיפוש רשת</SelectItem>
               </SelectContent>
             </Select>
             {currentConversationId && (
@@ -339,7 +341,7 @@ ${context}
           </div>
           <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 mt-2">
             <span>💡 העוזר יכול לעזור לך למצוא כלים, להשוות ביניהם ולתת המלצות מבוססות</span>
-            <span className="text-indigo-600 dark:text-indigo-400">מודל: {selectedModel.toUpperCase()}</span>
+            <span className="text-indigo-600 dark:text-indigo-400">מודל: {selectedModel}</span>
           </div>
         </div>
       </div>
