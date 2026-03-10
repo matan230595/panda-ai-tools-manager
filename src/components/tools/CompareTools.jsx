@@ -48,10 +48,10 @@ export default function CompareTools({ tools, onClose, isMobile = false }) {
               ))}
 
               {/* Description */}
-              <div className="font-semibold text-gray-700 dark:text-gray-300 flex items-center">תיאור</div>
+              <div className="font-semibold text-xs md:text-sm text-gray-700 dark:text-gray-300 flex items-center">תיאור</div>
               {tools.map((tool) => (
-                <div key={tool.id} className="glass-effect rounded-lg p-4">
-                  <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-3">
+                <div key={tool.id} className="glass-effect rounded-lg p-2 md:p-4">
+                  <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400 line-clamp-2 md:line-clamp-3">
                     {tool.description || 'אין תיאור'}
                   </p>
                 </div>
@@ -60,74 +60,54 @@ export default function CompareTools({ tools, onClose, isMobile = false }) {
               {/* Comparison Rows */}
               {compareRows.map((row) => (
                 <React.Fragment key={row.key}>
-                  <div className="font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                    {row.icon && <row.icon className="w-4 h-4" />}
+                  <div className="font-semibold text-xs md:text-sm text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                    {row.icon && <row.icon className="w-3 md:w-4 h-3 md:h-4" />}
                     {row.label}
                   </div>
                   {tools.map((tool) => (
-                    <div key={tool.id} className="glass-effect rounded-lg p-4 flex items-center justify-center">
-                      <span className="text-sm font-medium">{row.render(tool)}</span>
+                    <div key={tool.id} className="glass-effect rounded-lg p-2 md:p-4 flex items-center justify-center">
+                      <span className="text-xs md:text-sm font-medium">{row.render(tool)}</span>
                     </div>
                   ))}
                 </React.Fragment>
               ))}
 
               {/* Features Detail */}
-              <div className="font-semibold text-gray-700 dark:text-gray-300">תכונות מפורטות</div>
+              <div className="font-semibold text-xs md:text-sm text-gray-700 dark:text-gray-300">תכונות</div>
               {tools.map((tool) => (
-                <div key={tool.id} className="glass-effect rounded-lg p-4">
+                <div key={tool.id} className="glass-effect rounded-lg p-2 md:p-4">
                   {tool.features?.length > 0 ? (
-                    <ul className="space-y-1">
-                      {tool.features.slice(0, 5).map((feature, idx) => (
-                        <li key={idx} className="text-xs flex items-start gap-2">
-                          <Check className="w-3 h-3 text-green-500 flex-shrink-0 mt-0.5" />
-                          <span>{feature}</span>
+                    <ul className="space-y-0.5 md:space-y-1">
+                      {tool.features.slice(0, 3).map((feature, idx) => (
+                        <li key={idx} className="text-xs flex items-start gap-1 md:gap-2">
+                          <Check className="w-2 md:w-3 h-2 md:h-3 text-green-500 flex-shrink-0 mt-0.5" />
+                          <span className="line-clamp-1">{feature}</span>
                         </li>
                       ))}
-                      {tool.features.length > 5 && (
-                        <li className="text-xs text-gray-500">+{tool.features.length - 5} נוספות</li>
+                      {tool.features.length > 3 && (
+                        <li className="text-xs text-gray-500">+{tool.features.length - 3}</li>
                       )}
                     </ul>
                   ) : (
-                    <div className="flex items-center justify-center h-full">
-                      <Minus className="w-4 h-4 text-gray-400" />
-                    </div>
-                  )}
-                </div>
-              ))}
-
-              {/* Integrations Detail */}
-              <div className="font-semibold text-gray-700 dark:text-gray-300">אינטגרציות</div>
-              {tools.map((tool) => (
-                <div key={tool.id} className="glass-effect rounded-lg p-4">
-                  {tool.integrations?.length > 0 ? (
-                    <div className="flex flex-wrap gap-1">
-                      {tool.integrations.map((integration, idx) => (
-                        <Badge key={idx} variant="outline" className="text-xs">
-                          {integration}
-                        </Badge>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="flex items-center justify-center h-full">
-                      <Minus className="w-4 h-4 text-gray-400" />
+                    <div className="flex items-center justify-center">
+                      <Minus className="w-3 h-3 text-gray-400" />
                     </div>
                   )}
                 </div>
               ))}
 
               {/* Actions */}
-              <div className="font-semibold text-gray-700 dark:text-gray-300">פעולות</div>
+              <div className="font-semibold text-xs md:text-sm text-gray-700 dark:text-gray-300">פעולות</div>
               {tools.map((tool) => (
-                <div key={tool.id} className="glass-effect rounded-lg p-4">
+                <div key={tool.id} className="glass-effect rounded-lg p-2 md:p-4">
                   <Button
                     variant="outline"
                     size="sm"
-                    className="w-full"
+                    className="w-full text-xs md:text-sm"
                     onClick={() => window.open(tool.url, '_blank')}
                   >
-                    <ExternalLink className="w-4 h-4 ml-2" />
-                    בקר באתר
+                    <ExternalLink className="w-3 h-3 ml-1 md:w-4 md:h-4 md:ml-2" />
+                    בקר
                   </Button>
                 </div>
               ))}
