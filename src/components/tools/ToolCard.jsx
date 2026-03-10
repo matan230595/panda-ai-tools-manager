@@ -278,13 +278,20 @@ export default function ToolCard({
                   )}
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={(e) => {
-                  e.stopPropagation();
-                  handleVisit();
-                }}>
-                  <ExternalLink className="w-4 h-4 ml-2" />
-                  פתח באתר
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
+                   e.stopPropagation();
+                   handleVisit();
+                 }}>
+                   <ExternalLink className="w-4 h-4 ml-2" />
+                   פתח באתר
+                 </DropdownMenuItem>
+                 <DropdownMenuItem onClick={(e) => {
+                   e.stopPropagation();
+                   handleWhatsAppShare();
+                 }}>
+                   <MessageCircle className="w-4 h-4 ml-2" />
+                   שתף בוואטסאפ
+                 </DropdownMenuItem>
+                 <DropdownMenuSeparator />
                 <DropdownMenuItem 
                   onClick={(e) => {
                     e.stopPropagation();
