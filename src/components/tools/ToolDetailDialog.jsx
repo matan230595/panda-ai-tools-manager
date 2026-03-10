@@ -6,6 +6,7 @@ import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ToolLogo from '@/components/ToolLogo';
 import SimilarTools from '@/components/tools/SimilarTools';
+import UserCredentialsTab from '@/components/tools/UserCredentialsTab';
 
 export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onToggleFavorite, onManageSubscription }) {
   const categoryColors = {
