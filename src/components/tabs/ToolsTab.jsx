@@ -546,17 +546,6 @@ export default function ToolsTab({ settings, initialFilter }) {
         />
       ) : (
         <div className={gridClasses[viewMode]}>
-          {filteredAndSortedTools.map((tool) => (
-            <div key={tool.id} className="relative">
-              {compareMode && (
-                <div className="absolute top-2 left-2 z-10">
-                  <Checkbox
-                    checked={selectedForCompare.some(t => t.id === tool.id)}
-                    onCheckedChange={() => toggleCompareSelection(tool)}
-                    className="w-6 h-6 bg-white dark:bg-gray-800 border-2"
-                  />
-                </div>
-              )}
               <ToolCard
                 tool={tool}
                 onEdit={handleEdit}
