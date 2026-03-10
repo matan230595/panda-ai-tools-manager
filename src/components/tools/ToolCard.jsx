@@ -76,6 +76,8 @@ export default function ToolCard({
       className={`
         group relative glass-effect rounded-lg sm:rounded-xl md:rounded-2xl p-3 sm:p-4 md:p-5
         transition-all duration-300 hover-lift cursor-pointer
+        border border-gray-200 dark:border-gray-700 
+        shadow-md dark:shadow-lg hover:shadow-lg dark:hover:shadow-xl
         ${isDragging ? 'opacity-50 scale-95' : 'opacity-100'}
         ${tool.isFavorite ? 'ring-2 ring-yellow-400 dark:ring-yellow-500' : ''}
         ${onToggleSelect && isSelected ? 'ring-2 ring-indigo-500' : ''}
