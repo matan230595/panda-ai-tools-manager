@@ -168,7 +168,7 @@ export default function ToolCard({
         </div>
 
         {/* תיאור */}
-        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 line-clamp-2 sm:line-clamp-3 leading-relaxed">
+        <p className="text-xs sm:text-xs md:text-sm text-gray-600 dark:text-gray-300 line-clamp-2 md:line-clamp-3 leading-tight sm:leading-relaxed">
           {tool.description || 'אין תיאור זמין'}
         </p>
 
