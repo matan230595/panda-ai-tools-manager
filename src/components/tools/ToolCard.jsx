@@ -252,15 +252,15 @@ export default function ToolCard({
                 <Button 
                   size="sm" 
                   variant="ghost" 
-                  className="h-9 sm:h-10 w-9 sm:w-10 p-0 touch-target"
+                  className="h-8 sm:h-9 md:h-10 w-8 sm:w-9 md:w-10 p-0 touch-target"
                   onClick={(e) => e.stopPropagation()}
                   title="עוד אפשרויות"
                 >
                   <span className="sr-only">פתח תפריט</span>
-                  <span className="text-lg">⋮</span>
+                  <span className="text-base sm:text-lg">⋮</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-44 sm:w-48">
+              <DropdownMenuContent align="end" className="w-40 sm:w-44 md:w-48 text-sm">
                 <DropdownMenuItem onClick={(e) => {
                   e.stopPropagation();
                   onEdit(tool);
