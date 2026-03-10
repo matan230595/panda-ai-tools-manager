@@ -74,10 +74,11 @@ export default function ToolCard({
   return (
     <div 
       className={`
-        group relative glass-effect rounded-2xl p-4 sm:p-5 md:p-6
+        group relative glass-effect rounded-lg sm:rounded-xl md:rounded-2xl p-3 sm:p-4 md:p-5
         transition-all duration-300 hover-lift cursor-pointer
         ${isDragging ? 'opacity-50 scale-95' : 'opacity-100'}
         ${tool.isFavorite ? 'ring-2 ring-yellow-400 dark:ring-yellow-500' : ''}
+        ${onToggleSelect && isSelected ? 'ring-2 ring-indigo-500' : ''}
       `}
       role="article"
       aria-label={`כרטיס כלי: ${tool.name}`}
