@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ToolLogo from '@/components/ToolLogo';
 import SimilarTools from '@/components/tools/SimilarTools';
 import UserCredentialsTab from '@/components/tools/UserCredentialsTab';
+import ToolTasksPanel from '@/components/tools/ToolTasksPanel';
 
 export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onToggleFavorite, onManageSubscription, onQuickUpdate }) {
   const categoryColors = {
@@ -118,11 +119,12 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-6">
           <Tabs defaultValue="overview" className="w-full">
-            <TabsList className="grid w-full grid-cols-5">
+            <TabsList className="grid w-full grid-cols-6">
               <TabsTrigger value="overview">סקירה</TabsTrigger>
               <TabsTrigger value="details">פרטים</TabsTrigger>
               <TabsTrigger value="pricing">מחירים</TabsTrigger>
               <TabsTrigger value="credentials">👤 גישה</TabsTrigger>
+              <TabsTrigger value="tasks">משימות</TabsTrigger>
               <TabsTrigger value="notes">הערות</TabsTrigger>
             </TabsList>
 
@@ -383,6 +385,10 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
                 tool={tool} 
                 onSave={(patch) => onQuickUpdate?.(tool.id, { userCredentials: patch.userCredentials })}
               />
+            </TabsContent>
+
+            <TabsContent value="tasks" className="space-y-4 mt-6">
+              <ToolTasksPanel tool={tool} />
             </TabsContent>
 
             <TabsContent value="notes" className="space-y-4 mt-6">

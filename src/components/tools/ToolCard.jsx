@@ -15,7 +15,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { toast } from 'sonner';
 import { base44 } from '@/api/base44Client';
-import ToolStatsDisplay from '@/components/tools/ToolStatsDisplay';
 
 export default function ToolCard({ 
   tool, 
@@ -178,13 +177,6 @@ export default function ToolCard({
         <p className="text-xs sm:text-xs md:text-sm text-gray-600 dark:text-gray-300 line-clamp-2 md:line-clamp-3 leading-tight sm:leading-relaxed">
           {tool.description || 'אין תיאור זמין'}
         </p>
-
-        {/* סטטיסטיקות שימוש */}
-        {tool.usageStats && (
-          <div className="space-y-2">
-            <ToolStatsDisplay stats={tool.usageStats} personalRating={tool.personalRating} />
-          </div>
-        )}
 
         {/* הערות אישיות */}
         {tool.personalNotes && (
