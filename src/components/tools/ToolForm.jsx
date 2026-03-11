@@ -281,26 +281,64 @@ ${formData.url ? `URL: ${formData.url}` : ''}
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     if (!formData.name || !formData.url) {
       toast.error('שם ו-URL הם שדות חובה');
       return;
     }
 
+    const validCategories = new Set(categories);
+    const validPricing = new Set(['חינם', 'בתשלום', 'פרימיום', 'פרימיום_מוגבל']);
+    const validSubscriptionTypes = new Set(['חינמי', 'פרימיום', 'גולד']);
+    const normalizedUrl = formData.url.startsWith('http') ? formData.url : `https://${formData.url}`;
     const monthlyValue = (formData.directRevenue || 0) + ((formData.timeSavingsHours || 0) * 100);
-    const monthlyCost = formData.priceILS || 0;
+    const monthlyCost = Number(formData.priceILS || 0);
     const roiPercentage = monthlyCost > 0 ? (((monthlyValue - monthlyCost) / monthlyCost) * 100) : (monthlyValue > 0 ? 100 : 0);
 
-    onSave({
-      ...formData,
+    const sanitizedPayload = {
+      name: formData.name.trim(),
+      url: normalizedUrl.trim(),
+      description: formData.description || '',
+      detailedDescription: formData.detailedDescription || '',
+      category: validCategories.has(formData.category) ? formData.category : 'אחר',
+      pricing: validPricing.has(formData.pricing) ? formData.pricing : 'חינם',
+      subscriptionType: validSubscriptionTypes.has(formData.subscriptionType) ? formData.subscriptionType : 'חינמי',
+      subscriptionPlans: Array.isArray(formData.subscriptionPlans) ? formData.subscriptionPlans : [],
+      priceUSD: Number(formData.priceUSD || 0),
+      priceILS: monthlyCost,
+      timeSavingsHours: Number(formData.timeSavingsHours || 0),
+      directRevenue: Number(formData.directRevenue || 0),
       roiPercentage: Math.round(roiPercentage),
       roiDisplay: `ערך חודשי משוער ₪${monthlyValue} מול עלות ₪${monthlyCost}`,
+      features: Array.isArray(formData.features) ? formData.features.filter(Boolean) : [],
+      integrations: Array.isArray(formData.integrations) ? formData.integrations.filter(Boolean) : [],
+      tags: Array.isArray(formData.tags) ? formData.tags.filter(Boolean) : [],
+      rating: Number(formData.rating || 0),
+      popularity: Number(formData.popularity || 3),
+      isFavorite: !!formData.isFavorite,
+      hasSubscription: !!formData.hasSubscription,
+      logo: formData.logo || '',
+      screenshots: Array.isArray(formData.screenshots) ? formData.screenshots.filter(Boolean) : [],
+      videoDemo: formData.videoDemo || '',
+      useCases: Array.isArray(formData.useCases) ? formData.useCases : [],
+      prosAndCons: {
+        pros: Array.isArray(formData.prosAndCons?.pros) ? formData.prosAndCons.pros.filter(Boolean) : [],
+        cons: Array.isArray(formData.prosAndCons?.cons) ? formData.prosAndCons.cons.filter(Boolean) : [],
+      },
+      targetAudience: formData.targetAudience || '',
+      languagesSupported: Array.isArray(formData.languagesSupported) ? formData.languagesSupported.filter(Boolean) : [],
+      platforms: Array.isArray(formData.platforms) ? formData.platforms.filter(Boolean) : [],
+      notes: formData.notes || '',
+      personalNotes: formData.personalNotes || formData.notes || '',
+      aiGenerated: !!formData.aiGenerated,
       usageStats: {
         ...(formData.usageStats || {}),
         totalCostPerMonth: monthlyCost,
         roi: `ROI משוער: ${Math.round(roiPercentage)}%`,
       },
-    });
+    };
+
+    onSave(sanitizedPayload);
   };
 
   return (

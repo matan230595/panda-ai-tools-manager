@@ -145,7 +145,7 @@ export default function ToolsTab({ settings, initialFilter }) {
       setShowForm(false);
       setEditingTool(null);
     },
-    onError: () => toast.error('שגיאה בהוספת הכלי'),
+    onError: (error) => toast.error(error?.message || 'שגיאה בהוספת הכלי'),
   });
 
   const updateMutation = useMutation({
