@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { X, Sparkles, Loader2, Plus, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -165,6 +165,7 @@ ${formData.url ? `URL: ${formData.url}` : ''}
 📋 **ספק JSON מלא עם השדות הבאים:**
 
 **מידע בסיסי:**
+- url: כתובת האתר הרשמית המלאה של הכלי (homepage מדויקת, https מלא)
 - name: שם מלא בעברית (תרגם אם באנגלית)
 - description: תיאור קצר ותמציתי (1-2 משפטים)
 - detailedDescription: תיאור מקיף ומפורט (4-6 פסקאות) כולל:
@@ -212,6 +213,7 @@ ${formData.url ? `URL: ${formData.url}` : ''}
         response_json_schema: {
           type: 'object',
           properties: {
+            url: { type: 'string' },
             name: { type: 'string' },
             description: { type: 'string' },
             detailedDescription: { type: 'string' },
@@ -264,7 +266,7 @@ ${formData.url ? `URL: ${formData.url}` : ''}
       setFormData(prev => ({
         ...prev,
         ...response,
-        url: prev.url || response.url || prev.url,
+        url: response.url || prev.url,
         aiGenerated: true
       }));
 

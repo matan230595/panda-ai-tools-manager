@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Plus, Trash2 } from 'lucide-react';
@@ -29,6 +29,14 @@ export default function ToolLearningPlanPanel({ tool }) {
 
   const currentPlan = plans[0];
 
+  useEffect(() => {
+    if (!currentPlan) return;
+    setTitle(currentPlan.title || 'תוכנית למידה');
+    setDescription(currentPlan.description || '');
+    setTargetDate(currentPlan.targetDate || '');
+    setSteps(currentPlan.steps || []);
+  }, [currentPlan]);
+
   const savePlan = useMutation({
     mutationFn: async (payload) => {
       if (currentPlan?.id) {
@@ -50,21 +58,9 @@ export default function ToolLearningPlanPanel({ tool }) {
     },
   });
 
-  const effectiveSteps = currentPlan?.steps || steps;
+  const effectiveSteps = steps;
   const completedSteps = effectiveSteps.filter((step) => step.isCompleted).length;
   const progress = effectiveSteps.length ? Math.round((completedSteps / effectiveSteps.length) * 100) : 0;
-
-  const draftSteps = currentPlan?.id ? currentPlan.steps : steps;
-
-  const updateExistingStep = async (index, patch) => {
-    if (!currentPlan?.id) return;
-    const updatedSteps = currentPlan.steps.map((step, stepIndex) => (
-      stepIndex === index ? { ...step, ...patch } : step
-    ));
-    const updatedProgress = updatedSteps.length ? Math.round((updatedSteps.filter((step) => step.isCompleted).length / updatedSteps.length) * 100) : 0;
-    await base44.entities.ToolLearningPlan.update(currentPlan.id, { ...currentPlan, steps: updatedSteps, progress: updatedProgress });
-    queryClient.invalidateQueries({ queryKey: ['learningPlans', tool.id] });
-  };
 
   const saveDraftPlan = () => {
     const normalizedSteps = steps.filter((step) => step.title.trim());
@@ -90,15 +86,15 @@ export default function ToolLearningPlanPanel({ tool }) {
       <div className="rounded-xl border p-4 space-y-4">
         <div className="space-y-2">
           <Label>שם תוכנית הלמידה</Label>
-          <Input value={currentPlan?.title || title} onChange={(e) => currentPlan ? null : setTitle(e.target.value)} disabled={!!currentPlan} />
+          <Input value={title} onChange={(e) => setTitle(e.target.value)} />
         </div>
         <div className="space-y-2">
           <Label>תיאור</Label>
-          <Textarea value={currentPlan?.description || description} onChange={(e) => currentPlan ? null : setDescription(e.target.value)} disabled={!!currentPlan} rows={3} />
+          <Textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3} />
         </div>
         <div className="space-y-2">
           <Label>תאריך יעד כללי</Label>
-          <Input type="date" value={currentPlan?.targetDate || targetDate} onChange={(e) => currentPlan ? null : setTargetDate(e.target.value)} disabled={!!currentPlan} />
+          <Input type="date" value={targetDate} onChange={(e) => setTargetDate(e.target.value)} />
         </div>
       </div>
 
@@ -114,41 +110,31 @@ export default function ToolLearningPlanPanel({ tool }) {
         </div>
 
         <div className="space-y-3">
-          {draftSteps.map((step, index) => (
+          {steps.map((step, index) => (
             <div key={index} className="rounded-lg bg-gray-50 dark:bg-gray-900 p-3 space-y-3">
               <div className="flex items-center gap-3">
                 <Checkbox
                   checked={step.isCompleted}
                   onCheckedChange={(checked) => {
-                    if (currentPlan) {
-                      updateExistingStep(index, { isCompleted: !!checked });
-                    } else {
-                      setSteps((prev) => prev.map((item, itemIndex) => itemIndex === index ? { ...item, isCompleted: !!checked } : item));
-                    }
+                    setSteps((prev) => prev.map((item, itemIndex) => itemIndex === index ? { ...item, isCompleted: !!checked } : item));
                   }}
                 />
                 <Input
                   value={step.title}
                   onChange={(e) => {
-                    if (currentPlan) return;
                     setSteps((prev) => prev.map((item, itemIndex) => itemIndex === index ? { ...item, title: e.target.value } : item));
                   }}
-                  disabled={!!currentPlan}
                   placeholder="שם השלב"
                 />
-                {!currentPlan && (
-                  <Button variant="ghost" size="icon" onClick={() => setSteps((prev) => prev.filter((_, itemIndex) => itemIndex !== index))}>
-                    <Trash2 className="w-4 h-4 text-red-500" />
-                  </Button>
-                )}
+                <Button variant="ghost" size="icon" onClick={() => setSteps((prev) => prev.filter((_, itemIndex) => itemIndex !== index))}>
+                  <Trash2 className="w-4 h-4 text-red-500" />
+                </Button>
               </div>
               <Textarea
                 value={step.description || ''}
                 onChange={(e) => {
-                  if (currentPlan) return;
                   setSteps((prev) => prev.map((item, itemIndex) => itemIndex === index ? { ...item, description: e.target.value } : item));
                 }}
-                disabled={!!currentPlan}
                 placeholder="מה עושים בשלב הזה?"
                 rows={2}
               />
@@ -156,33 +142,26 @@ export default function ToolLearningPlanPanel({ tool }) {
                 type="date"
                 value={step.dueDate || ''}
                 onChange={(e) => {
-                  if (currentPlan) return;
                   setSteps((prev) => prev.map((item, itemIndex) => itemIndex === index ? { ...item, dueDate: e.target.value } : item));
                 }}
-                disabled={!!currentPlan}
               />
             </div>
           ))}
         </div>
 
-        {!currentPlan && (
-          <div className="flex gap-2 mt-4">
-            <Button variant="outline" onClick={() => setSteps((prev) => [...prev, { title: '', description: '', dueDate: '', isCompleted: false }])}>
-              <Plus className="w-4 h-4 ml-2" />
-              הוסף שלב
-            </Button>
-            <Button onClick={saveDraftPlan}>שמור תוכנית</Button>
-          </div>
-        )}
-
-        {currentPlan && (
-          <div className="flex gap-2 mt-4">
+        <div className="flex gap-2 mt-4 flex-wrap">
+          <Button variant="outline" onClick={() => setSteps((prev) => [...prev, { title: '', description: '', dueDate: '', isCompleted: false }])}>
+            <Plus className="w-4 h-4 ml-2" />
+            הוסף שלב
+          </Button>
+          <Button onClick={saveDraftPlan}>שמור תוכנית</Button>
+          {currentPlan && (
             <Button variant="outline" className="text-red-600" onClick={() => deletePlan.mutate()}>
               <Trash2 className="w-4 h-4 ml-2" />
               מחק תוכנית
             </Button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );

@@ -3,6 +3,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
+    const user = await base44.auth.me().catch(() => null);
     const body = await req.json().catch(() => ({}));
     const reminderIds = Array.isArray(body.reminderIds) ? body.reminderIds : [];
 
@@ -11,7 +12,12 @@ Deno.serve(async (req) => {
     }
 
     const allReminders = await base44.asServiceRole.entities.Reminder.list();
-    const reminders = allReminders.filter((reminder) => reminderIds.includes(reminder.id));
+    const reminders = allReminders.filter((reminder) => {
+      const matchesId = reminderIds.includes(reminder.id);
+      if (!matchesId) return false;
+      if (!user) return true;
+      return reminder.created_by === user.email || reminder.recipientEmail === user.email;
+    });
 
     let successCount = 0;
     let failureCount = 0;
