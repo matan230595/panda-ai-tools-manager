@@ -44,7 +44,7 @@ export default function SearchAndFilters({
           <SelectContent>{sortOptions.map((opt) => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}</SelectContent>
         </Select>
 
-        <div className="flex gap-0.5 flex-shrink-0 overflow-x-auto scrollbar-hide max-w-[210px] sm:max-w-none">
+        <div className="hidden sm:flex gap-0.5 flex-shrink-0 overflow-x-auto scrollbar-hide max-w-[210px] sm:max-w-none">
           {[['grid', LayoutGrid], ['list', LayoutList], ['compact', Columns3]].map(([mode, Icon]) => (
             <Button key={mode} size="sm" variant={viewMode === mode ? 'default' : 'ghost'} onClick={() => onViewModeChange(mode)} className="h-7 w-7 p-0 flex-shrink-0" title={mode}>
               <Icon className="w-3 h-3" />

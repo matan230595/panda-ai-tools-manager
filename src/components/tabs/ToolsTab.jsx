@@ -540,6 +540,21 @@ export default function ToolsTab({ settings, initialFilter }) {
                     <Upload className="w-3 h-3 ml-1" />
                     ייבא
                   </Button>
+                  <Button variant={viewMode === 'grid' ? 'default' : 'outline'} onClick={() => { setViewMode('grid'); setIsDrawerOpen(false); }} className="text-xs" size="sm">
+                    רשת
+                  </Button>
+                  <Button variant={viewMode === 'list' ? 'default' : 'outline'} onClick={() => { setViewMode('list'); setIsDrawerOpen(false); }} className="text-xs" size="sm">
+                    רשימה
+                  </Button>
+                  <Button variant={viewMode === 'compact' ? 'default' : 'outline'} onClick={() => { setViewMode('compact'); setIsDrawerOpen(false); }} className="text-xs" size="sm">
+                    צפוף
+                  </Button>
+                  <Button variant={viewMode === 'table' ? 'default' : 'outline'} onClick={() => { setViewMode('table'); setIsDrawerOpen(false); }} className="text-xs" size="sm">
+                    טבלה
+                  </Button>
+                  <Button variant={viewMode === 'kanban' ? 'default' : 'outline'} onClick={() => { setViewMode('kanban'); setIsDrawerOpen(false); }} className="text-xs col-span-2" size="sm">
+                    קאנבן
+                  </Button>
                   <input id="import-file" type="file" accept=".json" onChange={handleImport} className="hidden" />
                   <Button variant="outline" onClick={() => { setCompareMode(true); setIsDrawerOpen(false); }} disabled={tools.length < 2} className="text-xs col-span-2" size="sm">
                     <GitCompare className="w-3 h-3 ml-1" />
