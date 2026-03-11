@@ -267,6 +267,8 @@ ${formData.url ? `URL: ${formData.url}` : ''}
         ...prev,
         ...response,
         url: response.url || prev.url,
+        popularity: Math.max(1, Math.min(5, Math.round(Number(response.popularity || prev.popularity || 3)))),
+        rating: Number(response.rating || prev.rating || 0),
         aiGenerated: true
       }));
 
@@ -320,7 +322,7 @@ ${formData.url ? `URL: ${formData.url}` : ''}
       integrations: Array.isArray(formData.integrations) ? formData.integrations.filter(Boolean).map(String) : [],
       tags: Array.isArray(formData.tags) ? formData.tags.filter(Boolean).map(String) : [],
       rating: Number(formData.rating || 0),
-      popularity: Number(formData.popularity || 3),
+      popularity: Math.max(1, Math.min(5, Math.round(Number(formData.popularity || 3)))),
       isFavorite: !!formData.isFavorite,
       hasSubscription: !!formData.hasSubscription,
       logo: String(formData.logo || ''),
