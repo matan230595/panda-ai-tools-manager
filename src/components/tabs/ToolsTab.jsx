@@ -520,49 +520,7 @@ export default function ToolsTab({ settings, initialFilter }) {
               />
             </div>
 
-            {/* תפריט מובייל - שמאל */}
-            <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
-              <DrawerTrigger asChild>
-                <Button variant="outline" size="sm" className="md:hidden">
-                  <Menu className="w-4 h-4" />
-                </Button>
-              </DrawerTrigger>
-              <DrawerContent className="bg-white dark:bg-gray-900">
-                <DrawerHeader>
-                  <DrawerTitle>אפשרויות</DrawerTitle>
-                </DrawerHeader>
-                <div className="grid grid-cols-2 gap-2 p-4 pb-8">
-                  <Button variant="outline" onClick={() => { handleExport(); setIsDrawerOpen(false); }} className="text-xs" size="sm">
-                    <Download className="w-3 h-3 ml-1" />
-                    ייצא
-                  </Button>
-                  <Button variant="outline" onClick={() => document.getElementById('import-file').click()} className="text-xs" size="sm">
-                    <Upload className="w-3 h-3 ml-1" />
-                    ייבא
-                  </Button>
-                  <Button variant={viewMode === 'grid' ? 'default' : 'outline'} onClick={() => { setViewMode('grid'); setIsDrawerOpen(false); }} className="text-xs" size="sm">
-                    רשת
-                  </Button>
-                  <Button variant={viewMode === 'list' ? 'default' : 'outline'} onClick={() => { setViewMode('list'); setIsDrawerOpen(false); }} className="text-xs" size="sm">
-                    רשימה
-                  </Button>
-                  <Button variant={viewMode === 'compact' ? 'default' : 'outline'} onClick={() => { setViewMode('compact'); setIsDrawerOpen(false); }} className="text-xs" size="sm">
-                    צפוף
-                  </Button>
-                  <Button variant={viewMode === 'table' ? 'default' : 'outline'} onClick={() => { setViewMode('table'); setIsDrawerOpen(false); }} className="text-xs" size="sm">
-                    טבלה
-                  </Button>
-                  <Button variant={viewMode === 'kanban' ? 'default' : 'outline'} onClick={() => { setViewMode('kanban'); setIsDrawerOpen(false); }} className="text-xs col-span-2" size="sm">
-                    קאנבן
-                  </Button>
-                  <input id="import-file" type="file" accept=".json" onChange={handleImport} className="hidden" />
-                  <Button variant="outline" onClick={() => { setCompareMode(true); setIsDrawerOpen(false); }} disabled={tools.length < 2} className="text-xs col-span-2" size="sm">
-                    <GitCompare className="w-3 h-3 ml-1" />
-                    השווה
-                  </Button>
-                </div>
-              </DrawerContent>
-            </Drawer>
+            <input id="import-file" type="file" accept=".json" onChange={handleImport} className="hidden" />
 
             {compareMode && (
               <div className="flex gap-1.5">
@@ -573,6 +531,48 @@ export default function ToolsTab({ settings, initialFilter }) {
                 </Button>
               </div>
             )}
+         </div>
+
+         <div className="md:hidden mt-2 flex items-center gap-2">
+           <ExportImportDialog
+             tools={tools}
+             onImportComplete={() => queryClient.invalidateQueries(['tools'])}
+           />
+
+           <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+             <DrawerTrigger asChild>
+               <Button variant="outline" size="sm" className="text-xs">
+                 <Menu className="w-4 h-4 ml-1" />
+                 תצוגה
+               </Button>
+             </DrawerTrigger>
+             <DrawerContent className="bg-white dark:bg-gray-900">
+               <DrawerHeader>
+                 <DrawerTitle>בחר תצוגה</DrawerTitle>
+               </DrawerHeader>
+               <div className="grid grid-cols-2 gap-2 p-4 pb-8">
+                 <Button variant={viewMode === 'grid' ? 'default' : 'outline'} onClick={() => { setViewMode('grid'); setIsDrawerOpen(false); }} className="text-xs" size="sm">
+                   רשת
+                 </Button>
+                 <Button variant={viewMode === 'list' ? 'default' : 'outline'} onClick={() => { setViewMode('list'); setIsDrawerOpen(false); }} className="text-xs" size="sm">
+                   רשימה
+                 </Button>
+                 <Button variant={viewMode === 'compact' ? 'default' : 'outline'} onClick={() => { setViewMode('compact'); setIsDrawerOpen(false); }} className="text-xs" size="sm">
+                   צפוף
+                 </Button>
+                 <Button variant={viewMode === 'table' ? 'default' : 'outline'} onClick={() => { setViewMode('table'); setIsDrawerOpen(false); }} className="text-xs" size="sm">
+                   טבלה
+                 </Button>
+                 <Button variant={viewMode === 'kanban' ? 'default' : 'outline'} onClick={() => { setViewMode('kanban'); setIsDrawerOpen(false); }} className="text-xs col-span-2" size="sm">
+                   קאנבן
+                 </Button>
+                 <Button variant="outline" onClick={() => { setCompareMode(true); setIsDrawerOpen(false); }} disabled={tools.length < 2} className="text-xs col-span-2" size="sm">
+                   <GitCompare className="w-3 h-3 ml-1" />
+                   השווה
+                 </Button>
+               </div>
+             </DrawerContent>
+           </Drawer>
          </div>
       </div>
 
