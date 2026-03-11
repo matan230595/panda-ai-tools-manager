@@ -84,7 +84,7 @@ export default function Home() {
   // ניהול התראות
   const handleMarkAsRead = (notificationId) => {
     if (!settings) return;
-    const updatedNotifications = settings.notifications.map(n =>
+    const updatedNotifications = (settings.notifications || []).map(n =>
       n.id === notificationId ? { ...n, read: true } : n
     );
     base44.entities.Settings.update(settings.id, { notifications: updatedNotifications });

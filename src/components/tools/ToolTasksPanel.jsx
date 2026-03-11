@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import { getCurrentUser } from '@/components/hooks/userScopedData';
 import { CheckCircle2, Plus, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -23,7 +24,10 @@ export default function ToolTasksPanel({ tool }) {
 
   const { data: tasks = [] } = useQuery({
     queryKey: ['toolTasks', tool.id],
-    queryFn: () => base44.entities.ToolTask.filter({ toolId: tool.id }),
+    queryFn: async () => {
+      const user = await getCurrentUser();
+      return base44.entities.ToolTask.filter({ toolId: tool.id, created_by: user.email });
+    },
   });
 
   const createTask = useMutation({

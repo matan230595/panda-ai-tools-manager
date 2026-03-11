@@ -18,7 +18,10 @@ export default function AssistantTab() {
 
   const { data: conversations = [], refetch: refetchConversations } = useQuery({
     queryKey: ['agentConversations', AGENT_NAME],
-    queryFn: () => base44.agents.listConversations({ agent_name: AGENT_NAME }),
+    queryFn: async () => {
+      const result = await base44.agents.listConversations({ agent_name: AGENT_NAME });
+      return Array.isArray(result) ? result : [];
+    },
     initialData: [],
   });
 
@@ -81,18 +84,21 @@ export default function AssistantTab() {
 
     setIsSending(true);
 
-    const conversation = currentConversationId
-      ? await base44.agents.getConversation(currentConversationId)
-      : await createConversation(content);
+    try {
+      const conversation = currentConversationId
+        ? await base44.agents.getConversation(currentConversationId)
+        : await createConversation(content);
 
-    await base44.agents.addMessage(conversation, {
-      role: 'user',
-      content,
-    });
+      await base44.agents.addMessage(conversation, {
+        role: 'user',
+        content,
+      });
 
-    setInput('');
-    setIsSending(false);
-    refetchConversations();
+      setInput('');
+      refetchConversations();
+    } finally {
+      setIsSending(false);
+    }
   };
 
   return (

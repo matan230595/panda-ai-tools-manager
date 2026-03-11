@@ -125,7 +125,7 @@ export default function GoogleCalendarSync() {
       </CardHeader>
       <CardContent className="space-y-4">
         <p className="text-sm text-gray-600 dark:text-gray-400">
-          סנכרון אוטומטי ומהיר של תזכורות ומשימות מהמערכת ליומן Google המחובר.
+          סנכרון אוטומטי ומהיר של תזכורות ומשימות מהמערכת ליומן Google שמחובר לאפליקציה.
         </p>
 
         <div className="grid grid-cols-2 gap-3 text-sm">
