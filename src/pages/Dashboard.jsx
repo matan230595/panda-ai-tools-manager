@@ -45,10 +45,10 @@ export default function Dashboard() {
   // חישוב סטטיסטיקות
   const stats = {
     totalTools: tools.length,
-    totalMonthlyCost: tools.reduce((sum, t) => sum + (t.usageStats?.totalCostPerMonth || 0), 0),
+    totalMonthlyCost: subscriptions.filter(item => item.isActive).reduce((sum, item) => sum + (item.priceMonthly || 0), 0),
     favoriteTools: tools.filter(t => t.isFavorite).length,
     toolsWithSubscription: tools.filter(t => t.hasSubscription).length,
-    unusedTools: tools.filter(t => !t.usageStats?.timesUsed || t.usageStats.timesUsed === 0).length,
+    toolsWithTasks: new Set(toolTasks.map(task => task.toolId)).size,
     averageRating: (tools.reduce((sum, t) => sum + (t.rating || 0), 0) / tools.length || 0).toFixed(1),
   };
 
@@ -62,27 +62,23 @@ export default function Dashboard() {
     return Object.entries(grouped).map(([name, value]) => ({
       name: name.replace(/_/g, ' '),
       value,
-      usage: tools
-        .filter(t => t.category === name)
-        .reduce((sum, t) => sum + (t.usageStats?.timesUsed || 0), 0)
     }));
   };
 
   // נתונים לתרשים - עלות חודשית לפי כלי
-  const topExpensiveTools = tools
-    .filter(t => (t.usageStats?.totalCostPerMonth || 0) > 0)
-    .sort((a, b) => (b.usageStats?.totalCostPerMonth || 0) - (a.usageStats?.totalCostPerMonth || 0))
+  const topExpensiveTools = subscriptions
+    .filter(item => item.isActive && (item.priceMonthly || 0) > 0)
+    .sort((a, b) => (b.priceMonthly || 0) - (a.priceMonthly || 0))
     .slice(0, 5)
-    .map(t => ({
-      name: t.name,
-      cost: t.usageStats?.totalCostPerMonth || 0,
-      usage: t.usageStats?.timesUsed || 0
+    .map(item => ({
+      name: item.toolName,
+      cost: item.priceMonthly || 0,
+      type: item.subscriptionType || '-',
     }));
 
-  // כלים בשימוש תדיר
-  const frequentlyUsed = tools
-    .filter(t => t.usageStats?.timesUsed > 0)
-    .sort((a, b) => (b.usageStats?.timesUsed || 0) - (a.usageStats?.timesUsed || 0))
+  const highlightedTools = tools
+    .filter(t => t.isFavorite || (t.rating || 0) >= 4)
+    .sort((a, b) => ((b.rating || 0) + (b.isFavorite ? 1 : 0)) - ((a.rating || 0) + (a.isFavorite ? 1 : 0)))
     .slice(0, 5);
 
   const roiData = tools
@@ -96,13 +92,13 @@ export default function Dashboard() {
       timeSavings: tool.timeSavingsHours || 0,
     }));
 
-  const usageTrendData = tools
-    .filter(tool => tool.usageStats?.timesUsed > 0)
+  const knowledgeTrendData = tools
     .slice(0, 8)
     .map((tool) => ({
       name: tool.name,
-      usage: tool.usageStats?.timesUsed || 0,
-      duration: tool.usageStats?.averageSessionDuration || 0,
+      tasks: toolTasks.filter(task => task.toolId === tool.id && !task.isCompleted).length,
+      notes: tool.notes || tool.personalNotes ? 1 : 0,
+      learning: 0,
     }));
 
   const COLORS = ['#6366f1', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981'];
@@ -136,8 +132,8 @@ export default function Dashboard() {
           color="bg-purple-500"
         />
         <StatCard
-          title="כלים שלא בשימוש"
-          value={stats.unusedTools}
+          title="כלים עם משימות"
+          value={stats.toolsWithTasks}
           icon={<AlertCircle className="w-5 h-5" />}
           color="bg-orange-500"
         />
@@ -162,8 +158,8 @@ export default function Dashboard() {
                 <tr>
                   <th className="py-2 px-4 font-semibold">כלי</th>
                   <th className="py-2 px-4 font-semibold">עלות חודשית</th>
-                  <th className="py-2 px-4 font-semibold">מספר שימושים</th>
-                  <th className="py-2 px-4 font-semibold">ROI</th>
+                  <th className="py-2 px-4 font-semibold">סוג מנוי</th>
+                  <th className="py-2 px-4 font-semibold">הערה</th>
                 </tr>
               </thead>
               <tbody>
@@ -171,10 +167,8 @@ export default function Dashboard() {
                   <tr key={idx} className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
                     <td className="py-3 px-4">{tool.name}</td>
                     <td className="py-3 px-4">₪{tool.cost.toLocaleString('he-IL')}</td>
-                    <td className="py-3 px-4">{tool.usage}</td>
-                    <td className="py-3 px-4">
-                      {tool.usage > 0 ? `₪${(tool.cost / tool.usage).toFixed(2)}` : 'N/A'}
-                    </td>
+                    <td className="py-3 px-4">{tool.type}</td>
+                    <td className="py-3 px-4">עלות חודשית ידועה</td>
                   </tr>
                 ))}
               </tbody>
@@ -233,18 +227,18 @@ export default function Dashboard() {
         </div>
       )}
 
-      {usageTrendData.length > 0 && (
+      {knowledgeTrendData.length > 0 && (
         <div className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border border-gray-200 dark:border-gray-700">
-          <h2 className="text-base sm:text-lg font-bold mb-3 sm:mb-4">טרנדי שימוש בזמן</h2>
+          <h2 className="text-base sm:text-lg font-bold mb-3 sm:mb-4">מפת ידע ותחזוקה לכלים</h2>
           <ResponsiveContainer width="100%" height={280}>
-            <LineChart data={usageTrendData}>
+            <LineChart data={knowledgeTrendData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
               <YAxis />
               <Tooltip />
               <Legend />
-              <Line type="monotone" dataKey="usage" stroke="#6366f1" name="כמות שימושים" strokeWidth={2} />
-              <Line type="monotone" dataKey="duration" stroke="#f59e0b" name="משך שימוש בדקות" strokeWidth={2} />
+              <Line type="monotone" dataKey="tasks" stroke="#6366f1" name="משימות פתוחות" strokeWidth={2} />
+              <Line type="monotone" dataKey="notes" stroke="#f59e0b" name="יש הערות" strokeWidth={2} />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -259,20 +253,19 @@ export default function Dashboard() {
         <ReminderCalendarView reminders={reminders.filter(item => !item.isCompleted && item.isActive)} subscriptions={subscriptions.filter(item => item.isActive)} tasks={toolTasks.filter(item => !item.isCompleted)} onMoveReminder={() => {}} onMoveTask={() => {}} />
       </div>
 
-      {/* כלים בשימוש תדיר */}
-      {frequentlyUsed.length > 0 && (
+      {highlightedTools.length > 0 && (
         <div className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border border-gray-200 dark:border-gray-700">
           <h2 className="text-base sm:text-lg font-bold mb-3 sm:mb-4 flex items-center gap-2">
             <TrendingUp className="w-4 sm:w-5 h-4 sm:h-5 text-green-500" />
-            כלים בשימוש תדיר
+            כלים בולטים במאגר
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-2 sm:gap-3 md:gap-4">
-            {frequentlyUsed.map((tool, idx) => (
+            {highlightedTools.map((tool, idx) => (
               <div key={idx} className="p-4 bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-lg">
                 <h3 className="font-semibold text-sm mb-2">{tool.name}</h3>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-gray-600 dark:text-gray-400">שימושים</span>
-                  <span className="text-lg font-bold text-indigo-600">{tool.usageStats?.timesUsed || 0}</span>
+                  <span className="text-xs text-gray-600 dark:text-gray-400">דירוג</span>
+                  <span className="text-lg font-bold text-indigo-600">{tool.rating || 0}</span>
                 </div>
               </div>
             ))}

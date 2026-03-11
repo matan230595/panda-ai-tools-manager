@@ -88,16 +88,15 @@ export function useSmartNotifications(settings, queryClient) {
         }
       });
 
-      const fourteenDaysAgo = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000);
+      const today = new Date();
       toolTasks
-        .filter(task => !task.isCompleted)
+        .filter(task => !task.isCompleted && task.dueDate)
         .forEach(task => {
-          const tool = tools.find(item => item.id === task.toolId);
-          const lastUsed = tool?.lastUsed ? new Date(tool.lastUsed) : null;
-          if (!lastUsed || lastUsed < fourteenDaysAgo) {
+          const dueDate = new Date(task.dueDate);
+          if (dueDate < today) {
             addNotification({
-              title: '📝 משימה ממתינה לכלי לא פעיל',
-              message: `יש משימה פתוחה עבור ${task.toolName} אך לא היה שימוש בכלי לאחרונה`,
+              title: '📝 משימה באיחור',
+              message: `המשימה "${task.title}" עבור ${task.toolName} עברה את תאריך היעד`,
               type: 'warning',
             });
           }

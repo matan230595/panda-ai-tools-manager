@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import { getCurrentUser } from '@/components/hooks/userScopedData';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { TrendingUp, Users, Clock, DollarSign } from 'lucide-react';
@@ -10,18 +11,18 @@ const COLORS = ['#6366f1', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b', '#ef4444'
 export default function AdvancedAnalytics() {
   const { data: tools = [] } = useQuery({
     queryKey: ['analytics-tools'],
-    queryFn: async () => base44.entities.AiTool.list(),
+    queryFn: async () => {
+      const user = await getCurrentUser();
+      return base44.entities.AiTool.filter({ created_by: user.email });
+    },
   });
 
-  // Calculate usage trends
-  const usageTrends = tools
-    .filter(t => t.usageStats)
-    .sort((a, b) => new Date(b.usageStats.lastUsedDate) - new Date(a.usageStats.lastUsedDate))
+  const knowledgeTrends = tools
     .slice(0, 7)
     .map(t => ({
       name: t.name.substring(0, 10),
-      usage: t.usageStats.timesUsed || 0,
-      lastUsed: new Date(t.usageStats.lastUsedDate || Date.now()).getDate(),
+      notes: t.notes || t.personalNotes ? 1 : 0,
+      rating: t.rating || 0,
     }));
 
   // Category distribution
@@ -35,14 +36,11 @@ export default function AdvancedAnalytics() {
     value: count,
   }));
 
-  // Cost analysis
-  const totalCost = tools.reduce((sum, t) => sum + (t.usageStats?.totalCostPerMonth || 0), 0);
+  const totalCost = tools.reduce((sum, t) => sum + (t.priceILS || 0), 0);
   const avgCost = totalCost / tools.length || 0;
 
-  // Most used tools
   const topTools = tools
-    .filter(t => t.usageStats?.timesUsed > 0)
-    .sort((a, b) => (b.usageStats?.timesUsed || 0) - (a.usageStats?.timesUsed || 0))
+    .sort((a, b) => (b.rating || 0) - (a.rating || 0))
     .slice(0, 5);
 
   return (
@@ -65,9 +63,9 @@ export default function AdvancedAnalytics() {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">סה״כ שימוש</p>
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">כלים עם הערות</p>
                 <p className="text-xl sm:text-2xl font-bold text-green-600 dark:text-green-400">
-                  {tools.reduce((sum, t) => sum + (t.usageStats?.timesUsed || 0), 0)}
+                  {tools.filter((tool) => tool.notes || tool.personalNotes).length}
                 </p>
               </div>
               <TrendingUp className="w-8 h-8 sm:w-10 sm:h-10 text-green-500 opacity-50" />
@@ -81,7 +79,7 @@ export default function AdvancedAnalytics() {
               <div>
                 <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">ממוצע עלות</p>
                 <p className="text-xl sm:text-2xl font-bold text-purple-600 dark:text-purple-400">
-                  ${avgCost.toFixed(1)}
+                  ₪{avgCost.toFixed(1)}
                 </p>
               </div>
               <DollarSign className="w-8 h-8 sm:w-10 sm:h-10 text-purple-500 opacity-50" />
@@ -93,9 +91,9 @@ export default function AdvancedAnalytics() {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">סה״כ עלות חודשית</p>
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">סה״כ עלות מוצהרת</p>
                 <p className="text-xl sm:text-2xl font-bold text-orange-600 dark:text-orange-400">
-                  ${totalCost.toFixed(0)}
+                  ₪{totalCost.toFixed(0)}
                 </p>
               </div>
               <Clock className="w-8 h-8 sm:w-10 sm:h-10 text-orange-500 opacity-50" />
@@ -106,19 +104,20 @@ export default function AdvancedAnalytics() {
 
       {/* Charts Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* Usage Trends */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base sm:text-lg">מגמות שימוש</CardTitle>
+            <CardTitle className="text-base sm:text-lg">איכות הידע במאגר</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={usageTrends}>
+              <BarChart data={knowledgeTrends}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="usage" fill="#6366f1" />
+                <Legend />
+                <Bar dataKey="notes" fill="#6366f1" name="יש הערות" />
+                <Bar dataKey="rating" fill="#10b981" name="דירוג" />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
@@ -169,11 +168,11 @@ export default function AdvancedAnalytics() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-sm truncate">{tool.name}</p>
-                      <p className="text-xs text-gray-500">שימוש: {tool.usageStats?.timesUsed || 0}</p>
+                      <p className="text-xs text-gray-500">דירוג: {tool.rating || 0}</p>
                     </div>
                   </div>
                   <div className="text-sm font-bold text-indigo-600 dark:text-indigo-400">
-                    {tool.usageStats?.timesUsed || 0}x
+                    {tool.rating || 0}★
                   </div>
                 </div>
               ))}

@@ -99,24 +99,17 @@ export default function SmartRecommendations({ onSelectTool }) {
       })
       .slice(0, 3);
 
-    // 2. Similar (Collaborative Filtering - tools liked by users who liked similar tools)
     const userFavorites = tools.filter(t => t.isFavorite);
     const userFavoriteIds = new Set(userFavorites.map(t => t.id));
-    
+
     let collaborative = [];
     if (userFavorites.length > 0) {
-      const similarUserTools = ratings
-        .filter(r => userFavoriteIds.has(r.toolId) && r.rating >= 4)
-        .map(r => r.toolId);
-
+      const favoriteTags = userFavorites.flatMap((tool) => tool.tags || []);
       collaborative = [...tools]
         .filter(t => !userFavoriteIds.has(t.id) && t.id !== ratingTool?.id)
         .map(tool => {
-          // Score based on how often it's rated highly by users who like similar tools
-          const score = ratings
-            .filter(r => r.toolId === tool.id && r.rating >= 4)
-            .length;
-          return { tool, score };
+          const overlap = (tool.tags || []).filter((tag) => favoriteTags.includes(tag)).length;
+          return { tool, score: overlap + (tool.rating || 0) };
         })
         .filter(item => item.score > 0)
         .sort((a, b) => b.score - a.score)
@@ -134,9 +127,8 @@ export default function SmartRecommendations({ onSelectTool }) {
       .sort((a, b) => (avgToolRatings[b.id] || b.rating || 0) - (avgToolRatings[a.id] || a.rating || 0))
       .slice(0, 3);
 
-    // 4. For You (High rated by community + not used yet)
     const forYou = tools
-      .filter(t => (avgToolRatings[t.id] || t.rating || 0) >= 4 && !t.lastUsed)
+      .filter(t => (avgToolRatings[t.id] || t.rating || 0) >= 4 && !t.isFavorite)
       .sort((a, b) => (avgToolRatings[b.id] || b.rating || 0) - (avgToolRatings[a.id] || a.rating || 0))
       .slice(0, 3);
 
@@ -208,8 +200,8 @@ export default function SmartRecommendations({ onSelectTool }) {
         <div>
           <div className="flex items-center gap-2 mb-3">
             <Users className="w-5 h-5 text-blue-500" />
-            <h3 className="text-lg font-bold">👥 מומלץ משתמשים דומים</h3>
-            <span className="text-xs text-gray-500">על בסיס הכלים שאתה אוהב</span>
+            <h3 className="text-lg font-bold">👥 דומים למה שאתה אוהב</h3>
+            <span className="text-xs text-gray-500">מבוסס על תגיות וקטגוריות במאגר שלך</span>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {recommendations.collaborative.map(tool => (

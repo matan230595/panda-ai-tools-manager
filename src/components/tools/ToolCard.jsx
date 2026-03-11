@@ -86,7 +86,6 @@ export default function ToolCard({
       role="article"
       aria-label={`כרטיס כלי: ${tool.name}`}
       onClick={() => {
-        base44.functions.invoke('trackToolUsage', { toolId: tool.id, actionType: 'click' }).catch(() => {});
         onClick?.(tool);
       }}
     >
