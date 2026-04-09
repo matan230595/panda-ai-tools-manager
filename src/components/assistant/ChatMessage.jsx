@@ -27,14 +27,14 @@ export default function ChatMessage({ message }) {
         </div>
       )}
       
-      <div className={`flex-1 max-w-[92%] md:max-w-4xl ${isUser ? 'flex flex-col items-end' : ''}`}>
+      <div className={`flex-1 max-w-[96%] md:max-w-5xl ${isUser ? 'flex flex-col items-end' : ''}`}>
         <div className={`
           relative group
           ${isUser 
             ? 'bg-gradient-to-br from-indigo-500 to-purple-600 text-white rounded-2xl rounded-tl-sm' 
             : 'glass-effect rounded-2xl rounded-tr-sm'
           }
-          p-3 md:p-5 shadow-md
+          p-4 md:p-5 lg:p-6 shadow-md
         `}>
           {isUser ? (
             <p className="text-sm md:text-base leading-7 whitespace-pre-wrap break-words">{message.content}</p>
@@ -79,7 +79,7 @@ export default function ChatMessage({ message }) {
                   h2: ({ children }) => <h2 className="text-lg font-bold mb-2">{children}</h2>,
                   h3: ({ children }) => <h3 className="text-base font-semibold mb-2">{children}</h3>,
                   blockquote: ({ children }) => (
-                    <blockquote className="border-r-4 border-indigo-500 pr-4 my-3 text-gray-700 dark:text-gray-300">
+                    <blockquote className="border-r-4 border-indigo-500 pr-4 my-3 text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
                       {children}
                     </blockquote>
                   ),
