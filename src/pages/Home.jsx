@@ -223,7 +223,7 @@ export default function Home() {
       </main>
       
       {/* מקום לניווט תחתון במובייל */}
-      <div className="h-20 md:hidden" />
+      <div className="h-24 md:hidden" />
 
       {/* עזרת קיצורי מקלדת */}
       <KeyboardShortcutsHelp open={showKeyboardHelp} onOpenChange={setShowKeyboardHelp} />

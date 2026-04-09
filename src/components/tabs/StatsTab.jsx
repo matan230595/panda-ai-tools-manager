@@ -2,10 +2,10 @@ import React, { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { getCurrentUser } from '@/components/hooks/userScopedData';
-import { Sparkles, Star, TrendingUp, Package } from 'lucide-react';
+import { Sparkles, Star, TrendingUp, Package, Clock3, Wallet } from 'lucide-react';
 import StatCard from '@/components/stats/StatCard';
 import CategoryChart from '@/components/stats/CategoryChart';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend } from 'recharts';
 import EmptyState from '@/components/EmptyState';
 
 export default function StatsTab({ onNavigateToTools }) {
@@ -36,6 +36,12 @@ export default function StatsTab({ onNavigateToTools }) {
       value,
     }));
 
+    const totalMonthlyCost = tools.reduce((sum, tool) => sum + Number(tool.priceILS || tool.usageStats?.totalCostPerMonth || 0), 0);
+    const totalYearlyCost = totalMonthlyCost * 12;
+    const totalTimeSaved = tools.reduce((sum, tool) => sum + Number(tool.timeSavingsHours || 0), 0);
+    const totalMonthlyValue = tools.reduce((sum, tool) => sum + Number(tool.directRevenue || 0) + (Number(tool.timeSavingsHours || 0) * 100), 0);
+    const totalRoi = totalMonthlyCost > 0 ? Math.round(((totalMonthlyValue - totalMonthlyCost) / totalMonthlyCost) * 100) : 0;
+
     const topTools = [...tools]
       .sort((a, b) => (b.popularity || 0) - (a.popularity || 0))
       .slice(0, 5);
@@ -43,6 +49,26 @@ export default function StatsTab({ onNavigateToTools }) {
     const recentTools = [...tools]
       .sort((a, b) => new Date(b.created_date) - new Date(a.created_date))
       .slice(0, 5);
+
+    const monthlyTrendData = Array.from({ length: 6 }).map((_, index) => {
+      const date = new Date();
+      date.setMonth(date.getMonth() - (5 - index));
+      const label = date.toLocaleDateString('he-IL', { month: 'short' });
+      const toolsUntilMonth = tools.filter((tool) => new Date(tool.created_date) <= new Date(date.getFullYear(), date.getMonth() + 1, 0));
+      return {
+        month: label,
+        hours: toolsUntilMonth.reduce((sum, tool) => sum + Number(tool.timeSavingsHours || 0), 0),
+        roi: toolsUntilMonth.reduce((sum, tool) => sum + Number(tool.roiPercentage || 0), 0),
+      };
+    });
+
+    const costBreakdownData = [...tools]
+      .sort((a, b) => Number(b.priceILS || 0) - Number(a.priceILS || 0))
+      .slice(0, 8)
+      .map((tool) => ({
+        name: tool.name,
+        cost: Number(tool.priceILS || 0),
+      }));
 
     return {
       totalTools,
@@ -52,6 +78,12 @@ export default function StatsTab({ onNavigateToTools }) {
       pricingChartData,
       topTools,
       recentTools,
+      totalMonthlyCost,
+      totalYearlyCost,
+      totalTimeSaved,
+      totalRoi,
+      monthlyTrendData,
+      costBreakdownData,
     };
   }, [tools]);
 
@@ -94,38 +126,46 @@ export default function StatsTab({ onNavigateToTools }) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div onClick={() => onNavigateToTools?.({ filter: 'all' })} className="cursor-pointer">
-          <StatCard
-            title="סך הכל כלים"
-            value={stats.totalTools}
-            icon={Package}
-            gradient="from-indigo-500 to-purple-600"
-            trend="up"
-            trendValue="+12%"
-          />
+          <StatCard title="סך הכל כלים" value={stats.totalTools} icon={Package} gradient="from-indigo-500 to-purple-600" />
         </div>
         <div onClick={() => onNavigateToTools?.({ filter: 'favorites' })} className="cursor-pointer">
-          <StatCard
-            title="מועדפים"
-            value={stats.favorites}
-            icon={Star}
-            gradient="from-yellow-500 to-orange-600"
-          />
+          <StatCard title="ROI כולל" value={`${stats.totalRoi}%`} icon={TrendingUp} gradient="from-green-500 to-emerald-600" />
         </div>
         <div onClick={() => onNavigateToTools?.({ filter: 'highRated' })} className="cursor-pointer">
-          <StatCard
-            title="דירוג ממוצע"
-            value={stats.avgRating.toFixed(1)}
-            icon={TrendingUp}
-            gradient="from-green-500 to-emerald-600"
-          />
+          <StatCard title="חיסכון זמן" value={`${stats.totalTimeSaved} ש׳`} icon={Clock3} gradient="from-cyan-500 to-blue-600" />
         </div>
         <div onClick={() => onNavigateToTools?.({ filter: 'categories' })} className="cursor-pointer">
-          <StatCard
-            title="קטגוריות"
-            value={stats.categories}
-            icon={Sparkles}
-            gradient="from-pink-500 to-rose-600"
-          />
+          <StatCard title="עלות חודשית" value={`₪${stats.totalMonthlyCost.toFixed(0)}`} icon={Wallet} gradient="from-pink-500 to-rose-600" />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="glass-effect rounded-2xl p-6">
+          <h3 className="text-lg font-bold mb-6 text-gray-900 dark:text-white">ROI וחיסכון בזמן לפי חודשים</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={stats.monthlyTrendData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+              <XAxis dataKey="month" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Line type="monotone" dataKey="hours" stroke="#06b6d4" strokeWidth={3} name="שעות" />
+              <Line type="monotone" dataKey="roi" stroke="#22c55e" strokeWidth={3} name="ROI" />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div className="glass-effect rounded-2xl p-6">
+          <h3 className="text-lg font-bold mb-6 text-gray-900 dark:text-white">התפלגות עלויות הכלים</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={stats.costBreakdownData} layout="vertical" margin={{ top: 10, right: 10, left: 20, bottom: 10 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+              <XAxis type="number" />
+              <YAxis dataKey="name" type="category" width={90} />
+              <Tooltip />
+              <Bar dataKey="cost" fill="#8b5cf6" radius={[0, 8, 8, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
         </div>
       </div>
 

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { getCurrentUser } from '@/components/hooks/userScopedData';
-import { Key, Palette, Download, Trash2, Save, AlertCircle, ExternalLink, CheckCircle, Zap, Coins } from 'lucide-react';
+import { Key, Palette, Download, Trash2, Save, AlertCircle, ExternalLink, CheckCircle, Zap, Coins, ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -45,6 +45,7 @@ export default function SettingsTab({ settings, onLogout }) {
   });
   const [showResetDialog, setShowResetDialog] = useState(false);
   const [visibleKeys, setVisibleKeys] = useState({});
+  const [mobileSection, setMobileSection] = useState('branding');
 
   const apiProviders = [
     {
@@ -219,6 +220,20 @@ export default function SettingsTab({ settings, onLogout }) {
   const handleChange = (field, value) => setFormData(prev => ({ ...prev, [field]: value }));
   const toggleKeyVisibility = (key) => setVisibleKeys(prev => ({ ...prev, [key]: !prev[key] }));
 
+  const settingsSections = [
+    { id: 'branding', label: 'מיתוג' },
+    { id: 'footer', label: 'פוטר' },
+    { id: 'api', label: 'API' },
+    { id: 'ollama', label: 'מקומי' },
+    { id: 'preferences', label: 'ממשק' },
+    { id: 'security', label: 'אבטחה' },
+    { id: 'data', label: 'נתונים' },
+    { id: 'language', label: 'שפה' },
+    { id: 'collab', label: 'שיתוף' },
+    { id: 'calendar', label: 'יומן' },
+    { id: 'analytics', label: 'אנליטיקה' },
+  ];
+
   const handleExportAll = async () => {
     try {
       const user = await getCurrentUser();
@@ -260,8 +275,23 @@ export default function SettingsTab({ settings, onLogout }) {
         <p className="text-gray-600 dark:text-gray-400">התאם את המערכת לצרכים שלך</p>
       </div>
 
-      <Tabs defaultValue="api" className="w-full">
-        <TabsList className="grid w-full grid-cols-6 lg:grid-cols-11 gap-1 overflow-x-auto">
+      <div className="md:hidden space-y-3">
+        <div className="grid gap-2">
+          {settingsSections.map((section) => (
+            <button
+              key={section.id}
+              onClick={() => setMobileSection(section.id)}
+              className={`flex items-center justify-between rounded-2xl border px-4 py-4 text-right min-h-[56px] ${mobileSection === section.id ? 'bg-indigo-50 border-indigo-300 text-indigo-700 dark:bg-indigo-950/40 dark:border-indigo-800 dark:text-indigo-300' : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800'}`}
+            >
+              <span className="font-medium">{section.label}</span>
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <Tabs value={mobileSection} onValueChange={setMobileSection} className="w-full">
+        <TabsList className="hidden md:grid w-full grid-cols-6 lg:grid-cols-11 gap-1 overflow-x-auto">
           <TabsTrigger value="branding">🎨</TabsTrigger>
           <TabsTrigger value="footer">🔗</TabsTrigger>
           <TabsTrigger value="api">🔑</TabsTrigger>

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { getCurrentUser } from '@/components/hooks/userScopedData';
-import { Key, Calendar, DollarSign, CreditCard, Plus, Edit, Trash2, Search, AlertCircle } from 'lucide-react';
+import { Key, Calendar, DollarSign, CreditCard, Plus, Edit, Trash2, Search, AlertCircle, BellRing } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -25,6 +25,7 @@ export default function SubscriptionsTab() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTool, setSelectedTool] = useState(null);
   const [deletingSubscription, setDeletingSubscription] = useState(null);
+  const [creatingReminderFor, setCreatingReminderFor] = useState(null);
 
   const { data: subscriptions = [], isLoading } = useQuery({
     queryKey: ['subscriptions'],
@@ -42,12 +43,29 @@ export default function SubscriptionsTab() {
     },
   });
 
+  const { data: reminders = [] } = useQuery({
+    queryKey: ['reminders'],
+    queryFn: async () => {
+      const user = await getCurrentUser();
+      return base44.entities.Reminder.filter({ created_by: user.email }, '-updated_date');
+    },
+  });
+
   const deleteMutation = useMutation({
     mutationFn: (id) => base44.entities.Subscription.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries(['subscriptions']);
       toast.success('המנוי נמחק');
       setDeletingSubscription(null);
+    },
+  });
+
+  const createReminderMutation = useMutation({
+    mutationFn: (data) => base44.entities.Reminder.create(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['reminders']);
+      toast.success('נוספה תזכורת למנוי');
+      setCreatingReminderFor(null);
     },
   });
 
@@ -59,6 +77,23 @@ export default function SubscriptionsTab() {
     sub.toolName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     sub.subscriptionType?.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleCreateReminder = (subscription) => {
+    const reminderDate = subscription.renewalDate || new Date().toISOString().split('T')[0];
+    createReminderMutation.mutate({
+      toolId: subscription.toolId,
+      toolName: subscription.toolName,
+      reminderType: 'subscription_expiry',
+      reminderDate,
+      reminderTime: '09:00',
+      message: `בדיקה לפני חידוש או ביטול של ${subscription.toolName}`,
+      priority: 'high',
+      daysBeforeAlert: 7,
+      subscriptionRenewalDate: reminderDate,
+      isActive: true,
+      isCompleted: false,
+    });
+  };
 
   const typeColors = {
     'חינמי': 'bg-green-100 text-green-800',
@@ -88,7 +123,7 @@ export default function SubscriptionsTab() {
       </div>
 
       {/* סטטיסטיקות */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm text-gray-600 dark:text-gray-400">סה"כ מנויים</CardTitle>
@@ -224,12 +259,12 @@ export default function SubscriptionsTab() {
                     </Badge>
                   )}
 
-                  <div className="flex gap-2 pt-2">
+                  <div className="flex flex-wrap gap-2 pt-2">
                     <Button
                       size="sm"
                       variant="outline"
                       onClick={() => setSelectedTool(tool)}
-                      className="flex-1"
+                      className="flex-1 min-h-[42px]"
                     >
                       <Edit className="w-3 h-3 ml-1" />
                       ערוך
@@ -237,8 +272,17 @@ export default function SubscriptionsTab() {
                     <Button
                       size="sm"
                       variant="outline"
+                      onClick={() => handleCreateReminder(subscription)}
+                      className="flex-1 min-h-[42px]"
+                    >
+                      <BellRing className="w-3 h-3 ml-1" />
+                      תזכורת
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
                       onClick={() => setDeletingSubscription(subscription)}
-                      className="text-red-600"
+                      className="text-red-600 min-h-[42px]"
                     >
                       <Trash2 className="w-3 h-3" />
                     </Button>

@@ -45,8 +45,20 @@ export default function FooterSettingsTab({ settings }) {
     onError: () => toast.error('שגיאה בשמירת ההגדרות'),
   });
 
+  const normalizeLink = (link) => ({
+    label: String(link?.label || '').trim(),
+    url: String(link?.url || '').trim(),
+  });
+
   const handleSave = () => {
-    updateSettings.mutate({ footerContent: formData });
+    updateSettings.mutate({
+      footerContent: {
+        ...formData,
+        links: (formData.links || []).map(normalizeLink).filter((item) => item.label && item.url),
+        supportLinks: (formData.supportLinks || []).map(normalizeLink).filter((item) => item.label && item.url),
+        socialLinks: (formData.socialLinks || []).map(normalizeLink).filter((item) => item.label && item.url),
+      }
+    });
   };
 
   const updateLinksArray = (field, index, key, value) => {
@@ -121,7 +133,7 @@ export default function FooterSettingsTab({ settings }) {
           <div className="space-y-3">
             <h4 className="font-semibold text-sm">קישורים:</h4>
             {formData.links.map((link, idx) => (
-              <div key={idx} className="flex gap-2 items-end">
+              <div key={idx} className="flex flex-col md:flex-row gap-2 items-stretch md:items-end">
                 <div className="flex-1">
                   <Label className="text-xs">תווית</Label>
                   <Input
@@ -181,7 +193,7 @@ export default function FooterSettingsTab({ settings }) {
           <div className="space-y-3">
             <h4 className="font-semibold text-sm">קישורי תמיכה:</h4>
             {formData.supportLinks.map((link, idx) => (
-              <div key={idx} className="flex gap-2 items-end">
+              <div key={idx} className="flex flex-col md:flex-row gap-2 items-stretch md:items-end">
                 <div className="flex-1">
                   <Label className="text-xs">תווית</Label>
                   <Input
@@ -241,7 +253,7 @@ export default function FooterSettingsTab({ settings }) {
           <div className="space-y-3">
             <h4 className="font-semibold text-sm">קישורים חברתיים:</h4>
             {formData.socialLinks.map((link, idx) => (
-              <div key={idx} className="flex gap-2 items-end">
+              <div key={idx} className="flex flex-col md:flex-row gap-2 items-stretch md:items-end">
                 <div className="flex-1">
                   <Label className="text-xs">תווית</Label>
                   <Input

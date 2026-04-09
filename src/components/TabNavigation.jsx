@@ -111,9 +111,9 @@ export default function TabNavigation({ activeTab, onTabChange }) {
       </div>
 
       {/* Mobile - Bottom Navigation */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border-t border-gray-200 dark:border-gray-700 safe-area-bottom" dir="rtl">
-        <nav className="flex items-center h-16 px-1 overflow-x-auto scrollbar-hide" role="tablist">
-          {tabs.map((tab) => {
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-t border-gray-200 dark:border-gray-700 safe-area-bottom" dir="rtl">
+        <nav className="grid grid-cols-5 gap-0 h-[78px] px-1 pt-1 pb-2" role="tablist">
+          {tabs.slice(0, 5).map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
             
@@ -124,29 +124,20 @@ export default function TabNavigation({ activeTab, onTabChange }) {
                 role="tab"
                 aria-selected={isActive}
                 aria-label={tab.label}
-                className="min-w-[72px] flex flex-col items-center justify-center gap-0.5 py-1 relative touch-target"
+                className="flex flex-col items-center justify-center gap-1 py-1 relative touch-target min-h-[64px]"
               >
-                <div className={`
-                  relative flex items-center justify-center w-10 h-10 rounded-2xl
-                  transition-all duration-300
-                  ${isActive ? 'scale-110' : 'scale-90 opacity-60'}
-                `}>
-                  {isActive && (
-                    <div className={`absolute inset-0 bg-gradient-to-br ${tab.gradient} rounded-2xl opacity-20 animate-pulse`} />
-                  )}
+                <div className={`relative flex items-center justify-center w-11 h-11 rounded-2xl transition-all duration-300 ${isActive ? 'scale-105' : 'opacity-70'}`}>
+                  {isActive && <div className={`absolute inset-0 bg-gradient-to-br ${tab.gradient} rounded-2xl opacity-20`} />}
                   {typeof tab.icon === 'string' ? (
                     <span className="text-xl relative z-10">{tab.icon}</span>
                   ) : (
                     <Icon className={`w-5 h-5 relative z-10 ${isActive ? `bg-gradient-to-br ${tab.gradient} bg-clip-text text-transparent` : 'text-gray-600 dark:text-gray-400'}`} />
                   )}
                 </div>
-                <span className={`text-xs font-medium transition-all duration-300 line-clamp-1 ${isActive ? `bg-gradient-to-br ${tab.gradient} bg-clip-text text-transparent` : 'text-gray-600 dark:text-gray-400'}`}>
+                <span className={`text-[11px] font-medium transition-all duration-300 ${isActive ? `bg-gradient-to-br ${tab.gradient} bg-clip-text text-transparent` : 'text-gray-600 dark:text-gray-400'}`}>
                   {tab.label}
                 </span>
-                
-                {isActive && (
-                  <div className="absolute -top-0.5 left-1/2 -translate-x-1/2 w-8 h-1 bg-gradient-to-r from-transparent via-indigo-500 to-transparent rounded-full" />
-                )}
+                {isActive && <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-1 bg-gradient-to-r from-transparent via-indigo-500 to-transparent rounded-full" />}
               </button>
             );
           })}
