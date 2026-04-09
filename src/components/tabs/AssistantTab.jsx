@@ -102,8 +102,8 @@ export default function AssistantTab() {
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-[calc(100vh-12rem)]">
-      <div className="hidden lg:block glass-effect rounded-2xl p-4 overflow-y-auto">
+    <div className="grid grid-cols-1 xl:grid-cols-5 gap-4 md:gap-6 h-[calc(100vh-10rem)] md:h-[calc(100vh-12rem)]">
+      <div className="hidden xl:block glass-effect rounded-2xl p-4 overflow-y-auto">
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-bold text-gray-900 dark:text-white">שיחות עם הסוכן</h3>
           <Button size="sm" variant="ghost" onClick={handleNewChat}>
@@ -131,24 +131,24 @@ export default function AssistantTab() {
         </div>
       </div>
 
-      <div className="lg:col-span-3 glass-effect rounded-xl md:rounded-2xl flex flex-col overflow-hidden h-[calc(100vh-8rem)] md:h-[calc(100vh-10rem)]">
-        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-          <div>
-            <h2 className="text-xl font-bold gradient-text flex items-center gap-2">
-              <Bot className="w-5 h-5" />
+      <div className="xl:col-span-4 glass-effect rounded-2xl flex flex-col overflow-hidden h-[calc(100vh-8rem)] md:h-[calc(100vh-10rem)] min-w-0">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 p-4 md:p-5 border-b border-gray-200 dark:border-gray-700">
+          <div className="min-w-0">
+            <h2 className="text-xl md:text-2xl font-bold gradient-text flex items-center gap-2">
+              <Bot className="w-5 h-5 md:w-6 md:h-6" />
               סוכן AI חכם למערכת
             </h2>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              מחפש, משווה, מסכם ומארגן עבורך את מאגר הכלים שלך
+            <p className="text-sm md:text-base text-gray-600 dark:text-gray-400">
+              מחפש, משווה, מסכם, מעדכן ומארגן עבורך את מאגר הכלים שלך
             </p>
           </div>
-          <Button variant="outline" onClick={handleNewChat}>
+          <Button variant="outline" onClick={handleNewChat} className="min-h-[48px] w-full md:w-auto">
             <MessageSquarePlus className="w-4 h-4 ml-2" />
             שיחה חדשה
           </Button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-6 space-y-4">
+        <div className="flex-1 overflow-y-auto p-3 md:p-6 space-y-4 md:space-y-5">
           {messages.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center">
               <EmptyState
@@ -178,8 +178,8 @@ export default function AssistantTab() {
           )}
         </div>
 
-        <div className="p-4 border-t border-gray-200 dark:border-gray-700">
-          <div className="flex gap-3">
+        <div className="p-3 md:p-4 border-t border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-950/40">
+          <div className="flex flex-col md:flex-row gap-3">
             <Textarea
               value={input}
               onChange={(e) => setInput(e.target.value)}
@@ -189,20 +189,20 @@ export default function AssistantTab() {
                   handleSend();
                 }
               }}
-              placeholder="שאל את הסוכן למשל: איזה כלים אצלי הכי מתאימים לכתיבה? / צור לי משימה שבועית לכלי מסוים / השווה בין 2 כלים..."
-              className="flex-1 resize-none min-h-[60px] max-h-[200px]"
+              placeholder="למשל: הוסף כלי חדש, עדכן מחיר לכלי, צור תזכורת לחידוש מנוי, השווה בין 2 כלים, או סדר לי את המאגר"
+              className="flex-1 resize-none min-h-[88px] max-h-[220px] text-base"
               disabled={isSending}
             />
             <Button
               onClick={() => handleSend()}
               disabled={!input.trim() || isSending}
-              className="h-[60px] px-6 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700"
+              className="h-[56px] md:h-[88px] px-6 min-w-[64px] bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700"
             >
               {isSending ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
             </Button>
           </div>
-          <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 mt-2">
-            <span>הסוכן יודע לעבוד עם הכלים, המשימות, התזכורות והמרחבים שלך</span>
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 text-xs md:text-sm text-gray-500 dark:text-gray-400 mt-2">
+            <span>הסוכן יודע לעבוד עם כלים, משימות, תזכורות, מנויים, מרחבים והגדרות</span>
             <span className="text-indigo-600 dark:text-indigo-400 flex items-center gap-1"><Sparkles className="w-3 h-3" />Agent</span>
           </div>
         </div>

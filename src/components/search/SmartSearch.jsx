@@ -6,12 +6,13 @@ import { Badge } from '@/components/ui/badge';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 
-export default function SmartSearch({ onSearch, tools }) {
+export default function SmartSearch({ onSearch, tools, quickFilters = [] }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [isListening, setIsListening] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [recentSearches, setRecentSearches] = useState([]);
+  const [liveResults, setLiveResults] = useState([]);
 
   useEffect(() => {
     const saved = localStorage.getItem('recentSearches');
@@ -21,10 +22,20 @@ export default function SmartSearch({ onSearch, tools }) {
   }, []);
 
   useEffect(() => {
-    if (searchTerm.length > 1) {
+    if (searchTerm.length > 0) {
       generateSuggestions();
+      const lowerSearch = searchTerm.toLowerCase().trim();
+      const matches = tools.filter((tool) => {
+        const text = [tool.name, tool.description, ...(tool.tags || []), ...(tool.features || []), tool.category]
+          .filter(Boolean)
+          .join(' ')
+          .toLowerCase();
+        return text.includes(lowerSearch);
+      }).slice(0, 5);
+      setLiveResults(matches);
     } else {
       setSuggestions([]);
+      setLiveResults([]);
     }
   }, [searchTerm, tools]);
 
@@ -154,9 +165,44 @@ export default function SmartSearch({ onSearch, tools }) {
         </div>
       </div>
 
+      {quickFilters.length > 0 && (
+        <div className="flex flex-wrap gap-2 mt-2">
+          {quickFilters.map((filter) => (
+            <Badge key={filter} variant="outline" className="cursor-pointer" onClick={() => { setSearchTerm(filter); handleSearch(filter); }}>
+              {filter}
+            </Badge>
+          ))}
+        </div>
+      )}
+
       {/* הצעות */}
-      {showSuggestions && (suggestions.length > 0 || recentSearches.length > 0) && (
+      {showSuggestions && (suggestions.length > 0 || liveResults.length > 0 || recentSearches.length > 0) && (
         <div className="absolute top-full mt-2 w-full bg-white dark:bg-gray-900 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 z-50 max-h-96 overflow-y-auto">
+          {liveResults.length > 0 && (
+            <div className="p-2 border-b border-gray-200 dark:border-gray-700">
+              <div className="flex items-center gap-2 px-3 py-2 text-xs text-gray-500">
+                <Search className="w-4 h-4" />
+                תוצאות בזמן אמת
+              </div>
+              {liveResults.map((result) => (
+                <button
+                  key={result.id}
+                  onClick={() => {
+                    setSearchTerm(result.name);
+                    handleSearch(result.name);
+                  }}
+                  className="w-full flex items-center justify-between gap-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-colors"
+                >
+                  <div className="text-right flex-1 min-w-0">
+                    <div className="font-medium truncate">{result.name}</div>
+                    <div className="text-xs text-gray-500 truncate">{result.category?.replace(/_/g, ' ') || 'ללא קטגוריה'}</div>
+                  </div>
+                  {result.priceILS ? <Badge variant="outline">₪{result.priceILS}</Badge> : null}
+                </button>
+              ))}
+            </div>
+          )}
+
           {suggestions.length > 0 && (
             <div className="p-2">
               <div className="flex items-center gap-2 px-3 py-2 text-xs text-gray-500">

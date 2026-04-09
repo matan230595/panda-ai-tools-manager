@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Bot, User, Copy, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
 export default function ChatMessage({ message }) {
-  const [copied, setCopied] = React.useState(false);
+  const [copied, setCopied] = useState(false);
   const isUser = message.role === 'user';
 
   const handleCopy = async () => {
@@ -20,26 +20,26 @@ export default function ChatMessage({ message }) {
   };
 
   return (
-    <div className={`flex gap-4 mb-6 ${isUser ? 'justify-end' : 'justify-start'}`}>
+    <div className={`flex gap-2 md:gap-4 mb-4 md:mb-6 ${isUser ? 'justify-end' : 'justify-start'}`}>
       {!isUser && (
-        <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg">
-          <Bot className="w-6 h-6 text-white" />
+        <div className="flex-shrink-0 w-9 h-9 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg">
+          <Bot className="w-5 h-5 md:w-6 md:h-6 text-white" />
         </div>
       )}
       
-      <div className={`flex-1 max-w-3xl ${isUser ? 'flex flex-col items-end' : ''}`}>
+      <div className={`flex-1 max-w-[92%] md:max-w-4xl ${isUser ? 'flex flex-col items-end' : ''}`}>
         <div className={`
           relative group
           ${isUser 
             ? 'bg-gradient-to-br from-indigo-500 to-purple-600 text-white rounded-2xl rounded-tl-sm' 
             : 'glass-effect rounded-2xl rounded-tr-sm'
           }
-          p-4 shadow-md
+          p-3 md:p-5 shadow-md
         `}>
           {isUser ? (
-            <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
+            <p className="text-sm md:text-base leading-7 whitespace-pre-wrap break-words">{message.content}</p>
           ) : (
-            <div className="prose prose-sm max-w-none dark:prose-invert">
+            <div className="prose prose-sm md:prose-base max-w-none dark:prose-invert break-words">
               <ReactMarkdown
                 components={{
                   code: ({ inline, className, children, ...props }) => {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, Filter, X, Grid3x3, List, LayoutGrid, LayoutList, Columns3 } from 'lucide-react';
+import { LayoutGrid, LayoutList, Columns3 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
@@ -36,7 +36,11 @@ export default function SearchAndFilters({
     <div className="glass-effect rounded-lg p-2 shadow-md border border-indigo-100 dark:border-indigo-900">
       <div className="flex items-center gap-1 flex-nowrap overflow-x-auto pb-1 scrollbar-hide">
         <div className="flex-1 min-w-0">
-          <SmartSearch onSearch={onSearchChange} tools={tools} />
+          <SmartSearch
+            onSearch={onSearchChange}
+            tools={tools}
+            quickFilters={[...new Set(tools.flatMap((tool) => [tool.category?.replace(/_/g, ' '), ...(tool.tags || []).slice(0, 2)]).filter(Boolean))].slice(0, 6)}
+          />
         </div>
 
         <Select value={sortBy} onValueChange={onSortChange}>
@@ -45,11 +49,18 @@ export default function SearchAndFilters({
         </Select>
 
         <div className="hidden sm:flex gap-0.5 flex-shrink-0 overflow-x-auto scrollbar-hide max-w-[210px] sm:max-w-none">
-          {[['grid', LayoutGrid], ['list', LayoutList], ['compact', Columns3]].map(([mode, Icon]) => (
-            <Button key={mode} size="sm" variant={viewMode === mode ? 'default' : 'ghost'} onClick={() => onViewModeChange(mode)} className="h-7 w-7 p-0 flex-shrink-0" title={mode}>
-              <Icon className="w-3 h-3" />
-            </Button>
-          ))}
+          {[
+            { mode: 'grid', icon: LayoutGrid },
+            { mode: 'list', icon: LayoutList },
+            { mode: 'compact', icon: Columns3 },
+          ].map((item) => {
+            const ViewIcon = item.icon;
+            return (
+              <Button key={item.mode} size="sm" variant={viewMode === item.mode ? 'default' : 'ghost'} onClick={() => onViewModeChange(item.mode)} className="h-7 w-7 p-0 flex-shrink-0" title={item.mode}>
+                <ViewIcon className="w-3 h-3" />
+              </Button>
+            );
+          })}
           <Button size="sm" variant={viewMode === 'table' ? 'default' : 'ghost'} onClick={() => onViewModeChange('table')} className="h-7 w-7 p-0 flex-shrink-0" title="טבלה">📊</Button>
           <Button size="sm" variant={viewMode === 'kanban' ? 'default' : 'ghost'} onClick={() => onViewModeChange('kanban')} className="h-7 w-7 p-0 flex-shrink-0" title="קאנבן">🗂️</Button>
         </div>
