@@ -22,6 +22,17 @@ export default function GoogleCalendarSync() {
     },
   });
 
+  const { data: subscriptions = [] } = useQuery({
+    queryKey: ['calendar-subscriptions'],
+    queryFn: async () => {
+      const user = await getCurrentUser();
+      return base44.entities.Subscription.filter({
+        created_by: user.email,
+        isActive: true,
+      });
+    },
+  });
+
   const { data: integrations = [] } = useQuery({
     queryKey: ['integrations'],
     queryFn: async () => {
@@ -83,6 +94,13 @@ export default function GoogleCalendarSync() {
         endTime: `${reminder.reminderDate}T${reminder.reminderTime || '09:00'}:30`,
       }));
 
+      const subscriptionEvents = subscriptions.filter((subscription) => subscription.renewalDate).map((subscription) => ({
+        title: `חידוש מנוי: ${subscription.toolName}`,
+        description: `חידוש מנוי ${subscription.subscriptionType || ''} עבור ${subscription.toolName}`,
+        startTime: `${subscription.renewalDate}T09:00:00`,
+        endTime: `${subscription.renewalDate}T09:30:00`,
+      }));
+
       const taskEvents = tasks.map((task) => ({
         title: `משימה: ${task.title}`,
         description: `${task.toolName}${task.description ? ` — ${task.description}` : ''}`,
@@ -90,7 +108,7 @@ export default function GoogleCalendarSync() {
         endTime: `${task.dueDate}T${task.reminderTime || '09:00'}:30`,
       }));
 
-      const events = [...reminderEvents, ...taskEvents];
+      const events = [...reminderEvents, ...subscriptionEvents, ...taskEvents];
 
       const response = await base44.functions.invoke('syncGoogleCalendar', { events });
 
@@ -136,6 +154,10 @@ export default function GoogleCalendarSync() {
           <div className="rounded-lg bg-white/70 dark:bg-gray-900/50 p-3">
             <div className="text-gray-500">משימות פתוחות</div>
             <div className="text-xl font-bold text-purple-600">{tasks.length}</div>
+          </div>
+          <div className="rounded-lg bg-white/70 dark:bg-gray-900/50 p-3">
+            <div className="text-gray-500">חידושי מנויים</div>
+            <div className="text-xl font-bold text-orange-600">{subscriptions.filter((item) => item.renewalDate).length}</div>
           </div>
           <div className="rounded-lg bg-white/70 dark:bg-gray-900/50 p-3 col-span-2">
             <div className="text-gray-500">סנכרון אחרון</div>

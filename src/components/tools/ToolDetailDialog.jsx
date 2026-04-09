@@ -120,8 +120,11 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-6">
           <Tabs defaultValue="overview" className="w-full">
-            <TabsList className="grid w-full grid-cols-7">
+            <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 xl:grid-cols-10 gap-2 h-auto bg-transparent p-0">
               <TabsTrigger value="overview">סקירה</TabsTrigger>
+              <TabsTrigger value="use-cases">שימוש</TabsTrigger>
+              <TabsTrigger value="pros-cons">יתרונות/חסרונות</TabsTrigger>
+              <TabsTrigger value="integrations-links">אינטגרציות</TabsTrigger>
               <TabsTrigger value="details">פרטים</TabsTrigger>
               <TabsTrigger value="pricing">מחירים</TabsTrigger>
               <TabsTrigger value="credentials">👤 גישה</TabsTrigger>
@@ -162,57 +165,79 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
                 </div>
               )}
 
-              {/* Use Cases */}
-              {tool.useCases?.length > 0 && (
-                <div>
-                  <h3 className="font-bold text-lg mb-3">דוגמאות שימוש</h3>
-                  <div className="space-y-3">
-                    {tool.useCases.map((useCase, idx) => (
-                      <div key={idx} className="p-4 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800">
-                        <h4 className="font-semibold mb-1">{useCase.title}</h4>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">{useCase.description}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
 
-              {/* Pros & Cons */}
-              {(tool.prosAndCons?.pros?.length > 0 || tool.prosAndCons?.cons?.length > 0) && (
+            </TabsContent>
+
+            <TabsContent value="use-cases" className="space-y-4 mt-6">
+              {tool.useCases?.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {tool.prosAndCons.pros?.length > 0 && (
-                    <div>
-                      <h3 className="font-bold text-lg mb-3 flex items-center gap-2 text-green-600">
-                        <CheckCircle className="w-5 h-5" />
-                        יתרונות
-                      </h3>
-                      <ul className="space-y-2">
-                        {tool.prosAndCons.pros.map((pro, idx) => (
-                          <li key={idx} className="flex items-start gap-2 text-sm">
-                            <span className="text-green-500">✓</span>
-                            <span>{pro}</span>
-                          </li>
-                        ))}
-                      </ul>
+                  {tool.useCases.map((useCase, idx) => (
+                    <div key={idx} className="rounded-2xl border border-indigo-200 dark:border-indigo-800 bg-gradient-to-br from-indigo-50 to-white dark:from-indigo-950/30 dark:to-gray-900 p-4 md:p-5">
+                      <h3 className="font-bold text-base md:text-lg mb-2">{useCase.title}</h3>
+                      <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 leading-7">{useCase.description}</p>
                     </div>
-                  )}
-                  {tool.prosAndCons.cons?.length > 0 && (
-                    <div>
-                      <h3 className="font-bold text-lg mb-3 flex items-center gap-2 text-red-600">
-                        <XCircle className="w-5 h-5" />
-                        חסרונות
-                      </h3>
-                      <ul className="space-y-2">
-                        {tool.prosAndCons.cons.map((con, idx) => (
-                          <li key={idx} className="flex items-start gap-2 text-sm">
-                            <span className="text-red-500">✗</span>
-                            <span>{con}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
+                  ))}
                 </div>
+              ) : (
+                <div className="rounded-2xl border p-6 text-sm text-gray-500">אין דוגמאות שימוש זמינות לכלי זה.</div>
+              )}
+            </TabsContent>
+
+            <TabsContent value="pros-cons" className="space-y-6 mt-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div className="rounded-2xl border border-green-200 dark:border-green-800 bg-green-50/70 dark:bg-green-950/20 p-4 md:p-5">
+                  <h3 className="font-bold text-lg mb-3 flex items-center gap-2 text-green-700 dark:text-green-300">
+                    <CheckCircle className="w-5 h-5" />
+                    יתרונות
+                  </h3>
+                  {tool.prosAndCons?.pros?.length > 0 ? (
+                    <ul className="space-y-3">
+                      {tool.prosAndCons.pros.map((pro, idx) => (
+                        <li key={idx} className="flex items-start gap-2 text-sm md:text-base">
+                          <span className="text-green-500">✓</span>
+                          <span>{pro}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : <div className="text-sm text-gray-500">אין יתרונות שמורים.</div>}
+                </div>
+                <div className="rounded-2xl border border-red-200 dark:border-red-800 bg-red-50/70 dark:bg-red-950/20 p-4 md:p-5">
+                  <h3 className="font-bold text-lg mb-3 flex items-center gap-2 text-red-700 dark:text-red-300">
+                    <XCircle className="w-5 h-5" />
+                    חסרונות
+                  </h3>
+                  {tool.prosAndCons?.cons?.length > 0 ? (
+                    <ul className="space-y-3">
+                      {tool.prosAndCons.cons.map((con, idx) => (
+                        <li key={idx} className="flex items-start gap-2 text-sm md:text-base">
+                          <span className="text-red-500">✗</span>
+                          <span>{con}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : <div className="text-sm text-gray-500">אין חסרונות שמורים.</div>}
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="integrations-links" className="space-y-4 mt-6">
+              {tool.integrations?.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {tool.integrations.map((integration, idx) => (
+                    <div key={idx} className="rounded-2xl border border-gray-200 dark:border-gray-800 p-4 md:p-5 bg-white/80 dark:bg-gray-900/60 flex items-center justify-between gap-3">
+                      <div>
+                        <div className="font-semibold">{integration}</div>
+                        <div className="text-sm text-gray-500">קישור ישיר לחיפוש או שימוש באינטגרציה</div>
+                      </div>
+                      <Button variant="outline" onClick={() => window.open(`https://www.google.com/search?q=${encodeURIComponent(`${tool.name} ${integration} integration`)}`, '_blank')}>
+                        <ExternalLink className="w-4 h-4 ml-2" />
+                        פתח
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="rounded-2xl border p-6 text-sm text-gray-500">אין אינטגרציות שמורות לכלי זה.</div>
               )}
             </TabsContent>
 

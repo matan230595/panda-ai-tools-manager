@@ -2,7 +2,7 @@ import React, { useState, useEffect, Suspense } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { getCurrentUser } from '@/components/hooks/userScopedData';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import TabNavigation from '@/components/TabNavigation';
 import ToolsTab from '@/components/tabs/ToolsTab';
 import AssistantTab from '@/components/tabs/AssistantTab';
@@ -173,6 +173,11 @@ export default function Home() {
       
       {/* תוכן הטאב */}
       <main className="max-w-7xl mx-auto px-1.5 sm:px-4 md:px-6 py-2 sm:py-4 md:py-8 pb-20 md:pb-8">
+        <div className="flex justify-end mb-3 md:mb-4">
+          <Link to="/calendar" className="inline-flex items-center rounded-xl border border-indigo-200 bg-white/80 dark:bg-gray-900/70 dark:border-indigo-900 px-4 py-2 text-sm font-medium text-indigo-700 dark:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-colors">
+            פתח לוח שנה מנויים
+          </Link>
+        </div>
         <div className="animate-slide-in">
           {activeTab === 'tools' && <ToolsTab settings={settings} initialFilter={toolsFilter} />}
           {activeTab === 'assistant' && <AssistantTab />}
