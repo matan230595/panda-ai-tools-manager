@@ -19,13 +19,13 @@ export default function SuggestedQuestions({ onSelectQuestion }) {
         <span className="text-sm font-medium">שאלות מוצעות</span>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-3">
         {questions.map((question, index) => (
           <Button
             key={index}
             variant="outline"
             onClick={() => onSelectQuestion(question)}
-            className="h-auto p-4 justify-start text-right hover:bg-indigo-50 dark:hover:bg-indigo-900/20 hover:border-indigo-300 dark:hover:border-indigo-700 transition-all group"
+            className="h-auto min-h-[72px] p-4 justify-start text-right whitespace-normal hover:bg-indigo-50 dark:hover:bg-indigo-900/20 hover:border-indigo-300 dark:hover:border-indigo-700 transition-all group"
           >
             <MessageCircle className="w-4 h-4 ml-2 flex-shrink-0 text-gray-400 group-hover:text-indigo-500 transition-colors" />
             <span className="text-sm leading-relaxed">{question}</span>

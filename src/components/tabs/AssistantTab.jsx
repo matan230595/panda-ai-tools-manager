@@ -132,37 +132,20 @@ export default function AssistantTab() {
       </div>
 
       <div className="glass-effect rounded-2xl flex flex-col overflow-hidden h-[calc(100vh-7rem)] md:h-[calc(100vh-9rem)] min-w-0 w-full">
-        <div className="flex flex-col gap-4 p-4 md:p-6 border-b border-gray-200 dark:border-gray-700">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-            <div className="min-w-0">
-              <h2 className="text-2xl md:text-3xl font-bold gradient-text flex items-center gap-2">
-                <Bot className="w-6 h-6 md:w-7 md:h-7" />
-                סוכן AI חכם למערכת
-              </h2>
-              <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 mt-1">
-                מחפש, משווה, מסכם, מעדכן ומארגן עבורך את מאגר הכלים שלך
-              </p>
-            </div>
-            <Button variant="outline" onClick={handleNewChat} className="min-h-[48px] w-full md:w-auto">
-              <MessageSquarePlus className="w-4 h-4 ml-2" />
-              שיחה חדשה
-            </Button>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 p-4 md:p-5 border-b border-gray-200 dark:border-gray-700">
+          <div className="min-w-0">
+            <h2 className="text-2xl md:text-3xl font-bold gradient-text flex items-center gap-2">
+              <Bot className="w-6 h-6 md:w-7 md:h-7" />
+              סוכן AI חכם למערכת
+            </h2>
+            <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 mt-1">
+              יכול לחפש, להשוות וגם לבצע פעולות במערכת עבורך
+            </p>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <div className="rounded-2xl border border-indigo-200 dark:border-indigo-900 bg-indigo-50/70 dark:bg-indigo-950/30 p-3">
-              <div className="flex items-center gap-2 font-semibold text-sm md:text-base"><Wrench className="w-4 h-4 text-indigo-600" /> פעולות במערכת</div>
-              <div className="text-xs md:text-sm text-gray-600 dark:text-gray-400 mt-1">הוספת כלים, עדכון מחירים, שינוי מנויים ועריכת פרטי מערכת.</div>
-            </div>
-            <div className="rounded-2xl border border-purple-200 dark:border-purple-900 bg-purple-50/70 dark:bg-purple-950/30 p-3">
-              <div className="flex items-center gap-2 font-semibold text-sm md:text-base"><Database className="w-4 h-4 text-purple-600" /> ניהול מידע</div>
-              <div className="text-xs md:text-sm text-gray-600 dark:text-gray-400 mt-1">חיפוש, ארגון, סיכום והשוואה של כלים, משימות, תזכורות ומרחבים.</div>
-            </div>
-            <div className="rounded-2xl border border-cyan-200 dark:border-cyan-900 bg-cyan-50/70 dark:bg-cyan-950/30 p-3">
-              <div className="flex items-center gap-2 font-semibold text-sm md:text-base"><CalendarDays className="w-4 h-4 text-cyan-600" /> תזכורות ולוחות זמנים</div>
-              <div className="text-xs md:text-sm text-gray-600 dark:text-gray-400 mt-1">יצירת תזכורות, משימות ותכנון עבודה סביב המנויים והכלים שלך.</div>
-            </div>
-          </div>
+          <Button variant="outline" onClick={handleNewChat} className="min-h-[48px] w-full md:w-auto">
+            <MessageSquarePlus className="w-4 h-4 ml-2" />
+            שיחה חדשה
+          </Button>
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 space-y-4 md:space-y-6">
@@ -172,7 +155,7 @@ export default function AssistantTab() {
                 title="התחל שיחה עם הסוכן"
                 description="בקש ממנו למצוא כלים דומים, להשוות ביניהם, ליצור משימות ותזכורות, או לארגן את המאגר שלך"
               />
-              <div className="mt-8 w-full max-w-2xl">
+              <div className="mt-6 w-full max-w-4xl">
                 <SuggestedQuestions onSelectQuestion={(question) => handleSend(question)} />
               </div>
             </div>
