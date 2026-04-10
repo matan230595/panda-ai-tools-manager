@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { getCurrentUser } from '@/components/hooks/userScopedData';
-import { Key, Palette, Download, Trash2, Save, AlertCircle, ExternalLink, CheckCircle, Zap, Coins, ChevronRight } from 'lucide-react';
+import { Key, Palette, Download, Trash2, Save, AlertCircle, ExternalLink, CheckCircle, Zap, Coins, ChevronRight, CheckCircle2, XCircle, Activity } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -220,6 +220,25 @@ export default function SettingsTab({ settings, onLogout }) {
   const handleChange = (field, value) => setFormData(prev => ({ ...prev, [field]: value }));
   const toggleKeyVisibility = (key) => setVisibleKeys(prev => ({ ...prev, [key]: !prev[key] }));
 
+  const providerStatuses = useMemo(() => {
+    const getValue = (key) => String(formData[key] || '').trim();
+    return apiProviders.map((provider) => {
+      const value = getValue(provider.key);
+      const isConfigured = !!value;
+      const isEndpoint = provider.key === 'ollamaEndpoint' || provider.key === 'localaiBudget';
+      const looksValid = isEndpoint
+        ? /^https?:\/\//.test(value)
+        : value.length >= 12;
+
+      return {
+        ...provider,
+        isConfigured,
+        looksValid,
+        status: !isConfigured ? 'missing' : looksValid ? 'valid' : 'invalid'
+      };
+    });
+  }, [formData]);
+
   const settingsSections = [
     { id: 'branding', label: 'מיתוג' },
     { id: 'footer', label: 'פוטר' },
@@ -314,7 +333,36 @@ export default function SettingsTab({ settings, onLogout }) {
         </TabsContent>
 
         <TabsContent value="api" className="space-y-4 mt-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+            <div className="glass-effect rounded-2xl p-6 lg:col-span-3">
+              <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
+                <Activity className="w-5 h-5 text-indigo-500" />
+                מצב מפתחות וחיבורים
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+                {providerStatuses.map((provider) => (
+                  <div key={provider.id} className="rounded-xl border p-3 bg-white/70 dark:bg-gray-900/40">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="font-medium text-sm">{provider.name}</div>
+                      {provider.status === 'valid' ? (
+                        <span className="inline-flex items-center gap-1 text-green-600 text-xs"><CheckCircle2 className="w-4 h-4" /> תקין</span>
+                      ) : provider.status === 'invalid' ? (
+                        <span className="inline-flex items-center gap-1 text-amber-600 text-xs"><AlertCircle className="w-4 h-4" /> לבדוק</span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 text-gray-500 text-xs"><XCircle className="w-4 h-4" /> חסר</span>
+                      )}
+                    </div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                      {provider.status === 'valid'
+                        ? 'נראה שמוגדר ערך תקין.'
+                        : provider.status === 'invalid'
+                          ? 'נשמר ערך, אבל הוא לא נראה תקין.'
+                          : 'עדיין לא הוגדר.'}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
             <div className="glass-effect rounded-2xl p-6">
               <h3 className="font-bold text-lg mb-2 flex items-center gap-2">
                 <Zap className="w-5 h-5 text-yellow-500" />
@@ -422,6 +470,13 @@ export default function SettingsTab({ settings, onLogout }) {
                         <div className="text-xs space-y-1 text-gray-600 dark:text-gray-400">
                           <p>💚 {provider.free}</p>
                           <p>🤖 {provider.models}</p>
+                          <p className={providerStatuses.find((item) => item.id === provider.id)?.status === 'valid' ? 'text-green-600' : providerStatuses.find((item) => item.id === provider.id)?.status === 'invalid' ? 'text-amber-600' : 'text-gray-500'}>
+                            {providerStatuses.find((item) => item.id === provider.id)?.status === 'valid'
+                              ? '✓ הכתובת נראית תקינה'
+                              : providerStatuses.find((item) => item.id === provider.id)?.status === 'invalid'
+                                ? '⚠ בדוק את הכתובת'
+                                : '— לא הוגדר עדיין'}
+                          </p>
                         </div>
                         <div className="border-t pt-3">
                           <p className="text-sm font-semibold mb-2">📋 הוראות:</p>
@@ -478,6 +533,13 @@ export default function SettingsTab({ settings, onLogout }) {
                         <div className="text-xs space-y-1 text-gray-600 dark:text-gray-400">
                           <p>💚 {provider.free}</p>
                           <p>🤖 {provider.models}</p>
+                          <p className={providerStatuses.find((item) => item.id === provider.id)?.status === 'valid' ? 'text-green-600' : providerStatuses.find((item) => item.id === provider.id)?.status === 'invalid' ? 'text-amber-600' : 'text-gray-500'}>
+                            {providerStatuses.find((item) => item.id === provider.id)?.status === 'valid'
+                              ? '✓ המפתח נראה מוגדר'
+                              : providerStatuses.find((item) => item.id === provider.id)?.status === 'invalid'
+                                ? '⚠ המפתח קצר או לא שלם'
+                                : '— לא הוגדר עדיין'}
+                          </p>
                         </div>
                         <div className="border-t pt-3">
                           <p className="text-sm font-semibold mb-2">📋 הוראות:</p>

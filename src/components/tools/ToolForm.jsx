@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { X, Sparkles, Loader2, Plus, Trash2 } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { X, Sparkles, Loader2, Plus, AlertCircle, CheckCircle2, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -56,6 +56,22 @@ export default function ToolForm({ tool, onClose, onSave }) {
   const [newTag, setNewTag] = useState('');
   const [isAutofilling, setIsAutofilling] = useState(false);
   const [isAutoFetchingMeta, setIsAutoFetchingMeta] = useState(false);
+  const [autofillError, setAutofillError] = useState('');
+
+  const hasApiConfigured = useMemo(() => {
+    return !![
+      'geminiApiKey',
+      'groqApiKey',
+      'mistralApiKey',
+      'cohereApiKey',
+      'huggingfaceApiKey',
+      'togetherApiKey',
+      'claudeApiKey',
+      'openaiApiKey',
+      'ollamaEndpoint',
+      'localaiBudget'
+    ].some((key) => String(formData[key] || '').trim());
+  }, [formData]);
 
   const categories = [
     'עיבוד_שפה', 'יצירת_תמונות', 'וידאו', 'קוד', 'עיצוב', 
@@ -89,35 +105,8 @@ export default function ToolForm({ tool, onClose, onSave }) {
       try {
         const url = new URL(formData.url);
         const domain = url.hostname;
-        
-        // נסה לחלץ לוגו מ-favicon
         const faviconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
-        
-        // נסה לקבל OG image ותיאור
-        const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(formData.url)}`);
-        const data = await response.json();
-        
-        if (data.contents) {
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(data.contents, 'text/html');
-          
-          // חלץ OG image
-          const ogImage = doc.querySelector('meta[property="og:image"]')?.content;
-          if (ogImage && !formData.logo) {
-            handleChange('logo', ogImage);
-          }
-          
-          // חלץ תיאור אם לא קיים
-          if (!formData.description) {
-            const ogDescription = doc.querySelector('meta[property="og:description"]')?.content ||
-                                 doc.querySelector('meta[name="description"]')?.content;
-            if (ogDescription) {
-              handleChange('description', ogDescription.substring(0, 200));
-            }
-          }
-        }
-        
-        // תמיד הוסף favicon כגיבוי
+
         if (!formData.logo) {
           handleChange('logo', faviconUrl);
         }
@@ -152,6 +141,7 @@ export default function ToolForm({ tool, onClose, onSave }) {
       return;
     }
 
+    setAutofillError('');
     setIsAutofilling(true);
     
     try {
@@ -275,7 +265,12 @@ ${formData.url ? `URL: ${formData.url}` : ''}
       toast.success('המידע מולא בהצלחה עם תרגום אוטומטי! 🎉');
     } catch (error) {
       console.error('שגיאה במילוי אוטומטי:', error);
-      toast.error('שגיאה במילוי אוטומטי. אנא בדוק את הגדרות ה-API.');
+      const integrationLimitReached = error?.status === 402 || error?.data?.extra_data?.reason === 'integration_credits_limit_reached';
+      const message = integrationLimitReached
+        ? 'נגמרו קרדיטי האינטגרציות של החשבון, לכן המילוי האוטומטי חסום כרגע.'
+        : 'המילוי האוטומטי נכשל. בדוק שהוגדר מפתח API פעיל בהגדרות.';
+      setAutofillError(message);
+      toast.error(message);
     } finally {
       setIsAutofilling(false);
     }
@@ -424,6 +419,20 @@ ${formData.url ? `URL: ${formData.url}` : ''}
               </div>
             )}
           </div>
+
+          {autofillError && (
+            <div className="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/30 dark:text-red-300">
+              <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+              <div>{autofillError}</div>
+            </div>
+          )}
+
+          {!hasApiConfigured && (
+            <div className="flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-300">
+              <Info className="w-4 h-4 mt-0.5 flex-shrink-0" />
+              <div>לא זוהה שום מפתח או endpoint מוגדר בטופס הזה, לכן המילוי האוטומטי עלול להיכשל.</div>
+            </div>
+          )}
 
           {/* תיאור קצר */}
           <div className="space-y-2">
