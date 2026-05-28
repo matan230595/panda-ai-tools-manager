@@ -122,97 +122,135 @@ export default function TableView({ tools, onEdit, onDelete, onToggleFavorite, o
       </div>
 
       <div className="glass-effect rounded-lg sm:rounded-2xl overflow-hidden">
-        <div className="overflow-x-auto w-full">
+        <div className="md:hidden space-y-3 p-3">
+          {tools.map((tool) => (
+            <div key={tool.id} className="rounded-2xl border bg-white/80 dark:bg-gray-900/70 p-3 space-y-3" onClick={() => onToolClick?.(tool)}>
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex items-center gap-3 min-w-0">
+                  <ToolLogo tool={tool} size="sm" />
+                  <div className="min-w-0">
+                    <div className="font-semibold truncate">{tool.name}</div>
+                    <div className="text-xs text-gray-500 line-clamp-2">{tool.description || 'ללא תיאור'}</div>
+                  </div>
+                </div>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onToggleFavorite(tool);
+                  }}
+                  className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
+                  aria-label="toggle favorite"
+                >
+                  <Star className={`w-5 h-5 ${tool.isFavorite ? 'fill-yellow-400 text-yellow-400' : 'text-gray-400'}`} />
+                </button>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <Badge className={categoryColors[tool.category] || 'bg-gray-100'}>{tool.category?.replace(/_/g, ' ')}</Badge>
+                <Badge variant="outline">{tool.subscriptionType || tool.pricing}</Badge>
+                {tool.priceILS ? <Badge variant="secondary">₪{tool.priceILS.toFixed(0)}</Badge> : null}
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-xs text-gray-600 dark:text-gray-300">
+                <div className="rounded-xl bg-gray-50 dark:bg-gray-800 p-2">דירוג: {tool.rating || 0}</div>
+                <div className="rounded-xl bg-gray-50 dark:bg-gray-800 p-2">מנוי: {tool.hasSubscription ? 'פעיל' : 'לא פעיל'}</div>
+              </div>
+              <div className="grid grid-cols-4 gap-2">
+                <Button size="icon" variant="outline" className="min-h-[44px] w-full" onClick={(e) => { e.stopPropagation(); window.open(tool.url, '_blank'); }}><ExternalLink className="w-4 h-4" /></Button>
+                <Button size="icon" variant="outline" className="min-h-[44px] w-full" onClick={(e) => { e.stopPropagation(); onEdit(tool); }}><Edit className="w-4 h-4" /></Button>
+                <Button size="icon" variant="outline" className="min-h-[44px] w-full" onClick={(e) => { e.stopPropagation(); onManageSubscription?.(tool); }} disabled={!tool.hasSubscription}><Key className="w-4 h-4" /></Button>
+                <Button size="icon" variant="outline" className="min-h-[44px] w-full text-red-500" onClick={(e) => { e.stopPropagation(); onDelete(tool); }}><Trash2 className="w-4 h-4" /></Button>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="hidden md:block overflow-x-auto w-full">
           <div className="inline-block min-w-[860px] w-full align-top">
             <Table>
-            <TableHeader>
-              <TableRow className="bg-gray-50 dark:bg-gray-800">
-                <TableHead className="w-12"></TableHead>
-                {selectedColumns.map((col) => (
-                  <TableHead key={col.id} className="text-right">
-                    {col.label}
-                  </TableHead>
-                ))}
-                <TableHead className="text-right w-32">פעולות</TableHead>
-              </TableRow>
-            </TableHeader>
-          <TableBody>
-            {tools.map((tool) => (
-              <TableRow 
-                key={tool.id} 
-                className="hover:bg-gray-50 dark:hover:bg-gray-800/50 cursor-pointer text-xs sm:text-sm"
-                onClick={() => onToolClick?.(tool)}
-              >
-                <TableCell className="w-10 sm:w-12">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onToggleFavorite(tool);
-                    }}
-                    className="p-1.5 sm:p-2 hover:scale-110 transition-transform touch-target"
-                    aria-label="toggle favorite"
+              <TableHeader>
+                <TableRow className="bg-gray-50 dark:bg-gray-800">
+                  <TableHead className="w-12"></TableHead>
+                  {selectedColumns.map((col) => (
+                    <TableHead key={col.id} className="text-right">
+                      {col.label}
+                    </TableHead>
+                  ))}
+                  <TableHead className="text-right w-32">פעולות</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {tools.map((tool) => (
+                  <TableRow
+                    key={tool.id}
+                    className="hover:bg-gray-50 dark:hover:bg-gray-800/50 cursor-pointer text-xs sm:text-sm"
+                    onClick={() => onToolClick?.(tool)}
                   >
-                    <Star
-                      className={`w-4 sm:w-5 h-4 sm:h-5 ${
-                        tool.isFavorite
-                          ? 'fill-yellow-400 text-yellow-400'
-                          : 'text-gray-400'
-                      }`}
-                    />
-                  </button>
-                </TableCell>
-                {selectedColumns.map((col) => (
-                  <TableCell key={col.id} className={`${col.id === 'name' ? 'font-medium' : ''} p-2 sm:p-3`}>
-                    {renderCell(tool, col.id)}
-                  </TableCell>
+                    <TableCell className="w-10 sm:w-12">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onToggleFavorite(tool);
+                        }}
+                        className="p-1.5 sm:p-2 hover:scale-110 transition-transform touch-target"
+                        aria-label="toggle favorite"
+                      >
+                        <Star
+                          className={`w-4 sm:w-5 h-4 sm:h-5 ${
+                            tool.isFavorite ? 'fill-yellow-400 text-yellow-400' : 'text-gray-400'
+                          }`}
+                        />
+                      </button>
+                    </TableCell>
+                    {selectedColumns.map((col) => (
+                      <TableCell key={col.id} className={`${col.id === 'name' ? 'font-medium' : ''} p-2 sm:p-3`}>
+                        {renderCell(tool, col.id)}
+                      </TableCell>
+                    ))}
+                    <TableCell className="w-28 sm:w-32 p-2 sm:p-3">
+                      <div className="flex items-center gap-0.5 sm:gap-1">
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            window.open(tool.url, '_blank');
+                          }}
+                          title="בקר באתר"
+                          className="h-8 sm:h-9 w-8 sm:w-9 p-0 touch-target"
+                        >
+                          <ExternalLink className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
+                        </Button>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onEdit(tool);
+                          }}
+                          title="ערוך"
+                          className="h-8 sm:h-9 w-8 sm:w-9 p-0 touch-target"
+                        >
+                          <Edit className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
+                        </Button>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onDelete(tool);
+                          }}
+                          title="מחק"
+                          className="text-red-500 hover:text-red-700 h-8 sm:h-9 w-8 sm:w-9 p-0 touch-target"
+                        >
+                          <Trash2 className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
                 ))}
-                <TableCell className="w-28 sm:w-32 p-2 sm:p-3">
-                  <div className="flex items-center gap-0.5 sm:gap-1">
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        window.open(tool.url, '_blank');
-                      }}
-                      title="בקר באתר"
-                      className="h-8 sm:h-9 w-8 sm:w-9 p-0 touch-target"
-                    >
-                      <ExternalLink className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
-                    </Button>
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onEdit(tool);
-                      }}
-                      title="ערוך"
-                      className="h-8 sm:h-9 w-8 sm:w-9 p-0 touch-target"
-                    >
-                      <Edit className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
-                    </Button>
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onDelete(tool);
-                      }}
-                      title="מחק"
-                      className="text-red-500 hover:text-red-700 h-8 sm:h-9 w-8 sm:w-9 p-0 touch-target"
-                    >
-                      <Trash2 className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-         </div>
+              </TableBody>
+            </Table>
+          </div>
         </div>
-        </div>
-        </div>
-        );
-        }
+      </div>
+    </div>
+  );
+}

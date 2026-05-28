@@ -209,7 +209,7 @@ export default function BudgetTab() {
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl md:text-4xl font-bold gradient-text mb-2">
             ניהול תקציב חכם
@@ -221,7 +221,7 @@ export default function BudgetTab() {
         <Button
           onClick={generateAIInsights}
           disabled={aiInsightsLoading}
-          className="bg-gradient-to-r from-purple-500 to-pink-600"
+          className="bg-gradient-to-r from-purple-500 to-pink-600 w-full sm:w-auto min-h-[44px]"
         >
           {aiInsightsLoading ? (
             <>
@@ -451,8 +451,8 @@ export default function BudgetTab() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={250}>
-              <LineChart data={budgetAnalysis.forecast}>
+            <ResponsiveContainer width="100%" height={230}>
+              <LineChart data={budgetAnalysis.forecast} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" />
                 <YAxis />
@@ -472,7 +472,7 @@ export default function BudgetTab() {
             <CardDescription>היכן הכסף הולך</CardDescription>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={250}>
+            <ResponsiveContainer width="100%" height={230}>
               <RePieChart>
                 <Pie
                   data={budgetAnalysis.categoryData}

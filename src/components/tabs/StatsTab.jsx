@@ -142,8 +142,8 @@ export default function StatsTab({ onNavigateToTools }) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="glass-effect rounded-2xl p-6">
           <h3 className="text-lg font-bold mb-6 text-gray-900 dark:text-white">ROI וחיסכון בזמן לפי חודשים</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={stats.monthlyTrendData}>
+          <ResponsiveContainer width="100%" height={260}>
+            <LineChart data={stats.monthlyTrendData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
               <XAxis dataKey="month" />
               <YAxis />
@@ -157,8 +157,8 @@ export default function StatsTab({ onNavigateToTools }) {
 
         <div className="glass-effect rounded-2xl p-6">
           <h3 className="text-lg font-bold mb-6 text-gray-900 dark:text-white">התפלגות עלויות הכלים</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={stats.costBreakdownData} layout="vertical" margin={{ top: 10, right: 10, left: 20, bottom: 10 }}>
+          <ResponsiveContainer width="100%" height={260}>
+            <BarChart data={stats.costBreakdownData} layout="vertical" margin={{ top: 10, right: 10, left: 0, bottom: 10 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
               <XAxis type="number" />
               <YAxis dataKey="name" type="category" width={90} />
@@ -176,7 +176,7 @@ export default function StatsTab({ onNavigateToTools }) {
           <h3 className="text-lg font-bold mb-6 text-gray-900 dark:text-white">
             פילוח לפי תמחור
           </h3>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={260}>
             <PieChart>
               <Pie
                 data={stats.pricingChartData}
@@ -184,7 +184,7 @@ export default function StatsTab({ onNavigateToTools }) {
                 cy="50%"
                 labelLine={false}
                 label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
-                outerRadius={100}
+                outerRadius={window.innerWidth < 640 ? 72 : 100}
                 fill="#8884d8"
                 dataKey="value"
               >

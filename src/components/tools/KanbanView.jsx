@@ -42,7 +42,7 @@ export default function KanbanView({ tools, onEdit, onDelete, onToggleFavorite, 
 
   const KanbanCard = ({ tool }) => (
     <div 
-      className="glass-effect rounded-xl p-4 hover:shadow-lg transition-all cursor-pointer"
+      className="glass-effect rounded-xl p-4 hover:shadow-lg transition-all cursor-pointer min-w-0"
       onClick={() => onToolClick?.(tool)}
     >
       <div className="flex items-start justify-between mb-3">
@@ -79,7 +79,7 @@ export default function KanbanView({ tools, onEdit, onDelete, onToggleFavorite, 
               e.stopPropagation();
               window.open(tool.url, '_blank');
             }}
-            className="h-7 w-7 p-0"
+            className="h-9 w-9 p-0 min-h-[44px] min-w-[44px]"
           >
             <ExternalLink className="w-3.5 h-3.5" />
           </Button>
@@ -90,7 +90,7 @@ export default function KanbanView({ tools, onEdit, onDelete, onToggleFavorite, 
               e.stopPropagation();
               onEdit(tool);
             }}
-            className="h-7 w-7 p-0"
+            className="h-9 w-9 p-0 min-h-[44px] min-w-[44px]"
           >
             <Edit className="w-3.5 h-3.5" />
           </Button>
@@ -135,9 +135,9 @@ export default function KanbanView({ tools, onEdit, onDelete, onToggleFavorite, 
         {columns.map((column, colIdx) => {
           const droppableId = colIdx === 0 ? 'free' : colIdx === 1 ? 'premium' : 'gold';
           return (
-            <div key={column.title} className="flex flex-col">
-              <div className={`bg-gradient-to-r ${column.color} text-white rounded-xl p-4 mb-4`}>
-                <h3 className="font-bold text-lg">{column.title}</h3>
+            <div key={column.title} className="flex flex-col min-w-0">
+              <div className={`bg-gradient-to-r ${column.color} text-white rounded-xl p-4 mb-4 sticky top-20 md:top-24 z-10`}>
+                <h3 className="font-bold text-base md:text-lg">{column.title}</h3>
                 <p className="text-sm opacity-90">{column.tools.length} כלים</p>
               </div>
               <Droppable droppableId={droppableId}>

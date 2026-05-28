@@ -106,8 +106,8 @@ export default function TabNavigation({ activeTab, onTabChange }) {
       </div>
 
       {/* Mobile - Bottom Navigation */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-[70] bg-white/98 dark:bg-slate-900/98 backdrop-blur-xl border-t border-gray-200 dark:border-gray-700 shadow-[0_-8px_30px_rgba(15,23,42,0.12)] pb-[max(8px,env(safe-area-inset-bottom))]" dir="rtl">
-        <nav className="grid grid-cols-5 gap-0 min-h-[88px] px-1 pt-1" role="tablist">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-[90] bg-white/98 dark:bg-slate-900/98 backdrop-blur-xl border-t border-gray-200 dark:border-gray-700 shadow-[0_-12px_40px_rgba(15,23,42,0.18)] pb-[max(10px,env(safe-area-inset-bottom))]" dir="rtl">
+        <nav className="grid grid-cols-5 gap-1 min-h-[92px] px-2 pt-2 max-w-xl mx-auto" role="tablist">
           {[
             tabs.find((tab) => tab.id === 'tools'),
             tabs.find((tab) => tab.id === 'assistant'),

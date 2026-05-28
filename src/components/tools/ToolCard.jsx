@@ -209,7 +209,7 @@ export default function ToolCard({
 
         {/* מידע נוסף */}
         <div className="flex items-center justify-between pt-1.5 sm:pt-2 md:pt-3 border-t border-gray-200 dark:border-gray-700 gap-1.5 sm:gap-2">
-          <div className="flex items-center gap-1 sm:gap-2 min-w-0 flex-1">
+          <div className="flex items-center gap-1 sm:gap-2 min-w-0 flex-1 overflow-hidden">
             {/* תמחור */}
             <div className="flex items-center gap-0.5">
               <div className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${pricingColors[tool.pricing]} flex-shrink-0`} />
@@ -230,7 +230,7 @@ export default function ToolCard({
           </div>
 
           {/* כפתורי פעולה */}
-          <div className="flex items-center gap-0.5 sm:gap-1 flex-shrink-0">
+          <div className="flex items-center gap-0.5 sm:gap-1 flex-shrink-0 overflow-x-auto scrollbar-hide pb-1 max-w-full">
             <Button
               size="sm"
               variant="ghost"
