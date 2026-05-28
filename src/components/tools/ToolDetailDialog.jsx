@@ -25,13 +25,13 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
+    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-end md:items-center justify-center p-0 md:p-4" onClick={onClose}>
       <div 
-        className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col"
+        className="bg-white dark:bg-gray-900 rounded-t-3xl md:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[94vh] overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="relative p-6 border-b border-gray-200 dark:border-gray-700">
+        <div className="relative p-4 md:p-6 border-b border-gray-200 dark:border-gray-700">
           <button
             onClick={onClose}
             className="absolute top-4 left-4 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
@@ -39,7 +39,7 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
             <X className="w-5 h-5" />
           </button>
 
-          <div className="flex items-start gap-4 ml-12">
+          <div className="flex flex-col sm:flex-row items-start gap-4 ml-12">
              {tool.logo ? (
                <img src={tool.logo} alt={tool.name} className="w-16 h-16 md:w-20 md:h-20 rounded-xl object-contain shadow-md flex-shrink-0" />
              ) : (
@@ -88,7 +88,7 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
           </div>
 
           {/* Action Buttons */}
-          <div className="flex gap-2 mt-4">
+          <div className="flex flex-col sm:flex-row gap-2 mt-4">
             <Button
               onClick={() => window.open(tool.url, '_blank')}
               className="flex-1 bg-gradient-to-r from-indigo-500 to-purple-600"
@@ -118,7 +118,7 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto p-4 md:p-6">
           <Tabs defaultValue="overview" className="w-full">
             <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 xl:grid-cols-10 gap-2 h-auto bg-transparent p-0">
               <TabsTrigger value="overview">סקירה</TabsTrigger>

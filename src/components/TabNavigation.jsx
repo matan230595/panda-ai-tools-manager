@@ -125,7 +125,7 @@ export default function TabNavigation({ activeTab, onTabChange }) {
                 role="tab"
                 aria-selected={isActive}
                 aria-label={tab.label}
-                className="flex flex-col items-center justify-center gap-1 py-1.5 relative touch-target min-h-[72px] rounded-2xl"
+                className="flex flex-col items-center justify-center gap-1 py-1.5 relative touch-target min-h-[72px] rounded-2xl active:scale-95 transition-transform"
               >
                 <div className={`relative flex items-center justify-center w-11 h-11 rounded-2xl transition-all duration-300 ${isActive ? 'scale-105' : 'opacity-70'}`}>
                   {isActive && <div className={`absolute inset-0 bg-gradient-to-br ${tab.gradient} rounded-2xl opacity-20`} />}

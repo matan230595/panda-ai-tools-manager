@@ -158,13 +158,13 @@ export default function ExportImportDialog({ tools, onImportComplete }) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="text-xs md:text-sm">
+        <Button variant="outline" size="sm" className="text-xs md:text-sm min-h-[44px]">
           <Download className="w-4 h-4 ml-1 md:ml-2" />
           <span className="hidden sm:inline">ייצוא/ייבוא</span>
           <span className="sm:hidden">קבצים</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="w-[calc(100vw-1rem)] max-w-lg max-h-[92vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>ייצוא וייבוא כלים</DialogTitle>
           <DialogDescription>

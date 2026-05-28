@@ -61,12 +61,12 @@ export default function TableColumnSelector({ selectedColumns, onColumnsChange }
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-2">
+        <Button variant="outline" size="sm" className="gap-2 min-h-[44px]">
           <Settings2 className="w-4 h-4" />
           עמודות ({columns.length})
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-80" align="end">
+      <PopoverContent className="w-[calc(100vw-2rem)] max-w-80" align="end">
         <div className="space-y-4">
           <div>
             <h4 className="font-semibold mb-2">בחר עמודות להצגה</h4>

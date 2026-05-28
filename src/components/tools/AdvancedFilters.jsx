@@ -60,7 +60,7 @@ export default function AdvancedFilters({
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
-        <Button variant="outline" size="sm" className="relative">
+        <Button variant="outline" size="sm" className="relative min-h-[44px]">
           <Filter className="w-4 h-4 ml-2" />
           סינון מתקדם
           {activeFiltersCount > 0 && (
