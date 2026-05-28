@@ -122,8 +122,8 @@ export default function TableView({ tools, onEdit, onDelete, onToggleFavorite, o
       </div>
 
       <div className="glass-effect rounded-lg sm:rounded-2xl overflow-hidden">
-        <div className="overflow-x-auto -mx-2 sm:mx-0">
-          <div className="inline-block min-w-full sm:w-full">
+        <div className="overflow-x-auto w-full">
+          <div className="inline-block min-w-[860px] w-full align-top">
             <Table>
             <TableHeader>
               <TableRow className="bg-gray-50 dark:bg-gray-800">

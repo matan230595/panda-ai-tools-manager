@@ -108,12 +108,12 @@ export default function Dashboard() {
         <div className="bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 border border-gray-200 dark:border-gray-700">
           <h2 className="text-base sm:text-lg font-bold mb-4">כלים לפי קטגוריה</h2>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={categoriesData}>
+            <BarChart data={categoriesData} margin={{ top: 10, right: 10, left: 0, bottom: 40 }}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
+              <XAxis dataKey="name" angle={-20} textAnchor="end" height={60} interval={0} />
+              <YAxis width={32} />
               <Tooltip />
-              <Bar dataKey="value" fill="#6366f1" />
+              <Bar dataKey="value" fill="#6366f1" radius={[6, 6, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -121,12 +121,12 @@ export default function Dashboard() {
         <div className="bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 border border-gray-200 dark:border-gray-700">
           <h2 className="text-base sm:text-lg font-bold mb-4">עלות חודשית לפי מנויים</h2>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={subscriptionCostData}>
+            <BarChart data={subscriptionCostData} margin={{ top: 10, right: 10, left: 0, bottom: 70 }}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" angle={-30} textAnchor="end" height={90} />
-              <YAxis />
+              <XAxis dataKey="name" angle={-30} textAnchor="end" height={90} interval={0} />
+              <YAxis width={40} />
               <Tooltip />
-              <Bar dataKey="cost" fill="#ef4444" />
+              <Bar dataKey="cost" fill="#ef4444" radius={[6, 6, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -136,12 +136,12 @@ export default function Dashboard() {
         <div className="bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 border border-gray-200 dark:border-gray-700">
           <h2 className="text-base sm:text-lg font-bold mb-4">מפת ידע ותחזוקה לכלים</h2>
           <ResponsiveContainer width="100%" height={280}>
-            <LineChart data={knowledgeTrendData}>
+            <LineChart data={knowledgeTrendData} margin={{ top: 10, right: 10, left: 0, bottom: 35 }}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
+              <XAxis dataKey="name" angle={-20} textAnchor="end" height={55} interval={0} />
+              <YAxis width={32} />
               <Tooltip />
-              <Legend />
+              <Legend wrapperStyle={{ fontSize: '12px' }} />
               <Line type="monotone" dataKey="tasks" stroke="#6366f1" name="משימות פתוחות" strokeWidth={2} />
               <Line type="monotone" dataKey="notes" stroke="#f59e0b" name="יש הערות" strokeWidth={2} />
             </LineChart>
@@ -153,14 +153,14 @@ export default function Dashboard() {
         <div className="bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 border border-gray-200 dark:border-gray-700">
           <h2 className="text-base sm:text-lg font-bold mb-4">ROI ורווחיות לפי כלי</h2>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={roiData}>
+            <BarChart data={roiData} margin={{ top: 10, right: 10, left: 0, bottom: 70 }}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" angle={-30} textAnchor="end" height={90} />
-              <YAxis />
+              <XAxis dataKey="name" angle={-30} textAnchor="end" height={90} interval={0} />
+              <YAxis width={40} />
               <Tooltip />
-              <Legend />
-              <Bar dataKey="roi" fill="#10b981" name="ROI %" />
-              <Bar dataKey="revenue" fill="#6366f1" name="הכנסה ישירה" />
+              <Legend wrapperStyle={{ fontSize: '12px' }} />
+              <Bar dataKey="roi" fill="#10b981" name="ROI %" radius={[6, 6, 0, 0]} />
+              <Bar dataKey="revenue" fill="#6366f1" name="הכנסה ישירה" radius={[6, 6, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>

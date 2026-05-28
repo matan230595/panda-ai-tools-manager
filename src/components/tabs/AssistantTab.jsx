@@ -102,7 +102,7 @@ export default function AssistantTab() {
   };
 
   return (
-    <div className="grid grid-cols-1 gap-4 md:gap-6 h-[calc(100vh-9rem)] md:h-[calc(100vh-11rem)]">
+    <div className="grid grid-cols-1 gap-4 md:gap-6 min-h-[calc(100vh-9rem)] md:min-h-[calc(100vh-11rem)]">
       <div className="hidden">
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-bold text-gray-900 dark:text-white">שיחות עם הסוכן</h3>
@@ -131,7 +131,7 @@ export default function AssistantTab() {
         </div>
       </div>
 
-      <div className="glass-effect rounded-2xl flex flex-col overflow-hidden h-[calc(100vh-7rem)] md:h-[calc(100vh-9rem)] min-w-0 w-full">
+      <div className="glass-effect rounded-2xl flex flex-col overflow-hidden min-h-[calc(100vh-7rem)] md:min-h-[calc(100vh-9rem)] min-w-0 w-full">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 p-4 md:p-5 border-b border-gray-200 dark:border-gray-700">
           <div className="min-w-0">
             <h2 className="text-2xl md:text-3xl font-bold gradient-text flex items-center gap-2">

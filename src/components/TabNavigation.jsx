@@ -84,11 +84,6 @@ export default function TabNavigation({ activeTab, onTabChange }) {
                         : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
                       }
                     `}
-                    style={isActive ? {
-                      background: `linear-gradient(135deg, var(--tw-gradient-stops))`,
-                      '--tw-gradient-from': `var(--${tab.gradient.split(' ')[0].replace('from-', '')})`,
-                      '--tw-gradient-to': `var(--${tab.gradient.split(' ')[1].replace('to-', '')})`
-                    } : {}}
                   >
                     {isActive && (
                      <div className={`absolute inset-0 bg-gradient-to-r ${tab.gradient} rounded-lg opacity-100`} />
@@ -113,7 +108,13 @@ export default function TabNavigation({ activeTab, onTabChange }) {
       {/* Mobile - Bottom Navigation */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-t border-gray-200 dark:border-gray-700 safe-area-bottom" dir="rtl">
         <nav className="grid grid-cols-5 gap-0 h-[78px] px-1 pt-1 pb-2" role="tablist">
-          {tabs.slice(0, 5).map((tab) => {
+          {[
+            tabs.find((tab) => tab.id === 'tools'),
+            tabs.find((tab) => tab.id === 'assistant'),
+            tabs.find((tab) => tab.id === 'dashboard'),
+            tabs.find((tab) => tab.id === 'subscriptions-mgmt'),
+            tabs.find((tab) => tab.id === 'settings')
+          ].filter(Boolean).map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
             

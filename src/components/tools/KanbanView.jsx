@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Star, ExternalLink, Edit, Trash2, Key } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ToolLogo from '@/components/ToolLogo';
@@ -17,30 +17,20 @@ export default function KanbanView({ tools, onEdit, onDelete, onToggleFavorite, 
 
   const handleDragEnd = (result) => {
     if (!result.destination) return;
-    
-    const { source, destination } = result;
+
+    const { source, destination, draggableId } = result;
     if (source.droppableId === destination.droppableId && source.index === destination.index) return;
 
-    // העתק את המערך
-    const newTools = [...localTools];
-    
-    // מצא את הכלי שנגרר
-    const draggedTool = localTools.find(t => t.id === result.draggableId);
-    
-    // שנה את ה-subscriptionType בהתאם ליעד
+    const draggedTool = localTools.find((t) => t.id === draggableId);
+    if (!draggedTool) return;
+
     const updatedTool = {
       ...draggedTool,
-      subscriptionType: destination.droppableId === 'free' ? 'חינמי' : 
-                        destination.droppableId === 'premium' ? 'פרימיום' : 'גולד'
+      subscriptionType: destination.droppableId === 'free' ? 'חינמי' : destination.droppableId === 'premium' ? 'פרימיום' : 'גולד'
     };
-    
-    // עדכן את המערך
-    const toolIndex = newTools.findIndex(t => t.id === draggedTool.id);
-    newTools[toolIndex] = updatedTool;
-    
-    setLocalTools(newTools);
-    
-    // קרא לעדכון במסד הנתונים
+
+    setLocalTools((prev) => prev.map((tool) => tool.id === draggableId ? updatedTool : tool));
+  
     onEdit(updatedTool);
   };
 
@@ -141,7 +131,7 @@ export default function KanbanView({ tools, onEdit, onDelete, onToggleFavorite, 
 
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 md:gap-6">
         {columns.map((column, colIdx) => {
           const droppableId = colIdx === 0 ? 'free' : colIdx === 1 ? 'premium' : 'gold';
           return (
