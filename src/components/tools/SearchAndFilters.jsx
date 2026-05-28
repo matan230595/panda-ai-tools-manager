@@ -39,7 +39,7 @@ export default function SearchAndFilters({
           <SmartSearch
             onSearch={onSearchChange}
             tools={tools}
-            quickFilters={[...new Set(tools.flatMap((tool) => [tool.category?.replace(/_/g, ' '), ...(tool.tags || []).slice(0, 2)]).filter(Boolean))].slice(0, 6)}
+            quickFilters={[...new Set(tools.flatMap((tool) => [(tool.customCategory || tool.category)?.replace(/_/g, ' '), ...(tool.tags || []).slice(0, 2)]).filter(Boolean))].slice(0, 6)}
           />
         </div>
 

@@ -180,9 +180,16 @@ export default function ToolsTab({ settings, initialFilter }) {
         tool.name?.toLowerCase().includes(search) ||
         tool.description?.toLowerCase().includes(search) ||
         tool.detailedDescription?.toLowerCase().includes(search) ||
+        tool.personalNotes?.toLowerCase().includes(search) ||
+        tool.notes?.toLowerCase().includes(search) ||
+        tool.targetAudience?.toLowerCase().includes(search) ||
         tool.tags?.some(tag => tag.toLowerCase().includes(search)) ||
         tool.features?.some(f => f.toLowerCase().includes(search)) ||
+        tool.useCases?.some(useCase => `${useCase?.title || ''} ${useCase?.description || ''}`.toLowerCase().includes(search)) ||
+        tool.prosAndCons?.pros?.some(pro => pro.toLowerCase().includes(search)) ||
+        tool.prosAndCons?.cons?.some(con => con.toLowerCase().includes(search)) ||
         tool.category?.toLowerCase().includes(search) ||
+        tool.customCategory?.toLowerCase().includes(search) ||
         tool.integrations?.some(i => i.toLowerCase().includes(search)) ||
         tool.platforms?.some(p => p.toLowerCase().includes(search))
       );
@@ -190,7 +197,7 @@ export default function ToolsTab({ settings, initialFilter }) {
 
     // קטגוריה בסיסית
     if (selectedCategory !== 'all') {
-      filtered = filtered.filter(tool => tool.category === selectedCategory);
+      filtered = filtered.filter(tool => (tool.customCategory || tool.category) === selectedCategory);
     }
 
     // תמחור בסיסי
@@ -210,7 +217,7 @@ export default function ToolsTab({ settings, initialFilter }) {
 
     // סינון מתקדם - קטגוריות
     if (advancedFilters.categories.length > 0) {
-      filtered = filtered.filter(tool => advancedFilters.categories.includes(tool.category));
+      filtered = filtered.filter(tool => advancedFilters.categories.includes(tool.customCategory || tool.category));
     }
 
     // סינון מתקדם - תמחור
@@ -373,7 +380,7 @@ export default function ToolsTab({ settings, initialFilter }) {
     (advancedFilters.popularityRange[0] > 1 || advancedFilters.popularityRange[1] < 5 ? 1 : 0);
 
   // כל התגיות והקטגוריות
-  const allCategories = [...new Set(tools.map(t => t.category))].sort();
+  const allCategories = [...new Set(tools.map(t => t.customCategory || t.category).filter(Boolean))].sort();
   const allTags = [...new Set(tools.flatMap(t => t.tags || []))].sort();
 
   const toggleCompareSelection = (tool) => {
@@ -679,7 +686,7 @@ export default function ToolsTab({ settings, initialFilter }) {
       {/* טופס */}
       {showForm && (
         <ToolForm
-          tool={editingTool}
+          tool={editingTool ? { ...editingTool, availableCustomCategories: allCategories } : { availableCustomCategories: allCategories }}
           onClose={() => {
             setShowForm(false);
             setEditingTool(null);

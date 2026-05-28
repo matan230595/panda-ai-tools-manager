@@ -54,6 +54,7 @@ export default function ToolForm({ tool, onClose, onSave }) {
   const [newFeature, setNewFeature] = useState('');
   const [newIntegration, setNewIntegration] = useState('');
   const [newTag, setNewTag] = useState('');
+  const [newCustomCategory, setNewCustomCategory] = useState('');
   const [isAutofilling, setIsAutofilling] = useState(false);
   const [isAutoFetchingMeta, setIsAutoFetchingMeta] = useState(false);
   const [autofillError, setAutofillError] = useState('');
@@ -78,6 +79,15 @@ export default function ToolForm({ tool, onClose, onSave }) {
     'מחקר', 'פרודוקטיביות', 'אוטומציה', 'אנליטיקה', 'שיווק', 'כתיבה',
     'אודיו', 'נתונים', 'חינוך', 'אחר'
   ];
+  const validCategories = new Set(categories);
+
+  const customCategories = useMemo(() => {
+    return Array.isArray(tool?.availableCustomCategories) ? tool.availableCustomCategories : [];
+  }, [tool]);
+
+  const categoryOptions = useMemo(() => {
+    return [...new Set([...categories, ...customCategories, formData.customCategory].filter(Boolean))];
+  }, [categories, customCategories, formData.customCategory]);
 
   // חישוב אוטומטי של המחיר בשקלים
   useEffect(() => {
@@ -292,12 +302,15 @@ ${formData.url ? `URL: ${formData.url}` : ''}
     const monthlyCost = Number(formData.priceILS || 0);
     const roiPercentage = monthlyCost > 0 ? (((monthlyValue - monthlyCost) / monthlyCost) * 100) : (monthlyValue > 0 ? 100 : 0);
 
+    const normalizedCategory = String(formData.customCategory || formData.category || 'אחר').trim();
+
     const sanitizedPayload = {
       name: formData.name.trim(),
       url: normalizedUrl.trim(),
       description: String(formData.description || ''),
       detailedDescription: String(formData.detailedDescription || ''),
-      category: validCategories.has(formData.category) ? formData.category : 'אחר',
+      category: normalizedCategory || (validCategories.has(formData.category) ? formData.category : 'אחר'),
+      customCategory: validCategories.has(normalizedCategory) ? '' : normalizedCategory,
       pricing: validPricing.has(formData.pricing) ? formData.pricing : 'חינם',
       subscriptionType: validSubscriptionTypes.has(formData.subscriptionType) ? formData.subscriptionType : 'חינמי',
       subscriptionPlans: Array.isArray(formData.subscriptionPlans) ? formData.subscriptionPlans.map((plan) => ({
@@ -463,18 +476,51 @@ ${formData.url ? `URL: ${formData.url}` : ''}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label htmlFor="category">קטגוריה</Label>
-              <Select value={formData.category} onValueChange={(val) => handleChange('category', val)}>
+              <Select value={formData.customCategory || formData.category} onValueChange={(val) => {
+                handleChange('category', val);
+                handleChange('customCategory', validCategories.has(val) ? '' : val);
+              }}>
                 <SelectTrigger id="category">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {categories.map((cat) => (
+                  {categoryOptions.map((cat) => (
                     <SelectItem key={cat} value={cat}>
                       {cat.replace(/_/g, ' ')}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
+              <div className="flex gap-2">
+                <Input
+                  value={newCustomCategory}
+                  onChange={(e) => setNewCustomCategory(e.target.value)}
+                  placeholder="צור קטגוריה משלך"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      const value = newCustomCategory.trim();
+                      if (!value) return;
+                      handleChange('category', value);
+                      handleChange('customCategory', value);
+                      setNewCustomCategory('');
+                    }
+                  }}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    const value = newCustomCategory.trim();
+                    if (!value) return;
+                    handleChange('category', value);
+                    handleChange('customCategory', value);
+                    setNewCustomCategory('');
+                  }}
+                >
+                  <Plus className="w-4 h-4" />
+                </Button>
+              </div>
             </div>
             <div className="space-y-2">
               <Label htmlFor="pricing">תמחור</Label>

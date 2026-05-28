@@ -1,0 +1,311 @@
+{
+  "name": "AiTool",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "\u05e9\u05dd \u05d4\u05db\u05dc\u05d9"
+    },
+    "url": {
+      "type": "string",
+      "description": "\u05db\u05ea\u05d5\u05d1\u05ea URL \u05e9\u05dc \u05d4\u05db\u05dc\u05d9"
+    },
+    "description": {
+      "type": "string",
+      "description": "\u05ea\u05d9\u05d0\u05d5\u05e8 \u05e7\u05e6\u05e8 \u05e9\u05dc \u05d4\u05db\u05dc\u05d9"
+    },
+    "detailedDescription": {
+      "type": "string",
+      "description": "\u05ea\u05d9\u05d0\u05d5\u05e8 \u05de\u05e4\u05d5\u05e8\u05d8 \u05d5\u05d1\u05e8\u05d5\u05e8 \u05e2\u05dd \u05d3\u05d5\u05d2\u05de\u05d0\u05d5\u05ea \u05dc\u05e9\u05d9\u05de\u05d5\u05e9 \u05d5\u05d4\u05de\u05dc\u05e6\u05d5\u05ea"
+    },
+    "category": {
+      "type": "string",
+      "description": "\u05e7\u05d8\u05d2\u05d5\u05e8\u05d9\u05d9\u05ea \u05d4\u05db\u05dc\u05d9"
+    },
+    "customCategory": {
+      "type": "string",
+      "description": "\u05e7\u05d8\u05d2\u05d5\u05e8\u05d9\u05d4 \u05d0\u05d9\u05e9\u05d9\u05ea \u05e9\u05d4\u05de\u05e9\u05ea\u05de\u05e9 \u05d9\u05e6\u05e8"
+    },
+    "pricing": {
+      "type": "string",
+      "enum": [
+        "\u05d7\u05d9\u05e0\u05dd",
+        "\u05d1\u05ea\u05e9\u05dc\u05d5\u05dd",
+        "\u05e4\u05e8\u05d9\u05de\u05d9\u05d5\u05dd",
+        "\u05e4\u05e8\u05d9\u05de\u05d9\u05d5\u05dd_\u05de\u05d5\u05d2\u05d1\u05dc"
+      ],
+      "default": "\u05d7\u05d9\u05e0\u05dd",
+      "description": "\u05de\u05d5\u05d3\u05dc \u05ea\u05de\u05d7\u05d5\u05e8"
+    },
+    "subscriptionType": {
+      "type": "string",
+      "enum": [
+        "\u05d7\u05d9\u05e0\u05de\u05d9",
+        "\u05e4\u05e8\u05d9\u05de\u05d9\u05d5\u05dd",
+        "\u05d2\u05d5\u05dc\u05d3"
+      ],
+      "default": "\u05d7\u05d9\u05e0\u05de\u05d9",
+      "description": "\u05e1\u05d5\u05d2 \u05d4\u05de\u05e0\u05d5\u05d9"
+    },
+    "subscriptionPlans": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "priceUSD": {
+            "type": "number"
+          },
+          "priceILS": {
+            "type": "number"
+          },
+          "features": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "limits": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "\u05ea\u05d5\u05db\u05e0\u05d9\u05d5\u05ea \u05de\u05e0\u05d5\u05d9 \u05e9\u05d5\u05e0\u05d5\u05ea"
+    },
+    "priceUSD": {
+      "type": "number",
+      "description": "\u05de\u05d7\u05d9\u05e8 \u05d7\u05d5\u05d3\u05e9\u05d9 \u05d1\u05d3\u05d5\u05dc\u05e8"
+    },
+    "priceILS": {
+      "type": "number",
+      "description": "\u05de\u05d7\u05d9\u05e8 \u05d7\u05d5\u05d3\u05e9\u05d9 \u05d1\u05e9\u05e7\u05dc"
+    },
+    "timeSavingsHours": {
+      "type": "number",
+      "description": "\u05d7\u05d9\u05e1\u05db\u05d5\u05df \u05d6\u05de\u05df \u05d7\u05d5\u05d3\u05e9\u05d9 \u05d1\u05e9\u05e2\u05d5\u05ea"
+    },
+    "directRevenue": {
+      "type": "number",
+      "description": "\u05d4\u05db\u05e0\u05e1\u05d4 \u05d9\u05e9\u05d9\u05e8\u05d4 \u05d7\u05d5\u05d3\u05e9\u05d9\u05ea \u05de\u05d4\u05db\u05dc\u05d9 \u05d1\u05e9\u05e7\u05dc\u05d9\u05dd"
+    },
+    "roiPercentage": {
+      "type": "number",
+      "description": "\u05d4\u05d7\u05d6\u05e8 \u05d4\u05e9\u05e7\u05e2\u05d4 \u05d1\u05d0\u05d7\u05d5\u05d6\u05d9\u05dd"
+    },
+    "roiDisplay": {
+      "type": "string",
+      "description": "\u05d8\u05e7\u05e1\u05d8 \u05de\u05e1\u05db\u05dd \u05e9\u05dc \u05d4-ROI"
+    },
+    "features": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "\u05ea\u05db\u05d5\u05e0\u05d5\u05ea \u05e2\u05d9\u05e7\u05e8\u05d9\u05d5\u05ea"
+    },
+    "integrations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "\u05d0\u05d9\u05e0\u05d8\u05d2\u05e8\u05e6\u05d9\u05d5\u05ea"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "\u05ea\u05d2\u05d9\u05d5\u05ea \u05dc\u05d7\u05d9\u05e4\u05d5\u05e9"
+    },
+    "rating": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 5,
+      "description": "\u05d3\u05d9\u05e8\u05d5\u05d2 (0-5)"
+    },
+    "popularity": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "\u05e8\u05de\u05ea \u05e4\u05d5\u05e4\u05d5\u05dc\u05e8\u05d9\u05d5\u05ea (1-5)"
+    },
+    "isFavorite": {
+      "type": "boolean",
+      "default": false,
+      "description": "\u05de\u05d5\u05e2\u05d3\u05e3"
+    },
+    "hasSubscription": {
+      "type": "boolean",
+      "default": false,
+      "description": "\u05d9\u05e9 \u05dc\u05d9 \u05de\u05e0\u05d5\u05d9 \u05e4\u05e2\u05d9\u05dc"
+    },
+    "logo": {
+      "type": "string",
+      "description": "URL \u05dc\u05dc\u05d5\u05d2\u05d5"
+    },
+    "screenshots": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "\u05e6\u05d9\u05dc\u05d5\u05de\u05d9 \u05de\u05e1\u05da"
+    },
+    "videoDemo": {
+      "type": "string",
+      "description": "\u05e7\u05d9\u05e9\u05d5\u05e8 \u05dc\u05d5\u05d9\u05d3\u05d0\u05d5 \u05d4\u05d3\u05d2\u05de\u05d4"
+    },
+    "useCases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "\u05d3\u05d5\u05d2\u05de\u05d0\u05d5\u05ea \u05dc\u05e9\u05d9\u05de\u05d5\u05e9"
+    },
+    "prosAndCons": {
+      "type": "object",
+      "properties": {
+        "pros": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "cons": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "\u05d9\u05ea\u05e8\u05d5\u05e0\u05d5\u05ea \u05d5\u05d7\u05e1\u05e8\u05d5\u05e0\u05d5\u05ea"
+    },
+    "targetAudience": {
+      "type": "string",
+      "description": "\u05e7\u05d4\u05dc \u05d9\u05e2\u05d3"
+    },
+    "languagesSupported": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "\u05e9\u05e4\u05d5\u05ea \u05e0\u05ea\u05de\u05db\u05d5\u05ea"
+    },
+    "platforms": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "\u05e4\u05dc\u05d8\u05e4\u05d5\u05e8\u05de\u05d5\u05ea"
+    },
+    "notes": {
+      "type": "string",
+      "description": "\u05d4\u05e2\u05e8\u05d5\u05ea \u05e4\u05e8\u05d8\u05d9\u05d5\u05ea"
+    },
+    "lastUsed": {
+      "type": "string",
+      "format": "date-time",
+      "description": "\u05e9\u05d9\u05de\u05d5\u05e9 \u05d0\u05d7\u05e8\u05d5\u05df"
+    },
+    "sortOrder": {
+      "type": "integer",
+      "description": "\u05e1\u05d3\u05e8 \u05ea\u05e6\u05d5\u05d2\u05d4"
+    },
+    "aiGenerated": {
+      "type": "boolean",
+      "default": false,
+      "description": "\u05e0\u05d5\u05e6\u05e8 \u05d1\u05d0\u05de\u05e6\u05e2\u05d5\u05ea AI"
+    },
+    "usageStats": {
+      "type": "object",
+      "properties": {
+        "timesUsed": {
+          "type": "integer",
+          "default": 0,
+          "description": "\u05de\u05e1\u05e4\u05e8 \u05e4\u05e2\u05de\u05d9\u05dd \u05e9\u05d4\u05e9\u05ea\u05de\u05e9\u05d5 \u05d1\u05db\u05dc\u05d9"
+        },
+        "usageFrequency": {
+          "type": "string",
+          "enum": [
+            "\u05db\u05dc \u05d9\u05d5\u05dd",
+            "\u05db\u05de\u05d4 \u05e4\u05e2\u05de\u05d9\u05dd \u05d1\u05e9\u05d1\u05d5\u05e2",
+            "\u05e9\u05d1\u05d5\u05e2\u05d9",
+            "\u05d7\u05d5\u05d3\u05e9\u05d9",
+            "\u05dc\u05e2\u05d9\u05ea\u05d9\u05dd \u05e8\u05d7\u05d5\u05e7\u05d5\u05ea"
+          ],
+          "default": "\u05dc\u05e2\u05d9\u05ea\u05d9\u05dd \u05e8\u05d7\u05d5\u05e7\u05d5\u05ea",
+          "description": "\u05ea\u05d3\u05d9\u05e8\u05d5\u05ea \u05d4\u05e9\u05d9\u05de\u05d5\u05e9"
+        },
+        "averageSessionDuration": {
+          "type": "integer",
+          "description": "\u05de\u05e9\u05da \u05de\u05d5\u05e9\u05d1 \u05de\u05de\u05d5\u05e6\u05e2 \u05d1\u05d3\u05e7\u05d5\u05ea"
+        },
+        "lastUsedDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "\u05ea\u05d0\u05e8\u05d9\u05da \u05d4\u05e9\u05d9\u05de\u05d5\u05e9 \u05d4\u05d0\u05d7\u05e8\u05d5\u05df"
+        },
+        "totalCostPerMonth": {
+          "type": "number",
+          "description": "\u05e2\u05dc\u05d5\u05ea \u05d7\u05d5\u05d3\u05e9\u05d9\u05ea \u05de\u05de\u05d5\u05e6\u05e2\u05ea"
+        },
+        "roi": {
+          "type": "string",
+          "description": "\u05ea\u05d9\u05d0\u05d5\u05e8 \u05d4\u05ea\u05e9\u05d5\u05d0\u05d4 \u05e2\u05dc \u05d4\u05d4\u05e9\u05e7\u05e2\u05d4"
+        }
+      },
+      "description": "\u05e1\u05d8\u05d8\u05d9\u05e1\u05d8\u05d9\u05e7\u05d5\u05ea \u05e9\u05d9\u05de\u05d5\u05e9 \u05e9\u05dc \u05d4\u05db\u05dc\u05d9"
+    },
+    "personalNotes": {
+      "type": "string",
+      "description": "\u05d4\u05e2\u05e8\u05d5\u05ea \u05d0\u05d9\u05e9\u05d9\u05d5\u05ea \u05e2\u05dc \u05d4\u05db\u05dc\u05d9"
+    },
+    "personalRating": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 5,
+      "description": "\u05d3\u05d9\u05e8\u05d5\u05d2 \u05d0\u05d9\u05e9\u05d9"
+    },
+    "userCredentials": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "description": "\u05db\u05ea\u05d5\u05d1\u05ea \u05d0\u05d9\u05de\u05d9\u05d9\u05dc \u05dc\u05db\u05dc\u05d9"
+        },
+        "username": {
+          "type": "string",
+          "description": "\u05e9\u05dd \u05de\u05e9\u05ea\u05de\u05e9"
+        },
+        "password": {
+          "type": "string",
+          "description": "\u05e1\u05d9\u05e1\u05de\u05d4"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "\u05de\u05e1\u05e4\u05e8 \u05d8\u05dc\u05e4\u05d5\u05df"
+        },
+        "googleConnected": {
+          "type": "boolean",
+          "default": false,
+          "description": "\u05d7\u05e9\u05d1\u05d5\u05df Google \u05de\u05d7\u05d5\u05d1\u05e8"
+        }
+      },
+      "description": "\u05e4\u05e8\u05d8\u05d9 \u05d2\u05d9\u05e9\u05d4 \u05de\u05d0\u05d5\u05d7\u05e1\u05e0\u05d9\u05dd \u05d1\u05d8\u05d5\u05d7"
+    }
+  },
+  "required": [
+    "name",
+    "url",
+    "category"
+  ]
+}

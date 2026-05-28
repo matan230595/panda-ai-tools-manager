@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+
+const webkitSpeechRecognition = window.webkitSpeechRecognition;
 import { Search, Mic, X, Sparkles, TrendingUp } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -26,7 +28,21 @@ export default function SmartSearch({ onSearch, tools, quickFilters = [] }) {
       generateSuggestions();
       const lowerSearch = searchTerm.toLowerCase().trim();
       const matches = tools.filter((tool) => {
-        const text = [tool.name, tool.description, ...(tool.tags || []), ...(tool.features || []), tool.category]
+        const text = [
+          tool.name,
+          tool.description,
+          tool.detailedDescription,
+          tool.notes,
+          tool.personalNotes,
+          tool.targetAudience,
+          tool.category,
+          tool.customCategory,
+          ...(tool.tags || []),
+          ...(tool.features || []),
+          ...(tool.prosAndCons?.pros || []),
+          ...(tool.prosAndCons?.cons || []),
+          ...(tool.useCases || []).flatMap((item) => [item?.title, item?.description])
+        ]
           .filter(Boolean)
           .join(' ')
           .toLowerCase();
@@ -45,15 +61,26 @@ export default function SmartSearch({ onSearch, tools, quickFilters = [] }) {
     const scoreTool = (tool) => {
       const name = tool.name?.toLowerCase() || '';
       const description = tool.description?.toLowerCase() || '';
+      const detailedDescription = tool.detailedDescription?.toLowerCase() || '';
+      const notes = `${tool.notes || ''} ${tool.personalNotes || ''}`.toLowerCase();
+      const category = `${tool.category || ''} ${tool.customCategory || ''}`.toLowerCase();
       const tags = (tool.tags || []).join(' ').toLowerCase();
       const features = (tool.features || []).join(' ').toLowerCase();
-      const haystack = `${name} ${description} ${tags} ${features}`;
+      const pros = (tool.prosAndCons?.pros || []).join(' ').toLowerCase();
+      const cons = (tool.prosAndCons?.cons || []).join(' ').toLowerCase();
+      const useCases = (tool.useCases || []).flatMap((item) => [item?.title, item?.description]).filter(Boolean).join(' ').toLowerCase();
+      const haystack = `${name} ${description} ${detailedDescription} ${notes} ${category} ${tags} ${features} ${pros} ${cons} ${useCases}`;
 
       let score = 0;
       if (name.includes(lowerSearch)) score += 8;
       if (description.includes(lowerSearch)) score += 4;
+      if (detailedDescription.includes(lowerSearch)) score += 4;
       if (tags.includes(lowerSearch)) score += 5;
       if (features.includes(lowerSearch)) score += 3;
+      if (useCases.includes(lowerSearch)) score += 4;
+      if (pros.includes(lowerSearch)) score += 4;
+      if (notes.includes(lowerSearch)) score += 3;
+      if (category.includes(lowerSearch)) score += 3;
 
       const terms = lowerSearch.split(/\s+/).filter(Boolean);
       terms.forEach((term) => {
