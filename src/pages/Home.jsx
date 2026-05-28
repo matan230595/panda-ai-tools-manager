@@ -172,7 +172,7 @@ export default function Home() {
       </div>
       
       {/* תוכן הטאב */}
-      <main className="max-w-7xl mx-auto px-1.5 sm:px-4 md:px-6 py-2 sm:py-4 md:py-8 pb-20 md:pb-8">
+      <main className="max-w-7xl mx-auto px-1.5 sm:px-4 md:px-6 py-2 sm:py-4 md:py-8 pb-28 sm:pb-32 md:pb-8">
         <div className="flex justify-end mb-3 md:mb-4">
           <Link to="/calendar" className="inline-flex items-center rounded-xl border border-indigo-200 bg-white/80 dark:bg-gray-900/70 dark:border-indigo-900 px-4 py-2 text-sm font-medium text-indigo-700 dark:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-colors">
             פתח לוח שנה מנויים
@@ -228,7 +228,7 @@ export default function Home() {
       </main>
       
       {/* מקום לניווט תחתון במובייל */}
-      <div className="h-24 md:hidden" />
+      <div className="h-28 sm:h-32 md:hidden" />
 
       {/* עזרת קיצורי מקלדת */}
       <KeyboardShortcutsHelp open={showKeyboardHelp} onOpenChange={setShowKeyboardHelp} />

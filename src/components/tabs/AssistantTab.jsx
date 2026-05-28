@@ -131,7 +131,7 @@ export default function AssistantTab() {
         </div>
       </div>
 
-      <div className="glass-effect rounded-2xl flex flex-col overflow-hidden min-h-[calc(100vh-7rem)] md:min-h-[calc(100vh-9rem)] min-w-0 w-full">
+      <div className="glass-effect rounded-2xl flex flex-col overflow-hidden min-h-[calc(100vh-8.5rem)] md:min-h-[calc(100vh-9rem)] min-w-0 w-full">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 p-4 md:p-5 border-b border-gray-200 dark:border-gray-700">
           <div className="min-w-0">
             <h2 className="text-2xl md:text-3xl font-bold gradient-text flex items-center gap-2">

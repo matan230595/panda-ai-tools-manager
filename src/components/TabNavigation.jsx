@@ -106,8 +106,8 @@ export default function TabNavigation({ activeTab, onTabChange }) {
       </div>
 
       {/* Mobile - Bottom Navigation */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-t border-gray-200 dark:border-gray-700 safe-area-bottom" dir="rtl">
-        <nav className="grid grid-cols-5 gap-0 h-[78px] px-1 pt-1 pb-2" role="tablist">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-[70] bg-white/98 dark:bg-slate-900/98 backdrop-blur-xl border-t border-gray-200 dark:border-gray-700 shadow-[0_-8px_30px_rgba(15,23,42,0.12)] pb-[max(8px,env(safe-area-inset-bottom))]" dir="rtl">
+        <nav className="grid grid-cols-5 gap-0 min-h-[88px] px-1 pt-1" role="tablist">
           {[
             tabs.find((tab) => tab.id === 'tools'),
             tabs.find((tab) => tab.id === 'assistant'),
@@ -125,7 +125,7 @@ export default function TabNavigation({ activeTab, onTabChange }) {
                 role="tab"
                 aria-selected={isActive}
                 aria-label={tab.label}
-                className="flex flex-col items-center justify-center gap-1 py-1 relative touch-target min-h-[64px]"
+                className="flex flex-col items-center justify-center gap-1 py-1.5 relative touch-target min-h-[72px] rounded-2xl"
               >
                 <div className={`relative flex items-center justify-center w-11 h-11 rounded-2xl transition-all duration-300 ${isActive ? 'scale-105' : 'opacity-70'}`}>
                   {isActive && <div className={`absolute inset-0 bg-gradient-to-br ${tab.gradient} rounded-2xl opacity-20`} />}
@@ -146,7 +146,7 @@ export default function TabNavigation({ activeTab, onTabChange }) {
       </div>
 
       {/* Mobile - Header */}
-      <div className="md:hidden sticky top-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-gray-200 dark:border-gray-700 px-3 sm:px-4 py-2.5" dir="rtl">
+      <div className="md:hidden sticky top-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border-b border-gray-200 dark:border-gray-700 px-3 sm:px-4 py-2.5" dir="rtl">
         <div className="flex items-center gap-2 sm:gap-3 justify-between">
           <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0 bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30">
             {userLogo ? (

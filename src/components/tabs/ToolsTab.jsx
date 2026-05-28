@@ -475,7 +475,7 @@ export default function ToolsTab({ settings, initialFilter }) {
          </p>
         
         {/* כפתורי פעולה - מסודרים: כפתור הוספה | export/import | advanced filters | (mobile menu) */}
-         <div className="flex gap-1.5 items-center flex-nowrap overflow-x-auto scrollbar-hide">
+         <div className="flex gap-1.5 items-center flex-nowrap overflow-x-auto scrollbar-hide pb-1">
             {/* כפתור הוספה - ימין */}
             <Button
               onClick={() => {

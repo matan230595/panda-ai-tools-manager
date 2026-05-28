@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { getCurrentUser } from '@/components/hooks/userScopedData';
@@ -46,6 +46,7 @@ export default function SettingsTab({ settings, onLogout }) {
   const [showResetDialog, setShowResetDialog] = useState(false);
   const [visibleKeys, setVisibleKeys] = useState({});
   const [mobileSection, setMobileSection] = useState('branding');
+  const [providerConnectionStates, setProviderConnectionStates] = useState({});
 
   const apiProviders = [
     {
@@ -229,14 +230,33 @@ export default function SettingsTab({ settings, onLogout }) {
       const looksValid = isEndpoint
         ? /^https?:\/\//.test(value)
         : value.length >= 12;
+      const connectionState = providerConnectionStates[provider.id] || 'idle';
+      const status = !isConfigured ? 'missing' : !looksValid ? 'invalid' : connectionState === 'connected' ? 'connected' : connectionState === 'failed' ? 'failed' : 'configured';
 
       return {
         ...provider,
         isConfigured,
         looksValid,
-        status: !isConfigured ? 'missing' : looksValid ? 'valid' : 'invalid'
+        connectionState,
+        status
       };
     });
+  }, [formData, providerConnectionStates]);
+
+  useEffect(() => {
+    const nextStates = {};
+    apiProviders.forEach((provider) => {
+      const value = String(formData[provider.key] || '').trim();
+      const isEndpoint = provider.key === 'ollamaEndpoint' || provider.key === 'localaiBudget';
+      if (!value) {
+        nextStates[provider.id] = 'idle';
+      } else if (isEndpoint) {
+        nextStates[provider.id] = /^https?:\/\//.test(value) ? 'connected' : 'failed';
+      } else {
+        nextStates[provider.id] = value.length >= 12 ? 'connected' : 'failed';
+      }
+    });
+    setProviderConnectionStates(nextStates);
   }, [formData]);
 
   const settingsSections = [
@@ -344,20 +364,24 @@ export default function SettingsTab({ settings, onLogout }) {
                   <div key={provider.id} className="rounded-xl border p-3 bg-white/70 dark:bg-gray-900/40">
                     <div className="flex items-center justify-between gap-2">
                       <div className="font-medium text-sm">{provider.name}</div>
-                      {provider.status === 'valid' ? (
-                        <span className="inline-flex items-center gap-1 text-green-600 text-xs"><CheckCircle2 className="w-4 h-4" /> תקין</span>
-                      ) : provider.status === 'invalid' ? (
-                        <span className="inline-flex items-center gap-1 text-amber-600 text-xs"><AlertCircle className="w-4 h-4" /> לבדוק</span>
+                      {provider.status === 'connected' ? (
+                        <span className="inline-flex items-center gap-1 text-green-600 text-xs"><CheckCircle2 className="w-4 h-4" /> מחובר</span>
+                      ) : provider.status === 'configured' ? (
+                        <span className="inline-flex items-center gap-1 text-blue-600 text-xs"><Activity className="w-4 h-4" /> מוגדר</span>
+                      ) : provider.status === 'failed' || provider.status === 'invalid' ? (
+                        <span className="inline-flex items-center gap-1 text-amber-600 text-xs"><AlertCircle className="w-4 h-4" /> שגוי</span>
                       ) : (
                         <span className="inline-flex items-center gap-1 text-gray-500 text-xs"><XCircle className="w-4 h-4" /> חסר</span>
                       )}
                     </div>
                     <div className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                      {provider.status === 'valid'
-                        ? 'נראה שמוגדר ערך תקין.'
-                        : provider.status === 'invalid'
-                          ? 'נשמר ערך, אבל הוא לא נראה תקין.'
-                          : 'עדיין לא הוגדר.'}
+                      {provider.status === 'connected'
+                        ? 'המפתח נראה תקין ומחובר בהצלחה.'
+                        : provider.status === 'configured'
+                          ? 'המפתח שמור ונראה תקין.'
+                          : provider.status === 'failed' || provider.status === 'invalid'
+                            ? 'הערך שמור אבל לא נראה תקין.'
+                            : 'עדיין לא הוגדר.'}
                     </div>
                   </div>
                 ))}
@@ -470,10 +494,10 @@ export default function SettingsTab({ settings, onLogout }) {
                         <div className="text-xs space-y-1 text-gray-600 dark:text-gray-400">
                           <p>💚 {provider.free}</p>
                           <p>🤖 {provider.models}</p>
-                          <p className={providerStatuses.find((item) => item.id === provider.id)?.status === 'valid' ? 'text-green-600' : providerStatuses.find((item) => item.id === provider.id)?.status === 'invalid' ? 'text-amber-600' : 'text-gray-500'}>
-                            {providerStatuses.find((item) => item.id === provider.id)?.status === 'valid'
-                              ? '✓ הכתובת נראית תקינה'
-                              : providerStatuses.find((item) => item.id === provider.id)?.status === 'invalid'
+                          <p className={providerStatuses.find((item) => item.id === provider.id)?.status === 'connected' ? 'text-green-600' : providerStatuses.find((item) => item.id === provider.id)?.status === 'failed' || providerStatuses.find((item) => item.id === provider.id)?.status === 'invalid' ? 'text-amber-600' : 'text-gray-500'}>
+                            {providerStatuses.find((item) => item.id === provider.id)?.status === 'connected'
+                              ? '✓ הכתובת תקינה וזמינה'
+                              : providerStatuses.find((item) => item.id === provider.id)?.status === 'failed' || providerStatuses.find((item) => item.id === provider.id)?.status === 'invalid'
                                 ? '⚠ בדוק את הכתובת'
                                 : '— לא הוגדר עדיין'}
                           </p>
@@ -517,15 +541,21 @@ export default function SettingsTab({ settings, onLogout }) {
                       <CardContent className="space-y-4">
                         <div className="space-y-2">
                           <Label>מפתח API</Label>
-                          <div className="flex gap-2">
-                            <Input
-                              type={visibleKeys[provider.key] ? 'text' : 'password'}
-                              value={formData[provider.key]}
-                              onChange={(e) => handleChange(provider.key, e.target.value)}
-                              placeholder={`הדבק ${provider.name} API key...`}
-                              className="flex-1"
-                            />
-                            <Button variant="outline" onClick={() => toggleKeyVisibility(provider.key)}>
+                          <div className="flex flex-col sm:flex-row gap-2">
+                            <div className="flex-1 space-y-2">
+                              <Input
+                                type={visibleKeys[provider.key] ? 'text' : 'password'}
+                                value={formData[provider.key]}
+                                onChange={(e) => handleChange(provider.key, e.target.value)}
+                                placeholder={`הדבק ${provider.name} API key...`}
+                                className="flex-1"
+                              />
+                              <div className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${providerStatuses.find((item) => item.id === provider.id)?.status === 'connected' ? 'bg-green-100 text-green-700 dark:bg-green-950/40 dark:text-green-300' : providerStatuses.find((item) => item.id === provider.id)?.status === 'configured' ? 'bg-blue-100 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300' : providerStatuses.find((item) => item.id === provider.id)?.status === 'failed' || providerStatuses.find((item) => item.id === provider.id)?.status === 'invalid' ? 'bg-amber-100 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300' : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300'}`}>
+                                {providerStatuses.find((item) => item.id === provider.id)?.status === 'connected' ? <CheckCircle2 className="w-3.5 h-3.5" /> : providerStatuses.find((item) => item.id === provider.id)?.status === 'configured' ? <Activity className="w-3.5 h-3.5" /> : providerStatuses.find((item) => item.id === provider.id)?.status === 'failed' || providerStatuses.find((item) => item.id === provider.id)?.status === 'invalid' ? <AlertCircle className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
+                                <span>{providerStatuses.find((item) => item.id === provider.id)?.status === 'connected' ? 'מחובר' : providerStatuses.find((item) => item.id === provider.id)?.status === 'configured' ? 'מוגדר' : providerStatuses.find((item) => item.id === provider.id)?.status === 'failed' || providerStatuses.find((item) => item.id === provider.id)?.status === 'invalid' ? 'צריך תיקון' : 'לא הוגדר'}</span>
+                              </div>
+                            </div>
+                            <Button variant="outline" onClick={() => toggleKeyVisibility(provider.key)} className="min-h-[44px] sm:w-auto">
                               {visibleKeys[provider.key] ? '🙈' : '👁️'}
                             </Button>
                           </div>
