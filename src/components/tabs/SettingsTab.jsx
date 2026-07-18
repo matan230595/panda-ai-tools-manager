@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import SettingsNav from '@/components/tabs/SettingsNav';
 import OllamaIntegration from '@/components/integrations/OllamaIntegration';
 import BrandingTab from '@/components/tabs/BrandingTab';
 import FooterSettingsTab from '@/components/tabs/FooterSettingsTab';
@@ -314,37 +315,16 @@ export default function SettingsTab({ settings, onLogout }) {
         <p className="text-gray-600 dark:text-gray-400">התאם את המערכת לצרכים שלך</p>
       </div>
 
-      <div className="md:hidden space-y-3">
-        <div className="grid gap-2">
-          {settingsSections.map((section) => (
-            <button
-              key={section.id}
-              onClick={() => setMobileSection(section.id)}
-              className={`flex items-center justify-between rounded-2xl border px-4 py-4 text-right min-h-[56px] ${mobileSection === section.id ? 'bg-indigo-50 border-indigo-300 text-indigo-700 dark:bg-indigo-950/40 dark:border-indigo-800 dark:text-indigo-300' : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800'}`}
-            >
-              <span className="font-medium">{section.label}</span>
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          ))}
+      <div className="flex flex-col md:flex-row gap-6 items-start">
+        <div className="w-full md:w-56 lg:w-64 flex-shrink-0 md:sticky md:top-4">
+          <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-2">
+            <SettingsNav sections={settingsSections} active={mobileSection} onChange={setMobileSection} />
+          </div>
         </div>
-      </div>
 
-      <Tabs value={mobileSection} onValueChange={setMobileSection} className="w-full">
-        <TabsList className="hidden md:grid w-full grid-cols-6 lg:grid-cols-11 gap-1 overflow-x-auto">
-          <TabsTrigger value="branding">🎨</TabsTrigger>
-          <TabsTrigger value="footer">🔗</TabsTrigger>
-          <TabsTrigger value="api">🔑</TabsTrigger>
-          <TabsTrigger value="ollama">🆓</TabsTrigger>
-          <TabsTrigger value="preferences">⚙️</TabsTrigger>
-          <TabsTrigger value="security">🔐</TabsTrigger>
-          <TabsTrigger value="data">💾</TabsTrigger>
-          <TabsTrigger value="language">🌐</TabsTrigger>
-          <TabsTrigger value="collab">👥</TabsTrigger>
-          <TabsTrigger value="calendar">📅</TabsTrigger>
-          <TabsTrigger value="analytics">📊</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="branding" className="mt-6">
+        <div className="flex-1 min-w-0 w-full">
+          <Tabs value={mobileSection} onValueChange={setMobileSection} className="w-full">
+        <TabsContent value="branding" className="mt-0">
           <BrandingTab settings={settings} />
         </TabsContent>
 
@@ -365,7 +345,7 @@ export default function SettingsTab({ settings, onLogout }) {
                     <div className="flex items-center justify-between gap-2">
                       <div className="font-medium text-sm">{provider.name}</div>
                       {provider.status === 'connected' ? (
-                        <span className="inline-flex items-center gap-1 text-green-600 text-xs"><CheckCircle2 className="w-4 h-4" /> מחובר</span>
+                        <span className="inline-flex items-center gap-1 text-green-600 text-xs"><CheckCircle2 className="w-4 h-4" /> מפתח שמור</span>
                       ) : provider.status === 'configured' ? (
                         <span className="inline-flex items-center gap-1 text-blue-600 text-xs"><Activity className="w-4 h-4" /> מוגדר</span>
                       ) : provider.status === 'failed' || provider.status === 'invalid' ? (
@@ -376,11 +356,11 @@ export default function SettingsTab({ settings, onLogout }) {
                     </div>
                     <div className="text-xs text-gray-500 dark:text-gray-400 mt-2">
                       {provider.status === 'connected'
-                        ? 'המפתח נראה תקין ומחובר בהצלחה.'
+                        ? 'המפתח נשמר ונראה תקין בפורמט. אימות מול הספק יתבצע בזמן שימוש בפועל.'
                         : provider.status === 'configured'
                           ? 'המפתח שמור ונראה תקין.'
                           : provider.status === 'failed' || provider.status === 'invalid'
-                            ? 'הערך שמור אבל לא נראה תקין.'
+                            ? 'הערך שמור אבל הפורמט לא נראה תקין.'
                             : 'עדיין לא הוגדר.'}
                     </div>
                   </div>
@@ -552,7 +532,7 @@ export default function SettingsTab({ settings, onLogout }) {
                               />
                               <div className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${providerStatuses.find((item) => item.id === provider.id)?.status === 'connected' ? 'bg-green-100 text-green-700 dark:bg-green-950/40 dark:text-green-300' : providerStatuses.find((item) => item.id === provider.id)?.status === 'configured' ? 'bg-blue-100 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300' : providerStatuses.find((item) => item.id === provider.id)?.status === 'failed' || providerStatuses.find((item) => item.id === provider.id)?.status === 'invalid' ? 'bg-amber-100 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300' : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300'}`}>
                                 {providerStatuses.find((item) => item.id === provider.id)?.status === 'connected' ? <CheckCircle2 className="w-3.5 h-3.5" /> : providerStatuses.find((item) => item.id === provider.id)?.status === 'configured' ? <Activity className="w-3.5 h-3.5" /> : providerStatuses.find((item) => item.id === provider.id)?.status === 'failed' || providerStatuses.find((item) => item.id === provider.id)?.status === 'invalid' ? <AlertCircle className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
-                                <span>{providerStatuses.find((item) => item.id === provider.id)?.status === 'connected' ? 'מחובר' : providerStatuses.find((item) => item.id === provider.id)?.status === 'configured' ? 'מוגדר' : providerStatuses.find((item) => item.id === provider.id)?.status === 'failed' || providerStatuses.find((item) => item.id === provider.id)?.status === 'invalid' ? 'צריך תיקון' : 'לא הוגדר'}</span>
+                                <span>{providerStatuses.find((item) => item.id === provider.id)?.status === 'connected' ? 'מפתח שמור' : providerStatuses.find((item) => item.id === provider.id)?.status === 'configured' ? 'מוגדר' : providerStatuses.find((item) => item.id === provider.id)?.status === 'failed' || providerStatuses.find((item) => item.id === provider.id)?.status === 'invalid' ? 'צריך תיקון' : 'לא הוגדר'}</span>
                               </div>
                             </div>
                             <Button variant="outline" onClick={() => toggleKeyVisibility(provider.key)} className="min-h-[44px] sm:w-auto">
@@ -724,7 +704,9 @@ export default function SettingsTab({ settings, onLogout }) {
         <TabsContent value="analytics" className="space-y-6 mt-6">
           <AdvancedAnalytics />
         </TabsContent>
-      </Tabs>
+          </Tabs>
+        </div>
+      </div>
 
       <div className="flex justify-end">
         <Button onClick={handleSave} className="bg-gradient-to-r from-indigo-500 to-purple-600 px-8">

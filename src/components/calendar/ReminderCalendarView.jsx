@@ -1,8 +1,9 @@
 import React, { useMemo, useState } from 'react';
-import { ChevronLeft, ChevronRight, CalendarDays, GripVertical } from 'lucide-react';
+import { ChevronLeft, ChevronRight, CalendarDays, GripVertical, Bell, CreditCard, ListChecks } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import DayDetailDialog from '@/components/calendar/DayDetailDialog';
 
 const dayNames = ['א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ש'];
 
@@ -33,72 +34,164 @@ function buildWeekDays(currentDate) {
   });
 }
 
+const typeStyles = {
+  subscription: 'bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-200',
+  task: 'bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-200',
+  reminder: 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-200',
+};
+
 export default function ReminderCalendarView({ reminders = [], subscriptions = [], tasks = [], onMoveReminder, onMoveTask }) {
   const [viewMode, setViewMode] = useState('month');
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [selectedDateKey, setSelectedDateKey] = useState(formatDateKey(new Date()));
+  const [dialogDateKey, setDialogDateKey] = useState(null);
 
-  const calendarDays = useMemo(() => (
-    viewMode === 'month' ? buildMonthDays(currentDate) : buildWeekDays(currentDate)
-  ), [currentDate, viewMode]);
+  const calendarDays = useMemo(() => {
+    if (viewMode === 'month') return buildMonthDays(currentDate);
+    if (viewMode === 'week') return buildWeekDays(currentDate);
+    return [new Date(currentDate)];
+  }, [currentDate, viewMode]);
 
   const itemsByDate = useMemo(() => {
     const grouped = {};
-
-    reminders.forEach((reminder) => {
-      const key = reminder.reminderDate;
+    const push = (key, item) => {
+      if (!key) return;
       if (!grouped[key]) grouped[key] = [];
-      grouped[key].push({
-        ...reminder,
-        itemType: 'reminder',
-      });
-    });
+      grouped[key].push(item);
+    };
 
-    subscriptions.forEach((subscription) => {
-      if (!subscription.renewalDate) return;
-      const key = subscription.renewalDate;
-      if (!grouped[key]) grouped[key] = [];
-      grouped[key].push({
-        ...subscription,
-        itemType: 'subscription',
-      });
-    });
-
-    tasks.forEach((task) => {
-      if (!task.dueDate) return;
-      const key = task.dueDate;
-      if (!grouped[key]) grouped[key] = [];
-      grouped[key].push({
-        ...task,
-        itemType: 'task',
-      });
-    });
+    reminders.forEach((reminder) => push(reminder.reminderDate, { ...reminder, itemType: 'reminder' }));
+    subscriptions.forEach((subscription) => push(subscription.renewalDate, { ...subscription, itemType: 'subscription' }));
+    tasks.forEach((task) => push(task.dueDate, { ...task, itemType: 'task' }));
 
     return grouped;
   }, [reminders, subscriptions, tasks]);
 
-  const selectedItems = itemsByDate[selectedDateKey] || [];
-
   const moveCalendar = (direction) => {
     const next = new Date(currentDate);
-    if (viewMode === 'month') {
-      next.setMonth(next.getMonth() + direction);
-    } else {
-      next.setDate(next.getDate() + direction * 7);
-    }
+    if (viewMode === 'month') next.setMonth(next.getMonth() + direction);
+    else if (viewMode === 'week') next.setDate(next.getDate() + direction * 7);
+    else next.setDate(next.getDate() + direction);
     setCurrentDate(next);
   };
 
+  const headerLabel = viewMode === 'day'
+    ? currentDate.toLocaleDateString('he-IL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+    : currentDate.toLocaleDateString('he-IL', { month: 'long', year: 'numeric' });
+
+  const dropHandlers = (dateKey) => ({
+    onDragOver: (event) => event.preventDefault(),
+    onDrop: (event) => {
+      const reminderId = event.dataTransfer.getData('reminderId');
+      const taskId = event.dataTransfer.getData('taskId');
+      if (reminderId) onMoveReminder?.(reminderId, dateKey);
+      if (taskId) onMoveTask?.(taskId, dateKey);
+    },
+  });
+
+  const dragStart = (item) => (event) => {
+    if (item.itemType === 'reminder') event.dataTransfer.setData('reminderId', item.id);
+    if (item.itemType === 'task') event.dataTransfer.setData('taskId', item.id);
+  };
+
+  const renderDayView = () => {
+    const dateKey = formatDateKey(currentDate);
+    const dayItems = itemsByDate[dateKey] || [];
+    const iconMap = { subscription: CreditCard, task: ListChecks, reminder: Bell };
+
+    return (
+      <div className="rounded-2xl border border-gray-200 dark:border-gray-800 p-4 min-h-[400px]" {...dropHandlers(dateKey)}>
+        {dayItems.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-20 text-gray-400">
+            <CalendarDays className="w-12 h-12 mb-3 opacity-40" />
+            <div className="text-sm">אין פריטים ביום הזה</div>
+          </div>
+        ) : (
+          <div className="space-y-2.5">
+            {dayItems.map((item) => {
+              const Icon = iconMap[item.itemType];
+              const title = item.itemType === 'task' ? item.title : item.toolName;
+              return (
+                <div
+                  key={`${item.itemType}-${item.id}`}
+                  draggable={item.itemType !== 'subscription'}
+                  onDragStart={dragStart(item)}
+                  className={`flex items-center gap-3 rounded-xl p-3.5 ${typeStyles[item.itemType]}`}
+                >
+                  {item.itemType !== 'subscription' && <GripVertical className="w-4 h-4 flex-shrink-0 opacity-60" />}
+                  <Icon className="w-5 h-5 flex-shrink-0" />
+                  <div className="flex-1 min-w-0 text-right">
+                    <div className="font-semibold text-sm truncate">{title}</div>
+                    <div className="text-xs opacity-80 mt-0.5 truncate">
+                      {item.itemType === 'subscription' ? 'חידוש/תשלום מנוי' : item.itemType === 'task' ? (item.description || 'משימה') : item.message}
+                      {' • '}{item.reminderTime || '09:00'}
+                    </div>
+                  </div>
+                  <Badge variant="outline" className="flex-shrink-0 bg-white/50 dark:bg-black/20">
+                    {item.itemType === 'subscription' ? 'מנוי' : item.itemType === 'task' ? 'משימה' : 'תזכורת'}
+                  </Badge>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const renderGrid = () => (
+    <>
+      <div className="grid grid-cols-7 gap-2 text-center text-xs font-semibold text-gray-500">
+        {dayNames.map((day) => <div key={day}>{day}</div>)}
+      </div>
+
+      <div className="grid grid-cols-7 gap-2">
+        {calendarDays.map((date) => {
+          const dateKey = formatDateKey(date);
+          const isCurrentMonth = date.getMonth() === currentDate.getMonth();
+          const isToday = dateKey === formatDateKey(new Date());
+          const dayItems = itemsByDate[dateKey] || [];
+
+          return (
+            <div
+              key={dateKey}
+              onClick={() => setDialogDateKey(dateKey)}
+              {...dropHandlers(dateKey)}
+              className={`min-h-[110px] rounded-xl border p-2 cursor-pointer transition hover:border-indigo-400 hover:shadow-sm ${isToday ? 'border-indigo-500 bg-indigo-50/60 dark:bg-indigo-950/30' : 'border-gray-200 dark:border-gray-800'} ${!isCurrentMonth && viewMode === 'month' ? 'opacity-40' : ''}`}
+            >
+              <div className={`text-sm font-semibold mb-2 ${isToday ? 'text-indigo-600' : ''}`}>{date.getDate()}</div>
+              <div className="space-y-1">
+                {dayItems.slice(0, 3).map((item) => (
+                  <div
+                    key={`${item.itemType}-${item.id}`}
+                    draggable={item.itemType !== 'subscription'}
+                    onDragStart={dragStart(item)}
+                    onClick={(e) => e.stopPropagation()}
+                    className={`rounded-md px-2 py-1 text-[11px] flex items-center gap-1 ${typeStyles[item.itemType]}`}
+                  >
+                    {item.itemType !== 'subscription' && <GripVertical className="w-3 h-3 flex-shrink-0" />}
+                    <span className="truncate">{item.itemType === 'task' ? item.title : item.toolName}</span>
+                  </div>
+                ))}
+                {dayItems.length > 3 && <div className="text-[11px] text-gray-500">+{dayItems.length - 3} נוספים</div>}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </>
+  );
+
   return (
-    <Card>
+    <Card dir="rtl">
       <CardHeader className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <CardTitle className="flex items-center gap-2">
           <CalendarDays className="w-5 h-5 text-indigo-500" />
           לוח תזכורות וחידושי מנויים
         </CardTitle>
-        <div className="flex gap-2">
-          <Button variant={viewMode === 'month' ? 'default' : 'outline'} size="sm" onClick={() => setViewMode('month')}>חודשי</Button>
-          <Button variant={viewMode === 'week' ? 'default' : 'outline'} size="sm" onClick={() => setViewMode('week')}>שבועי</Button>
+        <div className="flex gap-1.5 bg-gray-100 dark:bg-gray-800 rounded-xl p-1">
+          <Button variant={viewMode === 'day' ? 'default' : 'ghost'} size="sm" className="rounded-lg" onClick={() => setViewMode('day')}>יומי</Button>
+          <Button variant={viewMode === 'week' ? 'default' : 'ghost'} size="sm" className="rounded-lg" onClick={() => setViewMode('week')}>שבועי</Button>
+          <Button variant={viewMode === 'month' ? 'default' : 'ghost'} size="sm" className="rounded-lg" onClick={() => setViewMode('month')}>חודשי</Button>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -106,85 +199,21 @@ export default function ReminderCalendarView({ reminders = [], subscriptions = [
           <Button variant="ghost" size="icon" onClick={() => moveCalendar(-1)}>
             <ChevronRight className="w-4 h-4" />
           </Button>
-          <div className="font-semibold text-lg">
-            {currentDate.toLocaleDateString('he-IL', { month: 'long', year: 'numeric' })}
-          </div>
+          <div className="font-semibold text-lg">{headerLabel}</div>
           <Button variant="ghost" size="icon" onClick={() => moveCalendar(1)}>
             <ChevronLeft className="w-4 h-4" />
           </Button>
         </div>
 
-        <div className="grid grid-cols-7 gap-2 text-center text-xs font-semibold text-gray-500">
-          {dayNames.map((day) => <div key={day}>{day}</div>)}
-        </div>
-
-        <div className="grid grid-cols-7 gap-2">
-          {calendarDays.map((date) => {
-            const dateKey = formatDateKey(date);
-            const isCurrentMonth = date.getMonth() === currentDate.getMonth();
-            const dayItems = itemsByDate[dateKey] || [];
-
-            return (
-              <div
-                key={dateKey}
-                onClick={() => setSelectedDateKey(dateKey)}
-                onDragOver={(event) => event.preventDefault()}
-                onDrop={(event) => {
-                  const reminderId = event.dataTransfer.getData('reminderId');
-                  const taskId = event.dataTransfer.getData('taskId');
-                  if (reminderId) onMoveReminder?.(reminderId, dateKey);
-                  if (taskId) onMoveTask?.(taskId, dateKey);
-                }}
-                className={`min-h-[110px] rounded-xl border p-2 cursor-pointer transition ${selectedDateKey === dateKey ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950/30' : 'border-gray-200 dark:border-gray-800'} ${!isCurrentMonth && viewMode === 'month' ? 'opacity-40' : ''}`}
-              >
-                <div className="text-sm font-semibold mb-2">{date.getDate()}</div>
-                <div className="space-y-1">
-                  {dayItems.slice(0, 3).map((item) => (
-                    <div
-                      key={`${item.itemType}-${item.id}`}
-                      draggable={item.itemType !== 'subscription'}
-                      onDragStart={(event) => {
-                        if (item.itemType === 'reminder') event.dataTransfer.setData('reminderId', item.id);
-                        if (item.itemType === 'task') event.dataTransfer.setData('taskId', item.id);
-                      }}
-                      className={`rounded-md px-2 py-1 text-[11px] flex items-center gap-1 ${item.itemType === 'subscription' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-200' : item.itemType === 'task' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-200' : 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-200'}`}
-                    >
-                      {item.itemType !== 'subscription' && <GripVertical className="w-3 h-3 flex-shrink-0" />}
-                      <span className="truncate">{item.itemType === 'task' ? item.title : item.toolName}</span>
-                    </div>
-                  ))}
-                  {dayItems.length > 3 && <div className="text-[11px] text-gray-500">+{dayItems.length - 3} נוספים</div>}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        <div className="rounded-xl border border-gray-200 dark:border-gray-800 p-4">
-          <div className="font-semibold mb-3">פריטים ליום {selectedDateKey}</div>
-          {selectedItems.length === 0 ? (
-            <div className="text-sm text-gray-500">אין פריטים ביום הזה.</div>
-          ) : (
-            <div className="space-y-2">
-              {selectedItems.map((item) => (
-                <div key={`${item.itemType}-${item.id}`} className="flex items-center justify-between rounded-lg bg-gray-50 dark:bg-gray-900 p-3">
-                  <div>
-                    <div className="font-medium">{item.toolName}</div>
-                    <div className="text-xs text-gray-500">
-                      {item.itemType === 'subscription'
-                        ? 'חידוש/תשלום מנוי'
-                        : item.itemType === 'task'
-                          ? `${item.description || 'משימה מקושרת לכלי'} • ${item.reminderTime || '09:00'}`
-                          : `${item.message} • ${item.reminderTime || '09:00'}`}
-                    </div>
-                  </div>
-                  <Badge variant="outline">{item.itemType === 'subscription' ? 'מנוי' : item.itemType === 'task' ? 'משימה' : 'תזכורת'}</Badge>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        {viewMode === 'day' ? renderDayView() : renderGrid()}
       </CardContent>
+
+      <DayDetailDialog
+        open={!!dialogDateKey}
+        onOpenChange={(open) => !open && setDialogDateKey(null)}
+        dateKey={dialogDateKey}
+        items={dialogDateKey ? (itemsByDate[dialogDateKey] || []) : []}
+      />
     </Card>
   );
 }
