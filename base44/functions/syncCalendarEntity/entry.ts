@@ -35,6 +35,16 @@ function mapEntityToGoogleEvent(entityName, record) {
     };
   }
 
+  if (entityName === 'Subscription') {
+    if (!record.renewalDate) return null;
+    return {
+      summary: `חידוש מנוי: ${record.toolName || 'כלי AI'}`,
+      description: `חידוש מנוי ${record.subscriptionType || ''} עבור ${record.toolName || 'כלי AI'}`,
+      startTime: buildDateTime(record.renewalDate, '09:00'),
+      endTime: buildEndDateTime(record.renewalDate, '09:00'),
+    };
+  }
+
   return null;
 }
 
@@ -50,7 +60,7 @@ Deno.serve(async (req) => {
     const event = payload.event || {};
     const entityName = event.entity_name || payload.entity_name;
 
-    if (!['Reminder', 'ToolTask'].includes(entityName)) {
+    if (!['Reminder', 'ToolTask', 'Subscription'].includes(entityName)) {
       return Response.json({ success: true, skipped: true, reason: 'Unsupported entity' });
     }
 
