@@ -37,7 +37,7 @@ export default function SearchAndFilters({
   ];
 
   return (
-    <div className="bg-white/90 dark:bg-slate-900/80 backdrop-blur rounded-3xl p-3 sm:p-4 shadow-sm border border-gray-200 dark:border-slate-800 space-y-3" dir="rtl">
+    <div className="relative z-20 bg-white/90 dark:bg-slate-900/80 backdrop-blur rounded-3xl p-3 sm:p-4 shadow-sm border border-gray-200 dark:border-slate-800 space-y-3" dir="rtl">
       <SmartSearch
         onSearch={onSearchChange}
         tools={tools}

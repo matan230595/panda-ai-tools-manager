@@ -159,9 +159,9 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                     {tool.features.map((feature, idx) => (
-                      <div key={idx} className="flex items-start gap-2 p-2 rounded-lg bg-gray-50 dark:bg-gray-800">
+                      <div key={idx} className="flex items-start justify-start gap-2 p-2.5 rounded-xl bg-gray-50 dark:bg-gray-800 text-right" dir="rtl">
                         <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                        <span className="text-sm">{feature}</span>
+                        <span className="text-sm leading-6">{feature}</span>
                       </div>
                     ))}
                   </div>

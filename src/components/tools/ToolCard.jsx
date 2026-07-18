@@ -195,7 +195,7 @@ export default function ToolCard({
         )}
 
         {/* מידע נוסף */}
-        <div className="flex items-center justify-between pt-1.5 sm:pt-2 md:pt-3 border-t border-gray-200 dark:border-gray-700 gap-1.5 sm:gap-2">
+        <div className="flex items-center justify-between pt-1.5 sm:pt-2 md:pt-3 border-t border-gray-200 dark:border-gray-700 gap-1.5 sm:gap-2" dir="rtl">
           <div className="flex items-center gap-1 sm:gap-2 min-w-0 flex-1 overflow-hidden">
             {/* תמחור */}
             <div className="flex items-center gap-0.5">
