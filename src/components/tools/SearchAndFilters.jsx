@@ -1,6 +1,5 @@
 import React from 'react';
-import { LayoutGrid, LayoutList, Columns3 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { LayoutGrid, LayoutList, Columns3, Table, SquareKanban, ArrowUpDown } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -8,7 +7,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
 import SmartSearch from '@/components/search/SmartSearch';
 
 export default function SearchAndFilters({ 
@@ -30,43 +28,51 @@ export default function SearchAndFilters({
     { value: 'cost', label: 'עלות' },
   ];
 
-  return (
-    <div className="glass-effect rounded-2xl p-2.5 shadow-md border border-indigo-100 dark:border-indigo-900" dir="rtl">
-      <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-        <div className="flex-1 min-w-0">
-          <SmartSearch
-            onSearch={onSearchChange}
-            tools={tools}
-            quickFilters={[...new Set(tools.flatMap((tool) => [(tool.customCategory || tool.category)?.replace(/_/g, ' '), ...(tool.tags || []).slice(0, 2)]).filter(Boolean))].slice(0, 6)}
-          />
-        </div>
+  const viewOptions = [
+    { mode: 'grid', icon: LayoutGrid, label: 'רשת' },
+    { mode: 'list', icon: LayoutList, label: 'רשימה' },
+    { mode: 'compact', icon: Columns3, label: 'קומפקטי' },
+    { mode: 'table', icon: Table, label: 'טבלה' },
+    { mode: 'kanban', icon: SquareKanban, label: 'קאנבן' },
+  ];
 
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
+  return (
+    <div className="bg-white/90 dark:bg-slate-900/80 backdrop-blur rounded-3xl p-3 sm:p-4 shadow-sm border border-gray-200 dark:border-slate-800 space-y-3" dir="rtl">
+      <SmartSearch
+        onSearch={onSearchChange}
+        tools={tools}
+        quickFilters={[...new Set(tools.flatMap((tool) => [(tool.customCategory || tool.category)?.replace(/_/g, ' '), ...(tool.tags || []).slice(0, 2)]).filter(Boolean))].slice(0, 6)}
+      />
+
+      <div className="flex items-center justify-between gap-2 flex-wrap">
+        <div className="flex items-center gap-2">
           <Select value={sortBy} onValueChange={onSortChange}>
-            <SelectTrigger className="h-10 text-xs w-[92px] flex-shrink-0"><SelectValue placeholder="מיין" /></SelectTrigger>
+            <SelectTrigger className="h-11 rounded-2xl text-sm w-[9.5rem] bg-gray-50 dark:bg-slate-950 border-gray-200 dark:border-slate-800">
+              <ArrowUpDown className="w-4 h-4 ml-1 text-gray-400 flex-shrink-0" />
+              <SelectValue placeholder="מיין לפי" />
+            </SelectTrigger>
             <SelectContent>{sortOptions.map((opt) => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}</SelectContent>
           </Select>
 
-        <div className="hidden sm:flex gap-1 flex-shrink-0 overflow-x-auto scrollbar-hide max-w-[210px] sm:max-w-none">
-          {[
-            { mode: 'grid', icon: LayoutGrid },
-            { mode: 'list', icon: LayoutList },
-            { mode: 'compact', icon: Columns3 },
-          ].map((item) => {
-            const ViewIcon = item.icon;
-            return (
-              <Button key={item.mode} size="sm" variant={viewMode === item.mode ? 'default' : 'ghost'} onClick={() => onViewModeChange(item.mode)} className="h-7 w-7 p-0 flex-shrink-0" title={item.mode} aria-label={`תצוגת ${item.mode}`}>
-                <ViewIcon className="w-3 h-3" />
-              </Button>
-            );
-          })}
-          <Button size="sm" variant={viewMode === 'table' ? 'default' : 'ghost'} onClick={() => onViewModeChange('table')} className="h-7 w-7 p-0 flex-shrink-0" title="טבלה" aria-label="תצוגת טבלה">📊</Button>
-          <Button size="sm" variant={viewMode === 'kanban' ? 'default' : 'ghost'} onClick={() => onViewModeChange('kanban')} className="h-7 w-7 p-0 flex-shrink-0" title="קאנבן" aria-label="תצוגת קאנבן">🗂️</Button>
+          <span className="text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap">
+            <span className="font-bold text-gray-900 dark:text-white">{resultsCount}</span> כלים
+          </span>
         </div>
 
-        <Badge variant="outline" className="text-xs px-2 py-1 flex-shrink-0 text-nowrap">{resultsCount}</Badge>
+        <div className="hidden sm:flex items-center gap-1 rounded-2xl bg-gray-100 dark:bg-slate-950 p-1 border border-gray-200 dark:border-slate-800">
+          {viewOptions.map(({ mode, icon: ViewIcon, label }) => (
+            <button
+              key={mode}
+              onClick={() => onViewModeChange(mode)}
+              title={label}
+              aria-label={`תצוגת ${label}`}
+              className={`flex items-center justify-center h-9 w-9 rounded-xl transition-all ${viewMode === mode ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-gray-500 hover:text-gray-800 dark:hover:text-gray-200'}`}
+            >
+              <ViewIcon className="w-4 h-4" />
+            </button>
+          ))}
         </div>
-        </div>
-        </div>
+      </div>
+    </div>
   );
 }
