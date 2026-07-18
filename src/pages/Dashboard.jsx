@@ -7,6 +7,7 @@ import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, L
 import SmartRecommendations from '@/components/recommendations/SmartRecommendations';
 import ReminderCalendarView from '@/components/calendar/ReminderCalendarView';
 import UpcomingRenewalsPanel from '@/components/subscription/UpcomingRenewalsPanel';
+import SubscriptionAlertsPanel from '@/components/dashboard/SubscriptionAlertsPanel';
 
 export default function Dashboard() {
   const { data: tools = [] } = useQuery({
@@ -105,6 +106,7 @@ export default function Dashboard() {
         <StatCard title="דירוג ממוצע" value={stats.averageRating} icon={<TrendingUp className="w-5 h-5" />} color="bg-green-500" />
       </div>
 
+      <SubscriptionAlertsPanel subscriptions={subscriptions} reminders={reminders} />
       <UpcomingRenewalsPanel subscriptions={subscriptions} tools={tools} limit={6} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">

@@ -21,7 +21,6 @@ const IntegrationsTab = React.lazy(() => import('@/components/tabs/IntegrationsT
 const CollaborationTab = React.lazy(() => import('@/components/tabs/CollaborationTab'));
 const BudgetTab = React.lazy(() => import('@/components/tabs/BudgetTab'));
 const RemindersTab = React.lazy(() => import('@/components/tabs/RemindersTab'));
-const TemplatesTab = React.lazy(() => import('@/components/tabs/TemplatesTab'));
 const DashboardTab = React.lazy(() => import('@/pages/Dashboard'));
 const SubscriptionMgmt = React.lazy(() => import('@/components/subscription/SubscriptionManagementPanel'));
 
@@ -76,7 +75,7 @@ export default function Home() {
   // טעינת טאב אחרון בהפעלה
   useEffect(() => {
     if (settings?.lastActiveTab) {
-      setActiveTab(settings.lastActiveTab);
+      setActiveTab(settings.lastActiveTab === 'templates' ? 'tools' : settings.lastActiveTab);
     }
   }, [settings?.lastActiveTab]);
 
@@ -160,22 +159,23 @@ export default function Home() {
       {/* ניווט */}
       <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
       
-      {/* כפתורים - desktop */}
-      <div className="hidden md:flex fixed top-4 right-4 z-40 gap-2">
-        <NotificationCenter 
-          notifications={settings?.notifications || []}
-          onMarkAsRead={handleMarkAsRead}
-          onClearAll={handleClearAllNotifications}
-        />
-        <ThemeToggle />
-      </div>
-      
       {/* תוכן הטאב */}
-      <main className="max-w-7xl mx-auto px-1.5 sm:px-4 md:px-6 py-2 sm:py-4 md:py-8 pb-[calc(8.5rem+env(safe-area-inset-bottom))] md:pb-8">
-        <div className="flex flex-col sm:flex-row justify-end gap-2 mb-3 md:mb-4">
-          <Link to="/calendar" className="inline-flex items-center justify-center rounded-xl border border-indigo-200 bg-white/80 dark:bg-gray-900/70 dark:border-indigo-900 px-4 py-3 text-sm font-medium text-indigo-700 dark:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-colors min-h-[48px] w-full sm:w-auto">
-            פתח לוח שנה מנויים
-          </Link>
+      <main className="max-w-7xl mx-auto px-1.5 sm:px-4 md:px-6 py-2 sm:py-4 md:py-8 md:pr-[21rem] pb-[calc(7.5rem+env(safe-area-inset-bottom))] md:pb-8">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 mb-4 md:mb-5 rounded-3xl border border-gray-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/70 backdrop-blur px-3 sm:px-4 py-3">
+          <div className="flex flex-col sm:flex-row gap-2 w-full lg:w-auto">
+            <Link to="/calendar" className="inline-flex items-center justify-center rounded-2xl border border-indigo-200 bg-white dark:bg-slate-950 dark:border-indigo-900 px-4 py-3 text-sm font-medium text-indigo-700 dark:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-colors min-h-[48px] w-full sm:w-auto">
+              פתח לוח שנה מנויים
+            </Link>
+          </div>
+          <div className="flex items-center gap-2 w-full lg:w-auto">
+            <NotificationCenter 
+              notifications={settings?.notifications || []}
+              onMarkAsRead={handleMarkAsRead}
+              onClearAll={handleClearAllNotifications}
+              className="flex-1 lg:flex-none"
+            />
+            <ThemeToggle />
+          </div>
         </div>
         <div className="animate-slide-in">
           {activeTab === 'tools' && <ToolsTab settings={settings} initialFilter={toolsFilter} />}
@@ -207,11 +207,6 @@ export default function Home() {
               <RemindersTab />
             </Suspense>
           )}
-          {activeTab === 'templates' && (
-            <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="animate-spin w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full" /></div>}>
-              <TemplatesTab />
-            </Suspense>
-          )}
           {activeTab === 'dashboard' && (
             <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="animate-spin w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full" /></div>}>
               <DashboardTab />
@@ -227,7 +222,7 @@ export default function Home() {
       </main>
       
       {/* מקום לניווט תחתון במובייל */}
-      <div className="h-[calc(8.5rem+env(safe-area-inset-bottom))] md:hidden" />
+      <div className="h-[calc(7.5rem+env(safe-area-inset-bottom))] md:hidden" />
 
       {/* עזרת קיצורי מקלדת */}
       <KeyboardShortcutsHelp open={showKeyboardHelp} onOpenChange={setShowKeyboardHelp} />

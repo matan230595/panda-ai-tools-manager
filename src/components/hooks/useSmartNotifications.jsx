@@ -3,9 +3,6 @@ import { toast } from 'sonner';
 import { base44 } from '@/api/base44Client';
 import { getCurrentUser } from '@/components/hooks/userScopedData';
 
-/**
- * Hook לניהול התראות חכמות על עדכונים חשובים ושימוש חריג ב-API
- */
 export function useSmartNotifications(settings, queryClient) {
   const addNotification = useCallback(async (notification) => {
     if (!settings) return;
@@ -14,21 +11,20 @@ export function useSmartNotifications(settings, queryClient) {
     const duplicate = existingNotifications.some((item) => (
       item.title === notification.title &&
       item.message === notification.message &&
-      new Date(item.timestamp).getTime() > Date.now() - (12 * 60 * 60 * 1000)
+      new Date(item.timestamp).getTime() > Date.now() - (24 * 60 * 60 * 1000)
     ));
 
     if (duplicate) return;
 
     const newNotification = {
-      id: Date.now().toString(),
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       ...notification,
       timestamp: new Date().toISOString(),
       read: false,
     };
 
-    const updatedNotifications = [...existingNotifications, newNotification];
     await base44.entities.Settings.update(settings.id, {
-      notifications: updatedNotifications,
+      notifications: [...existingNotifications, newNotification],
     });
 
     queryClient.invalidateQueries(['settings']);
@@ -38,14 +34,12 @@ export function useSmartNotifications(settings, queryClient) {
     }
   }, [settings, queryClient]);
 
-  // בדוק שימוש חריג בתקציב
   const checkApiUsage = useCallback(async () => {
     if (!settings?.trackApiCosts) return;
-
     const monthlyBudget = settings.monthlyApibudget || 100;
     const user = await getCurrentUser();
     const subscriptions = await base44.entities.Subscription.filter({ created_by_id: user.id });
-    const usedBudget = subscriptions.filter(item => item.isActive).reduce((sum, item) => sum + (item.priceMonthly || 0), 0);
+    const usedBudget = subscriptions.filter((item) => item.isActive).reduce((sum, item) => sum + (item.priceMonthly || 0), 0);
     const usagePercentage = monthlyBudget > 0 ? (usedBudget / monthlyBudget) * 100 : 0;
 
     if (usagePercentage >= 80 && usagePercentage < 100) {
@@ -65,59 +59,56 @@ export function useSmartNotifications(settings, queryClient) {
     }
   }, [settings, addNotification]);
 
-  // בדוק עדכונים חשובים
   const checkImportantUpdates = useCallback(async () => {
-    try {
-      const user = await getCurrentUser();
-      const tools = await base44.entities.AiTool.filter({ created_by_id: user.id });
-      const subscriptions = await base44.entities.Subscription.filter({ created_by_id: user.id });
-      const toolTasks = await base44.entities.ToolTask.filter({ created_by_id: user.id }).catch(() => []);
+    const user = await getCurrentUser();
+    const subscriptions = await base44.entities.Subscription.filter({ created_by_id: user.id });
+    const toolTasks = await base44.entities.ToolTask.filter({ created_by_id: user.id }).catch(() => []);
 
-      // בדוק מנויים שעומדים להסתיים תוך 7 ימים
-      const soon = new Date();
-      soon.setDate(soon.getDate() + 7);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-      subscriptions.forEach(sub => {
-        const renewalDate = new Date(sub.renewalDate);
-        if (renewalDate <= soon && renewalDate > new Date()) {
-          addNotification({
-            title: '📅 עדכון: מנוי עומד להסתיים',
-            message: `המנוי של ${sub.toolName} מסתיים ב-${renewalDate.toLocaleDateString('he-IL')}`,
-            type: 'info',
-          });
-        }
-      });
+    for (const sub of subscriptions.filter((item) => item.isActive && item.renewalDate)) {
+      const renewalDate = new Date(`${sub.renewalDate}T00:00:00`);
+      const daysLeft = Math.ceil((renewalDate - today) / (1000 * 60 * 60 * 24));
 
-      const today = new Date();
-      toolTasks
-        .filter(task => !task.isCompleted && task.dueDate)
-        .forEach(task => {
-          const dueDate = new Date(task.dueDate);
-          if (dueDate < today) {
-            addNotification({
-              title: '📝 משימה באיחור',
-              message: `המשימה "${task.title}" עבור ${task.toolName} עברה את תאריך היעד`,
-              type: 'warning',
-            });
-          }
+      if (daysLeft === 0) {
+        await addNotification({
+          title: '🚨 חידוש מנוי היום',
+          message: `המנוי של ${sub.toolName} מתחדש היום — כדאי להחליט אם לבטל או לחדש.`,
+          type: 'warning',
         });
-    } catch (error) {
-      console.error('Error checking for updates:', error);
+      } else if (daysLeft > 0 && daysLeft <= 7) {
+        await addNotification({
+          title: '📅 מנוי מתקרב לחידוש',
+          message: `המנוי של ${sub.toolName} יתחדש בעוד ${daysLeft} ימים.`,
+          type: daysLeft <= 3 ? 'warning' : 'info',
+        });
+      }
+    }
+
+    for (const task of toolTasks.filter((item) => !item.isCompleted && item.dueDate)) {
+      const dueDate = new Date(task.dueDate);
+      dueDate.setHours(0, 0, 0, 0);
+      if (dueDate < today) {
+        await addNotification({
+          title: '📝 משימה באיחור',
+          message: `המשימה "${task.title}" עבור ${task.toolName} עברה את תאריך היעד.`,
+          type: 'warning',
+        });
+      }
     }
   }, [addNotification]);
 
-  // הפעל בדיקות כל 5 דקות
   useEffect(() => {
+    if (!settings) return;
     checkApiUsage();
     checkImportantUpdates();
-
     const interval = setInterval(() => {
       checkApiUsage();
       checkImportantUpdates();
-    }, 5 * 60 * 1000);
-
+    }, 15 * 60 * 1000);
     return () => clearInterval(interval);
-  }, [checkApiUsage, checkImportantUpdates]);
+  }, [settings, checkApiUsage, checkImportantUpdates]);
 
   return { addNotification };
 }
