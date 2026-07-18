@@ -6,10 +6,10 @@ export async function getCurrentUser() {
 
 export async function listMine(entityName, sort, limit) {
   const user = await getCurrentUser();
-  return base44.entities[entityName].filter({ created_by: user.email }, sort, limit);
+  return base44.entities[entityName].filter({ created_by_id: user.id }, sort, limit);
 }
 
 export async function filterMine(entityName, filter = {}, sort, limit) {
   const user = await getCurrentUser();
-  return base44.entities[entityName].filter({ ...filter, created_by: user.email }, sort, limit);
+  return base44.entities[entityName].filter({ ...filter, created_by_id: user.id }, sort, limit);
 }

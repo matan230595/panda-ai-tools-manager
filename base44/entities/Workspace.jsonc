@@ -1,0 +1,87 @@
+{
+  "name": "Workspace",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "\u05e9\u05dd \u05e1\u05d1\u05d9\u05d1\u05ea \u05d4\u05e2\u05d1\u05d5\u05d3\u05d4"
+    },
+    "description": {
+      "type": "string",
+      "description": "\u05ea\u05d9\u05d0\u05d5\u05e8 \u05e7\u05e6\u05e8 \u05e9\u05dc \u05e1\u05d1\u05d9\u05d1\u05ea \u05d4\u05e2\u05d1\u05d5\u05d3\u05d4"
+    },
+    "ownerEmail": {
+      "type": "string",
+      "description": "\u05d4\u05d0\u05d9\u05de\u05d9\u05d9\u05dc \u05e9\u05dc \u05d1\u05e2\u05dc \u05e1\u05d1\u05d9\u05d1\u05ea \u05d4\u05e2\u05d1\u05d5\u05d3\u05d4"
+    },
+    "members": {
+      "type": "array",
+      "description": "\u05d7\u05d1\u05e8\u05d9 \u05d4\u05e6\u05d5\u05d5\u05ea \u05d1\u05e1\u05d1\u05d9\u05d1\u05ea \u05d4\u05e2\u05d1\u05d5\u05d3\u05d4",
+      "items": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "admin",
+              "editor",
+              "viewer"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "invited"
+            ],
+            "default": "active"
+          },
+          "invitedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "joinedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    },
+    "sharedToolIds": {
+      "type": "array",
+      "description": "\u05de\u05d6\u05d4\u05d9 \u05d4\u05db\u05dc\u05d9\u05dd \u05e9\u05de\u05e9\u05d5\u05ea\u05e4\u05d9\u05dd \u05dc\u05e1\u05d1\u05d9\u05d1\u05ea \u05d4\u05e2\u05d1\u05d5\u05d3\u05d4",
+      "items": {
+        "type": "string"
+      }
+    },
+    "activity": {
+      "type": "array",
+      "description": "\u05d9\u05d5\u05de\u05df \u05e4\u05e2\u05d9\u05dc\u05d5\u05ea \u05e9\u05dc \u05e1\u05d1\u05d9\u05d1\u05ea \u05d4\u05e2\u05d1\u05d5\u05d3\u05d4",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "ownerEmail"
+  ]
+}

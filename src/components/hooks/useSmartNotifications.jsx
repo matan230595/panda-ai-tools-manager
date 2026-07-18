@@ -44,7 +44,7 @@ export function useSmartNotifications(settings, queryClient) {
 
     const monthlyBudget = settings.monthlyApibudget || 100;
     const user = await getCurrentUser();
-    const subscriptions = await base44.entities.Subscription.filter({ created_by: user.email });
+    const subscriptions = await base44.entities.Subscription.filter({ created_by_id: user.id });
     const usedBudget = subscriptions.filter(item => item.isActive).reduce((sum, item) => sum + (item.priceMonthly || 0), 0);
     const usagePercentage = monthlyBudget > 0 ? (usedBudget / monthlyBudget) * 100 : 0;
 
@@ -69,9 +69,9 @@ export function useSmartNotifications(settings, queryClient) {
   const checkImportantUpdates = useCallback(async () => {
     try {
       const user = await getCurrentUser();
-      const tools = await base44.entities.AiTool.filter({ created_by: user.email });
-      const subscriptions = await base44.entities.Subscription.filter({ created_by: user.email });
-      const toolTasks = await base44.entities.ToolTask.filter({ created_by: user.email }).catch(() => []);
+      const tools = await base44.entities.AiTool.filter({ created_by_id: user.id });
+      const subscriptions = await base44.entities.Subscription.filter({ created_by_id: user.id });
+      const toolTasks = await base44.entities.ToolTask.filter({ created_by_id: user.id }).catch(() => []);
 
       // בדוק מנויים שעומדים להסתיים תוך 7 ימים
       const soon = new Date();

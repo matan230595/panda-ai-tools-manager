@@ -30,7 +30,7 @@ export default function CollaborationTab() {
     queryKey: ['workspaces'],
     queryFn: async () => {
       const user = await getCurrentUser();
-      return base44.entities.Workspace.filter({ created_by: user.email }, '-updated_date');
+      return base44.entities.Workspace.filter({ created_by_id: user.id }, '-updated_date');
     },
   });
 
@@ -38,7 +38,7 @@ export default function CollaborationTab() {
     queryKey: ['tools'],
     queryFn: async () => {
       const user = await getCurrentUser();
-      return base44.entities.AiTool.filter({ created_by: user.email });
+      return base44.entities.AiTool.filter({ created_by_id: user.id });
     },
   });
 

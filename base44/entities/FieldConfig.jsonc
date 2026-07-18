@@ -1,0 +1,44 @@
+{
+  "name": "FieldConfig",
+  "type": "object",
+  "properties": {
+    "fieldName": {
+      "type": "string",
+      "description": "\u05e9\u05dd \u05d4\u05e9\u05d3\u05d4"
+    },
+    "fieldLabel": {
+      "type": "string",
+      "description": "\u05ea\u05d5\u05d5\u05d9\u05ea \u05d1\u05e2\u05d1\u05e8\u05d9\u05ea"
+    },
+    "fieldType": {
+      "type": "string",
+      "enum": [
+        "text",
+        "number",
+        "boolean",
+        "array",
+        "select"
+      ],
+      "description": "\u05e1\u05d5\u05d2 \u05d4\u05e9\u05d3\u05d4"
+    },
+    "isVisible": {
+      "type": "boolean",
+      "default": true,
+      "description": "\u05de\u05d5\u05e6\u05d2 \u05d1\u05db\u05e8\u05d8\u05d9\u05e1"
+    },
+    "isRequired": {
+      "type": "boolean",
+      "default": false,
+      "description": "\u05e9\u05d3\u05d4 \u05d7\u05d5\u05d1\u05d4"
+    },
+    "order": {
+      "type": "integer",
+      "description": "\u05e1\u05d3\u05e8 \u05ea\u05e6\u05d5\u05d2\u05d4"
+    }
+  },
+  "required": [
+    "fieldName",
+    "fieldLabel",
+    "fieldType"
+  ]
+}

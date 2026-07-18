@@ -1,0 +1,43 @@
+{
+  "name": "UserToolRating",
+  "type": "object",
+  "properties": {
+    "toolId": {
+      "type": "string",
+      "description": "\u05de\u05d6\u05d4\u05d4 \u05d4\u05db\u05dc\u05d9"
+    },
+    "toolName": {
+      "type": "string",
+      "description": "\u05e9\u05dd \u05d4\u05db\u05dc\u05d9"
+    },
+    "rating": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "\u05d3\u05d9\u05e8\u05d5\u05d2 1-5 \u05db\u05d5\u05db\u05d1\u05d9\u05dd"
+    },
+    "comment": {
+      "type": "string",
+      "description": "\u05ea\u05d2\u05d5\u05d1\u05d4 \u05e2\u05dc \u05d4\u05db\u05dc\u05d9"
+    },
+    "interactionType": {
+      "type": "string",
+      "enum": [
+        "click",
+        "favorite",
+        "compare",
+        "rate"
+      ],
+      "description": "\u05e1\u05d5\u05d2 \u05d4\u05d0\u05d9\u05e0\u05d8\u05e8\u05d0\u05e7\u05e6\u05d9\u05d4"
+    },
+    "userEmail": {
+      "type": "string",
+      "description": "\u05d0\u05d9\u05de\u05d9\u05d9\u05dc \u05d4\u05de\u05e9\u05ea\u05de\u05e9"
+    }
+  },
+  "required": [
+    "toolId",
+    "toolName",
+    "rating"
+  ]
+}

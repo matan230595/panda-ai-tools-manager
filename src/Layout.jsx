@@ -13,7 +13,7 @@ export default function Layout({ currentPageName, children }) {
     queryFn: async () => {
       try {
         const user = await getCurrentUser();
-        const list = await base44.entities.Settings.filter({ created_by: user.email });
+        const list = await base44.entities.Settings.filter({ created_by_id: user.id });
         return list[0] || null;
       } catch {
         return null;

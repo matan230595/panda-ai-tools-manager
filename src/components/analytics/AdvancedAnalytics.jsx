@@ -13,7 +13,7 @@ export default function AdvancedAnalytics() {
     queryKey: ['analytics-tools'],
     queryFn: async () => {
       const user = await getCurrentUser();
-      return base44.entities.AiTool.filter({ created_by: user.email });
+      return base44.entities.AiTool.filter({ created_by_id: user.id });
     },
   });
 

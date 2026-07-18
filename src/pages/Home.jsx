@@ -1,8 +1,8 @@
 import React, { useState, useEffect, Suspense } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { getCurrentUser } from '@/components/hooks/userScopedData';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import TabNavigation from '@/components/TabNavigation';
 import ToolsTab from '@/components/tabs/ToolsTab';
 import AssistantTab from '@/components/tabs/AssistantTab';
@@ -14,7 +14,7 @@ import NotificationCenter from '@/components/NotificationCenter';
 import KeyboardShortcutsHelp from '@/components/KeyboardShortcutsHelp';
 import { useSmartNotifications } from '@/components/hooks/useSmartNotifications';
 import { useKeyboardShortcuts } from '@/components/hooks/useKeyboardShortcuts';
-import { Toaster, toast } from 'sonner';
+import { Toaster } from 'sonner';
 
 const InsightsTab = React.lazy(() => import('@/components/tabs/InsightsTab'));
 const IntegrationsTab = React.lazy(() => import('@/components/tabs/IntegrationsTab'));
@@ -32,7 +32,6 @@ export default function Home() {
   const [showKeyboardHelp, setShowKeyboardHelp] = useState(false);
   const queryClient = useQueryClient();
 
-  const navigate = useNavigate();
 
   // בדיקת אימות Base44
   useEffect(() => {
@@ -50,7 +49,7 @@ export default function Home() {
     enabled: authStatus === 'authenticated',
     queryFn: async () => {
       const user = await getCurrentUser();
-      const settingsList = await base44.entities.Settings.filter({ created_by: user.email });
+      const settingsList = await base44.entities.Settings.filter({ created_by_id: user.id });
       if (settingsList.length > 0) {
         return settingsList[0];
       }

@@ -1,6 +1,5 @@
 import React from 'react';
 import { LayoutGrid, LayoutList, Columns3 } from 'lucide-react';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
   Select,
@@ -13,7 +12,6 @@ import { Badge } from '@/components/ui/badge';
 import SmartSearch from '@/components/search/SmartSearch';
 
 export default function SearchAndFilters({ 
-  searchTerm, 
   onSearchChange,
   viewMode,
   onViewModeChange,
@@ -57,13 +55,13 @@ export default function SearchAndFilters({
           ].map((item) => {
             const ViewIcon = item.icon;
             return (
-              <Button key={item.mode} size="sm" variant={viewMode === item.mode ? 'default' : 'ghost'} onClick={() => onViewModeChange(item.mode)} className="h-7 w-7 p-0 flex-shrink-0" title={item.mode}>
+              <Button key={item.mode} size="sm" variant={viewMode === item.mode ? 'default' : 'ghost'} onClick={() => onViewModeChange(item.mode)} className="h-7 w-7 p-0 flex-shrink-0" title={item.mode} aria-label={`תצוגת ${item.mode}`}>
                 <ViewIcon className="w-3 h-3" />
               </Button>
             );
           })}
-          <Button size="sm" variant={viewMode === 'table' ? 'default' : 'ghost'} onClick={() => onViewModeChange('table')} className="h-7 w-7 p-0 flex-shrink-0" title="טבלה">📊</Button>
-          <Button size="sm" variant={viewMode === 'kanban' ? 'default' : 'ghost'} onClick={() => onViewModeChange('kanban')} className="h-7 w-7 p-0 flex-shrink-0" title="קאנבן">🗂️</Button>
+          <Button size="sm" variant={viewMode === 'table' ? 'default' : 'ghost'} onClick={() => onViewModeChange('table')} className="h-7 w-7 p-0 flex-shrink-0" title="טבלה" aria-label="תצוגת טבלה">📊</Button>
+          <Button size="sm" variant={viewMode === 'kanban' ? 'default' : 'ghost'} onClick={() => onViewModeChange('kanban')} className="h-7 w-7 p-0 flex-shrink-0" title="קאנבן" aria-label="תצוגת קאנבן">🗂️</Button>
         </div>
 
         <Badge variant="outline" className="text-xs px-2 py-1 flex-shrink-0 text-nowrap">{resultsCount}</Badge>

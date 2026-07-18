@@ -36,7 +36,7 @@ export default function RemindersTab() {
     queryKey: ['tools'],
     queryFn: async () => {
       const user = await getCurrentUser();
-      return base44.entities.AiTool.filter({ created_by: user.email });
+      return base44.entities.AiTool.filter({ created_by_id: user.id });
     },
   });
 
@@ -45,7 +45,7 @@ export default function RemindersTab() {
     queryKey: ['reminders'],
     queryFn: async () => {
       const user = await getCurrentUser();
-      return base44.entities.Reminder.filter({ created_by: user.email });
+      return base44.entities.Reminder.filter({ created_by_id: user.id });
     },
   });
 
@@ -53,7 +53,7 @@ export default function RemindersTab() {
     queryKey: ['subscriptions'],
     queryFn: async () => {
       const user = await getCurrentUser();
-      return base44.entities.Subscription.filter({ created_by: user.email });
+      return base44.entities.Subscription.filter({ created_by_id: user.id });
     },
   });
 
@@ -61,7 +61,7 @@ export default function RemindersTab() {
     queryKey: ['toolTasks'],
     queryFn: async () => {
       const user = await getCurrentUser();
-      return base44.entities.ToolTask.filter({ created_by: user.email });
+      return base44.entities.ToolTask.filter({ created_by_id: user.id });
     },
   });
 

@@ -15,7 +15,7 @@ export default function GoogleCalendarSync() {
     queryFn: async () => {
       const user = await getCurrentUser();
       return base44.entities.Reminder.filter({
-        created_by: user.email,
+        created_by_id: user.id,
         isActive: true,
         isCompleted: false,
       });
@@ -27,7 +27,7 @@ export default function GoogleCalendarSync() {
     queryFn: async () => {
       const user = await getCurrentUser();
       return base44.entities.Subscription.filter({
-        created_by: user.email,
+        created_by_id: user.id,
         isActive: true,
       });
     },
@@ -37,7 +37,7 @@ export default function GoogleCalendarSync() {
     queryKey: ['integrations'],
     queryFn: async () => {
       const user = await getCurrentUser();
-      return base44.entities.Integration.filter({ created_by: user.email });
+      return base44.entities.Integration.filter({ created_by_id: user.id });
     },
   });
 
@@ -46,7 +46,7 @@ export default function GoogleCalendarSync() {
     queryFn: async () => {
       const user = await getCurrentUser();
       return base44.entities.ToolTask.filter({
-        created_by: user.email,
+        created_by_id: user.id,
         isCompleted: false,
       });
     },

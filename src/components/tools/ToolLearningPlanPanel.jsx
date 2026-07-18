@@ -26,7 +26,7 @@ export default function ToolLearningPlanPanel({ tool }) {
     queryKey: ['learningPlans', tool.id],
     queryFn: async () => {
       const user = await getCurrentUser();
-      return base44.entities.ToolLearningPlan.filter({ toolId: tool.id, created_by: user.email });
+      return base44.entities.ToolLearningPlan.filter({ toolId: tool.id, created_by_id: user.id });
     },
     initialData: [],
   });

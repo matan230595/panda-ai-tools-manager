@@ -2,10 +2,9 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { getCurrentUser } from '@/components/hooks/userScopedData';
-import { Plus, Download, Upload, Trash2, GitCompare, Key, Sparkles, Menu, X } from 'lucide-react';
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger, DrawerClose } from '@/components/ui/drawer';
+import { Plus, Trash2, GitCompare, Sparkles, Menu } from 'lucide-react';
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import SearchAndFilters from '@/components/tools/SearchAndFilters';
 import ToolCard from '@/components/tools/ToolCard';
 import ToolForm from '@/components/tools/ToolForm';
@@ -41,7 +40,7 @@ export default function ToolsTab({ settings, initialFilter }) {
     queryFn: async () => {
       try {
         const user = await getCurrentUser();
-        const list = await base44.entities.Settings.filter({ created_by: user.email });
+        const list = await base44.entities.Settings.filter({ created_by_id: user.id });
         return list[0] || null;
       } catch {
         return null;
@@ -93,7 +92,7 @@ export default function ToolsTab({ settings, initialFilter }) {
     queryKey: ['tools'],
     queryFn: async () => {
       const user = await getCurrentUser();
-      return base44.entities.AiTool.filter({ created_by: user.email });
+      return base44.entities.AiTool.filter({ created_by_id: user.id });
     },
   });
 
@@ -314,17 +313,6 @@ export default function ToolsTab({ settings, initialFilter }) {
     });
   };
 
-  const handleExport = () => {
-    const dataStr = JSON.stringify(tools, null, 2);
-    const dataBlob = new Blob([dataStr], { type: 'application/json' });
-    const url = URL.createObjectURL(dataBlob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `ai-tools-${new Date().toISOString().split('T')[0]}.json`;
-    link.click();
-    toast.success('הנתונים יוצאו בהצלחה 📥');
-  };
-
   const handleImport = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -333,12 +321,12 @@ export default function ToolsTab({ settings, initialFilter }) {
     reader.onload = async (event) => {
       try {
         const importedTools = JSON.parse(event.target.result);
-        
-        for (const tool of importedTools) {
-          const { id, created_date, updated_date, created_by, ...toolData } = tool;
-          await base44.entities.AiTool.create(toolData);
-        }
-        
+        const cleanedTools = importedTools.map((tool) => {
+          const { id, created_date, updated_date, created_by, created_by_id, ...toolData } = tool;
+          return toolData;
+        });
+
+        await base44.entities.AiTool.bulkCreate(cleanedTools);
         queryClient.invalidateQueries(['tools']);
         toast.success(`${importedTools.length} כלים יובאו בהצלחה! 📤`);
       } catch (error) {
@@ -346,25 +334,6 @@ export default function ToolsTab({ settings, initialFilter }) {
       }
     };
     reader.readAsText(file);
-  };
-
-  const clearFilters = () => {
-    setSearchTerm('');
-    setSelectedCategory('all');
-    setSelectedPricing('all');
-    setSelectedRating(0);
-    setShowFavoritesOnly(false);
-    setAdvancedFilters({
-      categories: [],
-      pricing: [],
-      subscriptionTypes: [],
-      ratingRange: [0, 5],
-      popularityRange: [1, 5],
-      hasTags: [],
-      hasSubscription: null,
-      isFavorite: null,
-      aiGenerated: null,
-    });
   };
 
   // חישוב פילטרים פעילים

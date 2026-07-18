@@ -27,8 +27,8 @@ export default function CategoryChart({ tools }) {
       </h3>
       
       {data.length > 0 ? (
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={data} margin={{ top: 10, right: 10, left: 10, bottom: 50 }}>
+        <ResponsiveContainer width="100%" height={260}>
+          <BarChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 50 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
             <XAxis 
               dataKey="name" 

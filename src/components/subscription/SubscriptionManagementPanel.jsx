@@ -1,6 +1,7 @@
-import React, { useState, useMemo } from 'react';
+import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import { getCurrentUser } from '@/components/hooks/userScopedData';
 import { AlertCircle, TrendingDown, DollarSign, Calendar, Zap } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { LineChart, Line, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
@@ -8,7 +9,10 @@ import { LineChart, Line, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tool
 export default function SubscriptionManagementPanel() {
   const { data: tools = [] } = useQuery({
     queryKey: ['tools'],
-    queryFn: () => base44.entities.AiTool.list(),
+    queryFn: async () => {
+      const user = await getCurrentUser();
+      return base44.entities.AiTool.filter({ created_by_id: user.id });
+    },
   });
 
   // כלים עם מנויים בלבד

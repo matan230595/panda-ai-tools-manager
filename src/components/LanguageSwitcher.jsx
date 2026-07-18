@@ -11,7 +11,7 @@ export default function LanguageSwitcher() {
     queryKey: ['settings'],
     queryFn: async () => {
       const user = await getCurrentUser();
-      const list = await base44.entities.Settings.filter({ created_by: user.email });
+      const list = await base44.entities.Settings.filter({ created_by_id: user.id });
       return list[0] || null;
     },
   });

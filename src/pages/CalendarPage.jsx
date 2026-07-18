@@ -12,7 +12,7 @@ export default function CalendarPage() {
     queryKey: ['calendar-page-reminders'],
     queryFn: async () => {
       const user = await getCurrentUser();
-      return base44.entities.Reminder.filter({ created_by: user.email }, '-updated_date');
+      return base44.entities.Reminder.filter({ created_by_id: user.id }, '-updated_date');
     },
     initialData: [],
   });
@@ -21,7 +21,7 @@ export default function CalendarPage() {
     queryKey: ['calendar-page-subscriptions'],
     queryFn: async () => {
       const user = await getCurrentUser();
-      return base44.entities.Subscription.filter({ created_by: user.email }, '-updated_date');
+      return base44.entities.Subscription.filter({ created_by_id: user.id }, '-updated_date');
     },
     initialData: [],
   });
@@ -30,7 +30,7 @@ export default function CalendarPage() {
     queryKey: ['calendar-page-tasks'],
     queryFn: async () => {
       const user = await getCurrentUser();
-      return base44.entities.ToolTask.filter({ created_by: user.email }, '-updated_date');
+      return base44.entities.ToolTask.filter({ created_by_id: user.id }, '-updated_date');
     },
     initialData: [],
   });

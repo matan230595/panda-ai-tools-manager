@@ -31,7 +31,7 @@ export default function SubscriptionsTab() {
     queryKey: ['subscriptions'],
     queryFn: async () => {
       const user = await getCurrentUser();
-      return base44.entities.Subscription.filter({ created_by: user.email }, '-updated_date');
+      return base44.entities.Subscription.filter({ created_by_id: user.id }, '-updated_date');
     },
   });
 
@@ -39,7 +39,7 @@ export default function SubscriptionsTab() {
     queryKey: ['tools'],
     queryFn: async () => {
       const user = await getCurrentUser();
-      return base44.entities.AiTool.filter({ created_by: user.email });
+      return base44.entities.AiTool.filter({ created_by_id: user.id });
     },
   });
 
@@ -47,7 +47,7 @@ export default function SubscriptionsTab() {
     queryKey: ['reminders'],
     queryFn: async () => {
       const user = await getCurrentUser();
-      return base44.entities.Reminder.filter({ created_by: user.email }, '-updated_date');
+      return base44.entities.Reminder.filter({ created_by_id: user.id }, '-updated_date');
     },
   });
 

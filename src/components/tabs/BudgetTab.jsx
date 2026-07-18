@@ -22,7 +22,7 @@ export default function BudgetTab() {
     queryKey: ['settings'],
     queryFn: async () => {
       const user = await getCurrentUser();
-      const list = await base44.entities.Settings.filter({ created_by: user.email });
+      const list = await base44.entities.Settings.filter({ created_by_id: user.id });
       return list[0] || null;
     },
   });
@@ -50,7 +50,7 @@ export default function BudgetTab() {
     queryKey: ['tools'],
     queryFn: async () => {
       const user = await getCurrentUser();
-      return base44.entities.AiTool.filter({ created_by: user.email });
+      return base44.entities.AiTool.filter({ created_by_id: user.id });
     },
   });
 
@@ -58,7 +58,7 @@ export default function BudgetTab() {
     queryKey: ['subscriptions'],
     queryFn: async () => {
       const user = await getCurrentUser();
-      return base44.entities.Subscription.filter({ created_by: user.email });
+      return base44.entities.Subscription.filter({ created_by_id: user.id });
     },
   });
 

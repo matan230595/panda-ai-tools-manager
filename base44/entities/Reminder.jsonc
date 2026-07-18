@@ -1,0 +1,87 @@
+{
+  "name": "Reminder",
+  "type": "object",
+  "properties": {
+    "toolId": {
+      "type": "string",
+      "description": "\u05de\u05d6\u05d4\u05d4 \u05d4\u05db\u05dc\u05d9"
+    },
+    "toolName": {
+      "type": "string",
+      "description": "\u05e9\u05dd \u05d4\u05db\u05dc\u05d9"
+    },
+    "recipientEmail": {
+      "type": "string",
+      "description": "\u05db\u05ea\u05d5\u05d1\u05ea \u05d4\u05d0\u05d9\u05de\u05d9\u05d9\u05dc \u05e9\u05d0\u05dc\u05d9\u05d4 \u05ea\u05d9\u05e9\u05dc\u05d7 \u05d4\u05ea\u05d6\u05db\u05d5\u05e8\u05ea"
+    },
+    "reminderType": {
+      "type": "string",
+      "enum": [
+        "subscription_expiry",
+        "usage_check",
+        "price_alert",
+        "custom"
+      ],
+      "description": "\u05e1\u05d5\u05d2 \u05d4\u05ea\u05d6\u05db\u05d5\u05e8\u05ea"
+    },
+    "reminderDate": {
+      "type": "string",
+      "format": "date",
+      "description": "\u05ea\u05d0\u05e8\u05d9\u05da \u05d4\u05ea\u05d6\u05db\u05d5\u05e8\u05ea"
+    },
+    "reminderTime": {
+      "type": "string",
+      "description": "\u05e9\u05e2\u05ea \u05d4\u05ea\u05d6\u05db\u05d5\u05e8\u05ea (HH:MM)"
+    },
+    "message": {
+      "type": "string",
+      "description": "\u05d4\u05d5\u05d3\u05e2\u05ea \u05d4\u05ea\u05d6\u05db\u05d5\u05e8\u05ea"
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true,
+      "description": "\u05d4\u05d0\u05dd \u05d4\u05ea\u05d6\u05db\u05d5\u05e8\u05ea \u05e4\u05e2\u05d9\u05dc\u05d4"
+    },
+    "isCompleted": {
+      "type": "boolean",
+      "default": false,
+      "description": "\u05d4\u05d0\u05dd \u05d4\u05ea\u05d6\u05db\u05d5\u05e8\u05ea \u05d1\u05d5\u05e6\u05e2\u05d4"
+    },
+    "completedDate": {
+      "type": "string",
+      "format": "date-time",
+      "description": "\u05ea\u05d0\u05e8\u05d9\u05da \u05d4\u05e9\u05dc\u05de\u05ea \u05d4\u05ea\u05d6\u05db\u05d5\u05e8\u05ea"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "default": "medium",
+      "description": "\u05e2\u05d3\u05d9\u05e4\u05d5\u05ea \u05d4\u05ea\u05d6\u05db\u05d5\u05e8\u05ea"
+    },
+    "subscriptionRenewalDate": {
+      "type": "string",
+      "format": "date",
+      "description": "\u05ea\u05d0\u05e8\u05d9\u05da \u05d7\u05d9\u05d3\u05d5\u05e9 \u05d4\u05de\u05e0\u05d5\u05d9"
+    },
+    "daysBeforeAlert": {
+      "type": "integer",
+      "default": 7,
+      "description": "\u05db\u05de\u05d4 \u05d9\u05de\u05d9\u05dd \u05dc\u05e4\u05e0\u05d9 \u05d4\u05d0\u05d9\u05e8\u05d5\u05e2 \u05dc\u05d4\u05ea\u05e8\u05d9\u05e2"
+    },
+    "googleCalendarEventId": {
+      "type": "string",
+      "description": "\u05de\u05d6\u05d4\u05d4 \u05d4\u05d0\u05d9\u05e8\u05d5\u05e2 \u05d4\u05de\u05e7\u05d5\u05e9\u05e8 \u05d1-Google Calendar"
+    }
+  },
+  "required": [
+    "toolId",
+    "toolName",
+    "reminderType",
+    "reminderDate",
+    "message"
+  ]
+}

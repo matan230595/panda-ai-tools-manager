@@ -26,7 +26,7 @@ export default function ToolTasksPanel({ tool }) {
     queryKey: ['toolTasks', tool.id],
     queryFn: async () => {
       const user = await getCurrentUser();
-      return base44.entities.ToolTask.filter({ toolId: tool.id, created_by: user.email });
+      return base44.entities.ToolTask.filter({ toolId: tool.id, created_by_id: user.id });
     },
   });
 

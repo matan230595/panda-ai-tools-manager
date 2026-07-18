@@ -104,7 +104,7 @@ export default function IntegrationsTab() {
     queryKey: ['integrations'],
     queryFn: async () => {
       const user = await getCurrentUser();
-      return base44.entities.Integration.filter({ created_by: user.email });
+      return base44.entities.Integration.filter({ created_by_id: user.id });
     },
   });
 
@@ -112,7 +112,7 @@ export default function IntegrationsTab() {
     queryKey: ['subscriptions'],
     queryFn: async () => {
       const user = await getCurrentUser();
-      return base44.entities.Subscription.filter({ created_by: user.email });
+      return base44.entities.Subscription.filter({ created_by_id: user.id });
     },
   });
 

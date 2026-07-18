@@ -276,8 +276,8 @@ export default function SettingsTab({ settings, onLogout }) {
   const handleExportAll = async () => {
     try {
       const user = await getCurrentUser();
-      const tools = await base44.entities.AiTool.filter({ created_by: user.email });
-      const conversations = await base44.entities.Conversation.filter({ created_by: user.email });
+      const tools = await base44.entities.AiTool.filter({ created_by_id: user.id });
+      const conversations = await base44.entities.Conversation.filter({ created_by_id: user.id });
       const exportData = { tools, conversations, settings: formData, exportDate: new Date().toISOString() };
       const dataStr = JSON.stringify(exportData, null, 2);
       const dataBlob = new Blob([dataStr], { type: 'application/json' });
@@ -295,9 +295,9 @@ export default function SettingsTab({ settings, onLogout }) {
   const handleResetAll = async () => {
     try {
       const user = await getCurrentUser();
-      const tools = await base44.entities.AiTool.filter({ created_by: user.email });
+      const tools = await base44.entities.AiTool.filter({ created_by_id: user.id });
       for (const tool of tools) await base44.entities.AiTool.delete(tool.id);
-      const conversations = await base44.entities.Conversation.filter({ created_by: user.email });
+      const conversations = await base44.entities.Conversation.filter({ created_by_id: user.id });
       for (const conv of conversations) await base44.entities.Conversation.delete(conv.id);
       queryClient.invalidateQueries();
       toast.success('כל הנתונים נמחקו בהצלחה');

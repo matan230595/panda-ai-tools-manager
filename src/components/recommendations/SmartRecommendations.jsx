@@ -19,7 +19,7 @@ export default function SmartRecommendations({ onSelectTool }) {
     queryKey: ['tools'],
     queryFn: async () => {
       const user = await base44.auth.me();
-      return base44.entities.AiTool.filter({ created_by: user.email });
+      return base44.entities.AiTool.filter({ created_by_id: user.id });
     },
   });
 

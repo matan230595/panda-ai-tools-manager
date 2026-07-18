@@ -1,10 +1,8 @@
-import React, { Suspense } from 'react';
+import React from 'react';
 import { X, ExternalLink, Star, Edit, Trash2, Key, Calendar, TrendingUp, Users, Globe, Zap, CheckCircle, XCircle, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import ToolLogo from '@/components/ToolLogo';
 import SimilarTools from '@/components/tools/SimilarTools';
 import UserCredentialsTab from '@/components/tools/UserCredentialsTab';
 import ToolTasksPanel from '@/components/tools/ToolTasksPanel';
@@ -35,6 +33,7 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
           <button
             onClick={onClose}
             className="absolute top-4 left-4 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+            aria-label="סגור חלון"
           >
             <X className="w-5 h-5" />
           </button>
@@ -53,6 +52,7 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
                 <button
                   onClick={() => onToggleFavorite(tool)}
                   className="p-1 hover:scale-110 transition-transform"
+                  aria-label={tool.isFavorite ? 'הסר ממועדפים' : 'הוסף למועדפים'}
                 >
                   <Star
                     className={`w-6 h-6 ${
@@ -446,7 +446,7 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
           <div className="p-6 bg-gray-50 dark:bg-gray-800/50">
             <SimilarTools 
               currentTool={tool}
-              onSelectTool={(selectedTool) => {
+              onSelectTool={() => {
                 onClose();
               }}
             />

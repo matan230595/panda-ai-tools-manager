@@ -12,7 +12,7 @@ export default function Dashboard() {
     queryKey: ['tools'],
     queryFn: async () => {
       const user = await getCurrentUser();
-      return base44.entities.AiTool.filter({ created_by: user.email });
+      return base44.entities.AiTool.filter({ created_by_id: user.id });
     },
   });
 
@@ -20,7 +20,7 @@ export default function Dashboard() {
     queryKey: ['subscriptions'],
     queryFn: async () => {
       const user = await getCurrentUser();
-      return base44.entities.Subscription.filter({ created_by: user.email });
+      return base44.entities.Subscription.filter({ created_by_id: user.id });
     },
   });
 
@@ -28,7 +28,7 @@ export default function Dashboard() {
     queryKey: ['reminders'],
     queryFn: async () => {
       const user = await getCurrentUser();
-      return base44.entities.Reminder.filter({ created_by: user.email });
+      return base44.entities.Reminder.filter({ created_by_id: user.id });
     },
   });
 
@@ -36,7 +36,7 @@ export default function Dashboard() {
     queryKey: ['toolTasks'],
     queryFn: async () => {
       const user = await getCurrentUser();
-      return base44.entities.ToolTask.filter({ created_by: user.email });
+      return base44.entities.ToolTask.filter({ created_by_id: user.id });
     },
   });
 

@@ -1,0 +1,252 @@
+{
+  "name": "Settings",
+  "type": "object",
+  "properties": {
+    "geminiApiKey": {
+      "type": "string",
+      "description": "\u05de\u05e4\u05ea\u05d7 API \u05e9\u05dc Gemini"
+    },
+    "groqApiKey": {
+      "type": "string",
+      "description": "\u05de\u05e4\u05ea\u05d7 API \u05e9\u05dc Groq"
+    },
+    "mistralApiKey": {
+      "type": "string",
+      "description": "\u05de\u05e4\u05ea\u05d7 API \u05e9\u05dc Mistral"
+    },
+    "cohereApiKey": {
+      "type": "string",
+      "description": "\u05de\u05e4\u05ea\u05d7 API \u05e9\u05dc Cohere Command R+"
+    },
+    "huggingfaceApiKey": {
+      "type": "string",
+      "description": "\u05de\u05e4\u05ea\u05d7 API \u05e9\u05dc Hugging Face"
+    },
+    "togetherApiKey": {
+      "type": "string",
+      "description": "\u05de\u05e4\u05ea\u05d7 API \u05e9\u05dc Together AI"
+    },
+    "claudeApiKey": {
+      "type": "string",
+      "description": "\u05de\u05e4\u05ea\u05d7 API \u05e9\u05dc Claude (Anthropic)"
+    },
+    "openaiApiKey": {
+      "type": "string",
+      "description": "\u05de\u05e4\u05ea\u05d7 API \u05e9\u05dc OpenAI (GPT-4o)"
+    },
+    "ollamaEndpoint": {
+      "type": "string",
+      "description": "\u05db\u05ea\u05d5\u05d1\u05ea Ollama \u05d4\u05de\u05e7\u05d5\u05de\u05d9\u05ea (\u05d7\u05d9\u05e0\u05de\u05d9, \u05dc\u05dc\u05d0 \u05e7\u05e8\u05d3\u05d9\u05d8\u05d9\u05dd)"
+    },
+    "localaiBudget": {
+      "type": "string",
+      "description": "\u05db\u05ea\u05d5\u05d1\u05ea LocalAI \u05d4\u05de\u05e7\u05d5\u05de\u05d9\u05ea (\u05d7\u05d9\u05e0\u05de\u05d9, \u05dc\u05dc\u05d0 \u05e7\u05e8\u05d3\u05d9\u05d8\u05d9\u05dd)"
+    },
+    "preferredModel": {
+      "type": "string",
+      "enum": [
+        "gemini",
+        "groq",
+        "mistral",
+        "cohere",
+        "huggingface",
+        "together",
+        "anthropic",
+        "openai",
+        "ollama",
+        "localaib"
+      ],
+      "default": "groq",
+      "description": "\u05de\u05d5\u05d3\u05dc \u05d1\u05e8\u05d9\u05e8\u05ea \u05de\u05d7\u05d3\u05dc"
+    },
+    "useLocalModelsOnly": {
+      "type": "boolean",
+      "default": false,
+      "description": "\u05d4\u05e9\u05ea\u05de\u05e9 \u05d1\u05db\u05dc\u05d9\u05dd \u05d7\u05d9\u05e0\u05de\u05d9\u05d9\u05dd \u05d1\u05dc\u05d1\u05d3 (\u05d7\u05d9\u05e1\u05db\u05d5\u05df \u05e7\u05e8\u05d3\u05d9\u05d8\u05d9\u05dd)"
+    },
+    "trackApiCosts": {
+      "type": "boolean",
+      "default": true,
+      "description": "\u05e2\u05e7\u05d5\u05d1 \u05d0\u05d7\u05e8\u05d9 \u05e2\u05dc\u05d5\u05d9\u05d5\u05ea API"
+    },
+    "monthlyApibudget": {
+      "type": "number",
+      "description": "\u05ea\u05e7\u05e6\u05d9\u05d1 \u05d7\u05d5\u05d3\u05e9\u05d9 \u05dc-API"
+    },
+    "theme": {
+      "type": "string",
+      "enum": [
+        "light",
+        "dark",
+        "auto"
+      ],
+      "default": "light",
+      "description": "\u05e2\u05e8\u05db\u05ea \u05e0\u05d5\u05e9\u05d0"
+    },
+    "language": {
+      "type": "string",
+      "enum": [
+        "he",
+        "en"
+      ],
+      "default": "he",
+      "description": "\u05e9\u05e4\u05ea \u05de\u05de\u05e9\u05e7"
+    },
+    "viewMode": {
+      "type": "string",
+      "enum": [
+        "grid",
+        "list",
+        "compact"
+      ],
+      "default": "grid",
+      "description": "\u05ea\u05e6\u05d5\u05d2\u05ea \u05db\u05dc\u05d9\u05dd"
+    },
+    "sortBy": {
+      "type": "string",
+      "enum": [
+        "name",
+        "created",
+        "updated",
+        "rating",
+        "popularity"
+      ],
+      "default": "updated",
+      "description": "\u05de\u05d9\u05d5\u05df \u05dc\u05e4\u05d9"
+    },
+    "enableNotifications": {
+      "type": "boolean",
+      "default": true,
+      "description": "\u05d4\u05e4\u05e2\u05dc\u05ea \u05d4\u05ea\u05e8\u05d0\u05d5\u05ea"
+    },
+    "enableKeyboardShortcuts": {
+      "type": "boolean",
+      "default": true,
+      "description": "\u05e7\u05d9\u05e6\u05d5\u05e8\u05d9 \u05de\u05e7\u05dc\u05d3\u05ea"
+    },
+    "lastActiveTab": {
+      "type": "string",
+      "default": "tools",
+      "description": "\u05d8\u05d0\u05d1 \u05d0\u05d7\u05e8\u05d5\u05df \u05e9\u05e0\u05e4\u05ea\u05d7"
+    },
+    "userLogo": {
+      "type": "string",
+      "description": "URL \u05e9\u05dc \u05d4\u05dc\u05d5\u05d2\u05d5 \u05d4\u05d0\u05d9\u05e9\u05d9 \u05e9\u05dc \u05d4\u05de\u05e9\u05ea\u05de\u05e9"
+    },
+    "appName": {
+      "type": "string",
+      "description": "\u05e9\u05dd \u05d4\u05d0\u05e4\u05dc\u05d9\u05e7\u05e6\u05d9\u05d4 \u05d4\u05de\u05d5\u05ea\u05d0\u05dd \u05d0\u05d9\u05e9\u05d9\u05ea"
+    },
+    "notifications": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "info",
+              "success",
+              "warning",
+              "error"
+            ]
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "read": {
+            "type": "boolean",
+            "default": false
+          }
+        }
+      },
+      "description": "\u05d4\u05ea\u05e8\u05d0\u05d5\u05ea \u05de\u05e9\u05ea\u05de\u05e9"
+    },
+    "footerContent": {
+      "type": "object",
+      "properties": {
+        "aboutTitle": {
+          "type": "string",
+          "description": "\u05db\u05d5\u05ea\u05e8\u05ea \u05e1\u05e2\u05d9\u05e3 \u05d0\u05d5\u05d3\u05d5\u05ea\u05d9\u05e0\u05d5"
+        },
+        "aboutText": {
+          "type": "string",
+          "description": "\u05d8\u05e7\u05e1\u05d8 \u05e1\u05e2\u05d9\u05e3 \u05d0\u05d5\u05d3\u05d5\u05ea\u05d9\u05e0\u05d5"
+        },
+        "linksTitle": {
+          "type": "string",
+          "description": "\u05db\u05d5\u05ea\u05e8\u05ea \u05e1\u05e2\u05d9\u05e3 \u05e7\u05d9\u05e9\u05d5\u05e8\u05d9\u05dd"
+        },
+        "links": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            }
+          },
+          "description": "\u05e8\u05e9\u05d9\u05de\u05ea \u05e7\u05d9\u05e9\u05d5\u05e8\u05d9\u05dd"
+        },
+        "supportTitle": {
+          "type": "string",
+          "description": "\u05db\u05d5\u05ea\u05e8\u05ea \u05e1\u05e2\u05d9\u05e3 \u05ea\u05de\u05d9\u05db\u05d4"
+        },
+        "supportLinks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            }
+          },
+          "description": "\u05e8\u05e9\u05d9\u05de\u05ea \u05e7\u05d9\u05e9\u05d5\u05e8\u05d9 \u05ea\u05de\u05d9\u05db\u05d4"
+        },
+        "socialTitle": {
+          "type": "string",
+          "description": "\u05db\u05d5\u05ea\u05e8\u05ea \u05e1\u05e2\u05d9\u05e3 \u05e2\u05e7\u05d5\u05d1 \u05d0\u05d7\u05e8\u05d9\u05e0\u05d5"
+        },
+        "socialLinks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            }
+          },
+          "description": "\u05e8\u05e9\u05d9\u05de\u05ea \u05e7\u05d9\u05e9\u05d5\u05e8\u05d9\u05dd \u05d7\u05d1\u05e8\u05ea\u05d9\u05d9\u05dd"
+        },
+        "copyrightText": {
+          "type": "string",
+          "description": "\u05d8\u05e7\u05e1\u05d8 \u05d6\u05db\u05d5\u05d9\u05d5\u05ea \u05d9\u05d5\u05e6\u05e8\u05d9\u05dd"
+        }
+      },
+      "description": "\u05d4\u05d2\u05d3\u05e8\u05d5\u05ea \u05ea\u05d5\u05db\u05df footer"
+    }
+  },
+  "required": []
+}

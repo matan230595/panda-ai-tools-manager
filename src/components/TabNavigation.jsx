@@ -13,7 +13,7 @@ export default function TabNavigation({ activeTab, onTabChange }) {
     queryFn: async () => {
       try {
         const user = await getCurrentUser();
-        const list = await base44.entities.Settings.filter({ created_by: user.email });
+        const list = await base44.entities.Settings.filter({ created_by_id: user.id });
         return list[0] || null;
       } catch {
         return null;
@@ -132,7 +132,7 @@ export default function TabNavigation({ activeTab, onTabChange }) {
                   {typeof tab.icon === 'string' ? (
                     <span className="text-xl relative z-10">{tab.icon}</span>
                   ) : (
-                    <Icon className={`w-5 h-5 relative z-10 ${isActive ? `bg-gradient-to-br ${tab.gradient} bg-clip-text text-transparent` : 'text-gray-600 dark:text-gray-400'}`} />
+                    <Icon className={`w-5 h-5 relative z-10 ${isActive ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-600 dark:text-gray-400'}`} />
                   )}
                 </div>
                 <span className={`text-[11px] font-medium transition-all duration-300 ${isActive ? `bg-gradient-to-br ${tab.gradient} bg-clip-text text-transparent` : 'text-gray-600 dark:text-gray-400'}`}>
