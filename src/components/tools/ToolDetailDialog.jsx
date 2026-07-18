@@ -26,7 +26,8 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
   return (
     <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-end md:items-center justify-center p-0 md:p-4" onClick={onClose}>
       <div 
-        className="bg-white dark:bg-gray-900 rounded-t-3xl md:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[94vh] overflow-hidden flex flex-col"
+        className="bg-white dark:bg-gray-900 rounded-t-3xl md:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[94vh] overflow-hidden flex flex-col text-right"
+        dir="rtl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -39,7 +40,7 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
             <X className="w-5 h-5" />
           </button>
 
-          <div className="flex flex-col sm:flex-row items-start gap-4 ml-12">
+          <div className="flex flex-col sm:flex-row items-start gap-4 ml-12 text-right">
              {tool.logo ? (
                <img src={tool.logo} alt={tool.name} className="w-16 h-16 md:w-20 md:h-20 rounded-xl object-contain shadow-md flex-shrink-0" />
              ) : (
@@ -143,7 +144,7 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
                     <Zap className="w-5 h-5 text-indigo-500" />
                     אודות הכלי
                   </h3>
-                  <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap leading-relaxed">
+                  <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap leading-relaxed text-right">
                     {tool.detailedDescription}
                   </p>
                 </div>

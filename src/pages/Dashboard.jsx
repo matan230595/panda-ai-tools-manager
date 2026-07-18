@@ -4,8 +4,8 @@ import { base44 } from '@/api/base44Client';
 import { getCurrentUser } from '@/components/hooks/userScopedData';
 import { BarChart3, TrendingUp, DollarSign, Package, AlertCircle, Calendar } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { Link } from 'react-router-dom';
 import SmartRecommendations from '@/components/recommendations/SmartRecommendations';
-import ReminderCalendarView from '@/components/calendar/ReminderCalendarView';
 import UpcomingRenewalsPanel from '@/components/subscription/UpcomingRenewalsPanel';
 import SubscriptionAlertsPanel from '@/components/dashboard/SubscriptionAlertsPanel';
 
@@ -177,13 +177,17 @@ export default function Dashboard() {
           <SmartRecommendations />
         </div>
 
-        <ReminderCalendarView
-          reminders={reminders.filter((item) => !item.isCompleted && item.isActive)}
-          subscriptions={subscriptions.filter((item) => item.isActive)}
-          tasks={toolTasks.filter((item) => !item.isCompleted)}
-          onMoveReminder={() => {}}
-          onMoveTask={() => {}}
-        />
+        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 border border-gray-200 dark:border-gray-700 flex flex-col justify-between">
+          <div>
+            <h2 className="text-base sm:text-lg font-bold mb-2 flex items-center gap-2"><Calendar className="w-5 h-5 text-indigo-500" />לוח שנה מרוכז</h2>
+            <p className="text-sm text-gray-600 dark:text-gray-400 leading-6">
+              כל חידושי המנויים, התזכורות והמשימות מרוכזים בלוח שנה אחד — כולל עריכה והוספה ישירות מהלוח.
+            </p>
+          </div>
+          <Link to="/calendar" className="mt-4 inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-medium px-5 py-3 min-h-[48px] hover:from-indigo-600 hover:to-purple-700 transition-colors">
+            פתח את לוח השנה
+          </Link>
+        </div>
       </div>
 
       {highlightedTools.length > 0 && (

@@ -67,7 +67,9 @@ export default function ToolCard({
         ${isDragging ? 'opacity-50 scale-95' : 'opacity-100'}
         ${tool.isFavorite ? 'ring-2 ring-yellow-400 dark:ring-yellow-500' : ''}
         ${onToggleSelect && isSelected ? 'ring-2 ring-indigo-500' : ''}
+        hover:border-indigo-200 dark:hover:border-indigo-800
       `}
+      dir="rtl"
       role="article"
       aria-label={`כרטיס כלי: ${tool.name}`}
       onClick={() => {
@@ -139,7 +141,7 @@ export default function ToolCard({
               <Package className="w-4 sm:w-4.5 md:w-5 h-4 sm:h-4.5 md:h-5 text-white" />
             </div>
           
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-0 text-right">
             <h3 className="font-bold text-sm sm:text-base md:text-lg text-gray-900 dark:text-white truncate leading-tight">
               {tool.name}
             </h3>
@@ -158,13 +160,13 @@ export default function ToolCard({
         </div>
 
         {/* תיאור */}
-        <p className="text-xs sm:text-xs md:text-sm text-gray-600 dark:text-gray-300 line-clamp-2 md:line-clamp-3 leading-tight sm:leading-relaxed">
+        <p className="text-xs sm:text-xs md:text-sm text-gray-600 dark:text-gray-300 line-clamp-2 md:line-clamp-3 leading-relaxed text-right">
           {tool.description || 'אין תיאור זמין'}
         </p>
 
         {/* הערות אישיות */}
         {tool.personalNotes && (
-          <div className="bg-gray-50 dark:bg-gray-800 rounded-md sm:rounded-lg p-1.5 sm:p-2 md:p-3">
+          <div className="bg-gray-50 dark:bg-gray-800 rounded-md sm:rounded-lg p-1.5 sm:p-2 md:p-3 text-right">
             <p className="text-xs text-gray-700 dark:text-gray-300 line-clamp-1 sm:line-clamp-2">
               <span className="font-semibold">הערות:</span> {tool.personalNotes}
             </p>

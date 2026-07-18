@@ -31,7 +31,7 @@ export default function SearchAndFilters({
   ];
 
   return (
-    <div className="glass-effect rounded-lg p-2 shadow-md border border-indigo-100 dark:border-indigo-900">
+    <div className="glass-effect rounded-2xl p-2.5 shadow-md border border-indigo-100 dark:border-indigo-900" dir="rtl">
       <div className="flex flex-col sm:flex-row sm:items-center gap-2">
         <div className="flex-1 min-w-0">
           <SmartSearch

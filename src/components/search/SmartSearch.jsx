@@ -193,11 +193,15 @@ export default function SmartSearch({ onSearch, tools, quickFilters = [] }) {
       </div>
 
       {quickFilters.length > 0 && (
-        <div className="flex flex-wrap gap-2 mt-2">
+        <div className="flex gap-2 mt-2.5 overflow-x-auto scrollbar-hide pb-1" dir="rtl">
           {quickFilters.map((filter) => (
-            <Badge key={filter} variant="outline" className="cursor-pointer" onClick={() => { setSearchTerm(filter); handleSearch(filter); }}>
+            <button
+              key={filter}
+              onClick={() => { setSearchTerm(filter); handleSearch(filter); }}
+              className="flex-shrink-0 whitespace-nowrap rounded-full border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2 text-xs font-medium text-gray-700 dark:text-gray-300 hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700 dark:hover:bg-indigo-950/30 transition-colors"
+            >
               {filter}
-            </Badge>
+            </button>
           ))}
         </div>
       )}
