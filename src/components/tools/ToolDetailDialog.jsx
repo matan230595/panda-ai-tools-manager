@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import SimilarTools from '@/components/tools/SimilarTools';
+import ShareLinkDialog from '@/components/sharing/ShareLinkDialog';
 import UserCredentialsTab from '@/components/tools/UserCredentialsTab';
 import ToolTasksPanel from '@/components/tools/ToolTasksPanel';
 import ToolLearningPlanPanel from '@/components/tools/ToolLearningPlanPanel';
@@ -106,6 +107,7 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
                 נהל מנוי
               </Button>
             )}
+            <ShareLinkDialog tool={tool} />
             <Button variant="outline" onClick={() => onEdit(tool)}>
               <Edit className="w-4 h-4 ml-2" />
               ערוך

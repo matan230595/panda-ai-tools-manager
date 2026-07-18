@@ -1,0 +1,43 @@
+{
+  "name": "ShareLink",
+  "type": "object",
+  "properties": {
+    "token": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "targetType": {
+      "type": "string",
+      "enum": [
+        "tool",
+        "list"
+      ]
+    },
+    "toolIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "permission": {
+      "type": "string",
+      "enum": [
+        "view",
+        "edit"
+      ],
+      "default": "view"
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "token",
+    "targetType",
+    "toolIds",
+    "permission"
+  ]
+}

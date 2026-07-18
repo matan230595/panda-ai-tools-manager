@@ -18,6 +18,7 @@ import ToolDetailDialog from '@/components/tools/ToolDetailDialog';
 import DuplicateDetectorDialog from '@/components/tools/DuplicateDetectorDialog';
 import AdvancedFilters from '@/components/tools/AdvancedFilters';
 import ExportImportDialog from '@/components/tools/ExportImportDialog';
+import ShareLinkDialog from '@/components/sharing/ShareLinkDialog';
 import { toast } from 'sonner';
 import {
   AlertDialog,
@@ -467,6 +468,8 @@ export default function ToolsTab({ settings, initialFilter }) {
               <Sparkles className="w-4 h-4 ml-1" />
               המלצות
             </Button>
+
+            <ShareLinkDialog tools={filteredAndSortedTools} />
 
             <Button
               variant="outline"

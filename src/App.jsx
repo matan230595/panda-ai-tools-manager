@@ -10,6 +10,7 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import CalendarPage from '@/pages/CalendarPage';
+import SharedTools from '@/pages/SharedTools';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -62,6 +63,7 @@ const AuthenticatedApp = () => {
         />
       ))}
       <Route path="/calendar" element={<LayoutWrapper currentPageName="calendar"><CalendarPage /></LayoutWrapper>} />
+      <Route path="/shared/:token" element={<LayoutWrapper currentPageName="shared"><SharedTools /></LayoutWrapper>} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

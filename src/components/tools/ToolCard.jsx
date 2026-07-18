@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { 
   Star, ExternalLink, Edit, Trash2, Tag, TrendingUp, 
-  Copy, Check, GripVertical, Eye, Share2, BarChart3, DollarSign, Package, MessageCircle,
-  MessageSquare
+  GripVertical, Eye, Package, MessageSquare, Check
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -13,8 +12,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
-import { toast } from 'sonner';
-import { base44 } from '@/api/base44Client';
+import ShareLinkDialog from '@/components/sharing/ShareLinkDialog';
 
 export default function ToolCard({ 
   tool, 
@@ -27,7 +25,6 @@ export default function ToolCard({
   isSelected = false,
   onToggleSelect
 }) {
-  const [copied, setCopied] = useState(false);
 
   const categoryColors = {
     'עיבוד_שפה': 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
@@ -48,18 +45,6 @@ export default function ToolCard({
     'בתשלום': 'bg-blue-500',
     'פרימיום': 'bg-purple-500',
     'פרימיום_מוגבל': 'bg-orange-500',
-  };
-
-  const handleShare = async () => {
-    const shareUrl = `${window.location.origin}?tool=${tool.id}`;
-    try {
-      await navigator.clipboard.writeText(shareUrl);
-      setCopied(true);
-      toast.success('הקישור הועתק ללוח');
-      setTimeout(() => setCopied(false), 2000);
-    } catch (error) {
-      toast.error('שגיאה בהעתקת הקישור');
-    }
   };
 
   const handleVisit = () => {
@@ -245,23 +230,9 @@ export default function ToolCard({
               <Eye className="w-3.5 sm:w-4 md:w-5 h-3.5 sm:h-4 md:h-5" />
             </Button>
             
-            {/* כפתור העתקת קישור */}
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleShare();
-              }}
-              className="h-8 sm:h-9 md:h-10 w-8 sm:w-9 md:w-10 p-0 touch-target"
-              title={copied ? 'הועתק!' : 'העתק קישור'}
-            >
-              {copied ? (
-                <Check className="w-3.5 sm:w-4 md:w-5 h-3.5 sm:h-4 md:h-5 text-green-500" />
-              ) : (
-                <Copy className="w-3.5 sm:w-4 md:w-5 h-3.5 sm:h-4 md:h-5" />
-              )}
-            </Button>
+            <div onClick={(e) => e.stopPropagation()}>
+              <ShareLinkDialog tool={tool} iconOnly />
+            </div>
 
             {/* כפתור שיתוף ב-WhatsApp */}
             <Button
