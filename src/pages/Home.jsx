@@ -171,9 +171,9 @@ export default function Home() {
       </div>
       
       {/* תוכן הטאב */}
-      <main className="max-w-7xl mx-auto px-1.5 sm:px-4 md:px-6 py-2 sm:py-4 md:py-8 pb-28 sm:pb-32 md:pb-8">
-        <div className="flex justify-end mb-3 md:mb-4">
-          <Link to="/calendar" className="inline-flex items-center rounded-xl border border-indigo-200 bg-white/80 dark:bg-gray-900/70 dark:border-indigo-900 px-4 py-2 text-sm font-medium text-indigo-700 dark:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-colors">
+      <main className="max-w-7xl mx-auto px-1.5 sm:px-4 md:px-6 py-2 sm:py-4 md:py-8 pb-[calc(8.5rem+env(safe-area-inset-bottom))] md:pb-8">
+        <div className="flex flex-col sm:flex-row justify-end gap-2 mb-3 md:mb-4">
+          <Link to="/calendar" className="inline-flex items-center justify-center rounded-xl border border-indigo-200 bg-white/80 dark:bg-gray-900/70 dark:border-indigo-900 px-4 py-3 text-sm font-medium text-indigo-700 dark:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-colors min-h-[48px] w-full sm:w-auto">
             פתח לוח שנה מנויים
           </Link>
         </div>
@@ -227,7 +227,7 @@ export default function Home() {
       </main>
       
       {/* מקום לניווט תחתון במובייל */}
-      <div className="h-28 sm:h-32 md:hidden" />
+      <div className="h-[calc(8.5rem+env(safe-area-inset-bottom))] md:hidden" />
 
       {/* עזרת קיצורי מקלדת */}
       <KeyboardShortcutsHelp open={showKeyboardHelp} onOpenChange={setShowKeyboardHelp} />

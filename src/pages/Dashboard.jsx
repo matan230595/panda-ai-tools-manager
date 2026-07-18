@@ -6,6 +6,7 @@ import { BarChart3, TrendingUp, DollarSign, Package, AlertCircle, Calendar } fro
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import SmartRecommendations from '@/components/recommendations/SmartRecommendations';
 import ReminderCalendarView from '@/components/calendar/ReminderCalendarView';
+import UpcomingRenewalsPanel from '@/components/subscription/UpcomingRenewalsPanel';
 
 export default function Dashboard() {
   const { data: tools = [] } = useQuery({
@@ -103,6 +104,8 @@ export default function Dashboard() {
         <StatCard title="כלים עם משימות" value={stats.toolsWithTasks} icon={<AlertCircle className="w-5 h-5" />} color="bg-orange-500" />
         <StatCard title="דירוג ממוצע" value={stats.averageRating} icon={<TrendingUp className="w-5 h-5" />} color="bg-green-500" />
       </div>
+
+      <UpcomingRenewalsPanel subscriptions={subscriptions} tools={tools} limit={6} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
         <div className="bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 border border-gray-200 dark:border-gray-700">

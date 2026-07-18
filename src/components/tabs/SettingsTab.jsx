@@ -308,7 +308,7 @@ export default function SettingsTab({ settings, onLogout }) {
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8">
+    <div className="max-w-6xl mx-auto space-y-8" dir="rtl">
       <div>
         <h1 className="text-3xl md:text-4xl font-bold gradient-text mb-2">הגדרות</h1>
         <p className="text-gray-600 dark:text-gray-400">התאם את המערכת לצרכים שלך</p>

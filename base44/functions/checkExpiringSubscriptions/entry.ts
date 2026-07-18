@@ -1,61 +1,96 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.38';
+
+function toDateOnly(date) {
+  return date.toISOString().split('T')[0];
+}
+
+function startOfDay(value) {
+  const date = new Date(value);
+  date.setHours(0, 0, 0, 0);
+  return date;
+}
+
+function subtractDays(value, days) {
+  const date = new Date(value);
+  date.setDate(date.getDate() - days);
+  return date;
+}
 
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const tools = await base44.asServiceRole.entities.AiTool.filter({
-      hasSubscription: true,
+    const today = startOfDay(new Date());
+
+    const subscriptions = await base44.asServiceRole.entities.Subscription.filter({ isActive: true });
+    const existingReminders = await base44.asServiceRole.entities.Reminder.filter({
+      reminderType: 'subscription_expiry',
+      isCompleted: false,
+      isActive: true,
     });
-    const existingReminders = await base44.asServiceRole.entities.Reminder.list();
+    const users = await base44.asServiceRole.entities.User.list();
+    const userMap = Object.fromEntries(users.map((user) => [user.id, user]));
 
-    const today = new Date();
-    const createdReminders = [];
+    let created = 0;
+    let updated = 0;
+    let skipped = 0;
 
-    for (const tool of tools) {
-      const hasOpenReminder = existingReminders.some((reminder) => (
-        reminder.toolId === tool.id &&
-        reminder.reminderType === 'subscription_expiry' &&
-        !reminder.isCompleted
-      ));
+    for (const subscription of subscriptions) {
+      if (!subscription.renewalDate || !subscription.created_by_id) {
+        skipped++;
+        continue;
+      }
 
-      if (hasOpenReminder) continue;
+      const renewalDate = startOfDay(`${subscription.renewalDate}T00:00:00`);
+      if (Number.isNaN(renewalDate.getTime()) || renewalDate < today) {
+        skipped++;
+        continue;
+      }
 
-      const renewalDate = new Date(today);
-      renewalDate.setDate(renewalDate.getDate() + 30);
+      const owner = userMap[subscription.created_by_id];
+      if (!owner?.email) {
+        skipped++;
+        continue;
+      }
 
-      try {
-        await base44.asServiceRole.entities.Reminder.create({
-          toolId: tool.id,
-          toolName: tool.name,
-          recipientEmail: tool.created_by,
-          reminderType: 'subscription_expiry',
-          reminderDate: renewalDate.toISOString().split('T')[0],
-          reminderTime: '09:00',
-          message: `חידוש מנוי עבור ${tool.name}`,
-          priority: 'high',
-          daysBeforeAlert: 7,
-          subscriptionRenewalDate: renewalDate.toISOString().split('T')[0],
-          isActive: true,
-        });
+      const reminderDate = subtractDays(renewalDate, 7);
+      const payload = {
+        toolId: subscription.toolId,
+        toolName: subscription.toolName,
+        recipientEmail: owner.email,
+        reminderType: 'subscription_expiry',
+        reminderDate: toDateOnly(reminderDate),
+        reminderTime: '09:00',
+        message: `המנוי של ${subscription.toolName} מסתיים בתאריך ${toDateOnly(renewalDate)}. זה הזמן להחליט אם להמשיך או לבטל.`,
+        priority: Math.ceil((renewalDate - today) / (1000 * 60 * 60 * 24)) <= 7 ? 'high' : 'medium',
+        daysBeforeAlert: 7,
+        subscriptionRenewalDate: toDateOnly(renewalDate),
+        isActive: true,
+        isCompleted: false,
+      };
 
-        createdReminders.push({
-          id: tool.id,
-          name: tool.name,
-          status: 'reminder_created',
-        });
-      } catch (error) {
-        console.error(`Failed to create reminder for ${tool.name}:`, error);
+      const existingReminder = existingReminders.find((reminder) =>
+        reminder.toolId === subscription.toolId &&
+        reminder.subscriptionRenewalDate === payload.subscriptionRenewalDate &&
+        reminder.recipientEmail === payload.recipientEmail
+      );
+
+      if (existingReminder) {
+        await base44.asServiceRole.entities.Reminder.update(existingReminder.id, payload);
+        updated++;
+      } else {
+        await base44.asServiceRole.entities.Reminder.create(payload);
+        created++;
       }
     }
 
     return Response.json({
       success: true,
-      checked: tools.length,
-      newReminders: createdReminders.length,
-      tools: createdReminders,
+      checked: subscriptions.length,
+      created,
+      updated,
+      skipped,
     });
   } catch (error) {
-    console.error('Error:', error);
     return Response.json({ error: error.message }, { status: 500 });
   }
 });
