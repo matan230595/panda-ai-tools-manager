@@ -1,8 +1,7 @@
 {
   "type": "googlecalendar",
   "scopes": [
-    "https://www.googleapis.com/auth/userinfo.email",
-    "openid",
-    "https://www.googleapis.com/auth/calendar.events"
+    "https://www.googleapis.com/auth/calendar.events",
+    "email"
   ]
 }
