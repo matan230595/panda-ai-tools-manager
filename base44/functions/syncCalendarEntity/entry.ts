@@ -1,5 +1,24 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
 
+// Deterministic Google event id per source record — MUST match syncGoogleCalendar
+// so manual and automatic sync always target the SAME calendar event (no duplicates).
+// Google event IDs use base32hex chars (a-v, 0-9), length 5-1024.
+function toEventId(prefix, rawId) {
+  const cleaned = String(rawId || '')
+    .toLowerCase()
+    .split('')
+    .map((ch) => (/[a-v0-9]/.test(ch) ? ch : '0'))
+    .join('');
+  const id = `${prefix}${cleaned}`;
+  return id.length < 5 ? `${id}00000` : id.slice(0, 1024);
+}
+
+const ID_PREFIX = {
+  Reminder: 'rem',
+  ToolTask: 'task',
+  Subscription: 'sub',
+};
+
 function buildDateTime(date, time = '09:00') {
   return `${date}T${time}:00`;
 }
@@ -89,21 +108,19 @@ Deno.serve(async (req) => {
 
     const { accessToken } = await base44.asServiceRole.connectors.getConnection('googlecalendar');
     const eventType = event.type || payload.type || 'update';
-    const existingGoogleEventId = currentData?.googleCalendarEventId || oldData?.googleCalendarEventId;
 
+    // Deterministic id — same record always maps to the same calendar event.
+    const sourceId = currentData?.id || oldData?.id || event.entity_id;
+    const eventId = toEventId(ID_PREFIX[entityName] || 'evt', sourceId);
+
+    // Delete when the record is removed, completed, or deactivated.
     if (eventType === 'delete' || currentData?.isCompleted || currentData?.isActive === false) {
-      if (existingGoogleEventId) {
-        await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${existingGoogleEventId}`, {
-          method: 'DELETE',
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-      }
-
-      if (currentData?.id && eventType !== 'delete') {
-        await base44.asServiceRole.entities[entityName].update(currentData.id, { googleCalendarEventId: null });
-      }
+      await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${eventId}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
 
       return Response.json({ success: true, action: 'deleted' });
     }
@@ -114,6 +131,7 @@ Deno.serve(async (req) => {
     }
 
     const googlePayload = {
+      id: eventId,
       summary: mappedEvent.summary,
       description: mappedEvent.description,
       start: {
@@ -133,17 +151,18 @@ Deno.serve(async (req) => {
       },
     };
 
-    let response;
-    if (existingGoogleEventId) {
-      response = await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${existingGoogleEventId}`, {
-        method: 'PATCH',
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(googlePayload),
-      });
-    } else {
+    // Upsert: PUT to a fixed event id updates if it exists, else create via POST.
+    let response = await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${eventId}`, {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(googlePayload),
+    });
+
+    let action = 'updated';
+    if (response.status === 404 || response.status === 410) {
       response = await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
         method: 'POST',
         headers: {
@@ -152,6 +171,7 @@ Deno.serve(async (req) => {
         },
         body: JSON.stringify(googlePayload),
       });
+      action = 'created';
     }
 
     if (!response.ok) {
@@ -161,15 +181,9 @@ Deno.serve(async (req) => {
 
     const responseData = await response.json();
 
-    if (currentData?.id) {
-      await base44.asServiceRole.entities[entityName].update(currentData.id, {
-        googleCalendarEventId: responseData.id,
-      });
-    }
-
     return Response.json({
       success: true,
-      action: existingGoogleEventId ? 'updated' : 'created',
+      action,
       googleCalendarEventId: responseData.id,
     });
   } catch (error) {
