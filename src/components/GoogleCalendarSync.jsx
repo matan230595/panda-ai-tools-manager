@@ -88,6 +88,8 @@ export default function GoogleCalendarSync() {
       }
 
       const reminderEvents = reminders.map((reminder) => ({
+        idPrefix: 'rem',
+        sourceId: reminder.id,
         title: `תזכורת: ${reminder.toolName}`,
         description: reminder.message,
         startTime: `${reminder.reminderDate}T${reminder.reminderTime || '09:00'}:00`,
@@ -95,6 +97,8 @@ export default function GoogleCalendarSync() {
       }));
 
       const subscriptionEvents = subscriptions.filter((subscription) => subscription.renewalDate).map((subscription) => ({
+        idPrefix: 'sub',
+        sourceId: subscription.id,
         title: `חידוש מנוי: ${subscription.toolName}`,
         description: `חידוש מנוי ${subscription.subscriptionType || ''} עבור ${subscription.toolName}`,
         startTime: `${subscription.renewalDate}T09:00:00`,
@@ -102,6 +106,8 @@ export default function GoogleCalendarSync() {
       }));
 
       const taskEvents = tasks.map((task) => ({
+        idPrefix: 'task',
+        sourceId: task.id,
         title: `משימה: ${task.title}`,
         description: `${task.toolName}${task.description ? ` — ${task.description}` : ''}`,
         startTime: `${task.dueDate}T${task.reminderTime || '09:00'}:00`,
@@ -128,7 +134,9 @@ export default function GoogleCalendarSync() {
     },
     onSuccess: (res) => {
       queryClient.invalidateQueries(['integrations']);
-      toast.success(`סונכרנו ${res.data.synced} אירועים`);
+      const created = res.data.created || 0;
+      const updated = res.data.updated || 0;
+      toast.success(`סונכרנו ${res.data.synced} אירועים ללא כפילויות (${created} חדשים, ${updated} עודכנו)`);
     },
     onError: (error) => toast.error(error.message || 'שגיאה בסנכרון היומן'),
   });
