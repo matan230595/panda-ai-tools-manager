@@ -1,10 +1,46 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Star, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
+
+function ReviewItem({ review }) {
+  const [expanded, setExpanded] = useState(false);
+  const comment = review.comment || '';
+  const isLong = comment.length > 220;
+  const shown = expanded || !isLong ? comment : comment.slice(0, 220) + '…';
+
+  return (
+    <div className="p-3 rounded-xl border bg-white dark:bg-gray-900">
+      <div className="flex items-center justify-between gap-2 mb-1">
+        <div className="flex items-center gap-1">
+          {[...Array(5)].map((_, i) => (
+            <Star key={i} className={`w-4 h-4 ${i < review.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} />
+          ))}
+        </div>
+        <span className="text-xs text-gray-400">
+          {review.created_date ? new Date(review.created_date).toLocaleDateString('he-IL') : ''}
+        </span>
+      </div>
+      {comment ? (
+        <>
+          <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap break-words">{shown}</p>
+          {isLong && (
+            <button
+              onClick={() => setExpanded((v) => !v)}
+              className="text-xs text-indigo-600 hover:underline mt-1">
+              {expanded ? 'הצג פחות' : 'קרא עוד'}
+            </button>
+          )}
+        </>
+      ) : (
+        <p className="text-sm text-gray-400 italic">ללא תגובה</p>
+      )}
+    </div>
+  );
+}
 
 export default function ToolRatingPanel({ tool }) {
   const queryClient = useQueryClient();
@@ -19,28 +55,19 @@ export default function ToolRatingPanel({ tool }) {
 
   const { data: ratings = [] } = useQuery({
     queryKey: ['toolRatings', tool.id],
-    queryFn: () => base44.entities.UserToolRating.filter({ toolId: tool.id }).catch(() => []),
+    queryFn: () =>
+      base44.entities.UserToolRating
+        .filter({ toolId: tool.id, interactionType: 'rate' }, '-created_date', 100)
+        .catch(() => []),
   });
 
-  const myRating = ratings.find((r) => r.userEmail === currentUser?.email);
-
-  useEffect(() => {
-    if (myRating) {
-      setRating(myRating.rating || 0);
-      setComment(myRating.comment || '');
-    }
-  }, [myRating]);
-
   const saveMutation = useMutation({
-    mutationFn: async (data) => {
-      if (myRating) {
-        return base44.entities.UserToolRating.update(myRating.id, data);
-      }
-      return base44.entities.UserToolRating.create(data);
-    },
+    mutationFn: (data) => base44.entities.UserToolRating.create(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['toolRatings'] });
-      toast.success('הדירוג והמשוב נשמרו בהצלחה!');
+      queryClient.invalidateQueries({ queryKey: ['toolRatings', tool.id] });
+      setRating(0);
+      setComment('');
+      toast.success('המשוב נשמר בהצלחה!');
     },
     onError: () => toast.error('אירעה שגיאה בשמירת הדירוג'),
   });
@@ -59,8 +86,6 @@ export default function ToolRatingPanel({ tool }) {
       userEmail: currentUser?.email,
     });
   };
-
-  const otherRatings = ratings.filter((r) => r.userEmail !== currentUser?.email && r.comment);
 
   return (
     <div className="space-y-6" dir="rtl">
@@ -102,30 +127,27 @@ export default function ToolRatingPanel({ tool }) {
           onClick={handleSubmit}
           disabled={saveMutation.isPending}
           className="w-full bg-gradient-to-r from-indigo-500 to-purple-600">
-          {saveMutation.isPending ? 'שומר...' : myRating ? 'עדכן דירוג' : 'שלח דירוג ומשוב'}
+          {saveMutation.isPending ? 'שומר...' : 'שלח דירוג ומשוב'}
         </Button>
       </div>
 
-      {otherRatings.length > 0 && (
-        <div>
-          <div className="flex items-center gap-2 mb-3">
-            <MessageSquare className="w-5 h-5 text-indigo-500" />
-            <h3 className="font-bold text-lg">משובים נוספים</h3>
+      <div>
+        <div className="flex items-center gap-2 mb-3">
+          <MessageSquare className="w-5 h-5 text-indigo-500" />
+          <h3 className="font-bold text-lg">משובים ({ratings.length})</h3>
+        </div>
+        {ratings.length === 0 ? (
+          <div className="rounded-2xl border p-6 text-sm text-gray-500">
+            עדיין אין משובים לכלי זה. היה הראשון לשתף!
           </div>
+        ) : (
           <div className="space-y-3">
-            {otherRatings.map((r) => (
-              <div key={r.id} className="p-3 rounded-xl border bg-white dark:bg-gray-900">
-                <div className="flex items-center gap-1 mb-1">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className={`w-4 h-4 ${i < r.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} />
-                  ))}
-                </div>
-                <p className="text-sm text-gray-700 dark:text-gray-300">{r.comment}</p>
-              </div>
+            {ratings.map((r) => (
+              <ReviewItem key={r.id} review={r} />
             ))}
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
