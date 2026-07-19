@@ -90,19 +90,32 @@ export default function ToolForm({ tool, onClose, onSave }) {
 
   // חישוב אוטומטי של המחיר בשקלים
   useEffect(() => {
-    const calculateILS = async () => {
-      if (formData.priceUSD > 0) {
-        try {
-          const response = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
-          const data = await response.json();
-          const ilsRate = data.rates.ILS;
-          handleChange('priceILS', Math.round(formData.priceUSD * ilsRate));
-        } catch (error) {
-          handleChange('priceILS', Math.round(formData.priceUSD * 3.7));
+    const usd = Number(formData.priceUSD) || 0;
+    if (usd <= 0) {
+      handleChange('priceILS', 0);
+      return;
+    }
+
+    // עדכון מיידי לפי שער ברירת מחדל כדי שהשדה תמיד יתעדכן
+    const FALLBACK_RATE = 3.7;
+    handleChange('priceILS', Math.round(usd * FALLBACK_RATE));
+
+    // ניסיון לשפר לפי שער חי (לא חוסם, נכשל בשקט)
+    let cancelled = false;
+    (async () => {
+      try {
+        const response = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+        const data = await response.json();
+        const ilsRate = data?.rates?.ILS;
+        if (!cancelled && ilsRate) {
+          handleChange('priceILS', Math.round(usd * ilsRate));
         }
+      } catch {
+        // נשארים עם שער ברירת המחדל
       }
-    };
-    calculateILS();
+    })();
+
+    return () => { cancelled = true; };
   }, [formData.priceUSD]);
 
   // חילוץ Meta Data מ-URL (לוגו, תיאור)
