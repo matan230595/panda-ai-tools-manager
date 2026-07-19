@@ -67,7 +67,7 @@ export default function KanbanView({ tools, onEdit, onDelete, onToggleFavorite, 
 
   const KanbanCard = ({ tool, isDragging }) => (
     <div
-      className="glass-effect rounded-xl p-3 sm:p-4 hover:shadow-lg transition-all cursor-pointer min-w-0 border border-gray-200 dark:border-gray-700"
+      className="glass-effect rounded-xl p-3 sm:p-4 hover:shadow-lg transition-all cursor-grab active:cursor-grabbing min-w-0 border border-gray-200 dark:border-gray-700"
       onClick={() => {
         // Don't open details if this was a drag gesture
         if (isDragging || isDraggingAny) return;
@@ -160,6 +160,23 @@ export default function KanbanView({ tools, onEdit, onDelete, onToggleFavorite, 
             <span className="text-xs font-medium">{tool.rating}</span>
           </div>
         )}
+      </div>
+
+      {/* העברת סטטוס מהירה (חלופה לגרירה) */}
+      <div className="flex flex-wrap gap-1 mt-2 pt-2 border-t border-gray-200 dark:border-gray-700">
+        {COLUMNS.filter((c) => c.id !== getStatus(tool)).map((c) => (
+          <button
+            key={c.id}
+            onClick={(e) => {
+              e.stopPropagation();
+              onStatusChange?.(tool.id, c.id);
+              setLocalTools((prev) => prev.map((t) => (t.id === tool.id ? { ...t, operationalStatus: c.id } : t)));
+            }}
+            className="text-[11px] px-2 py-1 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          >
+            העבר ל{c.title}
+          </button>
+        ))}
       </div>
     </div>
   );
