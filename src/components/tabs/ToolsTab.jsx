@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { getCurrentUser } from '@/components/hooks/userScopedData';
 import { Plus, Trash2, GitCompare, Sparkles, SlidersHorizontal, LayoutGrid, List, Rows3, Table2, Kanban, Copy } from 'lucide-react';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -43,30 +44,8 @@ import {
 
 export default function ToolsTab({ settings, initialFilter, quickAddTool, onQuickAddDone }) {
   const queryClient = useQueryClient();
-  const [userLogo, setUserLogo] = useState('');
-  const [appName, setAppName] = useState('AI Tools Manager');
-
-  const { data: appSettings } = useQuery({
-    queryKey: ['settings'],
-    queryFn: async () => {
-      try {
-        const user = await getCurrentUser();
-        const list = await base44.entities.Settings.filter({ created_by_id: user.id });
-        return list[0] || null;
-      } catch {
-        return null;
-      }
-    },
-  });
-
-  useEffect(() => {
-    if (appSettings?.userLogo) {
-      setUserLogo(appSettings.userLogo);
-    }
-    if (appSettings?.appName) {
-      setAppName(appSettings.appName);
-    }
-  }, [appSettings]);
+  const userLogo = settings?.userLogo || '';
+  const appName = settings?.appName || 'AI Tools Manager';
   
   // State management — סינון/חיפוש/תצוגה נשמרים ב-URL (שמירה ברענון ובשיתוף קישור)
   const [urlFilters, setUrlFilter] = useUrlFilters({
@@ -141,7 +120,7 @@ export default function ToolsTab({ settings, initialFilter, quickAddTool, onQuic
 
   // בדוק התראות חכמות
   useEffect(() => {
-    if (!appSettings?.enableNotifications || !tools || tools.length === 0) return;
+    if (!settings?.enableNotifications || !tools || tools.length === 0) return;
 
     // התראה על כלים פופולריים חדשים
     const popularNew = tools
@@ -152,7 +131,7 @@ export default function ToolsTab({ settings, initialFilter, quickAddTool, onQuic
       toast.success(`🌟 כלי פופולרי חדש: ${popularNew[0].name}`);
       sessionStorage.setItem(`notified-popular-${popularNew[0].id}`, 'true');
     }
-  }, [tools, appSettings?.enableNotifications]);
+  }, [tools, settings?.enableNotifications]);
 
   // החל פילטר ראשוני
   React.useEffect(() => {

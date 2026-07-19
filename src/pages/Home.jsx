@@ -17,6 +17,8 @@ import QuickAddFAB from '@/components/QuickAddFAB';
 import { useSmartNotifications } from '@/components/hooks/useSmartNotifications';
 import { useKeyboardShortcuts } from '@/components/hooks/useKeyboardShortcuts';
 import { Toaster } from 'sonner';
+import SuspenseFallback from '@/components/ui/SuspenseFallback';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
 const InsightsTab = React.lazy(() => import('@/components/tabs/InsightsTab'));
 const IntegrationsTab = React.lazy(() => import('@/components/tabs/IntegrationsTab'));
@@ -91,13 +93,13 @@ export default function Home() {
       n.id === notificationId ? { ...n, read: true } : n
     );
     base44.entities.Settings.update(settings.id, { notifications: updatedNotifications });
-    queryClient.invalidateQueries(['settings']);
+    queryClient.invalidateQueries({ queryKey: ['settings'] });
   };
 
   const handleClearAllNotifications = () => {
     if (!settings) return;
     base44.entities.Settings.update(settings.id, { notifications: [] });
-    queryClient.invalidateQueries(['settings']);
+    queryClient.invalidateQueries({ queryKey: ['settings'] });
   };
 
   // קיצורי מקלדת חכמים
@@ -123,7 +125,7 @@ export default function Home() {
   if (authStatus === 'checking') {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+        <LoadingSpinner size="lg" />
       </div>
     );
   }
@@ -194,42 +196,42 @@ export default function Home() {
           {activeTab === 'subscriptions' && <SubscriptionsTab />}
           {activeTab === 'stats' && <StatsTab onNavigateToTools={handleNavigateToTools} />}
           {activeTab === 'insights' && (
-            <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="animate-spin w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full" /></div>}>
+            <Suspense fallback={<SuspenseFallback />}>
               <InsightsTab />
             </Suspense>
           )}
           {activeTab === 'integrations' && (
-            <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="animate-spin w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full" /></div>}>
+            <Suspense fallback={<SuspenseFallback />}>
               <IntegrationsTab />
             </Suspense>
           )}
           {activeTab === 'collaboration' && (
-            <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="animate-spin w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full" /></div>}>
+            <Suspense fallback={<SuspenseFallback />}>
               <CollaborationTab />
             </Suspense>
           )}
           {activeTab === 'budget' && (
-            <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="animate-spin w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full" /></div>}>
+            <Suspense fallback={<SuspenseFallback />}>
               <BudgetTab />
             </Suspense>
           )}
           {activeTab === 'reminders' && (
-            <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="animate-spin w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full" /></div>}>
+            <Suspense fallback={<SuspenseFallback />}>
               <RemindersTab />
             </Suspense>
           )}
           {activeTab === 'learning' && (
-            <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="animate-spin w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full" /></div>}>
+            <Suspense fallback={<SuspenseFallback />}>
               <LearningDashboard onToolClick={() => setActiveTab('tools')} />
             </Suspense>
           )}
           {activeTab === 'dashboard' && (
-            <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="animate-spin w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full" /></div>}>
+            <Suspense fallback={<SuspenseFallback />}>
               <DashboardTab />
             </Suspense>
           )}
           {activeTab === 'subscriptions-mgmt' && (
-            <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="animate-spin w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full" /></div>}>
+            <Suspense fallback={<SuspenseFallback />}>
               <SubscriptionMgmt />
             </Suspense>
           )}
