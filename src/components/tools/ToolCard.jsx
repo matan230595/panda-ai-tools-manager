@@ -60,14 +60,14 @@ export default function ToolCard({
   return (
     <div 
       className={`
-        group relative glass-effect rounded-lg sm:rounded-xl md:rounded-2xl p-3 sm:p-4 md:p-5
+        group relative flex flex-col glass-effect rounded-2xl p-4 sm:p-5 h-full overflow-hidden
         transition-all duration-300 hover-lift cursor-pointer
         border border-gray-200 dark:border-gray-700 
-        shadow-md dark:shadow-lg hover:shadow-lg dark:hover:shadow-xl
+        shadow-md dark:shadow-lg hover:shadow-xl dark:hover:shadow-2xl
         ${isDragging ? 'opacity-50 scale-95' : 'opacity-100'}
         ${tool.isFavorite ? 'ring-2 ring-yellow-400 dark:ring-yellow-500' : ''}
         ${onToggleSelect && isSelected ? 'ring-2 ring-indigo-500' : ''}
-        hover:border-indigo-200 dark:hover:border-indigo-800
+        hover:border-indigo-300 dark:hover:border-indigo-700
       `}
       dir="rtl"
       role="article"
@@ -122,9 +122,9 @@ export default function ToolCard({
        </button>
 
       {/* תוכן הכרטיס */}
-      <div className={`space-y-2 sm:space-y-3 md:space-y-4 ${onToggleSelect ? 'mt-8 sm:mt-8' : 'mt-5 sm:mt-6'}`}>
+      <div className={`flex flex-col flex-1 space-y-3 sm:space-y-4 ${onToggleSelect ? 'mt-9' : 'mt-6'}`}>
         {/* לוגו ושם */}
-        <div className="flex items-start gap-2 sm:gap-2.5 md:gap-3">
+        <div className="flex items-start gap-3">
             {tool.logo ? (
               <img 
                 src={tool.logo} 
@@ -142,11 +142,11 @@ export default function ToolCard({
             </div>
           
           <div className="flex-1 min-w-0 text-right">
-            <h3 className="font-bold text-sm sm:text-base md:text-lg text-gray-900 dark:text-white truncate leading-tight">
+            <h3 className="font-bold text-base md:text-lg text-gray-900 dark:text-white leading-tight line-clamp-2 break-words">
               {tool.name}
             </h3>
-            <div className="flex items-center gap-1 sm:gap-2 mt-0.5 sm:mt-1 flex-wrap">
-              <Badge className={`${categoryColors[tool.category]} text-xs`}>
+            <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+              <Badge className={`${categoryColors[tool.category]} text-xs max-w-full truncate`}>
                 {tool.category.replace(/_/g, ' ')}
               </Badge>
               {tool.rating > 0 && (
@@ -160,7 +160,7 @@ export default function ToolCard({
         </div>
 
         {/* תיאור */}
-        <p className="text-xs sm:text-xs md:text-sm text-gray-600 dark:text-gray-300 line-clamp-2 md:line-clamp-3 leading-relaxed text-right">
+        <p className="flex-1 text-sm text-gray-600 dark:text-gray-300 line-clamp-3 leading-relaxed text-right break-words">
           {tool.description || 'אין תיאור זמין'}
         </p>
 
@@ -195,7 +195,7 @@ export default function ToolCard({
         )}
 
         {/* מידע נוסף */}
-        <div className="flex items-center justify-between pt-1.5 sm:pt-2 md:pt-3 border-t border-gray-200 dark:border-gray-700 gap-1.5 sm:gap-2" dir="rtl">
+        <div className="flex items-center justify-between pt-3 mt-auto border-t border-gray-200 dark:border-gray-700 gap-2" dir="rtl">
           <div className="flex items-center gap-1 sm:gap-2 min-w-0 flex-1 overflow-hidden">
             {/* תמחור */}
             <div className="flex items-center gap-0.5">
