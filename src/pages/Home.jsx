@@ -13,6 +13,7 @@ import SettingsTab from '@/components/tabs/SettingsTab';
 import ThemeToggle from '@/components/ThemeToggle';
 import NotificationCenter from '@/components/NotificationCenter';
 import KeyboardShortcutsHelp from '@/components/KeyboardShortcutsHelp';
+import QuickAddFAB from '@/components/QuickAddFAB';
 import { useSmartNotifications } from '@/components/hooks/useSmartNotifications';
 import { useKeyboardShortcuts } from '@/components/hooks/useKeyboardShortcuts';
 import { Toaster } from 'sonner';
@@ -30,6 +31,7 @@ export default function Home() {
   const [toolsFilter, setToolsFilter] = useState(null);
   const [authStatus, setAuthStatus] = useState('checking');
   const [showKeyboardHelp, setShowKeyboardHelp] = useState(false);
+  const [quickAddTool, setQuickAddTool] = useState(false);
   const queryClient = useQueryClient();
 
 
@@ -185,7 +187,7 @@ export default function Home() {
           </div>
         </div>
         <div className="animate-slide-in">
-          {activeTab === 'tools' && <ToolsTab settings={settings} initialFilter={toolsFilter} />}
+          {activeTab === 'tools' && <ToolsTab settings={settings} initialFilter={toolsFilter} quickAddTool={quickAddTool} onQuickAddDone={() => setQuickAddTool(false)} />}
           {activeTab === 'assistant' && <AssistantTab />}
           {activeTab === 'subscriptions' && <SubscriptionsTab />}
           {activeTab === 'stats' && <StatsTab onNavigateToTools={handleNavigateToTools} />}
@@ -230,6 +232,12 @@ export default function Home() {
       
       {/* מקום לניווט תחתון במובייל */}
       <div className="h-[calc(7.5rem+env(safe-area-inset-bottom))] md:hidden" />
+
+      {/* כפתור פעולה מהירה במובייל */}
+      <QuickAddFAB
+        onAddTool={() => { setActiveTab('tools'); setQuickAddTool(true); }}
+        onStartChat={() => setActiveTab('assistant')}
+      />
 
       {/* עזרת קיצורי מקלדת */}
       <KeyboardShortcutsHelp open={showKeyboardHelp} onOpenChange={setShowKeyboardHelp} />

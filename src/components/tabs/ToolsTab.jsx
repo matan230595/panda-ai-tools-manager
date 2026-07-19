@@ -41,7 +41,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 
-export default function ToolsTab({ settings, initialFilter }) {
+export default function ToolsTab({ settings, initialFilter, quickAddTool, onQuickAddDone }) {
   const queryClient = useQueryClient();
   const [userLogo, setUserLogo] = useState('');
   const [appName, setAppName] = useState('AI Tools Manager');
@@ -93,6 +93,9 @@ export default function ToolsTab({ settings, initialFilter }) {
   const sortBy = urlFilters.sort;
   const setSortBy = (v) => setUrlFilter('sort', v);
 
+  const [showAddTool, setShowAddTool] = useState(false);
+  const [aiAutoCompleteOpen, setAiAutoCompleteOpen] = useState(false);
+  const [showQuickAction, setShowQuickAction] = useState(false);
   const [showRecommendations, setShowRecommendations] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [editingTool, setEditingTool] = useState(null);
@@ -101,6 +104,14 @@ export default function ToolsTab({ settings, initialFilter }) {
   const [selectedForCompare, setSelectedForCompare] = useState([]);
   const [managingSubscription, setManagingSubscription] = useState(null);
   const [selectedTool, setSelectedTool] = useState(null);
+
+  useEffect(() => {
+    if (quickAddTool) {
+      setEditingTool(null);
+      setShowForm(true);
+      onQuickAddDone?.();
+    }
+  }, [quickAddTool]);
   const [showDuplicatesDialog, setShowDuplicatesDialog] = useState(false);
   const [advancedFilters, setAdvancedFilters] = useState({
     categories: [],
