@@ -2,9 +2,16 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { getCurrentUser } from '@/components/hooks/userScopedData';
-import { Plus, Trash2, GitCompare, Sparkles, Menu } from 'lucide-react';
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer';
+import { Plus, Trash2, GitCompare, Sparkles, SlidersHorizontal, LayoutGrid, List, Rows3, Table2, Kanban, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import SearchAndFilters from '@/components/tools/SearchAndFilters';
 import ToolCard from '@/components/tools/ToolCard';
 import ToolForm from '@/components/tools/ToolForm';
@@ -444,109 +451,103 @@ export default function ToolsTab({ settings, initialFilter }) {
            נהל את כל כלי ה-AI שלך במקום אחד
          </p>
         
-        {/* כפתורי פעולה - מסודרים: כפתור הוספה | export/import | advanced filters | (mobile menu) */}
-         <div className="flex gap-1.5 items-center flex-nowrap overflow-x-auto scrollbar-hide pb-1">
-            {/* כפתור הוספה - ימין */}
+        {/* סרגל פעולות נקי: CTA ראשי + פעולות משניות בתפריט אחד */}
+        {compareMode ? (
+          <div className="flex items-center gap-2 rounded-2xl border border-green-200 dark:border-green-900 bg-green-50/60 dark:bg-green-950/30 p-2">
+            <span className="text-xs font-medium text-green-700 dark:text-green-300 flex-1 pr-1">
+              בחר עד 4 כלים להשוואה ({selectedForCompare.length}/4)
+            </span>
+            <Button variant="ghost" size="sm" className="text-xs" onClick={() => { setCompareMode(false); setSelectedForCompare([]); }}>
+              ביטול
+            </Button>
             <Button
-              onClick={() => {
-                setEditingTool(null);
-                setShowForm(true);
-              }}
-              className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 shadow-lg text-xs"
+              size="sm"
+              onClick={() => setCompareMode(false)}
+              disabled={selectedForCompare.length < 2}
+              className="bg-gradient-to-r from-green-500 to-emerald-600 text-xs"
+            >
+              <GitCompare className="w-3.5 h-3.5 ml-1" />
+              השווה
+            </Button>
+          </div>
+        ) : (
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              onClick={() => { setEditingTool(null); setShowForm(true); }}
+              className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 shadow-lg"
               size="sm"
             >
-              <Plus className="w-4 h-4 ml-1" />
-              <span className="hidden sm:inline">הוסף</span>
+              <Plus className="w-4 h-4 ml-1.5" />
+              הוסף כלי
             </Button>
 
             <Button
               variant={showRecommendations ? 'secondary' : 'outline'}
               onClick={() => setShowRecommendations(prev => !prev)}
               size="sm"
-              className="text-xs"
             >
-              <Sparkles className="w-4 h-4 ml-1" />
+              <Sparkles className="w-4 h-4 ml-1.5" />
               המלצות
             </Button>
 
+            <div className="flex-1" />
+
+            {/* פילטרים מתקדמים - נגיש ישירות */}
+            <AdvancedFilters
+              filters={advancedFilters}
+              onFiltersChange={setAdvancedFilters}
+              activeFiltersCount={activeAdvancedFiltersCount}
+              categories={allCategories}
+              tags={allTags}
+            />
+
+            {/* כל שאר הפעולות בתפריט אחד מסודר */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <SlidersHorizontal className="w-4 h-4 ml-1.5" />
+                  פעולות
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-52" dir="rtl">
+                <DropdownMenuLabel>תצוגה</DropdownMenuLabel>
+                <DropdownMenuItem onClick={() => setViewMode('grid')} className={viewMode === 'grid' ? 'bg-accent' : ''}>
+                  <LayoutGrid className="w-4 h-4 ml-2" /> רשת
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setViewMode('list')} className={viewMode === 'list' ? 'bg-accent' : ''}>
+                  <List className="w-4 h-4 ml-2" /> רשימה
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setViewMode('compact')} className={viewMode === 'compact' ? 'bg-accent' : ''}>
+                  <Rows3 className="w-4 h-4 ml-2" /> צפוף
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setViewMode('table')} className={viewMode === 'table' ? 'bg-accent' : ''}>
+                  <Table2 className="w-4 h-4 ml-2" /> טבלה
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setViewMode('kanban')} className={viewMode === 'kanban' ? 'bg-accent' : ''}>
+                  <Kanban className="w-4 h-4 ml-2" /> קאנבן
+                </DropdownMenuItem>
+
+                <DropdownMenuSeparator />
+                <DropdownMenuLabel>כלים</DropdownMenuLabel>
+                <DropdownMenuItem onClick={() => setCompareMode(true)} disabled={tools.length < 2}>
+                  <GitCompare className="w-4 h-4 ml-2" /> השוואת כלים
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setShowDuplicatesDialog(true)}>
+                  <Copy className="w-4 h-4 ml-2" /> ניקוי כפילויות
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
             <ShareLinkDialog tools={filteredAndSortedTools} />
 
-            <Button
-              variant="outline"
-              onClick={() => setShowDuplicatesDialog(true)}
-              size="sm"
-              className="text-xs"
-            >
-              נקה כפילויות
-            </Button>
-
-            {/* export/import - אמצע-ימין */}
-            <div className="hidden md:block">
-              <ExportImportDialog
-                tools={tools}
-                onImportComplete={() => queryClient.invalidateQueries(['tools'])}
-              />
-            </div>
-
-            <div className="md:hidden">
-              <ExportImportDialog
-                tools={tools}
-                onImportComplete={() => queryClient.invalidateQueries(['tools'])}
-              />
-            </div>
-
-            {/* advanced filters - אמצע-שמאל */}
-            <div className="hidden md:block">
-              <AdvancedFilters
-                filters={advancedFilters}
-                onFiltersChange={setAdvancedFilters}
-                activeFiltersCount={activeAdvancedFiltersCount}
-                categories={allCategories}
-                tags={allTags}
-              />
-            </div>
-
-            <div className="md:hidden">
-              <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
-                <DrawerTrigger asChild>
-                  <Button variant="outline" size="sm" className="text-xs whitespace-nowrap">
-                    <Menu className="w-4 h-4 ml-1" />
-                    תצוגה
-                  </Button>
-                </DrawerTrigger>
-                <DrawerContent className="bg-white dark:bg-gray-900">
-                  <DrawerHeader>
-                    <DrawerTitle>בחר תצוגה</DrawerTitle>
-                  </DrawerHeader>
-                  <div className="grid grid-cols-2 gap-2 p-4 pb-8">
-                    <Button variant={viewMode === 'grid' ? 'default' : 'outline'} onClick={() => { setViewMode('grid'); setIsDrawerOpen(false); }} className="text-xs" size="sm">רשת</Button>
-                    <Button variant={viewMode === 'list' ? 'default' : 'outline'} onClick={() => { setViewMode('list'); setIsDrawerOpen(false); }} className="text-xs" size="sm">רשימה</Button>
-                    <Button variant={viewMode === 'compact' ? 'default' : 'outline'} onClick={() => { setViewMode('compact'); setIsDrawerOpen(false); }} className="text-xs" size="sm">צפוף</Button>
-                    <Button variant={viewMode === 'table' ? 'default' : 'outline'} onClick={() => { setViewMode('table'); setIsDrawerOpen(false); }} className="text-xs" size="sm">טבלה</Button>
-                    <Button variant={viewMode === 'kanban' ? 'default' : 'outline'} onClick={() => { setViewMode('kanban'); setIsDrawerOpen(false); }} className="text-xs col-span-2" size="sm">קאנבן</Button>
-                    <Button variant="outline" onClick={() => { setCompareMode(true); setIsDrawerOpen(false); }} disabled={tools.length < 2} className="text-xs col-span-2" size="sm">
-                      <GitCompare className="w-3 h-3 ml-1" />
-                      השווה
-                    </Button>
-                  </div>
-                </DrawerContent>
-              </Drawer>
-            </div>
+            <ExportImportDialog
+              tools={tools}
+              onImportComplete={() => queryClient.invalidateQueries(['tools'])}
+            />
 
             <input id="import-file" type="file" accept=".json" onChange={handleImport} className="hidden" />
-
-            {compareMode && (
-              <div className="flex gap-1.5">
-                <Button variant="outline" onClick={() => { setCompareMode(false); setSelectedForCompare([]); }} size="sm" className="text-xs">ביטול</Button>
-                <Button onClick={() => setCompareMode(false)} disabled={selectedForCompare.length < 2} className="bg-gradient-to-r from-green-500 to-emerald-600 text-xs" size="sm">
-                  <GitCompare className="w-3 h-3 ml-1" />
-                  <span className="hidden sm:inline">השווה ({selectedForCompare.length}/4)</span>
-                </Button>
-              </div>
-            )}
-         </div>
-
-
+          </div>
+        )}
       </div>
 
       {/* המלצות חכמות */}
