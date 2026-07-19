@@ -462,41 +462,40 @@ export default function ToolsTab({ settings, initialFilter }) {
   return (
     <div className="space-y-3 sm:space-y-4 md:space-y-6">
       {/* באנר ראש עמוד מעוצב */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 via-purple-600 to-fuchsia-600 p-5 sm:p-6 md:p-8 shadow-xl">
+      <div className="relative overflow-hidden rounded-2xl md:rounded-3xl bg-gradient-to-br from-indigo-600 via-purple-600 to-fuchsia-600 p-4 sm:p-6 md:p-8 shadow-xl shadow-indigo-500/20">
         <div className="absolute -top-16 -left-16 w-56 h-56 rounded-full bg-white/10 blur-2xl pointer-events-none" />
         <div className="absolute -bottom-20 -right-10 w-64 h-64 rounded-full bg-white/10 blur-3xl pointer-events-none" />
-        <div className="relative flex flex-col sm:flex-row sm:items-center gap-4 text-right" dir="rtl">
+        <div className="relative flex items-center gap-3 sm:gap-4 text-right" dir="rtl">
           {userLogo && (
-            <img src={userLogo} alt={appName} className="w-12 sm:w-14 md:w-16 h-12 sm:h-14 md:h-16 object-contain rounded-2xl bg-white/15 backdrop-blur p-1.5 flex-shrink-0" />
+            <img src={userLogo} alt={appName} className="w-11 h-11 sm:w-14 md:w-16 sm:h-14 md:h-16 object-contain rounded-2xl bg-white/15 backdrop-blur p-1.5 flex-shrink-0" />
           )}
           <div className="min-w-0 flex-1">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-1 break-words drop-shadow-sm">
+            <h1 className="text-xl sm:text-2xl md:text-4xl font-extrabold text-white mb-0.5 break-words drop-shadow-sm">
               כלי AI שלי
             </h1>
-            <p className="text-sm md:text-base text-indigo-100/90">
+            <p className="text-xs sm:text-sm md:text-base text-indigo-100/90">
               נהל את כל כלי ה-AI שלך במקום אחד
             </p>
           </div>
-          <div className="flex gap-3 sm:gap-4 flex-shrink-0">
-            <div className="rounded-2xl bg-white/15 backdrop-blur px-4 py-2.5 text-center min-w-[70px]">
-              <div className="text-xl sm:text-2xl font-bold text-white">{tools.length}</div>
-              <div className="text-[11px] text-indigo-100/90">כלים</div>
+          <div className="flex gap-2 sm:gap-3 flex-shrink-0">
+            <div className="rounded-xl sm:rounded-2xl bg-white/15 backdrop-blur px-3 sm:px-4 py-1.5 sm:py-2.5 text-center min-w-[56px] sm:min-w-[70px]">
+              <div className="text-lg sm:text-2xl font-bold text-white leading-tight">{tools.length}</div>
+              <div className="text-[10px] sm:text-[11px] text-indigo-100/90">כלים</div>
             </div>
-            <div className="rounded-2xl bg-white/15 backdrop-blur px-4 py-2.5 text-center min-w-[70px]">
-              <div className="text-xl sm:text-2xl font-bold text-white">{tools.filter(t => t.isFavorite).length}</div>
-              <div className="text-[11px] text-indigo-100/90">מועדפים</div>
+            <div className="rounded-xl sm:rounded-2xl bg-white/15 backdrop-blur px-3 sm:px-4 py-1.5 sm:py-2.5 text-center min-w-[56px] sm:min-w-[70px]">
+              <div className="text-lg sm:text-2xl font-bold text-white leading-tight">{tools.filter(t => t.isFavorite).length}</div>
+              <div className="text-[10px] sm:text-[11px] text-indigo-100/90">מועדפים</div>
             </div>
-            <div className="rounded-2xl bg-white/15 backdrop-blur px-4 py-2.5 text-center min-w-[70px] hidden sm:block">
-              <div className="text-xl sm:text-2xl font-bold text-white">{allCategories.length}</div>
-              <div className="text-[11px] text-indigo-100/90">קטגוריות</div>
+            <div className="rounded-xl sm:rounded-2xl bg-white/15 backdrop-blur px-3 sm:px-4 py-1.5 sm:py-2.5 text-center min-w-[56px] sm:min-w-[70px] hidden sm:block">
+              <div className="text-lg sm:text-2xl font-bold text-white leading-tight">{allCategories.length}</div>
+              <div className="text-[10px] sm:text-[11px] text-indigo-100/90">קטגוריות</div>
             </div>
           </div>
         </div>
       </div>
 
       {/* סרגל פעולות */}
-      <div className="text-right px-1 sm:px-0">
-        {/* סרגל פעולות נקי: CTA ראשי + פעולות משניות בתפריט אחד */}
+      <div className="text-right">
         {compareMode ? (
           <div className="flex items-center gap-2 rounded-2xl border border-green-200 dark:border-green-900 bg-green-50/60 dark:bg-green-950/30 p-2">
             <span className="text-xs font-medium text-green-700 dark:text-green-300 flex-1 pr-1">
@@ -516,10 +515,10 @@ export default function ToolsTab({ settings, initialFilter }) {
             </Button>
           </div>
         ) : (
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto scrollbar-hide pb-1">
             <Button
               onClick={() => { setEditingTool(null); setShowForm(true); }}
-              className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 shadow-lg"
+              className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 shadow-md shadow-indigo-500/20 flex-shrink-0"
               size="sm"
             >
               <Plus className="w-4 h-4 ml-1.5" />
@@ -530,26 +529,27 @@ export default function ToolsTab({ settings, initialFilter }) {
               variant={showRecommendations ? 'secondary' : 'outline'}
               onClick={() => setShowRecommendations(prev => !prev)}
               size="sm"
+              className="flex-shrink-0"
             >
               <Sparkles className="w-4 h-4 ml-1.5" />
               המלצות
             </Button>
 
-            <div className="flex-1" />
+            <div className="flex-1 min-w-[20px]" />
 
-            {/* פילטרים מתקדמים - נגיש ישירות */}
-            <AdvancedFilters
-              filters={advancedFilters}
-              onFiltersChange={setAdvancedFilters}
-              activeFiltersCount={activeAdvancedFiltersCount}
-              categories={allCategories}
-              tags={allTags}
-            />
+            <div className="flex-shrink-0">
+              <AdvancedFilters
+                filters={advancedFilters}
+                onFiltersChange={setAdvancedFilters}
+                activeFiltersCount={activeAdvancedFiltersCount}
+                categories={allCategories}
+                tags={allTags}
+              />
+            </div>
 
-            {/* כל שאר הפעולות בתפריט אחד מסודר */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" className="flex-shrink-0">
                   <SlidersHorizontal className="w-4 h-4 ml-1.5" />
                   פעולות
                 </Button>
@@ -583,14 +583,16 @@ export default function ToolsTab({ settings, initialFilter }) {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            {['grid', 'list', 'compact'].includes(viewMode) && <CardFieldsCustomizer />}
+            {['grid', 'list', 'compact'].includes(viewMode) && <div className="flex-shrink-0"><CardFieldsCustomizer /></div>}
 
-            <ShareLinkDialog tools={filteredAndSortedTools} />
+            <div className="flex-shrink-0"><ShareLinkDialog tools={filteredAndSortedTools} /></div>
 
-            <ExportImportDialog
-              tools={tools}
-              onImportComplete={() => queryClient.invalidateQueries(['tools'])}
-            />
+            <div className="flex-shrink-0">
+              <ExportImportDialog
+                tools={tools}
+                onImportComplete={() => queryClient.invalidateQueries(['tools'])}
+              />
+            </div>
 
             <input id="import-file" type="file" accept=".json" onChange={handleImport} className="hidden" />
           </div>

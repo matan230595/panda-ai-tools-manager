@@ -160,15 +160,15 @@ export default function SmartSearch({ onSearch, tools, quickFilters = [] }) {
   return (
     <div className="relative">
       <div className="relative">
-        <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+        <Search className="absolute right-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
         <Input
           type="search"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           onKeyPress={(e) => e.key === 'Enter' && handleSearch(searchTerm)}
           onFocus={() => setShowSuggestions(true)}
-          placeholder="חיפוש חכם - נסה 'כלי לעיצוב', 'כתיבת תוכן'..."
-          className="pr-10 pl-24"
+          placeholder="חיפוש חכם — נסה 'כלי לעיצוב', 'כתיבת תוכן'..."
+          className="h-12 pr-11 pl-24 text-base rounded-2xl bg-gray-50 dark:bg-slate-950 border-gray-200 dark:border-slate-800 focus-visible:ring-2 focus-visible:ring-indigo-500/60 focus-visible:border-indigo-400 transition-all"
         />
         <div className="absolute left-2 top-1/2 -translate-y-1/2 flex gap-1">
           {searchTerm && (
@@ -176,7 +176,8 @@ export default function SmartSearch({ onSearch, tools, quickFilters = [] }) {
               size="sm"
               variant="ghost"
               onClick={handleClear}
-              className="h-7 w-7 p-0"
+              className="h-9 w-9 p-0"
+              aria-label="נקה חיפוש"
             >
               <X className="w-4 h-4" />
             </Button>
@@ -185,7 +186,8 @@ export default function SmartSearch({ onSearch, tools, quickFilters = [] }) {
             size="sm"
             variant="ghost"
             onClick={handleVoiceSearch}
-            className={`h-7 w-7 p-0 ${isListening ? 'text-red-500 animate-pulse' : ''}`}
+            className={`h-9 w-9 p-0 ${isListening ? 'text-red-500 animate-pulse' : ''}`}
+            aria-label="חיפוש קולי"
           >
             <Mic className="w-4 h-4" />
           </Button>
