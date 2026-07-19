@@ -33,6 +33,7 @@ const COLUMNS = [
 
 export default function KanbanView({ tools, onEdit, onDelete, onToggleFavorite, onManageSubscription, onToolClick, onStatusChange }) {
   const [localTools, setLocalTools] = useState(tools);
+  const [isDraggingAny, setIsDraggingAny] = useState(false);
 
   useEffect(() => {
     setLocalTools(tools);
@@ -40,7 +41,12 @@ export default function KanbanView({ tools, onEdit, onDelete, onToggleFavorite, 
 
   const getStatus = (tool) => tool.operationalStatus || 'בבדיקה';
 
+  const handleDragStart = () => {
+    setIsDraggingAny(true);
+  };
+
   const handleDragEnd = (result) => {
+    setIsDraggingAny(false);
     if (!result.destination) return;
     const { source, destination, draggableId } = result;
     if (source.droppableId === destination.droppableId) return;
@@ -59,10 +65,14 @@ export default function KanbanView({ tools, onEdit, onDelete, onToggleFavorite, 
     onStatusChange?.(draggedTool.id, newStatus);
   };
 
-  const KanbanCard = ({ tool }) => (
+  const KanbanCard = ({ tool, isDragging }) => (
     <div
       className="glass-effect rounded-xl p-3 sm:p-4 hover:shadow-lg transition-all cursor-pointer min-w-0 border border-gray-200 dark:border-gray-700"
-      onClick={() => onToolClick?.(tool)}
+      onClick={() => {
+        // Don't open details if this was a drag gesture
+        if (isDragging || isDraggingAny) return;
+        onToolClick?.(tool);
+      }}
       dir="rtl"
     >
       <div className="flex items-start justify-between gap-2 mb-2 sm:mb-3">
@@ -155,7 +165,7 @@ export default function KanbanView({ tools, onEdit, onDelete, onToggleFavorite, 
   );
 
   return (
-    <DragDropContext onDragEnd={handleDragEnd}>
+    <DragDropContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       {/* מובייל: גלילה אופקית בין העמודות · דסקטופ: 3 עמודות */}
       <div className="flex gap-3 md:gap-6 overflow-x-auto pb-4 snap-x snap-mandatory md:grid md:grid-cols-3 md:overflow-visible scrollbar-hide" dir="rtl">
         {COLUMNS.map((column) => {
@@ -192,7 +202,7 @@ export default function KanbanView({ tools, onEdit, onDelete, onToggleFavorite, 
                             style={dragProvided.draggableProps.style}
                             className={dragSnapshot.isDragging ? 'opacity-80 rotate-1' : ''}
                           >
-                            <KanbanCard tool={tool} />
+                            <KanbanCard tool={tool} isDragging={dragSnapshot.isDragging} />
                           </div>
                         )}
                       </Draggable>
