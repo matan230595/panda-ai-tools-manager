@@ -8,6 +8,8 @@ import { Link } from 'react-router-dom';
 import SmartRecommendations from '@/components/recommendations/SmartRecommendations';
 import UpcomingRenewalsPanel from '@/components/subscription/UpcomingRenewalsPanel';
 import SubscriptionAlertsPanel from '@/components/dashboard/SubscriptionAlertsPanel';
+import Stat3DCard from '@/components/dashboard/Stat3DCard';
+import CostOptimizationPanel from '@/components/dashboard/CostOptimizationPanel';
 
 export default function Dashboard() {
   const { data: tools = [] } = useQuery({
@@ -99,12 +101,14 @@ export default function Dashboard() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 md:gap-4">
-        <StatCard title="סך הכלים" value={stats.totalTools} icon={<Package className="w-5 h-5" />} color="bg-blue-500" />
-        <StatCard title="עלות חודשית" value={`₪${stats.totalMonthlyCost.toLocaleString('he-IL')}`} icon={<DollarSign className="w-5 h-5" />} color="bg-red-500" />
-        <StatCard title="עם מנוי" value={stats.toolsWithSubscription} icon={<Calendar className="w-5 h-5" />} color="bg-purple-500" />
-        <StatCard title="כלים עם משימות" value={stats.toolsWithTasks} icon={<AlertCircle className="w-5 h-5" />} color="bg-orange-500" />
-        <StatCard title="דירוג ממוצע" value={stats.averageRating} icon={<TrendingUp className="w-5 h-5" />} color="bg-green-500" />
+        <Stat3DCard title="סך הכלים" value={stats.totalTools} icon={<Package className="w-5 h-5" />} gradient="from-blue-500 to-cyan-500" delay={0} />
+        <Stat3DCard title="עלות חודשית" value={`₪${stats.totalMonthlyCost.toLocaleString('he-IL')}`} icon={<DollarSign className="w-5 h-5" />} gradient="from-rose-500 to-red-600" delay={70} />
+        <Stat3DCard title="עם מנוי" value={stats.toolsWithSubscription} icon={<Calendar className="w-5 h-5" />} gradient="from-violet-500 to-purple-600" delay={140} />
+        <Stat3DCard title="כלים עם משימות" value={stats.toolsWithTasks} icon={<AlertCircle className="w-5 h-5" />} gradient="from-amber-500 to-orange-600" delay={210} />
+        <Stat3DCard title="דירוג ממוצע" value={stats.averageRating} icon={<TrendingUp className="w-5 h-5" />} gradient="from-emerald-500 to-green-600" delay={280} />
       </div>
+
+      <CostOptimizationPanel tools={tools} />
 
       <SubscriptionAlertsPanel subscriptions={subscriptions} reminders={reminders} />
       <UpcomingRenewalsPanel subscriptions={subscriptions} tools={tools} limit={6} />
@@ -209,18 +213,6 @@ export default function Dashboard() {
           </div>
         </div>
       )}
-    </div>
-  );
-}
-
-function StatCard({ title, value, icon, color }) {
-  return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl p-3 md:p-4 border border-gray-200 dark:border-gray-700">
-      <div className={`${color} w-8 sm:w-9 md:w-10 h-8 sm:h-9 md:h-10 rounded-lg flex items-center justify-center text-white mb-2 sm:mb-3`}>
-        <span className="text-sm sm:text-base">{icon}</span>
-      </div>
-      <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-1">{title}</p>
-      <p className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white">{value}</p>
     </div>
   );
 }
