@@ -89,7 +89,7 @@ export default function TabNavigation({ activeTab, onTabChange }) {
 
   return (
     <>
-      <aside className={`hidden md:flex fixed top-0 right-0 h-screen z-50 border-l border-gray-200 dark:border-slate-800 bg-white/96 dark:bg-slate-950/96 backdrop-blur-xl flex-col transition-all duration-300 py-3 px-12 ${collapsed ? 'w-[5.75rem]' : 'w-[19rem]'}`} dir="rtl">
+      <aside className={`hidden md:flex fixed top-0 right-0 h-screen z-50 border-l border-gray-200 dark:border-slate-800 bg-white/96 dark:bg-slate-950/96 backdrop-blur-xl flex-col transition-all duration-300 px-1 py-2 ${collapsed ? 'w-[5.75rem]' : 'w-[19rem]'}`} dir="rtl">
         <div className={`flex items-center gap-3 rounded-3xl border border-gray-200 dark:border-slate-800 p-2.5 mb-3 bg-slate-50/80 dark:bg-slate-900/80 ${collapsed ? 'justify-center' : ''}`}>
           <div className="w-11 h-11 rounded-2xl overflow-hidden flex items-center justify-center bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30 flex-shrink-0">
             {userLogo ? <img src={userLogo} alt="Logo" className="w-full h-full object-contain" /> : <Sparkles className="w-6 h-6 text-indigo-500" />}
