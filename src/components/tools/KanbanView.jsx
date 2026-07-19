@@ -1,56 +1,76 @@
-import React, { useEffect, useState } from 'react';
-import { Star, ExternalLink, Edit, Trash2, Key } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Star, ExternalLink, Edit, Trash2, Key, FlaskConical, CheckCircle2, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ToolLogo from '@/components/ToolLogo';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 
-export default function KanbanView({ tools, onEdit, onDelete, onToggleFavorite, onManageSubscription, onToolClick }) {
+const COLUMNS = [
+  {
+    id: 'בבדיקה',
+    title: 'בבדיקה',
+    Icon: FlaskConical,
+    color: 'from-amber-500 to-orange-500',
+    ring: 'border-amber-300 dark:border-amber-800',
+    dropBg: 'bg-amber-50/70 dark:bg-amber-900/20',
+  },
+  {
+    id: 'בשימוש',
+    title: 'בשימוש',
+    Icon: CheckCircle2,
+    color: 'from-emerald-500 to-green-600',
+    ring: 'border-emerald-300 dark:border-emerald-800',
+    dropBg: 'bg-emerald-50/70 dark:bg-emerald-900/20',
+  },
+  {
+    id: 'לביטול',
+    title: 'לביטול',
+    Icon: XCircle,
+    color: 'from-rose-500 to-red-600',
+    ring: 'border-rose-300 dark:border-rose-800',
+    dropBg: 'bg-rose-50/70 dark:bg-rose-900/20',
+  },
+];
+
+export default function KanbanView({ tools, onEdit, onDelete, onToggleFavorite, onManageSubscription, onToolClick, onStatusChange }) {
   const [localTools, setLocalTools] = useState(tools);
-  React.useEffect(() => {
+
+  useEffect(() => {
     setLocalTools(tools);
   }, [tools]);
 
-  // חלוקה לפי סטטוס מנוי
-  const freeTools = localTools.filter(t => t.subscriptionType === 'חינמי');
-  const premiumTools = localTools.filter(t => t.subscriptionType === 'פרימיום');
-  const goldTools = localTools.filter(t => t.subscriptionType === 'גולד');
+  const getStatus = (tool) => tool.operationalStatus || 'בבדיקה';
 
   const handleDragEnd = (result) => {
     if (!result.destination) return;
-
     const { source, destination, draggableId } = result;
-    if (source.droppableId === destination.droppableId && source.index === destination.index) return;
+    if (source.droppableId === destination.droppableId) return;
 
     const draggedTool = localTools.find((t) => t.id === draggableId);
     if (!draggedTool) return;
 
-    const updatedTool = {
-      ...draggedTool,
-      subscriptionType: destination.droppableId === 'free' ? 'חינמי' : destination.droppableId === 'premium' ? 'פרימיום' : 'גולד'
-    };
+    const newStatus = destination.droppableId;
 
-    setLocalTools((prev) => prev.map((tool) => tool.id === draggableId ? updatedTool : tool));
-  
-    onEdit(updatedTool);
+    // עדכון אופטימי מיידי בממשק
+    setLocalTools((prev) =>
+      prev.map((tool) => (tool.id === draggableId ? { ...tool, operationalStatus: newStatus } : tool))
+    );
+
+    // שמירה בשרת — רק השדה שהשתנה כדי לא לדרוס מידע אחר
+    onStatusChange?.(draggedTool.id, newStatus);
   };
 
-  const columns = [
-    { title: '🆓 חינמי', tools: freeTools, color: 'from-green-500 to-emerald-600' },
-    { title: '⭐ פרימיום', tools: premiumTools, color: 'from-indigo-500 to-purple-600' },
-    { title: '👑 גולד', tools: goldTools, color: 'from-yellow-500 to-orange-600' },
-  ];
-
   const KanbanCard = ({ tool }) => (
-    <div 
-      className="glass-effect rounded-xl p-4 hover:shadow-lg transition-all cursor-pointer min-w-0"
+    <div
+      className="glass-effect rounded-xl p-3 sm:p-4 hover:shadow-lg transition-all cursor-pointer min-w-0 border border-gray-200 dark:border-gray-700"
       onClick={() => onToolClick?.(tool)}
+      dir="rtl"
     >
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center gap-3">
+      <div className="flex items-start justify-between gap-2 mb-2 sm:mb-3">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <ToolLogo tool={tool} size="sm" />
-          <div className="flex-1 min-w-0">
-            <h4 className="font-semibold text-gray-900 dark:text-white truncate">{tool.name}</h4>
-            <p className="text-xs text-gray-500 dark:text-gray-400">{tool.category?.replace(/_/g, ' ')}</p>
+          <div className="flex-1 min-w-0 text-right">
+            <h4 className="font-semibold text-sm sm:text-base text-gray-900 dark:text-white truncate">{tool.name}</h4>
+            <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{tool.category?.replace(/_/g, ' ')}</p>
           </div>
         </div>
         <button
@@ -58,28 +78,30 @@ export default function KanbanView({ tools, onEdit, onDelete, onToggleFavorite, 
             e.stopPropagation();
             onToggleFavorite(tool);
           }}
-          className="flex-shrink-0"
+          className="flex-shrink-0 p-1 -m-1"
+          aria-label={tool.isFavorite ? 'הסר ממועדפים' : 'הוסף למועדפים'}
         >
           <Star className={`w-4 h-4 ${tool.isFavorite ? 'fill-yellow-400 text-yellow-400' : 'text-gray-400'}`} />
         </button>
       </div>
 
       {tool.description && (
-        <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-3">
+        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-3 text-right break-words">
           {tool.description}
         </p>
       )}
 
-      <div className="flex items-center justify-between pt-3 border-t border-gray-200 dark:border-gray-700">
-        <div className="flex gap-1">
+      <div className="flex items-center justify-between pt-2 sm:pt-3 border-t border-gray-200 dark:border-gray-700 gap-1">
+        <div className="flex gap-0.5 sm:gap-1">
           <Button
             size="sm"
             variant="ghost"
             onClick={(e) => {
               e.stopPropagation();
-              window.open(tool.url, '_blank');
+              window.open(tool.url, '_blank', 'noopener,noreferrer');
             }}
-            className="h-9 w-9 p-0 min-h-[44px] min-w-[44px]"
+            className="h-9 w-9 p-0 touch-target"
+            aria-label="פתח באתר"
           >
             <ExternalLink className="w-3.5 h-3.5" />
           </Button>
@@ -90,20 +112,10 @@ export default function KanbanView({ tools, onEdit, onDelete, onToggleFavorite, 
               e.stopPropagation();
               onEdit(tool);
             }}
-            className="h-9 w-9 p-0 min-h-[44px] min-w-[44px]"
+            className="h-9 w-9 p-0 touch-target"
+            aria-label="עריכה"
           >
             <Edit className="w-3.5 h-3.5" />
-          </Button>
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={(e) => {
-              e.stopPropagation();
-              onDelete(tool);
-            }}
-            className="h-7 w-7 p-0 text-red-600"
-          >
-            <Trash2 className="w-3.5 h-3.5" />
           </Button>
           {tool.hasSubscription && (
             <Button
@@ -113,14 +125,27 @@ export default function KanbanView({ tools, onEdit, onDelete, onToggleFavorite, 
                 e.stopPropagation();
                 onManageSubscription(tool);
               }}
-              className="h-7 w-7 p-0 text-blue-600"
+              className="h-9 w-9 p-0 touch-target text-blue-600"
+              aria-label="ניהול מנוי"
             >
               <Key className="w-3.5 h-3.5" />
             </Button>
           )}
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete(tool);
+            }}
+            className="h-9 w-9 p-0 touch-target text-red-600"
+            aria-label="מחיקה"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+          </Button>
         </div>
         {tool.rating > 0 && (
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 flex-shrink-0">
             <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
             <span className="text-xs font-medium">{tool.rating}</span>
           </div>
@@ -131,33 +156,41 @@ export default function KanbanView({ tools, onEdit, onDelete, onToggleFavorite, 
 
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 md:gap-6">
-        {columns.map((column, colIdx) => {
-          const droppableId = colIdx === 0 ? 'free' : colIdx === 1 ? 'premium' : 'gold';
+      {/* מובייל: גלילה אופקית בין העמודות · דסקטופ: 3 עמודות */}
+      <div className="flex gap-3 md:gap-6 overflow-x-auto pb-4 snap-x snap-mandatory md:grid md:grid-cols-3 md:overflow-visible scrollbar-hide" dir="rtl">
+        {COLUMNS.map((column) => {
+          const columnTools = localTools.filter((t) => getStatus(t) === column.id);
+          const ColIcon = column.Icon;
           return (
-            <div key={column.title} className="flex flex-col min-w-0">
-              <div className={`bg-gradient-to-r ${column.color} text-white rounded-xl p-4 mb-4 sticky top-20 md:top-24 z-10`}>
-                <h3 className="font-bold text-base md:text-lg">{column.title}</h3>
-                <p className="text-sm opacity-90">{column.tools.length} כלים</p>
+            <div
+              key={column.id}
+              className="flex flex-col min-w-[80vw] sm:min-w-[55vw] md:min-w-0 snap-start"
+            >
+              <div className={`bg-gradient-to-l ${column.color} text-white rounded-xl p-3 sm:p-4 mb-3 sm:mb-4 sticky top-16 md:top-24 z-10 shadow-md`}>
+                <div className="flex items-center gap-2">
+                  <ColIcon className="w-5 h-5" />
+                  <h3 className="font-bold text-base md:text-lg">{column.title}</h3>
+                </div>
+                <p className="text-xs sm:text-sm opacity-90 mt-0.5">{columnTools.length} כלים</p>
               </div>
-              <Droppable droppableId={droppableId}>
+              <Droppable droppableId={column.id}>
                 {(provided, snapshot) => (
                   <div
                     ref={provided.innerRef}
                     {...provided.droppableProps}
-                    className={`space-y-3 flex-1 p-2 rounded-lg transition-colors ${
-                      snapshot.isDraggingOver ? 'bg-blue-50 dark:bg-blue-900/20' : ''
+                    className={`space-y-3 flex-1 p-2 rounded-2xl border-2 border-dashed transition-colors min-h-[120px] ${
+                      snapshot.isDraggingOver ? `${column.dropBg} ${column.ring}` : 'border-transparent'
                     }`}
                   >
-                    {column.tools.map((tool, index) => (
+                    {columnTools.map((tool, index) => (
                       <Draggable key={tool.id} draggableId={tool.id} index={index}>
-                        {(provided, snapshot) => (
+                        {(dragProvided, dragSnapshot) => (
                           <div
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            style={provided.draggableProps.style}
-                            className={snapshot.isDragging ? 'opacity-70 rotate-2' : ''}
+                            ref={dragProvided.innerRef}
+                            {...dragProvided.draggableProps}
+                            {...dragProvided.dragHandleProps}
+                            style={dragProvided.draggableProps.style}
+                            className={dragSnapshot.isDragging ? 'opacity-80 rotate-1' : ''}
                           >
                             <KanbanCard tool={tool} />
                           </div>
@@ -165,9 +198,9 @@ export default function KanbanView({ tools, onEdit, onDelete, onToggleFavorite, 
                       </Draggable>
                     ))}
                     {provided.placeholder}
-                    {column.tools.length === 0 && (
-                      <p className="text-center text-gray-400 dark:text-gray-600 py-8">
-                        {snapshot.isDraggingOver ? 'שחרר כאן' : 'אין כלים בקטגוריה זו'}
+                    {columnTools.length === 0 && (
+                      <p className="text-center text-gray-400 dark:text-gray-600 py-8 text-sm">
+                        {snapshot.isDraggingOver ? 'שחרר כאן' : 'גרור כלים לכאן'}
                       </p>
                     )}
                   </div>

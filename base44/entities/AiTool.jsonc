@@ -47,6 +47,16 @@
       "default": "\u05d7\u05d9\u05e0\u05de\u05d9",
       "description": "\u05e1\u05d5\u05d2 \u05d4\u05de\u05e0\u05d5\u05d9"
     },
+    "operationalStatus": {
+      "type": "string",
+      "enum": [
+        "\u05d1\u05d1\u05d3\u05d9\u05e7\u05d4",
+        "\u05d1\u05e9\u05d9\u05de\u05d5\u05e9",
+        "\u05dc\u05d1\u05d9\u05d8\u05d5\u05dc"
+      ],
+      "default": "\u05d1\u05d1\u05d3\u05d9\u05e7\u05d4",
+      "description": "\u05e1\u05d8\u05d8\u05d5\u05e1 \u05ea\u05e4\u05e2\u05d5\u05dc\u05d9 \u05e9\u05dc \u05d4\u05db\u05dc\u05d9 \u05d1\u05dc\u05d5\u05d7 \u05d4\u05e7\u05e0\u05d1\u05df"
+    },
     "subscriptionPlans": {
       "type": "array",
       "items": {

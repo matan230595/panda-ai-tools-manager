@@ -63,9 +63,37 @@ export function useSmartNotifications(settings, queryClient) {
     const user = await getCurrentUser();
     const subscriptions = await base44.entities.Subscription.filter({ created_by_id: user.id });
     const toolTasks = await base44.entities.ToolTask.filter({ created_by_id: user.id }).catch(() => []);
+    const tools = await base44.entities.AiTool.filter({ created_by_id: user.id }).catch(() => []);
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+
+    // התראה על כלי חדש בקטגוריה שאני עוקב אחריה
+    // "קטגוריה שאני עוקב אחריה" = קטגוריה שכבר יש בה לפחות כלי אחד ותיק
+    const threeDaysAgo = Date.now() - 3 * 24 * 60 * 60 * 1000;
+    const followedCategories = new Set();
+    const categoryCounts = {};
+    tools.forEach((t) => {
+      const cat = t.customCategory || t.category;
+      if (!cat) return;
+      categoryCounts[cat] = (categoryCounts[cat] || 0) + 1;
+    });
+    Object.keys(categoryCounts).forEach((cat) => {
+      if (categoryCounts[cat] >= 2) followedCategories.add(cat);
+    });
+
+    for (const tool of tools) {
+      const cat = tool.customCategory || tool.category;
+      const createdTime = new Date(tool.created_date).getTime();
+      const isNew = createdTime > threeDaysAgo;
+      if (isNew && followedCategories.has(cat)) {
+        await addNotification({
+          title: '✨ כלי חדש בקטגוריה שאתה עוקב אחריה',
+          message: `הכלי "${tool.name}" נוסף לקטגוריה "${cat?.replace(/_/g, ' ')}".`,
+          type: 'info',
+        });
+      }
+    }
 
     for (const sub of subscriptions.filter((item) => item.isActive && item.renewalDate)) {
       const renewalDate = new Date(`${sub.renewalDate}T00:00:00`);

@@ -117,19 +117,6 @@ export default function ToolsTab({ settings, initialFilter }) {
       toast.success(`🌟 כלי פופולרי חדש: ${popularNew[0].name}`);
       sessionStorage.setItem(`notified-popular-${popularNew[0].id}`, 'true');
     }
-
-    // התראה על כלים חדשים בקטגוריה שאתה משתמש בה
-    const toolsByCategory = {};
-    tools.forEach(t => {
-      if (!toolsByCategory[t.category]) toolsByCategory[t.category] = [];
-      toolsByCategory[t.category].push(t);
-    });
-    
-    const categoriesWithTools = Object.keys(toolsByCategory).filter(cat => toolsByCategory[cat].length > 3);
-    if (categoriesWithTools.length > 0 && !sessionStorage.getItem('notified-category')) {
-      toast.info(`📊 יש לך ${categoriesWithTools.length} קטגוריות עם כלים רבים`);
-      sessionStorage.setItem('notified-category', 'true');
-    }
   }, [tools, appSettings?.enableNotifications]);
 
   // החל פילטר ראשוני
@@ -380,6 +367,17 @@ export default function ToolsTab({ settings, initialFilter }) {
     toast.success('הכלי עודכן');
   };
 
+  const handleKanbanStatusChange = async (toolId, operationalStatus) => {
+    try {
+      await base44.entities.AiTool.update(toolId, { operationalStatus });
+      queryClient.invalidateQueries(['tools']);
+      toast.success(`הכלי הועבר ל"${operationalStatus}"`);
+    } catch {
+      toast.error('שגיאה בעדכון הסטטוס');
+      queryClient.invalidateQueries(['tools']);
+    }
+  };
+
   const handleMergeTools = async (primaryTool, duplicateTool, resolvedDescription) => {
     const mergedFeatures = [...new Set([...(primaryTool.features || []), ...(duplicateTool.features || [])])];
     const mergedTags = [...new Set([...(primaryTool.tags || []), ...(duplicateTool.tags || [])])];
@@ -619,6 +617,7 @@ export default function ToolsTab({ settings, initialFilter }) {
           onToggleFavorite={handleToggleFavorite}
           onManageSubscription={setManagingSubscription}
           onToolClick={setSelectedTool}
+          onStatusChange={handleKanbanStatusChange}
         />
       ) : (
         <div className={gridClasses[viewMode]}>
