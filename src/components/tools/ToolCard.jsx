@@ -47,6 +47,20 @@ export default function ToolCard({
     'פרימיום_מוגבל': 'bg-orange-500',
   };
 
+  const categoryBarColors = {
+    'עיבוד_שפה': 'from-blue-500 to-blue-400',
+    'יצירת_תמונות': 'from-purple-500 to-fuchsia-400',
+    'וידאו': 'from-pink-500 to-rose-400',
+    'קוד': 'from-green-500 to-emerald-400',
+    'עיצוב': 'from-orange-500 to-amber-400',
+    'מחקר': 'from-cyan-500 to-sky-400',
+    'פרודוקטיביות': 'from-indigo-500 to-violet-400',
+    'אוטומציה': 'from-yellow-500 to-amber-400',
+    'אנליטיקה': 'from-teal-500 to-cyan-400',
+    'שיווק': 'from-rose-500 to-pink-400',
+    'אחר': 'from-gray-400 to-gray-300',
+  };
+
   const handleVisit = () => {
     window.open(tool.url, '_blank', 'noopener,noreferrer');
   };
@@ -76,6 +90,12 @@ export default function ToolCard({
         onClick?.(tool);
       }}
     >
+      {/* פס צבע קטגוריה עליון */}
+      <div className={`absolute top-0 right-0 left-0 h-1 bg-gradient-to-l ${categoryBarColors[tool.category] || categoryBarColors['אחר']}`} />
+
+      {/* זוהר עדין ב-hover */}
+      <div className="absolute -top-20 -left-20 w-40 h-40 rounded-full bg-indigo-400/0 group-hover:bg-indigo-400/10 blur-3xl transition-all duration-500 pointer-events-none" />
+
       {/* Drag Handle */}
       <div 
         {...dragHandleProps}

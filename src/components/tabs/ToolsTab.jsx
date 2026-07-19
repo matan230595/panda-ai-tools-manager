@@ -438,22 +438,41 @@ export default function ToolsTab({ settings, initialFilter }) {
 
   return (
     <div className="space-y-3 sm:space-y-4 md:space-y-6">
-      {/* כותרת ראשית */}
+      {/* באנר ראש עמוד מעוצב */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 via-purple-600 to-fuchsia-600 p-5 sm:p-6 md:p-8 shadow-xl">
+        <div className="absolute -top-16 -left-16 w-56 h-56 rounded-full bg-white/10 blur-2xl pointer-events-none" />
+        <div className="absolute -bottom-20 -right-10 w-64 h-64 rounded-full bg-white/10 blur-3xl pointer-events-none" />
+        <div className="relative flex flex-col sm:flex-row sm:items-center gap-4 text-right" dir="rtl">
+          {userLogo && (
+            <img src={userLogo} alt={appName} className="w-12 sm:w-14 md:w-16 h-12 sm:h-14 md:h-16 object-contain rounded-2xl bg-white/15 backdrop-blur p-1.5 flex-shrink-0" />
+          )}
+          <div className="min-w-0 flex-1">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-1 break-words drop-shadow-sm">
+              כלי AI שלי
+            </h1>
+            <p className="text-sm md:text-base text-indigo-100/90">
+              נהל את כל כלי ה-AI שלך במקום אחד
+            </p>
+          </div>
+          <div className="flex gap-3 sm:gap-4 flex-shrink-0">
+            <div className="rounded-2xl bg-white/15 backdrop-blur px-4 py-2.5 text-center min-w-[70px]">
+              <div className="text-xl sm:text-2xl font-bold text-white">{tools.length}</div>
+              <div className="text-[11px] text-indigo-100/90">כלים</div>
+            </div>
+            <div className="rounded-2xl bg-white/15 backdrop-blur px-4 py-2.5 text-center min-w-[70px]">
+              <div className="text-xl sm:text-2xl font-bold text-white">{tools.filter(t => t.isFavorite).length}</div>
+              <div className="text-[11px] text-indigo-100/90">מועדפים</div>
+            </div>
+            <div className="rounded-2xl bg-white/15 backdrop-blur px-4 py-2.5 text-center min-w-[70px] hidden sm:block">
+              <div className="text-xl sm:text-2xl font-bold text-white">{allCategories.length}</div>
+              <div className="text-[11px] text-indigo-100/90">קטגוריות</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* סרגל פעולות */}
       <div className="text-right px-1 sm:px-0">
-         <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3 mb-1.5 sm:mb-2 md:mb-3">
-           {userLogo && (
-             <img src={userLogo} alt={appName} className="w-8 sm:w-10 md:w-12 lg:w-14 h-8 sm:h-10 md:h-12 lg:h-14 object-contain flex-shrink-0" />
-           )}
-           <div className="min-w-0 flex-1">
-             <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold gradient-text mb-0.5 md:mb-1 break-words">
-               כלי AI שלי
-             </h1>
-           </div>
-         </div>
-         <p className="text-xs sm:text-xs md:text-sm text-gray-600 dark:text-gray-400 mb-2 sm:mb-3 md:mb-4">
-           נהל את כל כלי ה-AI שלך במקום אחד
-         </p>
-        
         {/* סרגל פעולות נקי: CTA ראשי + פעולות משניות בתפריט אחד */}
         {compareMode ? (
           <div className="flex items-center gap-2 rounded-2xl border border-green-200 dark:border-green-900 bg-green-50/60 dark:bg-green-950/30 p-2">
