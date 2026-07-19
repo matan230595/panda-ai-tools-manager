@@ -438,23 +438,26 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
               </div>
             </TabsContent>
           </Tabs>
-        </div>
 
-        {/* כלים דומים */}
-        <details className="border-t border-gray-200 dark:border-gray-700">
-          <summary className="p-6 font-bold text-lg cursor-pointer flex items-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-800">
-            <Sparkles className="w-5 h-5 text-purple-500" />
-            כלים דומים והמלצות
-          </summary>
-          <div className="p-6 bg-gray-50 dark:bg-gray-800/50">
-            <SimilarTools 
+          {/* כלים דומים */}
+          <div className="mt-8 rounded-3xl border border-purple-200 dark:border-purple-900/60 bg-gradient-to-br from-purple-50 via-white to-pink-50 dark:from-purple-950/20 dark:via-gray-900 dark:to-pink-950/20 p-4 md:p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center shadow-md">
+                <Sparkles className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h3 className="font-bold text-lg leading-tight">כלים דומים והמלצות</h3>
+                <p className="text-xs text-gray-500">גלה כלים דומים מהמערכת שלך או מהרשת</p>
+              </div>
+            </div>
+            <SimilarTools
               currentTool={tool}
               onSelectTool={() => {
                 onClose();
               }}
             />
           </div>
-        </details>
+        </div>
       </div>
     </div>
   );

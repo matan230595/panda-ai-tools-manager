@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { getCurrentUser } from '@/components/hooks/userScopedData';
-import { Sparkles, Loader2, ExternalLink, Globe } from 'lucide-react';
+import { Sparkles, Loader2, ExternalLink, Globe, ArrowLeft, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import ToolLogo from '@/components/ToolLogo';
@@ -14,6 +13,7 @@ export default function SimilarTools({ currentTool, onSelectTool }) {
   const [isSearchingExternal, setIsSearchingExternal] = useState(false);
   const [similarTools, setSimilarTools] = useState([]);
   const [externalTools, setExternalTools] = useState([]);
+  const resultsRef = useRef(null);
 
   const { data: allTools = [] } = useQuery({
     queryKey: ['tools'],
@@ -23,19 +23,30 @@ export default function SimilarTools({ currentTool, onSelectTool }) {
     },
   });
 
+  // גלילה אוטומטית לתוצאות ברגע שהן מופיעות
+  useEffect(() => {
+    if ((similarTools.length > 0 || externalTools.length > 0) && resultsRef.current) {
+      resultsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [similarTools, externalTools]);
+
   const findSimilarTools = async () => {
     setIsSearching(true);
     try {
-      // סינון ראשוני בצד הלקוח
       const candidateTools = allTools
         .filter(t => t.id !== currentTool.id)
-        .filter(t => 
+        .filter(t =>
           t.category === currentTool.category ||
           t.tags?.some(tag => currentTool.tags?.includes(tag)) ||
           t.pricing === currentTool.pricing
         );
 
-      // שימוש ב-AI למיון והמלצה
+      if (candidateTools.length === 0) {
+        setSimilarTools([]);
+        toast.info('לא נמצאו כלים דומים אצלך — נסה לחפש כלים חדשים מחוץ למערכת');
+        return;
+      }
+
       const prompt = `
 אתה מומחה לכלי AI. יש לי את הכלי הבא:
 
@@ -91,14 +102,17 @@ ${i + 1}. ${t.name}
         }
       });
 
-      // שיוך הכלים המומלצים מהרשימה המקורית
-      const recommended = response.recommendations.map(rec => {
+      const recommended = (response.recommendations || []).map(rec => {
         const tool = allTools.find(t => t.name === rec.toolName);
         return tool ? { ...tool, similarityScore: rec.similarityScore, reason: rec.reason } : null;
       }).filter(Boolean);
 
       setSimilarTools(recommended);
-      toast.success(`נמצאו ${recommended.length} כלים דומים! 🎯`);
+      if (recommended.length > 0) {
+        toast.success(`נמצאו ${recommended.length} כלים דומים! 🎯`);
+      } else {
+        toast.info('לא נמצאו כלים דומים מספיק אצלך');
+      }
     } catch (error) {
       console.error('Error finding similar tools:', error);
       toast.error('שגיאה בחיפוש כלים דומים');
@@ -170,25 +184,21 @@ ${existingNames}
     }
   };
 
+  const hasResults = similarTools.length > 0 || externalTools.length > 0;
+
   return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap gap-3 justify-center py-2">
+    <div className="space-y-5" dir="rtl">
+      <div className="flex flex-col sm:flex-row gap-3 justify-center">
         <Button
           onClick={findSimilarTools}
           disabled={isSearching}
-          className="bg-gradient-to-r from-purple-500 to-pink-600"
+          className="bg-gradient-to-l from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 shadow-lg shadow-purple-500/20 flex-1"
           size="lg"
         >
           {isSearching ? (
-            <>
-              <Loader2 className="w-5 h-5 ml-2 animate-spin" />
-              מחפש במערכת...
-            </>
+            <><Loader2 className="w-5 h-5 ml-2 animate-spin" /> מחפש במערכת...</>
           ) : (
-            <>
-              <Sparkles className="w-5 h-5 ml-2" />
-              מצא כלים דומים אצלי
-            </>
+            <><Sparkles className="w-5 h-5 ml-2" /> מצא כלים דומים אצלי</>
           )}
         </Button>
 
@@ -197,90 +207,111 @@ ${existingNames}
           disabled={isSearchingExternal}
           variant="outline"
           size="lg"
+          className="flex-1"
         >
           {isSearchingExternal ? (
-            <>
-              <Loader2 className="w-5 h-5 ml-2 animate-spin" />
-              מחפש ברשת...
-            </>
+            <><Loader2 className="w-5 h-5 ml-2 animate-spin" /> מחפש ברשת...</>
           ) : (
-            <>
-              <Globe className="w-5 h-5 ml-2" />
-              מצא כלים דומים שאין לי
-            </>
+            <><Globe className="w-5 h-5 ml-2" /> מצא כלים דומים שאין לי</>
           )}
         </Button>
       </div>
 
-      <p className="text-sm text-gray-500 text-center">אפשר לחפש גם כלים דומים שכבר שמורים אצלך וגם כלים חדשים מחוץ למערכת.</p>
+      {!hasResults && (
+        <p className="text-sm text-gray-500 text-center">
+          אפשר לחפש גם כלים דומים שכבר שמורים אצלך וגם כלים חדשים מחוץ למערכת.
+        </p>
+      )}
 
-      {similarTools.length > 0 && (
-        <div className="space-y-3">
-          <div className="font-semibold text-sm text-gray-700 dark:text-gray-300">כלים דומים שכבר קיימים אצלך</div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {similarTools.map(tool => (
-              <Card key={tool.id} className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => onSelectTool?.(tool)}>
-                <CardHeader>
-                  <div className="flex items-start gap-3">
+      <div ref={resultsRef} className="scroll-mt-4 space-y-6">
+        {similarTools.length > 0 && (
+          <div className="space-y-3 animate-slide-in">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-xl bg-purple-100 dark:bg-purple-900/40 flex items-center justify-center">
+                <Sparkles className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+              </div>
+              <h4 className="font-bold text-base text-gray-800 dark:text-gray-100">
+                כלים דומים שכבר קיימים אצלך
+                <span className="mr-2 text-sm font-normal text-gray-500">({similarTools.length})</span>
+              </h4>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {similarTools.map((tool, idx) => (
+                <button
+                  key={tool.id}
+                  onClick={() => onSelectTool?.(tool)}
+                  style={{ animationDelay: `${idx * 60}ms` }}
+                  className="group text-right rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:border-purple-300 dark:hover:border-purple-700 animate-slide-in overflow-hidden"
+                >
+                  <div className="flex items-start gap-3 mb-2">
                     <ToolLogo tool={tool} size="sm" />
-                    <div className="flex-1">
-                      <CardTitle className="text-base">{tool.name}</CardTitle>
-                      <CardDescription className="text-xs">{tool.category}</CardDescription>
+                    <div className="flex-1 min-w-0">
+                      <div className="font-bold text-gray-900 dark:text-white truncate">{tool.name}</div>
+                      <div className="text-xs text-gray-500 truncate">{tool.category?.replace(/_/g, ' ')}</div>
                     </div>
-                    <Badge variant="outline" className="text-xs">
+                    <Badge className="bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300 border-0 flex-shrink-0">
                       {tool.similarityScore}% דומה
                     </Badge>
                   </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">{tool.reason}</p>
-                  <div className="flex items-center justify-between">
-                    <Badge className="text-xs">{tool.pricing}</Badge>
-                    {tool.rating > 0 && (
-                      <span className="text-xs text-yellow-600">⭐ {tool.rating}</span>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {externalTools.length > 0 && (
-        <div className="space-y-3">
-          <div className="font-semibold text-sm text-gray-700 dark:text-gray-300">כלים דומים חדשים שלא קיימים עדיין אצלך</div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {externalTools.map((tool, index) => (
-              <Card key={`${tool.name}-${index}`} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex-1">
-                      <CardTitle className="text-base">{tool.name}</CardTitle>
-                      <CardDescription className="text-xs mt-1">{tool.description}</CardDescription>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 leading-6 mb-3">{tool.reason}</p>
+                  <div className="flex items-center justify-between pt-2 border-t border-gray-100 dark:border-gray-800">
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="text-xs">{tool.pricing}</Badge>
+                      {tool.rating > 0 && (
+                        <span className="flex items-center gap-0.5 text-xs text-amber-500">
+                          <Star className="w-3.5 h-3.5 fill-current" /> {tool.rating}
+                        </span>
+                      )}
                     </div>
-                    <Badge variant="outline" className="text-xs">חדש</Badge>
+                    <span className="flex items-center gap-1 text-xs font-medium text-purple-600 dark:text-purple-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                      פתח כלי <ArrowLeft className="w-3.5 h-3.5" />
+                    </span>
                   </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">{tool.reason}</p>
-                  <div className="flex items-center justify-between gap-2">
-                    <Badge className="text-xs">{tool.pricing}</Badge>
-                    <Button size="sm" variant="outline" onClick={() => window.open(tool.url, '_blank')}>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {externalTools.length > 0 && (
+          <div className="space-y-3 animate-slide-in">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-xl bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center">
+                <Globe className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              </div>
+              <h4 className="font-bold text-base text-gray-800 dark:text-gray-100">
+                כלים דומים חדשים שלא קיימים עדיין אצלך
+                <span className="mr-2 text-sm font-normal text-gray-500">({externalTools.length})</span>
+              </h4>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {externalTools.map((tool, index) => (
+                <div
+                  key={`${tool.name}-${index}`}
+                  style={{ animationDelay: `${index * 60}ms` }}
+                  className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:border-blue-300 dark:hover:border-blue-700 animate-slide-in text-right"
+                >
+                  <div className="flex items-start justify-between gap-3 mb-2">
+                    <div className="flex-1 min-w-0">
+                      <div className="font-bold text-gray-900 dark:text-white truncate">{tool.name}</div>
+                      <p className="text-xs text-gray-500 line-clamp-1 mt-0.5">{tool.description}</p>
+                    </div>
+                    <Badge className="bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 border-0 flex-shrink-0">חדש</Badge>
+                  </div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 leading-6 mb-3">{tool.reason}</p>
+                  <div className="flex items-center justify-between gap-2 pt-2 border-t border-gray-100 dark:border-gray-800">
+                    <Badge variant="outline" className="text-xs">{tool.pricing}</Badge>
+                    <Button size="sm" variant="outline" onClick={() => window.open(tool.url, '_blank', 'noopener,noreferrer')}>
                       <ExternalLink className="w-4 h-4 ml-2" />
                       פתח אתר
                     </Button>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      )}
-
-      {similarTools.length === 0 && externalTools.length === 0 && !isSearching && !isSearchingExternal && (
-        <div className="text-center py-6 text-sm text-gray-500">עדיין לא בוצע חיפוש דמיון עבור הכלי הזה.</div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
