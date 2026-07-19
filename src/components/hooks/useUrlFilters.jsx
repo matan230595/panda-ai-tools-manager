@@ -67,6 +67,14 @@ export default function useUrlFilters(defaults, serializers = {}) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [values]);
 
+  // עדכון מצב מתי שה-URL משתנה (כפתורי חזרה/קדימה בדפדפן)
+  useEffect(() => {
+    const handlePopState = () => setValues(readFromUrl());
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [readFromUrl]);
+
   const setValue = useCallback((key, val) => {
     setValues(prev => ({
       ...prev,

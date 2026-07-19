@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Key, Calendar, CreditCard, Eye, EyeOff, Save, Trash2 } from 'lucide-react';
@@ -24,19 +24,39 @@ export default function SubscriptionDialog({ tool, onClose }) {
   const existingSub = subscriptions[0];
   
   const [formData, setFormData] = useState({
-    email: existingSub?.email || '',
-    username: existingSub?.username || '',
-    password: existingSub?.password || '',
-    subscriptionType: existingSub?.subscriptionType || 'חינמי',
-    priceMonthly: existingSub?.priceMonthly || tool?.priceILS || 0,
-    startDate: existingSub?.startDate || new Date().toISOString().split('T')[0],
-    renewalDate: existingSub?.renewalDate || '',
-    isActive: existingSub?.isActive ?? true,
-    autoRenewal: existingSub?.autoRenewal ?? true,
-    paymentMethod: existingSub?.paymentMethod || '',
-    notes: existingSub?.notes || '',
-    apiKey: existingSub?.apiKey || '',
+    email: '',
+    username: '',
+    password: '',
+    subscriptionType: 'חינמי',
+    priceMonthly: tool?.priceILS || 0,
+    startDate: new Date().toISOString().split('T')[0],
+    renewalDate: '',
+    isActive: true,
+    autoRenewal: true,
+    paymentMethod: '',
+    notes: '',
+    apiKey: '',
   });
+
+  // סנכרון נתוני הטופס כשהמנוי הקיים נטען מהשרת
+  useEffect(() => {
+    if (existingSub) {
+      setFormData({
+        email: existingSub.email || '',
+        username: existingSub.username || '',
+        password: existingSub.password || '',
+        subscriptionType: existingSub.subscriptionType || 'חינמי',
+        priceMonthly: existingSub.priceMonthly || tool?.priceILS || 0,
+        startDate: existingSub.startDate || new Date().toISOString().split('T')[0],
+        renewalDate: existingSub.renewalDate || '',
+        isActive: existingSub.isActive ?? true,
+        autoRenewal: existingSub.autoRenewal ?? true,
+        paymentMethod: existingSub.paymentMethod || '',
+        notes: existingSub.notes || '',
+        apiKey: existingSub.apiKey || '',
+      });
+    }
+  }, [existingSub]);
 
   const saveMutation = useMutation({
     mutationFn: (data) => {
