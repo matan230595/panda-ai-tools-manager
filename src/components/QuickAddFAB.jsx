@@ -5,7 +5,7 @@ export default function QuickAddFAB({ onAddTool, onStartChat }) {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="md:hidden fixed bottom-[5.5rem] left-1/2 -translate-x-1/2 z-[95] flex flex-col items-center gap-2" dir="rtl">
+    <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-[95] flex flex-col items-center gap-2" dir="rtl">
       {open && (
         <div className="flex flex-col gap-2 mb-2 animate-slide-in w-[200px]">
           <button

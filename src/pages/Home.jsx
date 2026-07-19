@@ -171,7 +171,7 @@ export default function Home() {
       <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
       
       {/* תוכן הטאב */}
-      <main id="main-content" className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 py-2 sm:py-4 md:py-8 md:pr-[var(--sidebar-w,21rem)] transition-[padding] duration-300 pb-[calc(7.5rem+env(safe-area-inset-bottom))] md:pb-8">
+      <main id="main-content" className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 py-2 sm:py-4 md:py-8 md:pr-[var(--sidebar-w,21rem)] transition-[padding] duration-300 pb-8">
         <div className="flex items-center justify-between gap-2 mb-3 md:mb-5 rounded-2xl border border-gray-200/80 dark:border-slate-800 bg-white/80 dark:bg-slate-900/70 backdrop-blur-xl px-3 py-2.5 shadow-sm">
           <Link to="/calendar" className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-indigo-500/20 hover:shadow-lg hover:shadow-indigo-500/30 transition-all active:scale-95 min-h-[44px]">
             <CalendarDays className="w-4 h-4" />
@@ -231,8 +231,7 @@ export default function Home() {
         </div>
       </main>
       
-      {/* מקום לניווט תחתון במובייל */}
-      <div className="h-[calc(7.5rem+env(safe-area-inset-bottom))] md:hidden" />
+
 
       {/* כפתור פעולה מהירה במובייל */}
       <QuickAddFAB

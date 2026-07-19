@@ -2,14 +2,14 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { getCurrentUser } from '@/components/hooks/userScopedData';
-import { Sparkles, MessageSquare, Settings, BarChart3, DollarSign, MoreHorizontal, Wallet, LayoutDashboard, BellRing, Lightbulb, Cable, Users, CalendarDays, ChevronsLeft, ChevronsRight } from 'lucide-react';
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer';
+import { Sparkles, MessageSquare, Settings, BarChart3, DollarSign, Menu, X, Wallet, LayoutDashboard, BellRing, Lightbulb, Cable, Users, CalendarDays, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 
 export default function TabNavigation({ activeTab, onTabChange }) {
   const [userLogo, setUserLogo] = useState('');
   const [appName, setAppName] = useState('AI Tools Manager');
-  const [isMoreOpen, setIsMoreOpen] = useState(false);
+  const [navDrawerOpen, setNavDrawerOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(() => localStorage.getItem('sidebarCollapsed') === '1');
 
   useEffect(() => {
@@ -52,9 +52,7 @@ export default function TabNavigation({ activeTab, onTabChange }) {
   { id: 'settings', label: 'הגדרות', icon: Settings }];
 
 
-  const mobileTabs = useMemo(() => mainTabs.slice(0, 4), [mainTabs]);
-  const mobileMoreTabs = useMemo(() => [...mainTabs.slice(4), ...secondaryTabs], [mainTabs, secondaryTabs]);
-  const isMoreActive = mobileMoreTabs.some((tab) => tab.id === activeTab);
+  const allTabs = useMemo(() => [...mainTabs, ...secondaryTabs], [mainTabs, secondaryTabs]);
 
   const NavButton = ({ tab, active, compact = false, iconOnly = false, onClick }) => {
     const Icon = tab.icon;
@@ -132,57 +130,81 @@ export default function TabNavigation({ activeTab, onTabChange }) {
         </div>
       </aside>
 
-      <div className="md:hidden sticky top-0 z-40 bg-white/94 dark:bg-slate-950/94 backdrop-blur-xl border-b border-gray-200 dark:border-slate-800 px-3 py-3" dir="rtl">
+      <div className="md:hidden sticky top-0 z-40 bg-white/94 dark:bg-slate-950/94 backdrop-blur-xl border-b border-gray-200 dark:border-slate-800 px-3 py-2.5" dir="rtl">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl overflow-hidden flex items-center justify-center bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30 flex-shrink-0">
-            {userLogo ? <img src={userLogo} alt="Logo" className="w-full h-full object-contain" /> : <Sparkles className="w-5 h-5 text-indigo-500" />}
+          <button
+            onClick={() => setNavDrawerOpen(true)}
+            className="w-11 h-11 rounded-2xl flex items-center justify-center bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 active:scale-95 transition-all flex-shrink-0"
+            aria-label="פתח תפריט ניווט"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+          <div className="w-9 h-9 rounded-xl overflow-hidden flex items-center justify-center bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30 flex-shrink-0">
+            {userLogo ? <img src={userLogo} alt="Logo" className="w-full h-full object-contain" /> : <Sparkles className="w-4 h-4 text-indigo-500" />}
           </div>
           <div className="min-w-0 flex-1 text-right">
-            <div className="text-xs text-gray-500 dark:text-gray-400">ניהול הכלים שלך</div>
-            <h2 className="font-bold text-base truncate">{appName}</h2>
+            <h2 className="font-bold text-sm truncate">{appName}</h2>
+            <div className="text-[11px] text-gray-500 dark:text-gray-400">{allTabs.find((t) => t.id === activeTab)?.label || 'מערכת ניהול'}</div>
           </div>
         </div>
       </div>
 
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-[90] bg-white/95 dark:bg-slate-950/95 backdrop-blur-2xl border-t border-gray-200/80 dark:border-slate-800 pb-[max(10px,env(safe-area-inset-bottom))] shadow-[0_-8px_30px_rgba(15,23,42,0.12)]" dir="rtl">
-        <nav className="grid grid-cols-5 gap-1 px-2 pt-1.5 max-w-xl mx-auto">
-          {mobileTabs.map((tab) => <NavButton key={tab.id} tab={tab} compact active={activeTab === tab.id} onClick={() => onTabChange(tab.id)} />)}
-          <Drawer open={isMoreOpen} onOpenChange={setIsMoreOpen}>
-            <DrawerTrigger asChild>
-              <button className={`w-full flex flex-col items-center justify-center min-h-[64px] rounded-2xl px-1 py-1.5 transition-all active:scale-95 ${isMoreActive ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/30' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800'}`}>
-                <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${isMoreActive ? 'bg-white/15' : 'bg-gray-100 dark:bg-slate-800'}`}><MoreHorizontal className="w-5 h-5" /></div>
-                <span className="text-[11px] font-medium mt-1">עוד</span>
-              </button>
-            </DrawerTrigger>
-            <DrawerContent className="rounded-t-[2rem] bg-white dark:bg-slate-950">
-              <DrawerHeader><DrawerTitle>עוד אזורים במערכת</DrawerTitle></DrawerHeader>
-              <div className="px-4 pb-8 space-y-2 max-h-[70vh] overflow-y-auto">
-                <Button variant="outline" className="w-full justify-between rounded-2xl min-h-[54px]" onClick={() => window.location.assign('/calendar')}>
-                  <span>לוח שנה מנויים</span>
-                  <CalendarDays className="w-4 h-4" />
-                </Button>
-                {mobileMoreTabs.map((tab) => {
-                  const Icon = tab.icon;
-                  return (
-                    <Button
-                      key={tab.id}
-                      variant={activeTab === tab.id ? 'default' : 'outline'}
-                      className="w-full justify-between rounded-2xl min-h-[54px]"
-                      onClick={() => {
-                        onTabChange(tab.id);
-                        setIsMoreOpen(false);
-                      }}>
-                      
-                      <span>{tab.label}</span>
-                      <Icon className="w-4 h-4" />
-                    </Button>);
+      {/* תפריט צד נשלף למובייל */}
+      <Sheet open={navDrawerOpen} onOpenChange={setNavDrawerOpen}>
+        <SheetContent side="right" className="w-[85vw] max-w-sm p-0 bg-white dark:bg-slate-950" dir="rtl">
+          <SheetHeader className="flex flex-row items-center justify-between border-b border-gray-200 dark:border-slate-800 p-4 space-y-0">
+            <SheetTitle className="text-lg font-bold text-right">תפריט ניווט</SheetTitle>
+          </SheetHeader>
+          <div className="px-3 py-4 overflow-y-auto flex-1 space-y-5 h-[calc(100vh-4rem)]">
+            <div className="space-y-1.5">
+              <div className="px-2 text-xs font-semibold text-gray-500 dark:text-gray-400">עיקרי</div>
+              {mainTabs.map((tab) => {
+                const Icon = tab.icon;
+                const active = activeTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => { onTabChange(tab.id); setNavDrawerOpen(false); }}
+                    className={`w-full flex items-center gap-3 rounded-2xl px-3 py-3 transition-all active:scale-95 ${active ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/30' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800'}`}
+                  >
+                    <div className={`flex items-center justify-center rounded-xl w-9 h-9 ${active ? 'bg-white/15' : 'bg-gray-100 dark:bg-slate-800'}`}>
+                      <Icon className="w-5 h-5" />
+                    </div>
+                    <span className="font-medium text-sm">{tab.label}</span>
+                  </button>
+                );
+              })}
+            </div>
 
-                })}
-              </div>
-            </DrawerContent>
-          </Drawer>
-        </nav>
-      </div>
+            <div className="space-y-1.5">
+              <div className="px-2 text-xs font-semibold text-gray-500 dark:text-gray-400">הגדרות ומערכת</div>
+              {secondaryTabs.map((tab) => {
+                const Icon = tab.icon;
+                const active = activeTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => { onTabChange(tab.id); setNavDrawerOpen(false); }}
+                    className={`w-full flex items-center gap-3 rounded-2xl px-3 py-3 transition-all active:scale-95 ${active ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/30' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800'}`}
+                  >
+                    <div className={`flex items-center justify-center rounded-xl w-9 h-9 ${active ? 'bg-white/15' : 'bg-gray-100 dark:bg-slate-800'}`}>
+                      <Icon className="w-5 h-5" />
+                    </div>
+                    <span className="font-medium text-sm">{tab.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="pt-2 border-t border-gray-200 dark:border-slate-800">
+              <Button variant="outline" className="w-full justify-between rounded-2xl min-h-[48px]" onClick={() => { window.location.assign('/calendar'); }}>
+                <span>לוח שנה מנויים</span>
+                <CalendarDays className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
     </>);
 
 }
