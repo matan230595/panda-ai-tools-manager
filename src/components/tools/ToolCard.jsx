@@ -20,6 +20,27 @@ import {
 import ShareLinkDialog from '@/components/sharing/ShareLinkDialog';
 import { toast } from 'sonner';
 
+const CATEGORY_BAR_COLORS = {
+  'עיבוד_שפה': 'from-blue-500 to-blue-400',
+  'יצירת_תמונות': 'from-purple-500 to-fuchsia-400',
+  'וידאו': 'from-pink-500 to-rose-400',
+  'קוד': 'from-green-500 to-emerald-400',
+  'עיצוב': 'from-orange-500 to-amber-400',
+  'מחקר': 'from-cyan-500 to-sky-400',
+  'פרודוקטיביות': 'from-indigo-500 to-violet-400',
+  'אוטומציה': 'from-yellow-500 to-amber-400',
+  'אנליטיקה': 'from-teal-500 to-cyan-400',
+  'שיווק': 'from-rose-500 to-pink-400',
+  'אחר': 'from-gray-400 to-gray-300',
+};
+
+const PRICING_COLORS = {
+  'חינם': 'bg-green-500',
+  'בתשלום': 'bg-blue-500',
+  'פרימיום': 'bg-purple-500',
+  'פרימיום_מוגבל': 'bg-orange-500',
+};
+
 export default function ToolCard({
   tool,
   onEdit,
@@ -36,27 +57,6 @@ export default function ToolCard({
   const [showQuickActions, setShowQuickActions] = useState(false);
   const longPressTimer = useRef(null);
   const longPressTriggered = useRef(false);
-
-  const categoryBarColors = {
-    'עיבוד_שפה': 'from-blue-500 to-blue-400',
-    'יצירת_תמונות': 'from-purple-500 to-fuchsia-400',
-    'וידאו': 'from-pink-500 to-rose-400',
-    'קוד': 'from-green-500 to-emerald-400',
-    'עיצוב': 'from-orange-500 to-amber-400',
-    'מחקר': 'from-cyan-500 to-sky-400',
-    'פרודוקטיביות': 'from-indigo-500 to-violet-400',
-    'אוטומציה': 'from-yellow-500 to-amber-400',
-    'אנליטיקה': 'from-teal-500 to-cyan-400',
-    'שיווק': 'from-rose-500 to-pink-400',
-    'אחר': 'from-gray-400 to-gray-300',
-  };
-
-  const pricingColors = {
-    'חינם': 'bg-green-500',
-    'בתשלום': 'bg-blue-500',
-    'פרימיום': 'bg-purple-500',
-    'פרימיום_מוגבל': 'bg-orange-500',
-  };
 
   const cardRef = useRef(null);
   const [tilt, setTilt] = useState({ rx: 0, ry: 0, active: false, gx: 50, gy: 50 });
@@ -171,7 +171,7 @@ export default function ToolCard({
         onTouchCancel={cancelLongPress}
       >
         {/* פס גרדיאנט עליון בצבע הקטגוריה */}
-        <div className={`absolute top-0 inset-x-0 h-1 bg-gradient-to-l ${categoryBarColors[tool.category] || categoryBarColors['אחר']}`} />
+        <div className={`absolute top-0 inset-x-0 h-1 bg-gradient-to-l ${CATEGORY_BAR_COLORS[tool.category] || CATEGORY_BAR_COLORS['אחר']}`} />
 
         {/* השתקפות זכוכית דינמית שעוקבת אחרי העכבר */}
         <div
@@ -308,7 +308,7 @@ export default function ToolCard({
               </div>
             )}
             {show('pricing') && (
-              <span className={`mr-auto inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold text-white ${pricingColors[tool.pricing] || 'bg-gray-500'}`}>
+              <span className={`mr-auto inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold text-white ${PRICING_COLORS[tool.pricing] || 'bg-gray-500'}`}>
                 {tool.pricing?.replace(/_/g, ' ')}
               </span>
             )}

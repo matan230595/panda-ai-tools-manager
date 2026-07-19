@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { getCurrentUser } from '@/components/hooks/userScopedData';
@@ -31,6 +31,26 @@ function NavButton({ tab, active, collapsed, onClick }) {
     </button>);
 }
 
+const MAIN_TABS = [
+  { id: 'dashboard', label: 'דשבורד', icon: LayoutDashboard },
+  { id: 'tools', label: 'כלים', icon: Sparkles },
+  { id: 'assistant', label: 'סוכן', icon: MessageSquare },
+  { id: 'subscriptions-mgmt', label: 'מנויים', icon: DollarSign },
+  { id: 'stats', label: 'ROI', icon: BarChart3 },
+  { id: 'reminders', label: 'התראות', icon: BellRing },
+  { id: 'learning', label: 'למידה', icon: GraduationCap }
+];
+
+const SECONDARY_TABS = [
+  { id: 'budget', label: 'תקציב', icon: Wallet },
+  { id: 'insights', label: 'תובנות', icon: Lightbulb },
+  { id: 'integrations', label: 'אינטגרציות', icon: Cable },
+  { id: 'collaboration', label: 'שיתוף', icon: Users },
+  { id: 'settings', label: 'הגדרות', icon: Settings }
+];
+
+const ALL_TABS = [...MAIN_TABS, ...SECONDARY_TABS];
+
 export default function TabNavigation({ activeTab, onTabChange }) {
   const [userLogo, setUserLogo] = useState('');
   const [appName, setAppName] = useState('AI Tools Manager');
@@ -60,25 +80,9 @@ export default function TabNavigation({ activeTab, onTabChange }) {
     if (settings?.appName) setAppName(settings.appName);
   }, [settings]);
 
-  const mainTabs = [
-  { id: 'dashboard', label: 'דשבורד', icon: LayoutDashboard },
-  { id: 'tools', label: 'כלים', icon: Sparkles },
-  { id: 'assistant', label: 'סוכן', icon: MessageSquare },
-  { id: 'subscriptions-mgmt', label: 'מנויים', icon: DollarSign },
-  { id: 'stats', label: 'ROI', icon: BarChart3 },
-  { id: 'reminders', label: 'התראות', icon: BellRing },
-  { id: 'learning', label: 'למידה', icon: GraduationCap }];
-
-
-  const secondaryTabs = [
-  { id: 'budget', label: 'תקציב', icon: Wallet },
-  { id: 'insights', label: 'תובנות', icon: Lightbulb },
-  { id: 'integrations', label: 'אינטגרציות', icon: Cable },
-  { id: 'collaboration', label: 'שיתוף', icon: Users },
-  { id: 'settings', label: 'הגדרות', icon: Settings }];
-
-
-  const allTabs = useMemo(() => [...mainTabs, ...secondaryTabs], [mainTabs, secondaryTabs]);
+  const mainTabs = MAIN_TABS;
+  const secondaryTabs = SECONDARY_TABS;
+  const allTabs = ALL_TABS;
 
   return (
     <>
