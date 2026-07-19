@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { X, Sparkles, Loader2, Plus, AlertCircle, Info } from 'lucide-react';
+import { X, Sparkles, Loader2, Plus, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -58,21 +58,6 @@ export default function ToolForm({ tool, onClose, onSave }) {
   const [isAutofilling, setIsAutofilling] = useState(false);
   const [isAutoFetchingMeta, setIsAutoFetchingMeta] = useState(false);
   const [autofillError, setAutofillError] = useState('');
-
-  const hasApiConfigured = useMemo(() => {
-    return !![
-      'geminiApiKey',
-      'groqApiKey',
-      'mistralApiKey',
-      'cohereApiKey',
-      'huggingfaceApiKey',
-      'togetherApiKey',
-      'claudeApiKey',
-      'openaiApiKey',
-      'ollamaEndpoint',
-      'localaiBudget'
-    ].some((key) => String(formData[key] || '').trim());
-  }, [formData]);
 
   const categories = [
     'עיבוד_שפה', 'יצירת_תמונות', 'וידאו', 'קוד', 'עיצוב', 
@@ -387,7 +372,7 @@ ${formData.url ? `URL: ${formData.url}` : ''}
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-0 md:p-4">
+    <div className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-center justify-center p-0 md:p-4">
       <div className="bg-white dark:bg-gray-900 rounded-none md:rounded-2xl shadow-2xl w-full h-full md:h-auto md:max-w-3xl md:max-h-[95vh] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0 sticky top-0 bg-white dark:bg-gray-900 z-10">
@@ -481,13 +466,6 @@ ${formData.url ? `URL: ${formData.url}` : ''}
             <div className="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/30 dark:text-red-300">
               <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
               <div>{autofillError}</div>
-            </div>
-          )}
-
-          {!hasApiConfigured && (
-            <div className="flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-300">
-              <Info className="w-4 h-4 mt-0.5 flex-shrink-0" />
-              <div>לא זוהה שום מפתח או endpoint מוגדר בטופס הזה, לכן המילוי האוטומטי עלול להיכשל.</div>
             </div>
           )}
 
