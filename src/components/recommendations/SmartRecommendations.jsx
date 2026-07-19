@@ -39,7 +39,7 @@ export default function SmartRecommendations({ onSelectTool }) {
   const ratingMutation = useMutation({
     mutationFn: (data) => base44.entities.UserToolRating.create(data),
     onSuccess: () => {
-      queryClient.invalidateQueries(['toolRatings']);
+      queryClient.invalidateQueries({ queryKey: ['toolRatings'] });
       toast.success('דירוגך נשמר בהצלחה');
       setRatingTool(null);
       setRating(0);

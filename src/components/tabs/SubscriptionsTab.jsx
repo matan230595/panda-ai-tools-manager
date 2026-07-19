@@ -20,6 +20,12 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 
+const TYPE_COLORS = {
+  'חינמי': 'bg-green-100 text-green-800',
+  'פרימיום': 'bg-blue-100 text-blue-800',
+  'גולד': 'bg-yellow-100 text-yellow-800',
+};
+
 export default function SubscriptionsTab() {
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState('');
@@ -54,7 +60,7 @@ export default function SubscriptionsTab() {
   const deleteMutation = useMutation({
     mutationFn: (id) => base44.entities.Subscription.delete(id),
     onSuccess: () => {
-      queryClient.invalidateQueries(['subscriptions']);
+      queryClient.invalidateQueries({ queryKey: ['subscriptions'] });
       toast.success('המנוי נמחק');
       setDeletingSubscription(null);
     },
@@ -63,7 +69,7 @@ export default function SubscriptionsTab() {
   const createReminderMutation = useMutation({
     mutationFn: (data) => base44.entities.Reminder.create(data),
     onSuccess: () => {
-      queryClient.invalidateQueries(['reminders']);
+      queryClient.invalidateQueries({ queryKey: ['reminders'] });
       toast.success('נוספה תזכורת למנוי');
       setCreatingReminderFor(null);
     },
@@ -93,12 +99,6 @@ export default function SubscriptionsTab() {
       isActive: true,
       isCompleted: false,
     });
-  };
-
-  const typeColors = {
-    'חינמי': 'bg-green-100 text-green-800',
-    'פרימיום': 'bg-blue-100 text-blue-800',
-    'גולד': 'bg-yellow-100 text-yellow-800',
   };
 
   if (isLoading) {
@@ -221,7 +221,7 @@ export default function SubscriptionsTab() {
                       )}
                       <div>
                         <CardTitle className="text-lg">{subscription.toolName}</CardTitle>
-                        <Badge className={typeColors[subscription.subscriptionType]}>
+                        <Badge className={TYPE_COLORS[subscription.subscriptionType]}>
                           {subscription.subscriptionType?.replace(/_/g, ' ')}
                         </Badge>
                       </div>

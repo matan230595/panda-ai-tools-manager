@@ -11,6 +11,8 @@ import { Input } from '@/components/ui/input';
 import { LineChart, Line, PieChart as RePieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { toast } from 'sonner';
 
+const CHART_COLORS = ['#6366f1', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b', '#3b82f6'];
+
 export default function BudgetTab() {
   const queryClient = useQueryClient();
   const [currency, setCurrency] = useState('ILS');
@@ -204,8 +206,6 @@ export default function BudgetTab() {
       setAiInsightsLoading(false);
     }
   };
-
-  const COLORS = ['#6366f1', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b', '#3b82f6'];
 
   return (
     <div className="max-w-7xl mx-auto space-y-4 md:space-y-6">
@@ -484,7 +484,7 @@ export default function BudgetTab() {
                   dataKey="value"
                 >
                   {budgetAnalysis.categoryData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
                   ))}
                 </Pie>
                 <Tooltip />
