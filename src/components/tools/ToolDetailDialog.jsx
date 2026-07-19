@@ -20,47 +20,47 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
     'פרודוקטיביות': 'bg-orange-100 text-orange-800',
     'אוטומציה': 'bg-red-100 text-red-800',
     'אנליטיקה': 'bg-teal-100 text-teal-800',
-    'שיווק': 'bg-cyan-100 text-cyan-800',
+    'שיווק': 'bg-cyan-100 text-cyan-800'
   };
 
   return (
     <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-end md:items-center justify-center p-0 md:p-4" onClick={onClose}>
-      <div 
+      <div
         className="bg-white dark:bg-gray-900 rounded-t-3xl md:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[94vh] overflow-hidden flex flex-col text-right"
         dir="rtl"
-        onClick={(e) => e.stopPropagation()}
-      >
+        onClick={(e) => e.stopPropagation()}>
+        
         {/* Header */}
         <div className="relative p-4 md:p-6 border-b border-gray-200 dark:border-gray-700">
           <button
             onClick={onClose}
             className="absolute top-4 left-4 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
-            aria-label="סגור חלון"
-          >
+            aria-label="סגור חלון">
+            
             <X className="w-5 h-5" />
           </button>
 
           <div className="flex flex-col sm:flex-row items-start gap-4 ml-12 text-right">
-             {tool.logo ? (
-               <img src={tool.logo} alt={tool.name} className="w-16 h-16 md:w-20 md:h-20 rounded-xl object-contain shadow-md flex-shrink-0" />
-             ) : (
-               <div className="w-16 h-16 md:w-20 md:h-20 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+             {tool.logo ?
+            <img src={tool.logo} alt={tool.name} className="w-16 h-16 md:w-20 md:h-20 rounded-xl object-contain shadow-md flex-shrink-0" /> :
+
+            <div className="w-16 h-16 md:w-20 md:h-20 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center flex-shrink-0">
                  <span className="text-2xl md:text-3xl font-bold text-white">{tool.name.charAt(0)}</span>
                </div>
-             )}
+            }
              <div className="flex-1">
               <div className="flex items-center gap-3 mb-2">
                 <h2 className="text-2xl font-bold">{tool.name}</h2>
                 <button
                   onClick={() => onToggleFavorite(tool)}
                   className="p-1 hover:scale-110 transition-transform"
-                  aria-label={tool.isFavorite ? 'הסר ממועדפים' : 'הוסף למועדפים'}
-                >
+                  aria-label={tool.isFavorite ? 'הסר ממועדפים' : 'הוסף למועדפים'}>
+                  
                   <Star
                     className={`w-6 h-6 ${
-                      tool.isFavorite ? 'fill-yellow-400 text-yellow-400' : 'text-gray-400'
-                    }`}
-                  />
+                    tool.isFavorite ? 'fill-yellow-400 text-yellow-400' : 'text-gray-400'}`
+                    } />
+                  
                 </button>
               </div>
               
@@ -69,23 +69,23 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
                   {tool.category?.replace(/_/g, ' ')}
                 </Badge>
                 <Badge variant="outline">{tool.subscriptionType || tool.pricing}</Badge>
-                {tool.priceILS > 0 && (
-                  <Badge variant="secondary">₪{tool.priceILS.toFixed(0)}/חודש</Badge>
-                )}
-                {tool.roiPercentage !== undefined && (
-                  <Badge className="bg-green-100 text-green-800">ROI {tool.roiPercentage || 0}%</Badge>
-                )}
-                {tool.rating > 0 && (
-                  <Badge className="bg-yellow-100 text-yellow-800">
+                {tool.priceILS > 0 &&
+                <Badge variant="secondary">₪{tool.priceILS.toFixed(0)}/חודש</Badge>
+                }
+                {tool.roiPercentage !== undefined &&
+                <Badge className="bg-green-100 text-green-800">ROI {tool.roiPercentage || 0}%</Badge>
+                }
+                {tool.rating > 0 &&
+                <Badge className="bg-yellow-100 text-yellow-800">
                     <Star className="w-3 h-3 ml-1 fill-yellow-400" />
                     {tool.rating}
                   </Badge>
-                )}
+                }
               </div>
 
-              {tool.description && (
-                <p className="text-gray-600 dark:text-gray-400">{tool.description}</p>
-              )}
+              {tool.description &&
+              <p className="text-gray-600 dark:text-gray-400">{tool.description}</p>
+              }
             </div>
           </div>
 
@@ -93,21 +93,21 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
           <div className="flex flex-col sm:flex-row gap-2 mt-4">
             <Button
               onClick={() => window.open(tool.url, '_blank')}
-              className="flex-1 bg-gradient-to-r from-indigo-500 to-purple-600"
-            >
+              className="flex-1 bg-gradient-to-r from-indigo-500 to-purple-600">
+              
               <ExternalLink className="w-4 h-4 ml-2" />
               בקר באתר
             </Button>
-            {tool.hasSubscription && (
-              <Button
-                variant="outline"
-                onClick={() => onManageSubscription(tool)}
-                className="border-green-500 text-green-600"
-              >
+            {tool.hasSubscription &&
+            <Button
+              variant="outline"
+              onClick={() => onManageSubscription(tool)}
+              className="border-green-500 text-green-600">
+              
                 <Key className="w-4 h-4 ml-2" />
                 נהל מנוי
               </Button>
-            )}
+            }
             <ShareLinkDialog tool={tool} />
             <Button variant="outline" onClick={() => onEdit(tool)}>
               <Edit className="w-4 h-4 ml-2" />
@@ -138,52 +138,52 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
 
             <TabsContent value="overview" className="space-y-6 mt-6">
               {/* Detailed Description */}
-              {tool.detailedDescription && (
-                <div>
-                  <h3 className="font-bold text-lg mb-3 flex items-center gap-2">
-                    <Zap className="w-5 h-5 text-indigo-500" />
-                    אודות הכלי
-                  </h3>
+              {tool.detailedDescription &&
+              <div>
+                  <h3 className="font-bold text-lg mb-3 flex items-center gap-2 text-center no-underline">אודות הכלי
+
+
+                </h3>
                   <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap leading-relaxed text-right">
                     {tool.detailedDescription}
                   </p>
                 </div>
-              )}
+              }
 
               {/* Features */}
-              {tool.features?.length > 0 && (
-                <div>
+              {tool.features?.length > 0 &&
+              <div>
                   <h3 className="font-bold text-lg mb-3 flex items-center gap-2">
                     <CheckCircle className="w-5 h-5 text-green-500" />
                     תכונות עיקריות
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                    {tool.features.map((feature, idx) => (
-                      <div key={idx} className="flex items-start justify-start gap-2 p-2.5 rounded-xl bg-gray-50 dark:bg-gray-800 text-right" dir="rtl">
+                    {tool.features.map((feature, idx) =>
+                  <div key={idx} className="flex items-start justify-start gap-2 p-2.5 rounded-xl bg-gray-50 dark:bg-gray-800 text-right" dir="rtl">
                         <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
                         <span className="text-sm leading-6">{feature}</span>
                       </div>
-                    ))}
+                  )}
                   </div>
                 </div>
-              )}
+              }
 
 
             </TabsContent>
 
             <TabsContent value="use-cases" className="space-y-4 mt-6">
-              {tool.useCases?.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {tool.useCases.map((useCase, idx) => (
-                    <div key={idx} className="rounded-2xl border border-indigo-200 dark:border-indigo-800 bg-gradient-to-br from-indigo-50 to-white dark:from-indigo-950/30 dark:to-gray-900 p-4 md:p-5">
+              {tool.useCases?.length > 0 ?
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {tool.useCases.map((useCase, idx) =>
+                <div key={idx} className="rounded-2xl border border-indigo-200 dark:border-indigo-800 bg-gradient-to-br from-indigo-50 to-white dark:from-indigo-950/30 dark:to-gray-900 p-4 md:p-5">
                       <h3 className="font-bold text-base md:text-lg mb-2">{useCase.title}</h3>
                       <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 leading-7">{useCase.description}</p>
                     </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="rounded-2xl border p-6 text-sm text-gray-500">אין דוגמאות שימוש זמינות לכלי זה.</div>
-              )}
+                )}
+                </div> :
+
+              <div className="rounded-2xl border p-6 text-sm text-gray-500">אין דוגמאות שימוש זמינות לכלי זה.</div>
+              }
             </TabsContent>
 
             <TabsContent value="pros-cons" className="space-y-6 mt-6">
@@ -193,41 +193,41 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
                     <CheckCircle className="w-5 h-5" />
                     יתרונות
                   </h3>
-                  {tool.prosAndCons?.pros?.length > 0 ? (
-                    <ul className="space-y-3">
-                      {tool.prosAndCons.pros.map((pro, idx) => (
-                        <li key={idx} className="flex items-start gap-2 text-sm md:text-base">
+                  {tool.prosAndCons?.pros?.length > 0 ?
+                  <ul className="space-y-3">
+                      {tool.prosAndCons.pros.map((pro, idx) =>
+                    <li key={idx} className="flex items-start gap-2 text-sm md:text-base">
                           <span className="text-green-500">✓</span>
                           <span>{pro}</span>
                         </li>
-                      ))}
-                    </ul>
-                  ) : <div className="text-sm text-gray-500">אין יתרונות שמורים.</div>}
+                    )}
+                    </ul> :
+                  <div className="text-sm text-gray-500">אין יתרונות שמורים.</div>}
                 </div>
                 <div className="rounded-2xl border border-red-200 dark:border-red-800 bg-red-50/70 dark:bg-red-950/20 p-4 md:p-5">
                   <h3 className="font-bold text-lg mb-3 flex items-center gap-2 text-red-700 dark:text-red-300">
                     <XCircle className="w-5 h-5" />
                     חסרונות
                   </h3>
-                  {tool.prosAndCons?.cons?.length > 0 ? (
-                    <ul className="space-y-3">
-                      {tool.prosAndCons.cons.map((con, idx) => (
-                        <li key={idx} className="flex items-start gap-2 text-sm md:text-base">
+                  {tool.prosAndCons?.cons?.length > 0 ?
+                  <ul className="space-y-3">
+                      {tool.prosAndCons.cons.map((con, idx) =>
+                    <li key={idx} className="flex items-start gap-2 text-sm md:text-base">
                           <span className="text-red-500">✗</span>
                           <span>{con}</span>
                         </li>
-                      ))}
-                    </ul>
-                  ) : <div className="text-sm text-gray-500">אין חסרונות שמורים.</div>}
+                    )}
+                    </ul> :
+                  <div className="text-sm text-gray-500">אין חסרונות שמורים.</div>}
                 </div>
               </div>
             </TabsContent>
 
             <TabsContent value="integrations-links" className="space-y-4 mt-6">
-              {tool.integrations?.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {tool.integrations.map((integration, idx) => (
-                    <div key={idx} className="rounded-2xl border border-gray-200 dark:border-gray-800 p-4 md:p-5 bg-white/80 dark:bg-gray-900/60 flex items-center justify-between gap-3">
+              {tool.integrations?.length > 0 ?
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {tool.integrations.map((integration, idx) =>
+                <div key={idx} className="rounded-2xl border border-gray-200 dark:border-gray-800 p-4 md:p-5 bg-white/80 dark:bg-gray-900/60 flex items-center justify-between gap-3">
                       <div>
                         <div className="font-semibold">{integration}</div>
                         <div className="text-sm text-gray-500">קישור ישיר לחיפוש או שימוש באינטגרציה</div>
@@ -237,11 +237,11 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
                         פתח
                       </Button>
                     </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="rounded-2xl border p-6 text-sm text-gray-500">אין אינטגרציות שמורות לכלי זה.</div>
-              )}
+                )}
+                </div> :
+
+              <div className="rounded-2xl border p-6 text-sm text-gray-500">אין אינטגרציות שמורות לכלי זה.</div>
+              }
             </TabsContent>
 
             <TabsContent value="details" className="space-y-6 mt-6">
@@ -255,90 +255,90 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
                   <div className="text-2xl font-bold text-green-600">₪{tool.directRevenue || 0}</div>
                 </div>
                 {/* Target Audience */}
-                {tool.targetAudience && (
-                  <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
+                {tool.targetAudience &&
+                <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
                     <div className="flex items-center gap-2 mb-2">
                       <Users className="w-5 h-5 text-indigo-500" />
                       <h3 className="font-semibold">קהל יעד</h3>
                     </div>
                     <p className="text-sm text-gray-600 dark:text-gray-400">{tool.targetAudience}</p>
                   </div>
-                )}
+                }
 
                 {/* Popularity */}
-                {tool.popularity && (
-                  <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
+                {tool.popularity &&
+                <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
                     <div className="flex items-center gap-2 mb-2">
                       <TrendingUp className="w-5 h-5 text-orange-500" />
                       <h3 className="font-semibold">פופולריות</h3>
                     </div>
                     <div className="flex gap-1">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`w-4 h-4 ${
-                            i < tool.popularity ? 'fill-orange-400 text-orange-400' : 'text-gray-300'
-                          }`}
-                        />
-                      ))}
+                      {[...Array(5)].map((_, i) =>
+                    <Star
+                      key={i}
+                      className={`w-4 h-4 ${
+                      i < tool.popularity ? 'fill-orange-400 text-orange-400' : 'text-gray-300'}`
+                      } />
+
+                    )}
                     </div>
                   </div>
-                )}
+                }
 
                 {/* Languages */}
-                {tool.languagesSupported?.length > 0 && (
-                  <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
+                {tool.languagesSupported?.length > 0 &&
+                <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
                     <div className="flex items-center gap-2 mb-2">
                       <Globe className="w-5 h-5 text-blue-500" />
                       <h3 className="font-semibold">שפות נתמכות</h3>
                     </div>
                     <div className="flex flex-wrap gap-1">
-                      {tool.languagesSupported.map((lang, idx) => (
-                        <Badge key={idx} variant="secondary" className="text-xs">{lang}</Badge>
-                      ))}
+                      {tool.languagesSupported.map((lang, idx) =>
+                    <Badge key={idx} variant="secondary" className="text-xs">{lang}</Badge>
+                    )}
                     </div>
                   </div>
-                )}
+                }
 
                 {/* Platforms */}
-                {tool.platforms?.length > 0 && (
-                  <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
+                {tool.platforms?.length > 0 &&
+                <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
                     <div className="flex items-center gap-2 mb-2">
                       <Zap className="w-5 h-5 text-purple-500" />
                       <h3 className="font-semibold">פלטפורמות</h3>
                     </div>
                     <div className="flex flex-wrap gap-1">
-                      {tool.platforms.map((platform, idx) => (
-                        <Badge key={idx} variant="outline" className="text-xs">{platform}</Badge>
-                      ))}
+                      {tool.platforms.map((platform, idx) =>
+                    <Badge key={idx} variant="outline" className="text-xs">{platform}</Badge>
+                    )}
                     </div>
                   </div>
-                )}
+                }
               </div>
 
               {/* Integrations */}
-              {tool.integrations?.length > 0 && (
-                <div>
+              {tool.integrations?.length > 0 &&
+              <div>
                   <h3 className="font-bold text-lg mb-3">אינטגרציות</h3>
                   <div className="flex flex-wrap gap-2">
-                    {tool.integrations.map((integration, idx) => (
-                      <Badge key={idx} variant="outline">{integration}</Badge>
-                    ))}
+                    {tool.integrations.map((integration, idx) =>
+                  <Badge key={idx} variant="outline">{integration}</Badge>
+                  )}
                   </div>
                 </div>
-              )}
+              }
 
               {/* Tags */}
-              {tool.tags?.length > 0 && (
-                <div>
+              {tool.tags?.length > 0 &&
+              <div>
                   <h3 className="font-bold text-lg mb-3">תגיות</h3>
                   <div className="flex flex-wrap gap-2">
-                    {tool.tags.map((tag, idx) => (
-                      <Badge key={idx} className="bg-indigo-100 text-indigo-800">{tag}</Badge>
-                    ))}
+                    {tool.tags.map((tag, idx) =>
+                  <Badge key={idx} className="bg-indigo-100 text-indigo-800">{tag}</Badge>
+                  )}
                   </div>
                 </div>
-              )}
+              }
 
               {/* Dates */}
               <div className="grid grid-cols-2 gap-4 pt-4 border-t">
@@ -379,42 +379,42 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
               </div>
 
               {/* Subscription Plans */}
-              {tool.subscriptionPlans?.length > 0 && (
-                <div>
+              {tool.subscriptionPlans?.length > 0 &&
+              <div>
                   <h3 className="font-bold text-lg mb-4">תוכניות מנוי</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {tool.subscriptionPlans.map((plan, idx) => (
-                      <div key={idx} className="p-5 rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-indigo-500 dark:hover:border-indigo-500 transition-colors">
+                    {tool.subscriptionPlans.map((plan, idx) =>
+                  <div key={idx} className="p-5 rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-indigo-500 dark:hover:border-indigo-500 transition-colors">
                         <h4 className="font-bold text-xl mb-2">{plan.name}</h4>
                         <div className="text-3xl font-bold text-indigo-600 mb-3">
                           ${plan.priceUSD}
                           <span className="text-sm font-normal text-gray-500">/חודש</span>
                         </div>
-                        {plan.limits && (
-                          <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">{plan.limits}</p>
-                        )}
-                        {plan.features?.length > 0 && (
-                          <ul className="space-y-2">
-                            {plan.features.map((feature, fIdx) => (
-                              <li key={fIdx} className="flex items-start gap-2 text-sm">
+                        {plan.limits &&
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">{plan.limits}</p>
+                    }
+                        {plan.features?.length > 0 &&
+                    <ul className="space-y-2">
+                            {plan.features.map((feature, fIdx) =>
+                      <li key={fIdx} className="flex items-start gap-2 text-sm">
                                 <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
                                 <span>{feature}</span>
                               </li>
-                            ))}
+                      )}
                           </ul>
-                        )}
+                    }
                       </div>
-                    ))}
+                  )}
                   </div>
                 </div>
-              )}
+              }
             </TabsContent>
 
             <TabsContent value="credentials" className="space-y-4 mt-6">
-              <UserCredentialsTab 
-                tool={tool} 
-                onSave={(patch) => onQuickUpdate?.(tool.id, { userCredentials: patch.userCredentials })}
-              />
+              <UserCredentialsTab
+                tool={tool}
+                onSave={(patch) => onQuickUpdate?.(tool.id, { userCredentials: patch.userCredentials })} />
+              
             </TabsContent>
 
             <TabsContent value="tasks" className="space-y-4 mt-6">
@@ -432,8 +432,8 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
                   defaultValue={tool.notes || tool.personalNotes || ''}
                   onBlur={(e) => onQuickUpdate?.(tool.id, { notes: e.target.value, personalNotes: e.target.value })}
                   placeholder="כתוב כאן הערות חופשיות על הכלי..."
-                  className="w-full min-h-[140px] rounded-lg border bg-white dark:bg-gray-900 p-3 text-sm"
-                />
+                  className="w-full min-h-[140px] rounded-lg border bg-white dark:bg-gray-900 p-3 text-sm" />
+                
                 <div className="text-xs text-gray-500 mt-2">השמירה מתבצעת כשיוצאים מהשדה.</div>
               </div>
             </TabsContent>
@@ -454,11 +454,11 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
               currentTool={tool}
               onSelectTool={() => {
                 onClose();
-              }}
-            />
+              }} />
+            
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>);
+
 }
