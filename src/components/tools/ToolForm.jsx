@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { X, Sparkles, Loader2, Plus, AlertCircle, CheckCircle2, Info } from 'lucide-react';
+import { X, Sparkles, Loader2, Plus, AlertCircle, CheckCircle2, Info, ShieldCheck, KeyRound } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
@@ -34,6 +35,7 @@ export default function ToolForm({ tool, onClose, onSave }) {
     popularity: 3,
     isFavorite: false,
     hasSubscription: false,
+    userCredentials: { email: '', username: '', password: '', phoneNumber: '', googleConnected: false },
     logo: '',
     screenshots: [],
     videoDemo: '',
@@ -133,6 +135,13 @@ export default function ToolForm({ tool, onClose, onSave }) {
 
   const handleChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleCredentialChange = (field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      userCredentials: { ...(prev.userCredentials || {}), [field]: value },
+    }));
   };
 
   const addArrayItem = (field, value, setter) => {
@@ -333,6 +342,13 @@ ${formData.url ? `URL: ${formData.url}` : ''}
       popularity: Math.max(1, Math.min(5, Math.round(Number(formData.popularity || 3)))),
       isFavorite: !!formData.isFavorite,
       hasSubscription: !!formData.hasSubscription,
+      userCredentials: formData.hasSubscription ? {
+        email: String(formData.userCredentials?.email || ''),
+        username: String(formData.userCredentials?.username || ''),
+        password: String(formData.userCredentials?.password || ''),
+        phoneNumber: String(formData.userCredentials?.phoneNumber || ''),
+        googleConnected: !!formData.userCredentials?.googleConnected,
+      } : { email: '', username: '', password: '', phoneNumber: '', googleConnected: false },
       logo: String(formData.logo || ''),
       screenshots: Array.isArray(formData.screenshots) ? formData.screenshots.filter(Boolean).map(String) : [],
       videoDemo: String(formData.videoDemo || ''),
@@ -745,6 +761,85 @@ ${formData.url ? `URL: ${formData.url}` : ''}
                 </Badge>
               ))}
             </div>
+          </div>
+
+          {/* יש לי מנוי פעיל + פרטי גישה מוצפנים */}
+          <div className="rounded-2xl border border-indigo-200 dark:border-indigo-900 bg-indigo-50/50 dark:bg-indigo-950/20 p-4 space-y-4">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <span className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white flex-shrink-0">
+                  <ShieldCheck className="w-4 h-4" />
+                </span>
+                <div>
+                  <Label htmlFor="hasSubscription" className="text-sm font-semibold cursor-pointer">יש לי מנוי פעיל</Label>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">שמור פרטי גישה מאובטחים לכלי זה</p>
+                </div>
+              </div>
+              <Switch
+                id="hasSubscription"
+                checked={!!formData.hasSubscription}
+                onCheckedChange={(val) => handleChange('hasSubscription', val)}
+              />
+            </div>
+
+            {formData.hasSubscription && (
+              <div className="space-y-4 pt-2 border-t border-indigo-200/60 dark:border-indigo-900/60">
+                <div className="flex items-center gap-2 text-xs text-indigo-700 dark:text-indigo-300">
+                  <KeyRound className="w-3.5 h-3.5" />
+                  <span>הפרטים נשמרים באופן מאובטח ומשויכים לחשבון שלך בלבד</span>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="cred-email">אימייל לכלי</Label>
+                    <Input
+                      id="cred-email"
+                      type="email"
+                      value={formData.userCredentials?.email || ''}
+                      onChange={(e) => handleCredentialChange('email', e.target.value)}
+                      placeholder="name@example.com"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="cred-username">שם משתמש</Label>
+                    <Input
+                      id="cred-username"
+                      value={formData.userCredentials?.username || ''}
+                      onChange={(e) => handleCredentialChange('username', e.target.value)}
+                      placeholder="שם המשתמש שלך"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="cred-password">סיסמה</Label>
+                    <Input
+                      id="cred-password"
+                      type="password"
+                      value={formData.userCredentials?.password || ''}
+                      onChange={(e) => handleCredentialChange('password', e.target.value)}
+                      placeholder="••••••••"
+                      autoComplete="new-password"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="cred-phone">מספר טלפון</Label>
+                    <Input
+                      id="cred-phone"
+                      type="tel"
+                      value={formData.userCredentials?.phoneNumber || ''}
+                      onChange={(e) => handleCredentialChange('phoneNumber', e.target.value)}
+                      placeholder="050-0000000"
+                    />
+                  </div>
+                </div>
+                <div className="flex items-center justify-between gap-3">
+                  <Label htmlFor="cred-google" className="text-sm cursor-pointer">חשבון Google מחובר</Label>
+                  <Switch
+                    id="cred-google"
+                    checked={!!formData.userCredentials?.googleConnected}
+                    onCheckedChange={(val) => handleCredentialChange('googleConnected', val)}
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
           {/* הערות */}
