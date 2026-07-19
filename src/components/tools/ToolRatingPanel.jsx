@@ -62,9 +62,17 @@ export default function ToolRatingPanel({ tool }) {
   });
 
   const saveMutation = useMutation({
-    mutationFn: (data) => base44.entities.UserToolRating.create(data),
+    mutationFn: async (data) => {
+      await base44.entities.UserToolRating.create(data);
+      // עדכן את דירוג הכלי עצמו לממוצע כל הדירוגים — כדי שיוצג בכרטיס, בדשבורד ובאנליטיקה
+      const allRatings = [...ratings.map((r) => r.rating), data.rating].filter((n) => n > 0);
+      const avg = allRatings.reduce((sum, n) => sum + n, 0) / allRatings.length;
+      await base44.entities.AiTool.update(tool.id, { rating: Math.round(avg * 10) / 10 });
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['toolRatings', tool.id] });
+      queryClient.invalidateQueries({ queryKey: ['tools'] });
+      queryClient.invalidateQueries({ queryKey: ['userToolRatings'] });
       setRating(0);
       setComment('');
       toast.success('המשוב נשמר בהצלחה!');
