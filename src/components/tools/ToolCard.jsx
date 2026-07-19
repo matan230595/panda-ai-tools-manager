@@ -1,7 +1,7 @@
-import React, { useRef, useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   Star, ExternalLink, Edit, Trash2, Tag, Flame,
-  GripVertical, Package, MoreHorizontal, Check
+  GripVertical, Package, MoreHorizontal, Check, Copy, Share2, Link2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -11,7 +11,14 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+} from '@/components/ui/drawer';
 import ShareLinkDialog from '@/components/sharing/ShareLinkDialog';
+import { toast } from 'sonner';
 
 export default function ToolCard({
   tool,
@@ -26,6 +33,9 @@ export default function ToolCard({
   fieldVisibility = {}
 }) {
   const show = (field) => fieldVisibility[field] !== false;
+  const [showQuickActions, setShowQuickActions] = useState(false);
+  const longPressTimer = useRef(null);
+  const longPressTriggered = useRef(false);
 
   const categoryBarColors = {
     'עיבוד_שפה': 'from-blue-500 to-blue-400',
@@ -69,6 +79,49 @@ export default function ToolCard({
     window.open(tool.url, '_blank', 'noopener,noreferrer');
   };
 
+  const handleCopyLink = (e) => {
+    e?.stopPropagation();
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(tool.url || window.location.href);
+      toast.success('הקישור הועתק');
+    }
+  };
+
+  const handleQuickFavorite = (e) => {
+    e?.stopPropagation();
+    onToggleFavorite(tool);
+    toast.success(tool.isFavorite ? 'הוסר ממועדפים' : 'נוסף למועדפים');
+  };
+
+  const startLongPress = (e) => {
+    longPressTriggered.current = false;
+    longPressTimer.current = setTimeout(() => {
+      if (!longPressTriggered.current) {
+        longPressTriggered.current = true;
+        setShowQuickActions(true);
+        // רטט אם נתמך
+        if (navigator.vibrate) navigator.vibrate(50);
+      }
+    }, 500);
+  };
+
+  const cancelLongPress = () => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+  };
+
+  const handleTouchMove = () => cancelLongPress();
+
+  const handleTouchEnd = () => {
+    cancelLongPress();
+    // אם הלחיצה הארוכה הופעלה, נמנע את הקליק הרגיל
+    if (longPressTriggered.current) {
+      setTimeout(() => { longPressTriggered.current = false; }, 300);
+    }
+  };
+
   const FavoriteButton = ({ className = '' }) => (
     <button
       onClick={(e) => { e.stopPropagation(); onToggleFavorite(tool); }}
@@ -108,7 +161,14 @@ export default function ToolCard({
         dir="rtl"
         role="article"
         aria-label={`כרטיס כלי: ${tool.name}`}
-        onClick={() => onClick?.(tool)}
+        onClick={(e) => {
+          if (longPressTriggered.current) { e.preventDefault(); e.stopPropagation(); return; }
+          onClick?.(tool);
+        }}
+        onTouchStart={startLongPress}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        onTouchCancel={cancelLongPress}
       >
         {/* פס גרדיאנט עליון בצבע הקטגוריה */}
         <div className={`absolute top-0 inset-x-0 h-1 bg-gradient-to-l ${categoryBarColors[tool.category] || categoryBarColors['אחר']}`} />
@@ -281,7 +341,15 @@ export default function ToolCard({
                   <MoreHorizontal className="w-5 h-5" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48 text-sm">
+              <DropdownMenuContent align="end" className="w-52 text-sm">
+                <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleQuickFavorite(e); }}>
+                  <Star className={`w-4 h-4 ml-2 ${tool.isFavorite ? 'fill-yellow-400 text-yellow-400' : ''}`} />
+                  {tool.isFavorite ? 'הסר ממועדפים' : 'הוסף למועדפים'}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleCopyLink(e); }}>
+                  <Link2 className="w-4 h-4 ml-2" />
+                  העתק קישור
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onEdit(tool); }}>
                   <Edit className="w-4 h-4 ml-2" />
                   עריכה
@@ -303,6 +371,57 @@ export default function ToolCard({
           </div>
         </div>
       </div>
+
+      {/* תפריט פעולות מהירות בלחיצה ארוכה (מובייל) */}
+      <Drawer open={showQuickActions} onOpenChange={setShowQuickActions}>
+        <DrawerContent className="rounded-t-[2rem] bg-white dark:bg-slate-950" dir="rtl">
+          <DrawerHeader>
+            <DrawerTitle className="text-right">פעולות מהירות — {tool.name}</DrawerTitle>
+          </DrawerHeader>
+          <div className="px-4 pb-8 space-y-2">
+            <Button
+              variant="outline"
+              className="w-full justify-between rounded-2xl min-h-[54px]"
+              onClick={(e) => { handleQuickFavorite(e); setShowQuickActions(false); }}
+            >
+              <span>{tool.isFavorite ? 'הסר ממועדפים' : 'הוסף למועדפים'}</span>
+              <Star className={`w-5 h-5 ${tool.isFavorite ? 'fill-yellow-400 text-yellow-400' : ''}`} />
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full justify-between rounded-2xl min-h-[54px]"
+              onClick={(e) => { handleCopyLink(e); setShowQuickActions(false); }}
+            >
+              <span>העתק קישור</span>
+              <Copy className="w-5 h-5" />
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full justify-between rounded-2xl min-h-[54px]"
+              onClick={() => { setShowQuickActions(false); setTimeout(() => onEdit(tool), 200); }}
+            >
+              <span>עריכה</span>
+              <Edit className="w-5 h-5" />
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full justify-between rounded-2xl min-h-[54px]"
+              onClick={() => { setShowQuickActions(false); setTimeout(() => handleVisit(), 200); }}
+            >
+              <span>פתח באתר</span>
+              <ExternalLink className="w-5 h-5" />
+            </Button>
+            <Button
+              variant="destructive"
+              className="w-full justify-between rounded-2xl min-h-[54px]"
+              onClick={() => { setShowQuickActions(false); setTimeout(() => onDelete(tool), 200); }}
+            >
+              <span>מחיקה</span>
+              <Trash2 className="w-5 h-5" />
+            </Button>
+          </div>
+        </DrawerContent>
+      </Drawer>
     </div>
   );
 }

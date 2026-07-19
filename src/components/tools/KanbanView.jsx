@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Star, ExternalLink, Edit, Trash2, Key, FlaskConical, CheckCircle2, XCircle } from 'lucide-react';
+import { Star, ExternalLink, Edit, Trash2, Key, FlaskConical, CheckCircle2, XCircle, Bookmark } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ToolLogo from '@/components/ToolLogo';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
@@ -20,6 +20,14 @@ const COLUMNS = [
     color: 'from-emerald-500 to-green-600',
     ring: 'border-emerald-300 dark:border-emerald-800',
     dropBg: 'bg-emerald-50/70 dark:bg-emerald-900/20',
+  },
+  {
+    id: 'נשמר לסקירה',
+    title: 'נשמר לסקירה',
+    Icon: Bookmark,
+    color: 'from-violet-500 to-purple-600',
+    ring: 'border-violet-300 dark:border-violet-800',
+    dropBg: 'bg-violet-50/70 dark:bg-violet-900/20',
   },
   {
     id: 'לביטול',
