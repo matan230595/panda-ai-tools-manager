@@ -16,6 +16,13 @@ import { toast } from 'sonner';
 import CredentialsSection from '@/components/tools/form/CredentialsSection';
 import ArrayInputField from '@/components/tools/form/ArrayInputField';
 
+const CATEGORIES = [
+  'עיבוד_שפה', 'יצירת_תמונות', 'וידאו', 'קוד', 'עיצוב', 
+  'מחקר', 'פרודוקטיביות', 'אוטומציה', 'אנליטיקה', 'שיווק', 'כתיבה',
+  'אודיו', 'נתונים', 'חינוך', 'אחר'
+];
+const VALID_CATEGORIES = new Set(CATEGORIES);
+
 export default function ToolForm({ tool, onClose, onSave }) {
   const [formData, setFormData] = useState({
     name: '',
@@ -59,20 +66,16 @@ export default function ToolForm({ tool, onClose, onSave }) {
   const [isAutoFetchingMeta, setIsAutoFetchingMeta] = useState(false);
   const [autofillError, setAutofillError] = useState('');
 
-  const categories = [
-    'עיבוד_שפה', 'יצירת_תמונות', 'וידאו', 'קוד', 'עיצוב', 
-    'מחקר', 'פרודוקטיביות', 'אוטומציה', 'אנליטיקה', 'שיווק', 'כתיבה',
-    'אודיו', 'נתונים', 'חינוך', 'אחר'
-  ];
-  const validCategories = new Set(categories);
+  const categories = CATEGORIES;
+  const validCategories = VALID_CATEGORIES;
 
   const customCategories = useMemo(() => {
     return Array.isArray(tool?.availableCustomCategories) ? tool.availableCustomCategories : [];
   }, [tool]);
 
   const categoryOptions = useMemo(() => {
-    return [...new Set([...categories, ...customCategories, formData.customCategory].filter(Boolean))];
-  }, [categories, customCategories, formData.customCategory]);
+    return [...new Set([...CATEGORIES, ...customCategories, formData.customCategory].filter(Boolean))];
+  }, [customCategories, formData.customCategory]);
 
   // חישוב אוטומטי של המחיר בשקלים
   useEffect(() => {
@@ -297,7 +300,6 @@ ${formData.url ? `URL: ${formData.url}` : ''}
       return;
     }
 
-    const validCategories = new Set(categories);
     const validPricing = new Set(['חינם', 'בתשלום', 'פרימיום', 'פרימיום_מוגבל']);
     const validSubscriptionTypes = new Set(['חינמי', 'פרימיום', 'גולד']);
     const normalizedUrl = formData.url.startsWith('http') ? formData.url : `https://${formData.url}`;

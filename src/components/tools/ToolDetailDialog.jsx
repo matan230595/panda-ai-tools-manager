@@ -14,6 +14,19 @@ import DriveDocsPanel from '@/components/tools/DriveDocsPanel';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
 
+const CATEGORY_COLORS = {
+  'עיבוד_שפה': 'bg-blue-100 text-blue-800',
+  'יצירת_תמונות': 'bg-purple-100 text-purple-800',
+  'וידאו': 'bg-pink-100 text-pink-800',
+  'קוד': 'bg-green-100 text-green-800',
+  'עיצוב': 'bg-yellow-100 text-yellow-800',
+  'מחקר': 'bg-indigo-100 text-indigo-800',
+  'פרודוקטיביות': 'bg-orange-100 text-orange-800',
+  'אוטומציה': 'bg-red-100 text-red-800',
+  'אנליטיקה': 'bg-teal-100 text-teal-800',
+  'שיווק': 'bg-cyan-100 text-cyan-800'
+};
+
 export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onToggleFavorite, onManageSubscription, onQuickUpdate }) {
   const queryClient = useQueryClient();
   // רישום אינטראקציית קליק כשנפתח כרטיס כלי
@@ -34,18 +47,7 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
     })();
   }, [tool?.id]);
 
-  const categoryColors = {
-    'עיבוד_שפה': 'bg-blue-100 text-blue-800',
-    'יצירת_תמונות': 'bg-purple-100 text-purple-800',
-    'וידאו': 'bg-pink-100 text-pink-800',
-    'קוד': 'bg-green-100 text-green-800',
-    'עיצוב': 'bg-yellow-100 text-yellow-800',
-    'מחקר': 'bg-indigo-100 text-indigo-800',
-    'פרודוקטיביות': 'bg-orange-100 text-orange-800',
-    'אוטומציה': 'bg-red-100 text-red-800',
-    'אנליטיקה': 'bg-teal-100 text-teal-800',
-    'שיווק': 'bg-cyan-100 text-cyan-800'
-  };
+  const categoryColors = CATEGORY_COLORS;
 
   return (
     <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-end md:items-center justify-center p-0 md:p-4" onClick={onClose}>

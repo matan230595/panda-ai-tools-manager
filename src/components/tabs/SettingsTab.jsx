@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { getCurrentUser } from '@/components/hooks/userScopedData';
 import { Key, Palette, Download, Trash2, Save, AlertCircle, ExternalLink, CheckCircle, Zap, Coins, ChevronRight, CheckCircle2, XCircle, Activity } from 'lucide-react';
+import { API_PROVIDERS, FREE_MODELS, PAID_MODELS } from '@/lib/apiProviders';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -49,170 +50,14 @@ export default function SettingsTab({ settings, onLogout }) {
   const [mobileSection, setMobileSection] = useState('branding');
   const [providerConnectionStates, setProviderConnectionStates] = useState({});
 
-  const apiProviders = [
-    {
-      id: 'gemini',
-      name: 'Google Gemini',
-      key: 'geminiApiKey',
-      url: 'https://makersuite.google.com/app/apikey',
-      description: 'מודל מתקדם של Google עם יכולות מולטימודליות',
-      free: '60 בקשות לדקה',
-      models: 'Gemini Pro, Gemini Pro Vision',
-      steps: [
-        'היכנס ל-Google AI Studio',
-        'לחץ על "Get API Key"',
-        'צור מפתח חדש או השתמש בקיים',
-        'העתק את המפתח והדבק כאן'
-      ]
-    },
-    {
-      id: 'groq',
-      name: 'Groq',
-      key: 'groqApiKey',
-      url: 'https://console.groq.com',
-      description: 'מהיר ביותר! עד 500 tokens/sec 🚀',
-      free: '14,400 בקשות ליום',
-      models: 'Llama 3, Mixtral, Gemma',
-      steps: [
-        'הירשם ב-Groq Console',
-        'לך ל-API Keys',
-        'צור מפתח חדש',
-        'העתק והדבק כאן'
-      ]
-    },
-    {
-      id: 'mistral',
-      name: 'Mistral AI',
-      key: 'mistralApiKey',
-      url: 'https://console.mistral.ai',
-      description: 'מודלים אירופאיים מתקדמים',
-      free: 'טיר חינמי זמין',
-      models: 'Mistral 7B, Mixtral 8x7B',
-      steps: [
-        'הירשם ב-Mistral Console',
-        'צור מפתח API חדש',
-        'העתק את המפתח',
-        'הדבק כאן'
-      ]
-    },
-    {
-      id: 'cohere',
-      name: 'Cohere',
-      key: 'cohereApiKey',
-      url: 'https://dashboard.cohere.com',
-      description: 'מודלים עסקיים ומתקדמים',
-      free: 'Trial API זמין',
-      models: 'Command, Command Light',
-      steps: [
-        'הירשם ב-Cohere',
-        'לך ל-API Keys',
-        'צור Trial Key',
-        'הדבק כאן'
-      ]
-    },
-    {
-      id: 'huggingface',
-      name: 'Hugging Face',
-      key: 'huggingfaceApiKey',
-      url: 'https://huggingface.co/settings/tokens',
-      description: 'גישה למאות מודלים בקוד פתוח',
-      free: 'חינמי עם rate limits',
-      models: 'מאות מודלים',
-      steps: [
-        'הירשם ב-Hugging Face',
-        'לך להגדרות > Access Tokens',
-        'צור Read token',
-        'הדבק כאן'
-      ]
-    },
-    {
-      id: 'together',
-      name: 'Together AI',
-      key: 'togetherApiKey',
-      url: 'https://together.ai',
-      description: 'פלטפורמה לריצת מודלים בענן',
-      free: '$25 credit חינם',
-      models: 'Llama 3, Mistral, ועוד',
-      steps: [
-        'הירשם ב-Together AI',
-        'קבל $25 credit',
-        'צור API Key',
-        'הדבק כאן'
-      ]
-    },
-    {
-      id: 'anthropic',
-      name: 'Anthropic Claude 3.5',
-      key: 'claudeApiKey',
-      url: 'https://console.anthropic.com',
-      description: 'Claude 3.5 Sonnet - מודל מתקדם ביותר לחשיבה מורכבת',
-      free: '$5 credit חינם',
-      models: 'Claude 3.5 Sonnet, Opus, Haiku',
-      category: 'paid',
-      steps: [
-        'הירשם ב-Anthropic Console',
-        'קבל $5 credit חינם',
-        'צור API Key חדש',
-        'הדבק כאן'
-      ]
-    },
-    {
-      id: 'openai',
-      name: 'OpenAI GPT-4o',
-      key: 'openaiApiKey',
-      url: 'https://platform.openai.com/api-keys',
-      description: 'GPT-4o - מודל דור חדש עם ראיית חזון',
-      free: '$5 credit חינם',
-      models: 'GPT-4o, GPT-4 Turbo, GPT-3.5',
-      category: 'paid',
-      steps: [
-        'הירשם ב-OpenAI Platform',
-        'קבל $5 credit חינם',
-        'צור API Key חדש',
-        'הדבק כאן'
-      ]
-    },
-    {
-      id: 'ollama',
-      name: 'Ollama (חינמי מקומי)',
-      key: 'ollamaEndpoint',
-      url: 'https://ollama.ai',
-      description: '🆓 הרץ מודלים מקומיים - אפס עלויות ללא קרדיטים',
-      free: 'חינמי ב-100%',
-      models: 'Llama 2, Mistral, Neural Chat וכו\'',
-      category: 'free',
-      steps: [
-        'הורד Ollama מ-ollama.ai',
-        'התקן וקבל את המודלים',
-        'הרץ: ollama serve',
-        'הוסף localhost:11434'
-      ]
-    },
-    {
-      id: 'localaib',
-      name: 'LocalAI (חינמי מקומי)',
-      key: 'localaiBudget',
-      url: 'https://localai.io',
-      description: '🆓 OpenAI-compatible API מקומי - אפס עלויות',
-      free: 'חינמי ב-100%',
-      models: 'מאות מודלים פתוחים',
-      category: 'free',
-      steps: [
-        'התקן LocalAI',
-        'הרץ: docker run -p 8080:8080 localai/localai',
-        'כנס מודלים מרצוי',
-        'הוסף http://localhost:8080'
-      ]
-    }
-  ];
-
-  const freeModels = apiProviders.filter(p => p.category === 'free');
-  const paidModels = apiProviders.filter(p => p.category !== 'free');
+  const apiProviders = API_PROVIDERS;
+  const freeModels = FREE_MODELS;
+  const paidModels = PAID_MODELS;
 
   const updateSettings = useMutation({
     mutationFn: (data) => base44.entities.Settings.update(settings.id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries(['settings']);
+      queryClient.invalidateQueries({ queryKey: ['settings'] });
       toast.success('ההגדרות נשמרו בהצלחה! ✅');
     },
     onError: () => toast.error('שגיאה בשמירת ההגדרות'),
@@ -243,6 +88,12 @@ export default function SettingsTab({ settings, onLogout }) {
       };
     });
   }, [formData, providerConnectionStates]);
+
+  const providerStatusMap = useMemo(() => {
+    const map = {};
+    providerStatuses.forEach((p) => { map[p.id] = p; });
+    return map;
+  }, [providerStatuses]);
 
   useEffect(() => {
     const nextStates = {};
@@ -297,9 +148,9 @@ export default function SettingsTab({ settings, onLogout }) {
     try {
       const user = await getCurrentUser();
       const tools = await base44.entities.AiTool.filter({ created_by_id: user.id });
-      for (const tool of tools) await base44.entities.AiTool.delete(tool.id);
+      await base44.entities.AiTool.deleteMany({ created_by_id: user.id });
       const conversations = await base44.entities.Conversation.filter({ created_by_id: user.id });
-      for (const conv of conversations) await base44.entities.Conversation.delete(conv.id);
+      await base44.entities.Conversation.deleteMany({ created_by_id: user.id });
       queryClient.invalidateQueries();
       toast.success('כל הנתונים נמחקו בהצלחה');
       setShowResetDialog(false);
@@ -477,10 +328,10 @@ export default function SettingsTab({ settings, onLogout }) {
                         <div className="text-xs space-y-1 text-gray-600 dark:text-gray-400">
                           <p>💚 {provider.free}</p>
                           <p>🤖 {provider.models}</p>
-                          <p className={providerStatuses.find((item) => item.id === provider.id)?.status === 'connected' ? 'text-green-600' : providerStatuses.find((item) => item.id === provider.id)?.status === 'failed' || providerStatuses.find((item) => item.id === provider.id)?.status === 'invalid' ? 'text-amber-600' : 'text-gray-500'}>
-                            {providerStatuses.find((item) => item.id === provider.id)?.status === 'connected'
+                          <p className={providerStatusMap[provider.id]?.status === 'connected' ? 'text-green-600' : providerStatusMap[provider.id]?.status === 'failed' || providerStatusMap[provider.id]?.status === 'invalid' ? 'text-amber-600' : 'text-gray-500'}>
+                            {providerStatusMap[provider.id]?.status === 'connected'
                               ? '✓ הכתובת תקינה וזמינה'
-                              : providerStatuses.find((item) => item.id === provider.id)?.status === 'failed' || providerStatuses.find((item) => item.id === provider.id)?.status === 'invalid'
+                              : providerStatusMap[provider.id]?.status === 'failed' || providerStatusMap[provider.id]?.status === 'invalid'
                                 ? '⚠ בדוק את הכתובת'
                                 : '— לא הוגדר עדיין'}
                           </p>
@@ -533,9 +384,9 @@ export default function SettingsTab({ settings, onLogout }) {
                                 placeholder={`הדבק ${provider.name} API key...`}
                                 className="flex-1"
                               />
-                              <div className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${providerStatuses.find((item) => item.id === provider.id)?.status === 'connected' ? 'bg-green-100 text-green-700 dark:bg-green-950/40 dark:text-green-300' : providerStatuses.find((item) => item.id === provider.id)?.status === 'configured' ? 'bg-blue-100 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300' : providerStatuses.find((item) => item.id === provider.id)?.status === 'failed' || providerStatuses.find((item) => item.id === provider.id)?.status === 'invalid' ? 'bg-amber-100 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300' : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300'}`}>
-                                {providerStatuses.find((item) => item.id === provider.id)?.status === 'connected' ? <CheckCircle2 className="w-3.5 h-3.5" /> : providerStatuses.find((item) => item.id === provider.id)?.status === 'configured' ? <Activity className="w-3.5 h-3.5" /> : providerStatuses.find((item) => item.id === provider.id)?.status === 'failed' || providerStatuses.find((item) => item.id === provider.id)?.status === 'invalid' ? <AlertCircle className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
-                                <span>{providerStatuses.find((item) => item.id === provider.id)?.status === 'connected' ? 'מפתח שמור' : providerStatuses.find((item) => item.id === provider.id)?.status === 'configured' ? 'מוגדר' : providerStatuses.find((item) => item.id === provider.id)?.status === 'failed' || providerStatuses.find((item) => item.id === provider.id)?.status === 'invalid' ? 'צריך תיקון' : 'לא הוגדר'}</span>
+                              <div className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${providerStatusMap[provider.id]?.status === 'connected' ? 'bg-green-100 text-green-700 dark:bg-green-950/40 dark:text-green-300' : providerStatusMap[provider.id]?.status === 'configured' ? 'bg-blue-100 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300' : providerStatusMap[provider.id]?.status === 'failed' || providerStatusMap[provider.id]?.status === 'invalid' ? 'bg-amber-100 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300' : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300'}`}>
+                                {providerStatusMap[provider.id]?.status === 'connected' ? <CheckCircle2 className="w-3.5 h-3.5" /> : providerStatusMap[provider.id]?.status === 'configured' ? <Activity className="w-3.5 h-3.5" /> : providerStatusMap[provider.id]?.status === 'failed' || providerStatusMap[provider.id]?.status === 'invalid' ? <AlertCircle className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
+                                <span>{providerStatusMap[provider.id]?.status === 'connected' ? 'מפתח שמור' : providerStatusMap[provider.id]?.status === 'configured' ? 'מוגדר' : providerStatusMap[provider.id]?.status === 'failed' || providerStatusMap[provider.id]?.status === 'invalid' ? 'צריך תיקון' : 'לא הוגדר'}</span>
                               </div>
                             </div>
                             <Button variant="outline" onClick={() => toggleKeyVisibility(provider.key)} className="min-h-[44px] sm:w-auto">
@@ -546,10 +397,10 @@ export default function SettingsTab({ settings, onLogout }) {
                         <div className="text-xs space-y-1 text-gray-600 dark:text-gray-400">
                           <p>💚 {provider.free}</p>
                           <p>🤖 {provider.models}</p>
-                          <p className={providerStatuses.find((item) => item.id === provider.id)?.status === 'valid' ? 'text-green-600' : providerStatuses.find((item) => item.id === provider.id)?.status === 'invalid' ? 'text-amber-600' : 'text-gray-500'}>
-                            {providerStatuses.find((item) => item.id === provider.id)?.status === 'valid'
+                          <p className={providerStatusMap[provider.id]?.status === 'valid' ? 'text-green-600' : providerStatusMap[provider.id]?.status === 'invalid' ? 'text-amber-600' : 'text-gray-500'}>
+                            {providerStatusMap[provider.id]?.status === 'valid'
                               ? '✓ המפתח נראה מוגדר'
-                              : providerStatuses.find((item) => item.id === provider.id)?.status === 'invalid'
+                              : providerStatusMap[provider.id]?.status === 'invalid'
                                 ? '⚠ המפתח קצר או לא שלם'
                                 : '— לא הוגדר עדיין'}
                           </p>

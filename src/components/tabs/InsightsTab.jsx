@@ -11,6 +11,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import MonthlySummaryReport from '@/components/tools/MonthlySummaryReport';
 
+const PRIORITY_COLORS = {
+  'גבוהה': 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300',
+  'בינונית': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300',
+  'נמוכה': 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300'
+};
+
 export default function InsightsTab() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [insights, setInsights] = useState(null);
@@ -158,11 +164,7 @@ ${JSON.stringify(toolsSummary, null, 2)}
     toast.success('הניתוח יוצא בהצלחה! 📥');
   };
 
-  const priorityColors = {
-    'גבוהה': 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300',
-    'בינונית': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300',
-    'נמוכה': 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300'
-  };
+  const priorityColors = PRIORITY_COLORS;
 
   return (
     <div className="max-w-7xl mx-auto space-y-4 md:space-y-6">
