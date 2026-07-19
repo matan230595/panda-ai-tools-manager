@@ -3,7 +3,8 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { getCurrentUser } from '@/components/hooks/userScopedData';
 import { Link } from 'react-router-dom';
-import { CalendarDays } from 'lucide-react';
+import { CalendarDays, Search } from 'lucide-react';
+import GlobalSearch from '@/components/search/GlobalSearch';
 import TabNavigation from '@/components/TabNavigation';
 import ToolsTab from '@/components/tabs/ToolsTab';
 import AssistantTab from '@/components/tabs/AssistantTab';
@@ -35,7 +36,20 @@ export default function Home() {
   const [authStatus, setAuthStatus] = useState('checking');
   const [showKeyboardHelp, setShowKeyboardHelp] = useState(false);
   const [quickAddTool, setQuickAddTool] = useState(false);
+  const [showGlobalSearch, setShowGlobalSearch] = useState(false);
   const queryClient = useQueryClient();
+
+  // קיצור מקלדת גלובלי לחיפוש (Ctrl+K / Cmd+K)
+  useEffect(() => {
+    const handler = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        setShowGlobalSearch(true);
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, []);
 
 
   // בדיקת אימות Base44
@@ -181,6 +195,15 @@ export default function Home() {
             <span className="hidden sm:inline">לוח שנה מנויים</span>
             <span className="sm:hidden">לוח שנה</span>
           </Link>
+          <button
+            onClick={() => setShowGlobalSearch(true)}
+            className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 sm:px-4 py-2.5 text-sm text-gray-500 hover:text-indigo-600 hover:border-indigo-300 transition-all active:scale-95 min-h-[44px]"
+            aria-label="חיפוש גלובלי"
+          >
+            <Search className="w-4 h-4" />
+            <span className="hidden md:inline">חיפוש כלים, משימות...</span>
+            <kbd className="hidden md:inline-flex items-center gap-0.5 text-[10px] text-gray-400 bg-gray-100 dark:bg-slate-800 px-1.5 py-0.5 rounded mr-1">Ctrl+K</kbd>
+          </button>
           <div className="flex items-center gap-1.5">
             <NotificationCenter 
               notifications={settings?.notifications || []}
@@ -249,6 +272,13 @@ export default function Home() {
 
       {/* עזרת קיצורי מקלדת */}
       <KeyboardShortcutsHelp open={showKeyboardHelp} onOpenChange={setShowKeyboardHelp} />
+
+      {/* חיפוש גלובלי */}
+      <GlobalSearch
+        open={showGlobalSearch}
+        onOpenChange={setShowGlobalSearch}
+        onNavigateTool={() => setActiveTab('tools')}
+      />
     </div>
   );
 }

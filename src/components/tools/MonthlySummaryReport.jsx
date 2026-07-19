@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { getCurrentUser } from '@/components/hooks/userScopedData';
-import { CalendarRange, Download, Loader2, TrendingUp, DollarSign, Clock } from 'lucide-react';
+import { CalendarRange, Download, Loader2, TrendingUp, DollarSign, Clock, GraduationCap } from 'lucide-react';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -28,6 +28,14 @@ export default function MonthlySummaryReport() {
     queryFn: async () => {
       const user = await getCurrentUser();
       return base44.entities.Subscription.filter({ created_by_id: user.id });
+    },
+  });
+
+  const { data: learningPlans = [] } = useQuery({
+    queryKey: ['learningPlansReport'],
+    queryFn: async () => {
+      const user = await getCurrentUser();
+      return base44.entities.ToolLearningPlan.filter({ created_by_id: user.id });
     },
   });
 
@@ -66,6 +74,23 @@ export default function MonthlySummaryReport() {
 
     const pieData = Object.entries(budgetByCategory).map(([name, value]) => ({ name, value }));
 
+    // נתוני למידה
+    const activeLearningPlans = learningPlans.filter((p) => (p.progress || 0) < 100);
+    const completedLearning = learningPlans.filter((p) => (p.progress || 0) >= 100);
+    const avgLearningProgress = learningPlans.length
+      ? Math.round(learningPlans.reduce((sum, p) => sum + (p.progress || 0), 0) / learningPlans.length)
+      : 0;
+
+    const learningByTool = learningPlans
+      .map((p) => ({
+        name: p.toolName || p.title,
+        progress: Math.round(p.progress || 0),
+        stepsTotal: (p.steps || []).length,
+        stepsCompleted: (p.steps || []).filter((s) => s.isCompleted).length,
+      }))
+      .sort((a, b) => b.progress - a.progress)
+      .slice(0, 5);
+
     setReport({
       monthName,
       totalTools: tools.length,
@@ -75,10 +100,17 @@ export default function MonthlySummaryReport() {
       pieData,
       topTools,
       categoryBreakdown,
+      learning: {
+        totalPlans: learningPlans.length,
+        activePlans: activeLearningPlans.length,
+        completedPlans: completedLearning.length,
+        avgProgress: avgLearningProgress,
+        topLearning: learningByTool,
+      },
     });
     setIsGenerating(false);
     toast.success('הדוח החודשי הופק בהצלחה! 📊');
-  }, [tools, subscriptions]);
+  }, [tools, subscriptions, learningPlans]);
 
   const exportReport = () => {
     const dataStr = JSON.stringify(report, null, 2);
@@ -225,6 +257,52 @@ export default function MonthlySummaryReport() {
               </div>
             </CardContent>
           </Card>
+
+          {/* בלום התקדמות למידה */}
+          {report.learning && report.learning.totalPlans > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base flex items-center gap-2">
+                  <GraduationCap className="w-4 h-4 text-purple-500" />
+                  התקדמות למידה — {report.monthName}
+                </CardTitle>
+                <CardDescription>כלים עם ההתקדמות הגבוהה ביותר בלמידה</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-3 gap-3 mb-4">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-purple-600">{report.learning.activePlans}</div>
+                    <div className="text-xs text-gray-500">בתהליך</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-green-600">{report.learning.completedPlans}</div>
+                    <div className="text-xs text-gray-500">הושלמו</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-indigo-600">{report.learning.avgProgress}%</div>
+                    <div className="text-xs text-gray-500">התקדמות ממוצעת</div>
+                  </div>
+                </div>
+                <div className="space-y-2.5">
+                  {report.learning.topLearning.map((item, idx) => (
+                    <div key={idx} className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800">
+                      <span className="w-6 h-6 rounded-full bg-purple-100 dark:bg-purple-900/40 text-purple-600 flex items-center justify-center text-xs font-bold flex-shrink-0">{idx + 1}</span>
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium text-sm truncate">{item.name}</div>
+                        <div className="flex items-center gap-2 mt-1">
+                          <div className="flex-1 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                            <div className="h-full bg-gradient-to-l from-purple-500 to-indigo-500 rounded-full" style={{ width: `${item.progress}%` }} />
+                          </div>
+                          <span className="text-xs font-bold text-purple-600 flex-shrink-0">{item.progress}%</span>
+                        </div>
+                        <div className="text-[11px] text-gray-500 mt-0.5">{item.stepsCompleted}/{item.stepsTotal} שלבים</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </>
       )}
     </div>

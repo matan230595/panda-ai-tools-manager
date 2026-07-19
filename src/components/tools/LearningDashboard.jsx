@@ -2,7 +2,7 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { getCurrentUser } from '@/components/hooks/userScopedData';
-import { GraduationCap, Target, Clock, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { GraduationCap, Target, Clock, CheckCircle2, AlertCircle, Loader2, ChevronLeft, ArrowLeft } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
@@ -139,8 +139,34 @@ export default function LearningDashboard({ onToolClick }) {
                         )}
                       </div>
 
+                      {(() => {
+                        const nextStep = steps.find((s) => !s.isCompleted);
+                        if (!nextStep) return null;
+                        const stepIdx = steps.indexOf(nextStep);
+                        return (
+                          <div className="mt-3 rounded-xl border border-indigo-200 dark:border-indigo-900/50 bg-indigo-50/60 dark:bg-indigo-950/20 p-2.5">
+                            <div className="flex items-center gap-1.5 text-[11px] font-semibold text-indigo-600 dark:text-indigo-400 mb-1">
+                              <ArrowLeft className="w-3 h-3" />
+                              השלב הבא
+                            </div>
+                            <div className="flex items-center gap-2 text-xs">
+                              <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 bg-indigo-500 text-white text-[10px] font-bold">
+                                {stepIdx + 1}
+                              </div>
+                              <span className="text-gray-700 dark:text-gray-200 font-medium truncate">{nextStep.title}</span>
+                            </div>
+                            {nextStep.dueDate && (
+                              <div className="flex items-center gap-1 mt-1.5 text-[11px] text-gray-500 pr-7">
+                                <Clock className="w-3 h-3" />
+                                יעד: {moment(nextStep.dueDate).format('DD/MM/YYYY')}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })()}
+
                       {steps.length > 0 && (
-                        <div className="mt-3 space-y-1">
+                        <div className="mt-2 space-y-1">
                           {steps.slice(0, 3).map((step, i) => (
                             <div key={i} className="flex items-center gap-2 text-xs">
                               <div className={`w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0 ${step.isCompleted ? 'bg-green-100 dark:bg-green-900/30 text-green-600' : 'bg-gray-100 dark:bg-gray-800 text-gray-400'}`}>
