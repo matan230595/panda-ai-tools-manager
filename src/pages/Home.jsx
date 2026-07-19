@@ -166,7 +166,7 @@ export default function Home() {
       <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
       
       {/* תוכן הטאב */}
-      <main id="main-content" className="max-w-7xl mx-auto px-1.5 sm:px-4 md:px-6 py-2 sm:py-4 md:py-8 md:pr-[var(--sidebar-w,21rem)] transition-[padding] duration-300 pb-[calc(7.5rem+env(safe-area-inset-bottom))] md:pb-8">
+      <main id="main-content" className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 py-2 sm:py-4 md:py-8 md:pr-[var(--sidebar-w,21rem)] transition-[padding] duration-300 pb-[calc(7.5rem+env(safe-area-inset-bottom))] md:pb-8">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 mb-4 md:mb-5 rounded-3xl border border-gray-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/70 backdrop-blur px-3 sm:px-4 py-3">
           <div className="flex flex-col sm:flex-row gap-2 w-full lg:w-auto">
             <Link to="/calendar" className="inline-flex items-center justify-center rounded-2xl border border-indigo-200 bg-white dark:bg-slate-950 dark:border-indigo-900 px-4 py-3 text-sm font-medium text-indigo-700 dark:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-colors min-h-[48px] w-full sm:w-auto">

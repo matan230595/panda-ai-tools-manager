@@ -54,6 +54,8 @@ export default function ToolCard({
   const handleMouseMove = (e) => {
     const el = cardRef.current;
     if (!el || isDragging) return;
+    // בטל אפקט 3D במסכים קטנים / מגע - גורם לחיתוך הכרטיסים בנייד
+    if (typeof window !== 'undefined' && window.matchMedia('(max-width: 767px), (pointer: coarse)').matches) return;
     const rect = el.getBoundingClientRect();
     const px = (e.clientX - rect.left) / rect.width;
     const py = (e.clientY - rect.top) / rect.height;
@@ -70,7 +72,7 @@ export default function ToolCard({
 
   return (
     <div
-      className="h-full [perspective:1400px] py-2"
+      className="h-full md:[perspective:1400px] py-2"
       onMouseMove={handleMouseMove}
       onMouseLeave={resetTilt}
     >
