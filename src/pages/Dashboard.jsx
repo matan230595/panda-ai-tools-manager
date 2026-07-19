@@ -10,8 +10,11 @@ import UpcomingRenewalsPanel from '@/components/subscription/UpcomingRenewalsPan
 import SubscriptionAlertsPanel from '@/components/dashboard/SubscriptionAlertsPanel';
 import Stat3DCard from '@/components/dashboard/Stat3DCard';
 import CostOptimizationPanel from '@/components/dashboard/CostOptimizationPanel';
+import DashboardCustomizer, { useDashboardWidgets } from '@/components/dashboard/DashboardCustomizer';
 
 export default function Dashboard() {
+  const { visible, toggle } = useDashboardWidgets();
+
   const { data: tools = [] } = useQuery({
     queryKey: ['tools'],
     queryFn: async () => {
@@ -95,53 +98,60 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-4 md:space-y-6" dir="rtl">
-      <div className="text-right px-1 sm:px-0">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text mb-1 sm:mb-2">דשבורד</h1>
-        <p className="text-xs sm:text-sm md:text-base text-gray-600 dark:text-gray-400">מבט מרכזי על מאגר הידע שלך לכלי AI</p>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 md:gap-4">
-        <Stat3DCard title="סך הכלים" value={stats.totalTools} icon={<Package className="w-5 h-5" />} gradient="from-blue-500 to-cyan-500" delay={0} />
-        <Stat3DCard title="עלות חודשית" value={`₪${stats.totalMonthlyCost.toLocaleString('he-IL')}`} icon={<DollarSign className="w-5 h-5" />} gradient="from-rose-500 to-red-600" delay={70} />
-        <Stat3DCard title="עם מנוי" value={stats.toolsWithSubscription} icon={<Calendar className="w-5 h-5" />} gradient="from-violet-500 to-purple-600" delay={140} />
-        <Stat3DCard title="כלים עם משימות" value={stats.toolsWithTasks} icon={<AlertCircle className="w-5 h-5" />} gradient="from-amber-500 to-orange-600" delay={210} />
-        <Stat3DCard title="דירוג ממוצע" value={stats.averageRating} icon={<TrendingUp className="w-5 h-5" />} gradient="from-emerald-500 to-green-600" delay={280} />
-      </div>
-
-      <CostOptimizationPanel tools={tools} />
-
-      <SubscriptionAlertsPanel subscriptions={subscriptions} reminders={reminders} />
-      <UpcomingRenewalsPanel subscriptions={subscriptions} tools={tools} limit={6} />
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 border border-gray-200 dark:border-gray-700">
-          <h2 className="text-base sm:text-lg font-bold mb-4">כלים לפי קטגוריה</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={categoriesData} margin={{ top: 10, right: 10, left: 0, bottom: 40 }}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" angle={-20} textAnchor="end" height={60} interval={0} />
-              <YAxis width={32} />
-              <Tooltip />
-              <Bar dataKey="value" fill="#6366f1" radius={[6, 6, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
+      <div className="flex items-start justify-between gap-3 px-1 sm:px-0">
+        <div className="text-right">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text mb-1 sm:mb-2">דשבורד</h1>
+          <p className="text-xs sm:text-sm md:text-base text-gray-600 dark:text-gray-400">מבט מרכזי על מאגר הידע שלך לכלי AI</p>
         </div>
-
-        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 border border-gray-200 dark:border-gray-700">
-          <h2 className="text-base sm:text-lg font-bold mb-4">עלות חודשית לפי מנויים</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={subscriptionCostData} margin={{ top: 10, right: 10, left: 0, bottom: 70 }}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" angle={-30} textAnchor="end" height={90} interval={0} />
-              <YAxis width={40} />
-              <Tooltip />
-              <Bar dataKey="cost" fill="#ef4444" radius={[6, 6, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+        <DashboardCustomizer visible={visible} toggle={toggle} />
       </div>
 
-      {knowledgeTrendData.length > 0 && (
+      {visible.stats && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 md:gap-4">
+          <Stat3DCard title="סך הכלים" value={stats.totalTools} icon={<Package className="w-5 h-5" />} gradient="from-blue-500 to-cyan-500" delay={0} />
+          <Stat3DCard title="עלות חודשית" value={`₪${stats.totalMonthlyCost.toLocaleString('he-IL')}`} icon={<DollarSign className="w-5 h-5" />} gradient="from-rose-500 to-red-600" delay={70} />
+          <Stat3DCard title="עם מנוי" value={stats.toolsWithSubscription} icon={<Calendar className="w-5 h-5" />} gradient="from-violet-500 to-purple-600" delay={140} />
+          <Stat3DCard title="כלים עם משימות" value={stats.toolsWithTasks} icon={<AlertCircle className="w-5 h-5" />} gradient="from-amber-500 to-orange-600" delay={210} />
+          <Stat3DCard title="דירוג ממוצע" value={stats.averageRating} icon={<TrendingUp className="w-5 h-5" />} gradient="from-emerald-500 to-green-600" delay={280} />
+        </div>
+      )}
+
+      {visible.optimization && <CostOptimizationPanel tools={tools} />}
+
+      {visible.alerts && <SubscriptionAlertsPanel subscriptions={subscriptions} reminders={reminders} />}
+      {visible.renewals && <UpcomingRenewalsPanel subscriptions={subscriptions} tools={tools} limit={6} />}
+
+      {visible.charts && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 border border-gray-200 dark:border-gray-700">
+            <h2 className="text-base sm:text-lg font-bold mb-4">כלים לפי קטגוריה</h2>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={categoriesData} margin={{ top: 10, right: 10, left: 0, bottom: 40 }}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" angle={-20} textAnchor="end" height={60} interval={0} />
+                <YAxis width={32} />
+                <Tooltip />
+                <Bar dataKey="value" fill="#6366f1" radius={[6, 6, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 border border-gray-200 dark:border-gray-700">
+            <h2 className="text-base sm:text-lg font-bold mb-4">עלות חודשית לפי מנויים</h2>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={subscriptionCostData} margin={{ top: 10, right: 10, left: 0, bottom: 70 }}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" angle={-30} textAnchor="end" height={90} interval={0} />
+                <YAxis width={40} />
+                <Tooltip />
+                <Bar dataKey="cost" fill="#ef4444" radius={[6, 6, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      )}
+
+      {visible.knowledge && knowledgeTrendData.length > 0 && (
         <div className="bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 border border-gray-200 dark:border-gray-700">
           <h2 className="text-base sm:text-lg font-bold mb-4">מפת ידע ותחזוקה לכלים</h2>
           <ResponsiveContainer width="100%" height={280}>
@@ -158,7 +168,7 @@ export default function Dashboard() {
         </div>
       )}
 
-      {roiData.length > 0 && (
+      {visible.roi && roiData.length > 0 && (
         <div className="bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 border border-gray-200 dark:border-gray-700">
           <h2 className="text-base sm:text-lg font-bold mb-4">ROI ורווחיות לפי כלי</h2>
           <ResponsiveContainer width="100%" height={300}>
@@ -175,26 +185,28 @@ export default function Dashboard() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6">
-        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 border border-gray-200 dark:border-gray-700">
-          <h2 className="text-base sm:text-lg font-bold mb-4">המלצות חכמות</h2>
-          <SmartRecommendations />
-        </div>
-
-        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 border border-gray-200 dark:border-gray-700 flex flex-col justify-between">
-          <div>
-            <h2 className="text-base sm:text-lg font-bold mb-2 flex items-center gap-2"><Calendar className="w-5 h-5 text-indigo-500" />לוח שנה מרוכז</h2>
-            <p className="text-sm text-gray-600 dark:text-gray-400 leading-6">
-              כל חידושי המנויים, התזכורות והמשימות מרוכזים בלוח שנה אחד — כולל עריכה והוספה ישירות מהלוח.
-            </p>
+      {visible.recommendations && (
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 border border-gray-200 dark:border-gray-700">
+            <h2 className="text-base sm:text-lg font-bold mb-4">המלצות חכמות</h2>
+            <SmartRecommendations />
           </div>
-          <Link to="/calendar" className="mt-4 inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-medium px-5 py-3 min-h-[48px] hover:from-indigo-600 hover:to-purple-700 transition-colors">
-            פתח את לוח השנה
-          </Link>
-        </div>
-      </div>
 
-      {highlightedTools.length > 0 && (
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 border border-gray-200 dark:border-gray-700 flex flex-col justify-between">
+            <div>
+              <h2 className="text-base sm:text-lg font-bold mb-2 flex items-center gap-2"><Calendar className="w-5 h-5 text-indigo-500" />לוח שנה מרוכז</h2>
+              <p className="text-sm text-gray-600 dark:text-gray-400 leading-6">
+                כל חידושי המנויים, התזכורות והמשימות מרוכזים בלוח שנה אחד — כולל עריכה והוספה ישירות מהלוח.
+              </p>
+            </div>
+            <Link to="/calendar" className="mt-4 inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-medium px-5 py-3 min-h-[48px] hover:from-indigo-600 hover:to-purple-700 transition-colors">
+              פתח את לוח השנה
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {visible.highlighted && highlightedTools.length > 0 && (
         <div className="bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 border border-gray-200 dark:border-gray-700">
           <h2 className="text-base sm:text-lg font-bold mb-4 flex items-center gap-2">
             <TrendingUp className="w-4 sm:w-5 h-4 sm:h-5 text-green-500" />
