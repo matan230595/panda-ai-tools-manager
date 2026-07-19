@@ -442,9 +442,9 @@ export default function ToolsTab({ settings, initialFilter }) {
 
   // Grid classes
   const gridClasses = {
-    grid: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3 md:gap-4 lg:gap-6',
-    list: 'flex flex-col gap-2 sm:gap-3 md:gap-4',
-    compact: 'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4',
+    grid: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-4 lg:gap-6',
+    list: 'flex flex-col gap-3 sm:gap-4',
+    compact: 'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4',
     table: '',
     kanban: '',
   };
