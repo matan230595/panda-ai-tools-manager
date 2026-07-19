@@ -25,6 +25,7 @@ export default function ToolForm({ tool, onClose, onSave }) {
     category: 'אחר',
     pricing: 'חינם',
     subscriptionType: 'חינמי',
+    operationalStatus: 'בבדיקה',
     subscriptionPlans: [],
     priceUSD: 0,
     priceILS: 0,
@@ -330,6 +331,7 @@ ${formData.url ? `URL: ${formData.url}` : ''}
       customCategory: validCategories.has(normalizedCategory) ? '' : normalizedCategory,
       pricing: validPricing.has(formData.pricing) ? formData.pricing : 'חינם',
       subscriptionType: validSubscriptionTypes.has(formData.subscriptionType) ? formData.subscriptionType : 'חינמי',
+      operationalStatus: ['בבדיקה', 'בשימוש', 'לביטול'].includes(formData.operationalStatus) ? formData.operationalStatus : 'בבדיקה',
       subscriptionPlans: Array.isArray(formData.subscriptionPlans) ? formData.subscriptionPlans.map((plan) => ({
         name: String(plan?.name || ''),
         priceUSD: Number(plan?.priceUSD || 0),
@@ -591,6 +593,21 @@ ${formData.url ? `URL: ${formData.url}` : ''}
                 </SelectContent>
               </Select>
             </div>
+          </div>
+
+          {/* סטטוס תפעולי (workflow) */}
+          <div className="space-y-2">
+            <Label htmlFor="operationalStatus">סטטוס תפעולי (לוח קנבן)</Label>
+            <Select value={formData.operationalStatus} onValueChange={(val) => handleChange('operationalStatus', val)}>
+              <SelectTrigger id="operationalStatus">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="בבדיקה">בבדיקה</SelectItem>
+                <SelectItem value="בשימוש">בשימוש</SelectItem>
+                <SelectItem value="לביטול">לביטול</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           {/* מחירים */}

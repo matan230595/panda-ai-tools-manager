@@ -167,14 +167,14 @@ export default function KanbanView({ tools, onEdit, onDelete, onToggleFavorite, 
   return (
     <DragDropContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       {/* מובייל: גלילה אופקית בין העמודות · דסקטופ: 3 עמודות */}
-      <div className="flex gap-3 md:gap-6 overflow-x-auto pb-4 snap-x snap-mandatory md:grid md:grid-cols-3 md:overflow-visible scrollbar-hide" dir="rtl">
+      <div className="flex gap-3 md:gap-6 overflow-x-auto pb-4 md:grid md:grid-cols-3 md:overflow-visible scrollbar-hide" dir="rtl">
         {COLUMNS.map((column) => {
           const columnTools = localTools.filter((t) => getStatus(t) === column.id);
           const ColIcon = column.Icon;
           return (
             <div
               key={column.id}
-              className="flex flex-col min-w-[80vw] sm:min-w-[55vw] md:min-w-0 snap-start"
+              className="flex flex-col min-w-[80vw] sm:min-w-[55vw] md:min-w-0"
             >
               <div className={`bg-gradient-to-l ${column.color} text-white rounded-xl p-3 sm:p-4 mb-3 sm:mb-4 sticky top-16 md:top-24 z-10 shadow-md`}>
                 <div className="flex items-center gap-2">
@@ -200,7 +200,7 @@ export default function KanbanView({ tools, onEdit, onDelete, onToggleFavorite, 
                             {...dragProvided.draggableProps}
                             {...dragProvided.dragHandleProps}
                             style={dragProvided.draggableProps.style}
-                            className={dragSnapshot.isDragging ? 'opacity-80 rotate-1' : ''}
+                            className={dragSnapshot.isDragging ? 'opacity-90' : ''}
                           >
                             <KanbanCard tool={tool} isDragging={dragSnapshot.isDragging} />
                           </div>
