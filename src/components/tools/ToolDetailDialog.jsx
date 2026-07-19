@@ -140,7 +140,7 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
               {/* Detailed Description */}
               {tool.detailedDescription &&
               <div>
-                  <h3 className="font-bold text-lg mb-3 flex items-center gap-2 text-center no-underline">אודות הכלי
+                  <h3 className="font-bold text-lg mb-3 flex items-center gap-2 no-underline text-right">אודות הכלי
 
 
                 </h3>
