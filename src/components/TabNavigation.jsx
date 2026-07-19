@@ -64,7 +64,7 @@ export default function TabNavigation({ activeTab, onTabChange }) {
           onClick={onClick}
           title={tab.label}
           aria-label={tab.label}
-          className={`w-full flex items-center justify-center rounded-2xl py-2.5 transition-all ${active ? 'bg-indigo-600 text-white shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800'}`}>
+          className={`w-full flex items-center justify-center rounded-2xl py-2.5 transition-all ${active ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/30' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800'}`}>
           
           <div className={`flex items-center justify-center rounded-2xl w-10 h-10 ${active ? 'bg-white/15' : 'bg-gray-100 dark:bg-slate-800'}`}>
             <Icon className="w-5 h-5" />
@@ -75,10 +75,10 @@ export default function TabNavigation({ activeTab, onTabChange }) {
     return (
       <button
         onClick={onClick}
-        className={`w-full flex items-center gap-3 rounded-2xl transition-all ${compact ? 'flex-col justify-center min-h-[72px] px-1 py-2 text-center' : 'justify-between px-3 py-2'} ${active ? 'bg-indigo-600 text-white shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800'}`}>
+        className={`w-full flex items-center gap-3 rounded-2xl transition-all active:scale-95 ${compact ? 'flex-col justify-center min-h-[64px] px-1 py-1.5 text-center' : 'justify-between px-3 py-2'} ${active ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/30' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800'}`}>
         
-        <div className={`flex items-center gap-3 ${compact ? 'flex-col gap-1.5' : ''}`}>
-          <div className={`flex items-center justify-center rounded-xl ${compact ? 'w-11 h-11' : 'w-8 h-8'} ${active ? 'bg-white/15' : 'bg-gray-100 dark:bg-slate-800'}`}>
+        <div className={`flex items-center gap-3 ${compact ? 'flex-col gap-1' : ''}`}>
+          <div className={`flex items-center justify-center rounded-xl ${compact ? 'w-10 h-10' : 'w-8 h-8'} ${active ? 'bg-white/15' : 'bg-gray-100 dark:bg-slate-800'}`}>
             <Icon className="w-5 h-5" />
           </div>
           <span className={`${compact ? 'text-[11px]' : 'text-sm'} font-medium`}>{tab.label}</span>
@@ -144,14 +144,14 @@ export default function TabNavigation({ activeTab, onTabChange }) {
         </div>
       </div>
 
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-[90] bg-white/98 dark:bg-slate-950/98 backdrop-blur-xl border-t border-gray-200 dark:border-slate-800 pb-[max(12px,env(safe-area-inset-bottom))] shadow-[0_-10px_32px_rgba(15,23,42,0.16)]" dir="rtl">
-        <nav className="grid grid-cols-5 gap-1 px-2 pt-2 max-w-xl mx-auto">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-[90] bg-white/95 dark:bg-slate-950/95 backdrop-blur-2xl border-t border-gray-200/80 dark:border-slate-800 pb-[max(10px,env(safe-area-inset-bottom))] shadow-[0_-8px_30px_rgba(15,23,42,0.12)]" dir="rtl">
+        <nav className="grid grid-cols-5 gap-1 px-2 pt-1.5 max-w-xl mx-auto">
           {mobileTabs.map((tab) => <NavButton key={tab.id} tab={tab} compact active={activeTab === tab.id} onClick={() => onTabChange(tab.id)} />)}
           <Drawer open={isMoreOpen} onOpenChange={setIsMoreOpen}>
             <DrawerTrigger asChild>
-              <button className={`w-full flex flex-col items-center justify-center min-h-[72px] rounded-2xl px-1 py-2 transition-all ${isMoreActive ? 'bg-indigo-600 text-white shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800'}`}>
-                <div className={`w-11 h-11 rounded-2xl flex items-center justify-center ${isMoreActive ? 'bg-white/15' : 'bg-gray-100 dark:bg-slate-800'}`}><MoreHorizontal className="w-5 h-5" /></div>
-                <span className="text-[11px] font-medium mt-1.5">עוד</span>
+              <button className={`w-full flex flex-col items-center justify-center min-h-[64px] rounded-2xl px-1 py-1.5 transition-all active:scale-95 ${isMoreActive ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/30' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800'}`}>
+                <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${isMoreActive ? 'bg-white/15' : 'bg-gray-100 dark:bg-slate-800'}`}><MoreHorizontal className="w-5 h-5" /></div>
+                <span className="text-[11px] font-medium mt-1">עוד</span>
               </button>
             </DrawerTrigger>
             <DrawerContent className="rounded-t-[2rem] bg-white dark:bg-slate-950">

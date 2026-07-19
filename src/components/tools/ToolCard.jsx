@@ -88,13 +88,15 @@ export default function ToolCard({
       <div
         ref={cardRef}
         className={`
-          group relative flex flex-col rounded-[22px] md:rounded-[26px] p-4 md:p-5 h-full antialiased cursor-pointer
-          bg-white/80 dark:bg-gray-900/70 backdrop-blur-xl
+          group relative flex flex-col rounded-[22px] md:rounded-[26px] p-4 md:p-5 h-full antialiased cursor-pointer overflow-hidden
+          bg-white/85 dark:bg-gray-900/75 backdrop-blur-xl
           border border-gray-200/70 dark:border-white/10
-          transition-[transform,box-shadow] duration-200 ease-out will-change-transform
+          transition-[transform,box-shadow,border-color] duration-200 ease-out will-change-transform
+          active:scale-[0.98] md:active:scale-100
+          hover:border-indigo-300/60 dark:hover:border-indigo-500/30
           ${tilt.active
             ? 'shadow-[0_40px_70px_-20px_rgba(79,70,229,0.45)]'
-            : 'shadow-[0_10px_30px_-18px_rgba(0,0,0,0.30)] md:shadow-[0_20px_40px_-24px_rgba(0,0,0,0.35)]'}
+            : 'shadow-[0_8px_24px_-12px_rgba(0,0,0,0.18)] md:shadow-[0_20px_40px_-24px_rgba(0,0,0,0.35)] hover:shadow-[0_16px_36px_-16px_rgba(79,70,229,0.30)] md:hover:shadow-[0_28px_50px_-20px_rgba(79,70,229,0.35)]'}
           ${isDragging ? 'opacity-50 scale-95' : 'opacity-100'}
           ${tool.isFavorite ? 'ring-2 ring-yellow-400/70' : ''}
           ${onToggleSelect && isSelected ? 'ring-2 ring-indigo-500' : ''}
@@ -108,6 +110,9 @@ export default function ToolCard({
         aria-label={`כרטיס כלי: ${tool.name}`}
         onClick={() => onClick?.(tool)}
       >
+        {/* פס גרדיאנט עליון בצבע הקטגוריה */}
+        <div className={`absolute top-0 inset-x-0 h-1 bg-gradient-to-l ${categoryBarColors[tool.category] || categoryBarColors['אחר']}`} />
+
         {/* השתקפות זכוכית דינמית שעוקבת אחרי העכבר */}
         <div
           className="absolute inset-0 rounded-[22px] md:rounded-[26px] pointer-events-none transition-opacity duration-300"
