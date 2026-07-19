@@ -10,6 +10,7 @@ import UpcomingRenewalsPanel from '@/components/subscription/UpcomingRenewalsPan
 import SubscriptionAlertsPanel from '@/components/dashboard/SubscriptionAlertsPanel';
 import Stat3DCard from '@/components/dashboard/Stat3DCard';
 import CostOptimizationPanel from '@/components/dashboard/CostOptimizationPanel';
+import ActivityHighlightsPanel from '@/components/dashboard/ActivityHighlightsPanel';
 import DashboardCustomizer, { useDashboardWidgets } from '@/components/dashboard/DashboardCustomizer';
 
 export default function Dashboard() {
@@ -117,6 +118,9 @@ export default function Dashboard() {
       )}
 
       {visible.optimization && <CostOptimizationPanel tools={tools} />}
+
+      <ActivityHighlightsPanel tools={tools} />
+
 
       {visible.alerts && <SubscriptionAlertsPanel subscriptions={subscriptions} reminders={reminders} />}
       {visible.renewals && <UpcomingRenewalsPanel subscriptions={subscriptions} tools={tools} limit={6} />}

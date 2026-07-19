@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Download, Upload, FileJson, FileSpreadsheet, AlertCircle, Loader2 } from 'lucide-react';
+import { Download, Upload, FileJson, FileSpreadsheet, AlertCircle, Loader2, Sheet, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -103,6 +103,32 @@ export default function ExportImportDialog({ tools, onImportComplete }) {
     includeNotes: true,
   });
   const [isImporting, setIsImporting] = useState(false);
+  const [isExportingSheet, setIsExportingSheet] = useState(false);
+
+  const handleExportGoogleSheet = async () => {
+    setIsExportingSheet(true);
+    try {
+      const res = await base44.functions.invoke('exportToGoogleSheet', {});
+      const url = res.data?.spreadsheetUrl;
+      if (url) {
+        toast.success(res.data.message || 'הגיליון נוצר בהצלחה', {
+          action: {
+            label: 'פתח גיליון',
+            onClick: () => window.open(url, '_blank'),
+          },
+          duration: 10000,
+        });
+        window.open(url, '_blank');
+        setIsOpen(false);
+      } else {
+        throw new Error(res.data?.error || 'שגיאה ביצירת הגיליון');
+      }
+    } catch (error) {
+      toast.error(error?.response?.data?.error || error.message || 'שגיאה בייצוא לגיליון Google');
+    } finally {
+      setIsExportingSheet(false);
+    }
+  };
 
   const handleExportJSON = () => {
     const exportData = tools.map((tool) => {
@@ -268,6 +294,28 @@ export default function ExportImportDialog({ tools, onImportComplete }) {
               <Button onClick={handleExportCSV} variant="outline" className="w-full" disabled={tools.length === 0}>
                 <FileSpreadsheet className="w-4 h-4 ml-2" />
                 ייצא כ-CSV
+              </Button>
+            </div>
+
+            <div className="pt-2 border-t">
+              <p className="text-xs text-gray-500 mb-2">ייצוא ישיר לגיליון Google Sheets חדש עם נתוני שימוש, דירוגים וסטטוס:</p>
+              <Button
+                onClick={handleExportGoogleSheet}
+                disabled={tools.length === 0 || isExportingSheet}
+                className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+              >
+                {isExportingSheet ? (
+                  <>
+                    <Loader2 className="w-4 h-4 ml-2 animate-spin" />
+                    יוצר גיליון...
+                  </>
+                ) : (
+                  <>
+                    <Sheet className="w-4 h-4 ml-2" />
+                    ייצא לגיליון Google Sheets
+                    <ExternalLink className="w-3.5 h-3.5 mr-2 opacity-70" />
+                  </>
+                )}
               </Button>
             </div>
           </TabsContent>
