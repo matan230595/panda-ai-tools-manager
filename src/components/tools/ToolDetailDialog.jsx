@@ -10,6 +10,7 @@ import ToolTasksPanel from '@/components/tools/ToolTasksPanel';
 import ToolLearningPlanPanel from '@/components/tools/ToolLearningPlanPanel';
 import ToolRatingPanel from '@/components/tools/ToolRatingPanel';
 import ToolUsageActivity from '@/components/tools/ToolUsageActivity';
+import DriveDocsPanel from '@/components/tools/DriveDocsPanel';
 import { base44 } from '@/api/base44Client';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -146,7 +147,7 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-4 md:p-6">
           <Tabs defaultValue="overview" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 md:grid-cols-6 xl:grid-cols-11 gap-2 h-auto bg-transparent p-0">
+            <TabsList className="grid w-full grid-cols-2 md:grid-cols-6 xl:grid-cols-12 gap-2 h-auto bg-transparent p-0">
               <TabsTrigger value="overview">סקירה</TabsTrigger>
               <TabsTrigger value="rating">⭐ דירוג ומשוב</TabsTrigger>
               <TabsTrigger value="use-cases">שימוש</TabsTrigger>
@@ -157,6 +158,7 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
               <TabsTrigger value="credentials">👤 גישה</TabsTrigger>
               <TabsTrigger value="tasks">משימות</TabsTrigger>
               <TabsTrigger value="learning">למידה</TabsTrigger>
+              <TabsTrigger value="docs">Drive</TabsTrigger>
               <TabsTrigger value="notes">הערות</TabsTrigger>
             </TabsList>
 
@@ -456,6 +458,10 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
 
             <TabsContent value="learning" className="space-y-4 mt-6">
               <ToolLearningPlanPanel tool={tool} />
+            </TabsContent>
+
+            <TabsContent value="docs" className="space-y-4 mt-6">
+              <DriveDocsPanel tool={tool} />
             </TabsContent>
 
             <TabsContent value="notes" className="space-y-4 mt-6">
