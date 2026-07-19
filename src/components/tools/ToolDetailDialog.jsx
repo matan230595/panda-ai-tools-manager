@@ -8,8 +8,27 @@ import ShareLinkDialog from '@/components/sharing/ShareLinkDialog';
 import UserCredentialsTab from '@/components/tools/UserCredentialsTab';
 import ToolTasksPanel from '@/components/tools/ToolTasksPanel';
 import ToolLearningPlanPanel from '@/components/tools/ToolLearningPlanPanel';
+import ToolRatingPanel from '@/components/tools/ToolRatingPanel';
+import { base44 } from '@/api/base44Client';
 
 export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onToggleFavorite, onManageSubscription, onQuickUpdate }) {
+  // רישום אינטראקציית קליק כשנפתח כרטיס כלי
+  React.useEffect(() => {
+    if (!tool?.id) return;
+    (async () => {
+      try {
+        const user = await base44.auth.me();
+        await base44.entities.UserToolRating.create({
+          toolId: tool.id,
+          toolName: tool.name,
+          rating: 1,
+          interactionType: 'click',
+          userEmail: user.email,
+        });
+      } catch { /* התעלם משגיאות מעקב */ }
+    })();
+  }, [tool?.id]);
+
   const categoryColors = {
     'עיבוד_שפה': 'bg-blue-100 text-blue-800',
     'יצירת_תמונות': 'bg-purple-100 text-purple-800',
@@ -123,8 +142,9 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-4 md:p-6">
           <Tabs defaultValue="overview" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 xl:grid-cols-10 gap-2 h-auto bg-transparent p-0">
+            <TabsList className="grid w-full grid-cols-2 md:grid-cols-6 xl:grid-cols-11 gap-2 h-auto bg-transparent p-0">
               <TabsTrigger value="overview">סקירה</TabsTrigger>
+              <TabsTrigger value="rating">⭐ דירוג ומשוב</TabsTrigger>
               <TabsTrigger value="use-cases">שימוש</TabsTrigger>
               <TabsTrigger value="pros-cons">יתרונות/חסרונות</TabsTrigger>
               <TabsTrigger value="integrations-links">אינטגרציות</TabsTrigger>
@@ -169,6 +189,10 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
               }
 
 
+            </TabsContent>
+
+            <TabsContent value="rating" className="space-y-4 mt-6">
+              <ToolRatingPanel tool={tool} />
             </TabsContent>
 
             <TabsContent value="use-cases" className="space-y-4 mt-6">
