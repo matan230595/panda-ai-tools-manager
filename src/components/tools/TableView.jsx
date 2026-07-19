@@ -58,7 +58,7 @@ export default function TableView({ tools, onEdit, onDelete, onToggleFavorite, o
           </Badge>
         );
       case 'pricing':
-        return <Badge variant="outline">{tool.subscriptionType || tool.pricing}</Badge>;
+        return <Badge variant="outline">{(tool.subscriptionType || tool.pricing)?.replace(/_/g, ' ')}</Badge>;
       case 'priceILS':
         return tool.priceILS ? (
           <span className="font-medium">₪{tool.priceILS.toFixed(0)}</span>
@@ -146,7 +146,7 @@ export default function TableView({ tools, onEdit, onDelete, onToggleFavorite, o
               </div>
               <div className="flex flex-wrap gap-2">
                 <Badge className={categoryColors[tool.category] || 'bg-gray-100'}>{tool.category?.replace(/_/g, ' ')}</Badge>
-                <Badge variant="outline">{tool.subscriptionType || tool.pricing}</Badge>
+                <Badge variant="outline">{(tool.subscriptionType || tool.pricing)?.replace(/_/g, ' ')}</Badge>
                 {tool.priceILS ? <Badge variant="secondary">₪{tool.priceILS.toFixed(0)}</Badge> : null}
               </div>
               <div className="grid grid-cols-2 gap-2 text-xs text-gray-600 dark:text-gray-300">

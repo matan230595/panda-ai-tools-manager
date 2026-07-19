@@ -12,6 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import useUrlFilters from '@/components/hooks/useUrlFilters';
 import SearchAndFilters from '@/components/tools/SearchAndFilters';
 import ToolCard from '@/components/tools/ToolCard';
 import ToolForm from '@/components/tools/ToolForm';
@@ -26,6 +27,8 @@ import DuplicateDetectorDialog from '@/components/tools/DuplicateDetectorDialog'
 import AdvancedFilters from '@/components/tools/AdvancedFilters';
 import ExportImportDialog from '@/components/tools/ExportImportDialog';
 import ShareLinkDialog from '@/components/sharing/ShareLinkDialog';
+import CardFieldsCustomizer from '@/components/tools/CardFieldsCustomizer';
+import { useCardFieldConfig } from '@/components/hooks/useCardFieldConfig';
 import { toast } from 'sonner';
 import {
   AlertDialog,
@@ -65,15 +68,32 @@ export default function ToolsTab({ settings, initialFilter }) {
     }
   }, [appSettings]);
   
-  // State management
-  const [searchTerm, setSearchTerm] = useState('');
+  // State management — סינון/חיפוש/תצוגה נשמרים ב-URL (שמירה ברענון ובשיתוף קישור)
+  const [urlFilters, setUrlFilter] = useUrlFilters({
+    q: '',
+    category: 'all',
+    pricing: 'all',
+    rating: 0,
+    favorites: false,
+    view: settings?.viewMode || 'grid',
+    sort: settings?.sortBy || 'updated',
+  });
+  const searchTerm = urlFilters.q;
+  const setSearchTerm = (v) => setUrlFilter('q', v);
+  const selectedCategory = urlFilters.category;
+  const setSelectedCategory = (v) => setUrlFilter('category', v);
+  const selectedPricing = urlFilters.pricing;
+  const setSelectedPricing = (v) => setUrlFilter('pricing', v);
+  const selectedRating = urlFilters.rating;
+  const setSelectedRating = (v) => setUrlFilter('rating', v);
+  const showFavoritesOnly = urlFilters.favorites;
+  const setShowFavoritesOnly = (v) => setUrlFilter('favorites', v);
+  const viewMode = urlFilters.view;
+  const setViewMode = (v) => setUrlFilter('view', v);
+  const sortBy = urlFilters.sort;
+  const setSortBy = (v) => setUrlFilter('sort', v);
+
   const [showRecommendations, setShowRecommendations] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [selectedPricing, setSelectedPricing] = useState('all');
-  const [selectedRating, setSelectedRating] = useState(0);
-  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
-  const [viewMode, setViewMode] = useState(settings?.viewMode || 'grid');
-  const [sortBy, setSortBy] = useState(settings?.sortBy || 'updated');
   const [showForm, setShowForm] = useState(false);
   const [editingTool, setEditingTool] = useState(null);
   const [deletingTool, setDeletingTool] = useState(null);
@@ -94,6 +114,11 @@ export default function ToolsTab({ settings, initialFilter }) {
     aiGenerated: null,
   });
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const PAGE_SIZE = 30;
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+
+  // הגדרות תצוגת שדות בכרטיס
+  const { visibility: cardFieldVisibility } = useCardFieldConfig();
 
   // טעינת כלים
   const { data: tools = [], isLoading } = useQuery({
@@ -558,6 +583,8 @@ export default function ToolsTab({ settings, initialFilter }) {
               </DropdownMenuContent>
             </DropdownMenu>
 
+            {['grid', 'list', 'compact'].includes(viewMode) && <CardFieldsCustomizer />}
+
             <ShareLinkDialog tools={filteredAndSortedTools} />
 
             <ExportImportDialog
@@ -596,9 +623,22 @@ export default function ToolsTab({ settings, initialFilter }) {
       {filteredAndSortedTools.length === 0 ? (
         <EmptyState
           title={tools.length === 0 ? 'אין כלים עדיין' : 'לא נמצאו תוצאות'}
-          description={tools.length === 0 ? 'התחל בהוספת כלי AI ראשון שלך' : 'נסה לשנות את הפילטרים'}
-          actionLabel={tools.length === 0 ? 'הוסף כלי ראשון' : undefined}
-          onAction={tools.length === 0 ? () => setShowForm(true) : undefined}
+          description={tools.length === 0 ? 'התחל בהוספת כלי AI ראשון שלך, או ייבא רשימה קיימת' : 'נסה לשנות את הפילטרים או לאפס אותם'}
+          actionLabel={tools.length === 0 ? 'הוסף כלי ראשון' : 'אפס פילטרים'}
+          onAction={tools.length === 0 ? () => { setEditingTool(null); setShowForm(true); } : () => {
+            setSearchTerm('');
+            setSelectedCategory('all');
+            setSelectedPricing('all');
+            setSelectedRating(0);
+            setShowFavoritesOnly(false);
+            setAdvancedFilters({
+              categories: [], pricing: [], subscriptionTypes: [],
+              ratingRange: [0, 5], popularityRange: [1, 5], hasTags: [],
+              hasSubscription: null, isFavorite: null, aiGenerated: null,
+            });
+          }}
+          secondaryActionLabel={tools.length === 0 ? 'ייבא רשימה' : undefined}
+          onSecondaryAction={tools.length === 0 ? () => document.getElementById('import-file')?.click() : undefined}
         />
       ) : viewMode === 'table' ? (
         <TableView
@@ -632,6 +672,7 @@ export default function ToolsTab({ settings, initialFilter }) {
                 onClick={setSelectedTool}
                 isSelected={selectedForCompare.some(t => t.id === tool.id)}
                 onToggleSelect={compareMode ? toggleCompareSelection : null}
+                fieldVisibility={cardFieldVisibility}
                 />
                 ))}
         </div>

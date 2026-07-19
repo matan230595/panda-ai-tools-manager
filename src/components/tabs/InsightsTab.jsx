@@ -292,7 +292,7 @@ ${JSON.stringify(toolsSummary, null, 2)}
                   {insights.categoryAnalysis.map((cat, idx) => (
                     <div key={idx} className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
                       <div className="flex items-center justify-between mb-2">
-                        <h4 className="font-semibold">{cat.category}</h4>
+                        <h4 className="font-semibold">{cat.category?.replace(/_/g, ' ')}</h4>
                         <span className="text-sm text-gray-500">{cat.toolCount} כלים</span>
                       </div>
                       <p className="text-sm text-gray-600 dark:text-gray-400">{cat.insight}</p>

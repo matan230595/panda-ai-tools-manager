@@ -223,7 +223,7 @@ export default function SubscriptionsTab() {
                       <div>
                         <CardTitle className="text-lg">{subscription.toolName}</CardTitle>
                         <Badge className={typeColors[subscription.subscriptionType]}>
-                          {subscription.subscriptionType}
+                          {subscription.subscriptionType?.replace(/_/g, ' ')}
                         </Badge>
                       </div>
                     </div>

@@ -279,7 +279,7 @@ ${JSON.stringify(toolsInfo, null, 2)}
               <div className="space-y-2 border-t pt-2">
                 <div className="flex justify-between text-xs">
                   <span className="text-gray-600 dark:text-gray-400">תמחור:</span>
-                  <span className="font-medium">{tool.pricing}</span>
+                  <span className="font-medium">{tool.pricing?.replace(/_/g, ' ')}</span>
                 </div>
                 <div className="flex justify-between text-xs">
                   <span className="text-gray-600 dark:text-gray-400">מחיר:</span>

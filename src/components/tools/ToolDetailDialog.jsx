@@ -68,7 +68,7 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
                 <Badge className={categoryColors[tool.category] || 'bg-gray-100'}>
                   {tool.category?.replace(/_/g, ' ')}
                 </Badge>
-                <Badge variant="outline">{tool.subscriptionType || tool.pricing}</Badge>
+                <Badge variant="outline">{(tool.subscriptionType || tool.pricing)?.replace(/_/g, ' ')}</Badge>
                 {tool.priceILS > 0 &&
                 <Badge variant="secondary">₪{tool.priceILS.toFixed(0)}/חודש</Badge>
                 }
@@ -364,11 +364,11 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="p-4 rounded-lg bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-800">
                   <h4 className="font-semibold mb-1">תמחור</h4>
-                  <p className="text-2xl font-bold text-indigo-600">{tool.pricing}</p>
+                  <p className="text-2xl font-bold text-indigo-600">{tool.pricing?.replace(/_/g, ' ')}</p>
                 </div>
                 <div className="p-4 rounded-lg bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-200 dark:border-green-800">
                   <h4 className="font-semibold mb-1">סוג מנוי</h4>
-                  <p className="text-2xl font-bold text-green-600">{tool.subscriptionType}</p>
+                  <p className="text-2xl font-bold text-green-600">{tool.subscriptionType?.replace(/_/g, ' ')}</p>
                 </div>
                 <div className="p-4 rounded-lg bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border border-purple-200 dark:border-purple-800">
                   <h4 className="font-semibold mb-1">מחיר חודשי</h4>

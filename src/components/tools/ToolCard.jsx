@@ -22,8 +22,10 @@ export default function ToolCard({
   isDragging = false,
   dragHandleProps = {},
   isSelected = false,
-  onToggleSelect
+  onToggleSelect,
+  fieldVisibility = {}
 }) {
+  const show = (field) => fieldVisibility[field] !== false;
 
   const categoryBarColors = {
     'עיבוד_שפה': 'from-blue-500 to-blue-400',
@@ -161,12 +163,14 @@ export default function ToolCard({
               {tool.name}
             </h3>
             {/* Badge קטגוריה */}
-            <span className="inline-flex items-center mt-1.5 px-3 py-1 rounded-full text-xs font-medium text-sky-700 bg-sky-100 border border-sky-200 dark:bg-sky-900/40 dark:text-sky-300 dark:border-sky-800 max-w-full truncate">
-              {tool.category.replace(/_/g, ' ')}
-            </span>
+            {show('category') && (
+              <span className="inline-flex items-center mt-1.5 px-3 py-1 rounded-full text-xs font-medium text-sky-700 bg-sky-100 border border-sky-200 dark:bg-sky-900/40 dark:text-sky-300 dark:border-sky-800 max-w-full truncate">
+                {tool.category.replace(/_/g, ' ')}
+              </span>
+            )}
 
             {/* דירוג כוכבים */}
-            {tool.rating > 0 && (
+            {show('rating') && tool.rating > 0 && (
               <div className="flex items-center gap-1.5 mt-2">
                 <div className="flex items-center gap-0.5">
                   {[...Array(5)].map((_, i) => (
@@ -196,12 +200,14 @@ export default function ToolCard({
         {/* תוכן */}
         <div className="relative flex flex-col flex-1 [transform:translateZ(25px)]">
           {/* תיאור */}
-          <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2 leading-relaxed text-right break-words mb-4">
-            {tool.description || 'אין תיאור זמין'}
-          </p>
+          {show('description') && (
+            <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2 leading-relaxed text-right break-words mb-4">
+              {tool.description || 'אין תיאור זמין'}
+            </p>
+          )}
 
           {/* תגיות עם מסגרת גרדיאנט */}
-          {tool.tags && tool.tags.length > 0 && (
+          {show('tags') && tool.tags && tool.tags.length > 0 && (
             <div className="flex flex-wrap gap-1.5 mb-4">
               {tool.tags.slice(0, 3).map((tag, index) => (
                 <span
@@ -222,15 +228,17 @@ export default function ToolCard({
 
           {/* פס תמחור + פופולריות */}
           <div className="flex items-center justify-between gap-2 mb-3 mt-auto">
-            {tool.popularity >= 4 && (
+            {show('popularity') && tool.popularity >= 4 && (
               <div className="inline-flex items-center gap-1.5 text-sm text-gray-600 dark:text-gray-300">
                 <Flame className="w-4 h-4 text-orange-500" />
                 <span>פופולרי מאוד</span>
               </div>
             )}
-            <span className={`mr-auto inline-flex items-center px-3 py-1 rounded-full text-xs font-bold text-white ${pricingColors[tool.pricing] || 'bg-gray-500'}`}>
-              {tool.pricing?.replace(/_/g, ' ')}
-            </span>
+            {show('pricing') && (
+              <span className={`mr-auto inline-flex items-center px-3 py-1 rounded-full text-xs font-bold text-white ${pricingColors[tool.pricing] || 'bg-gray-500'}`}>
+                {tool.pricing?.replace(/_/g, ' ')}
+              </span>
+            )}
           </div>
 
           {/* כפתורי פעולה */}

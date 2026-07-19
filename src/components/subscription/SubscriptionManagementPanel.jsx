@@ -135,7 +135,7 @@ export default function SubscriptionManagementPanel() {
                   <div className="space-y-2">
                     <div className="flex flex-wrap items-center gap-2">
                       <div className="font-semibold text-base">{subscription.toolName}</div>
-                      <Badge variant="secondary">{subscription.subscriptionType}</Badge>
+                      <Badge variant="secondary">{subscription.subscriptionType?.replace(/_/g, ' ')}</Badge>
                       <Badge variant="outline">{subscription.category.replace(/_/g, ' ')}</Badge>
                       {subscription.autoRenewal && <Badge>חידוש אוטומטי</Badge>}
                     </div>

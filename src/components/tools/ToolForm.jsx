@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { X, Sparkles, Loader2, Plus, AlertCircle, CheckCircle2, Info, ShieldCheck, KeyRound } from 'lucide-react';
+import { X, Sparkles, Loader2, Plus, AlertCircle, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
@@ -12,9 +11,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
+import CredentialsSection from '@/components/tools/form/CredentialsSection';
+import ArrayInputField from '@/components/tools/form/ArrayInputField';
 
 export default function ToolForm({ tool, onClose, onSave }) {
   const [formData, setFormData] = useState({
@@ -53,9 +53,6 @@ export default function ToolForm({ tool, onClose, onSave }) {
     ...tool
   });
 
-  const [newFeature, setNewFeature] = useState('');
-  const [newIntegration, setNewIntegration] = useState('');
-  const [newTag, setNewTag] = useState('');
   const [newCustomCategory, setNewCustomCategory] = useState('');
   const [isAutofilling, setIsAutofilling] = useState(false);
   const [isAutoFetchingMeta, setIsAutoFetchingMeta] = useState(false);
@@ -144,10 +141,8 @@ export default function ToolForm({ tool, onClose, onSave }) {
     }));
   };
 
-  const addArrayItem = (field, value, setter) => {
-    if (!value.trim()) return;
-    handleChange(field, [...(formData[field] || []), value.trim()]);
-    setter('');
+  const addArrayItem = (field, value) => {
+    handleChange(field, [...(formData[field] || []), value]);
   };
 
   const removeArrayItem = (field, index) => {
@@ -674,173 +669,41 @@ ${formData.url ? `URL: ${formData.url}` : ''}
           </div>
 
           {/* תכונות */}
-          <div className="space-y-2">
-            <Label>תכונות עיקריות</Label>
-            <div className="flex gap-2">
-              <Input
-                value={newFeature}
-                onChange={(e) => setNewFeature(e.target.value)}
-                placeholder="הוסף תכונה..."
-                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addArrayItem('features', newFeature, setNewFeature))}
-              />
-              <Button type="button" onClick={() => addArrayItem('features', newFeature, setNewFeature)}>
-                <Plus className="w-4 h-4" />
-              </Button>
-            </div>
-            <div className="flex flex-wrap gap-2 mt-2">
-              {formData.features?.map((feature, index) => (
-                <Badge key={index} variant="secondary" className="pr-1">
-                  {feature}
-                  <button
-                    type="button"
-                    onClick={() => removeArrayItem('features', index)}
-                    className="mr-1 hover:text-red-500"
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                </Badge>
-              ))}
-            </div>
-          </div>
+          <ArrayInputField
+            label="תכונות עיקריות"
+            placeholder="הוסף תכונה..."
+            items={formData.features}
+            onAdd={(val) => addArrayItem('features', val)}
+            onRemove={(index) => removeArrayItem('features', index)}
+          />
 
           {/* אינטגרציות */}
-          <div className="space-y-2">
-            <Label>אינטגרציות</Label>
-            <div className="flex gap-2">
-              <Input
-                value={newIntegration}
-                onChange={(e) => setNewIntegration(e.target.value)}
-                placeholder="הוסף אינטגרציה..."
-                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addArrayItem('integrations', newIntegration, setNewIntegration))}
-              />
-              <Button type="button" onClick={() => addArrayItem('integrations', newIntegration, setNewIntegration)}>
-                <Plus className="w-4 h-4" />
-              </Button>
-            </div>
-            <div className="flex flex-wrap gap-2 mt-2">
-              {formData.integrations?.map((integration, index) => (
-                <Badge key={index} variant="outline" className="pr-1">
-                  {integration}
-                  <button
-                    type="button"
-                    onClick={() => removeArrayItem('integrations', index)}
-                    className="mr-1 hover:text-red-500"
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                </Badge>
-              ))}
-            </div>
-          </div>
+          <ArrayInputField
+            label="אינטגרציות"
+            placeholder="הוסף אינטגרציה..."
+            items={formData.integrations}
+            onAdd={(val) => addArrayItem('integrations', val)}
+            onRemove={(index) => removeArrayItem('integrations', index)}
+            badgeVariant="outline"
+          />
 
           {/* תגיות */}
-          <div className="space-y-2">
-            <Label>תגיות</Label>
-            <div className="flex gap-2">
-              <Input
-                value={newTag}
-                onChange={(e) => setNewTag(e.target.value)}
-                placeholder="הוסף תגית..."
-                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addArrayItem('tags', newTag, setNewTag))}
-              />
-              <Button type="button" onClick={() => addArrayItem('tags', newTag, setNewTag)}>
-                <Plus className="w-4 h-4" />
-              </Button>
-            </div>
-            <div className="flex flex-wrap gap-2 mt-2">
-              {formData.tags?.map((tag, index) => (
-                <Badge key={index} className="pr-1 bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200">
-                  {tag}
-                  <button
-                    type="button"
-                    onClick={() => removeArrayItem('tags', index)}
-                    className="mr-1 hover:text-red-500"
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                </Badge>
-              ))}
-            </div>
-          </div>
+          <ArrayInputField
+            label="תגיות"
+            placeholder="הוסף תגית..."
+            items={formData.tags}
+            onAdd={(val) => addArrayItem('tags', val)}
+            onRemove={(index) => removeArrayItem('tags', index)}
+            badgeClassName="bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200"
+          />
 
           {/* יש לי מנוי פעיל + פרטי גישה מוצפנים */}
-          <div className="rounded-2xl border border-indigo-200 dark:border-indigo-900 bg-indigo-50/50 dark:bg-indigo-950/20 p-4 space-y-4">
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <span className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white flex-shrink-0">
-                  <ShieldCheck className="w-4 h-4" />
-                </span>
-                <div>
-                  <Label htmlFor="hasSubscription" className="text-sm font-semibold cursor-pointer">יש לי מנוי פעיל</Label>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">שמור פרטי גישה מאובטחים לכלי זה</p>
-                </div>
-              </div>
-              <Switch
-                id="hasSubscription"
-                checked={!!formData.hasSubscription}
-                onCheckedChange={(val) => handleChange('hasSubscription', val)}
-              />
-            </div>
-
-            {formData.hasSubscription && (
-              <div className="space-y-4 pt-2 border-t border-indigo-200/60 dark:border-indigo-900/60">
-                <div className="flex items-center gap-2 text-xs text-indigo-700 dark:text-indigo-300">
-                  <KeyRound className="w-3.5 h-3.5" />
-                  <span>הפרטים נשמרים באופן מאובטח ומשויכים לחשבון שלך בלבד</span>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="cred-email">אימייל לכלי</Label>
-                    <Input
-                      id="cred-email"
-                      type="email"
-                      value={formData.userCredentials?.email || ''}
-                      onChange={(e) => handleCredentialChange('email', e.target.value)}
-                      placeholder="name@example.com"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="cred-username">שם משתמש</Label>
-                    <Input
-                      id="cred-username"
-                      value={formData.userCredentials?.username || ''}
-                      onChange={(e) => handleCredentialChange('username', e.target.value)}
-                      placeholder="שם המשתמש שלך"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="cred-password">סיסמה</Label>
-                    <Input
-                      id="cred-password"
-                      type="password"
-                      value={formData.userCredentials?.password || ''}
-                      onChange={(e) => handleCredentialChange('password', e.target.value)}
-                      placeholder="••••••••"
-                      autoComplete="new-password"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="cred-phone">מספר טלפון</Label>
-                    <Input
-                      id="cred-phone"
-                      type="tel"
-                      value={formData.userCredentials?.phoneNumber || ''}
-                      onChange={(e) => handleCredentialChange('phoneNumber', e.target.value)}
-                      placeholder="050-0000000"
-                    />
-                  </div>
-                </div>
-                <div className="flex items-center justify-between gap-3">
-                  <Label htmlFor="cred-google" className="text-sm cursor-pointer">חשבון Google מחובר</Label>
-                  <Switch
-                    id="cred-google"
-                    checked={!!formData.userCredentials?.googleConnected}
-                    onCheckedChange={(val) => handleCredentialChange('googleConnected', val)}
-                  />
-                </div>
-              </div>
-            )}
-          </div>
+          <CredentialsSection
+            hasSubscription={formData.hasSubscription}
+            credentials={formData.userCredentials}
+            onToggleSubscription={(val) => handleChange('hasSubscription', val)}
+            onCredentialChange={handleCredentialChange}
+          />
 
           {/* הערות */}
           <div className="space-y-2">

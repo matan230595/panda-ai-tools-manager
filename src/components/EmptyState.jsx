@@ -7,7 +7,9 @@ export default function EmptyState({
   title = 'אין כלים עדיין',
   description = 'התחל בהוספת כלי AI ראשון שלך',
   actionLabel = 'הוסף כלי',
-  onAction 
+  onAction,
+  secondaryActionLabel,
+  onSecondaryAction,
 }) {
   return (
     <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
@@ -23,15 +25,22 @@ export default function EmptyState({
         {description}
       </p>
       
-      {onAction && (
-        <Button 
-          onClick={onAction}
-          className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 shadow-lg"
-        >
-          <Icon className="w-5 h-5 ml-2" />
-          {actionLabel}
-        </Button>
-      )}
+      <div className="flex flex-wrap items-center justify-center gap-3">
+        {onAction && (
+          <Button 
+            onClick={onAction}
+            className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 shadow-lg"
+          >
+            <Icon className="w-5 h-5 ml-2" />
+            {actionLabel}
+          </Button>
+        )}
+        {onSecondaryAction && secondaryActionLabel && (
+          <Button variant="outline" onClick={onSecondaryAction}>
+            {secondaryActionLabel}
+          </Button>
+        )}
+      </div>
     </div>
   );
 }

@@ -373,7 +373,7 @@ export default function CollaborationTab() {
                     <div key={tool.id} className="flex items-center justify-between rounded-lg border p-3">
                       <div>
                         <div className="font-semibold">{tool.name}</div>
-                        <div className="text-xs text-gray-500">{tool.category}</div>
+                        <div className="text-xs text-gray-500">{tool.category?.replace(/_/g, ' ')}</div>
                       </div>
                       <Button variant={isShared ? 'secondary' : 'outline'} onClick={() => handleToggleToolShare(tool)}>
                         {isShared ? <Check className="w-4 h-4 ml-2" /> : <Share2 className="w-4 h-4 ml-2" />}
@@ -399,7 +399,7 @@ export default function CollaborationTab() {
                   <div key={tool.id} className="flex items-center justify-between rounded-lg bg-gray-50 dark:bg-gray-800 p-3">
                     <div>
                       <div className="font-semibold">{tool.name}</div>
-                      <div className="text-xs text-gray-500">{tool.category}</div>
+                      <div className="text-xs text-gray-500">{tool.category?.replace(/_/g, ' ')}</div>
                     </div>
                     <Button variant="ghost" onClick={() => handleToggleToolShare(tool)}>
                       <Trash2 className="w-4 h-4 ml-2" />

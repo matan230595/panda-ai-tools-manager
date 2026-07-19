@@ -256,7 +256,7 @@ ${existingNames}
                   <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 leading-6 mb-3">{tool.reason}</p>
                   <div className="flex items-center justify-between pt-2 border-t border-gray-100 dark:border-gray-800">
                     <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="text-xs">{tool.pricing}</Badge>
+                      <Badge variant="outline" className="text-xs">{tool.pricing?.replace(/_/g, ' ')}</Badge>
                       {tool.rating > 0 && (
                         <span className="flex items-center gap-0.5 text-xs text-amber-500">
                           <Star className="w-3.5 h-3.5 fill-current" /> {tool.rating}
@@ -300,7 +300,7 @@ ${existingNames}
                   </div>
                   <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 leading-6 mb-3">{tool.reason}</p>
                   <div className="flex items-center justify-between gap-2 pt-2 border-t border-gray-100 dark:border-gray-800">
-                    <Badge variant="outline" className="text-xs">{tool.pricing}</Badge>
+                    <Badge variant="outline" className="text-xs">{tool.pricing?.replace(/_/g, ' ')}</Badge>
                     <Button size="sm" variant="outline" onClick={() => window.open(tool.url, '_blank', 'noopener,noreferrer')}>
                       <ExternalLink className="w-4 h-4 ml-2" />
                       פתח אתר
