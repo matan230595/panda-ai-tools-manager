@@ -404,6 +404,24 @@ ${formData.url ? `URL: ${formData.url}` : ''}
             </div>
           </div>
 
+          {/* רמז חכם: זוהה לינק — אפשר לנתח אוטומטית */}
+          {formData.url && !formData.aiGenerated && (
+            <button
+              type="button"
+              onClick={handleAutofill}
+              disabled={isAutofilling}
+              className="w-full flex items-center gap-3 rounded-2xl border border-indigo-200 dark:border-indigo-900 bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-950/40 dark:to-purple-950/30 px-4 py-3 text-right hover:shadow-md transition-all disabled:opacity-60"
+            >
+              <span className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white flex-shrink-0">
+                <Sparkles className="w-4 h-4" />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-sm font-semibold text-indigo-800 dark:text-indigo-200">זוהה לינק — נתח אותו אוטומטית</span>
+                <span className="block text-xs text-indigo-600/80 dark:text-indigo-300/70 truncate">ה-AI ימלא שם, תיאור, קטגוריה, מחירים ותכונות מתוך העמוד</span>
+              </span>
+            </button>
+          )}
+
           {/* כפתור מילוי אוטומטי */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <Button
