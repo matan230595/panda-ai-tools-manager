@@ -5,7 +5,7 @@ import { queryClientInstance } from '@/lib/query-client'
 import VisualEditAgent from '@/lib/VisualEditAgent'
 import NavigationTracker from '@/lib/NavigationTracker'
 import { pagesConfig } from './pages.config'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
@@ -64,6 +64,9 @@ const AuthenticatedApp = () => {
       ))}
       <Route path="/calendar" element={<LayoutWrapper currentPageName="calendar"><CalendarPage /></LayoutWrapper>} />
       <Route path="/shared/:token" element={<LayoutWrapper currentPageName="shared"><SharedTools /></LayoutWrapper>} />
+      {/* Catalog aliases: /SharedTools and /shared (without token) point to the main tools catalog on Home */}
+      <Route path="/SharedTools" element={<Navigate to="/" replace />} />
+      <Route path="/shared" element={<Navigate to="/" replace />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
