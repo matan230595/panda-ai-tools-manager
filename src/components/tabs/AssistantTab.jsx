@@ -1,12 +1,13 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { Bot, Loader2, Send, Sparkles, Clock3, Database, Wrench } from 'lucide-react';
+import { Bot, Loader2, Send, Clock3, Database, Wrench } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import ChatMessage from '@/components/assistant/ChatMessage';
 import SuggestedQuestions from '@/components/assistant/SuggestedQuestions';
 import ConversationList from '@/components/assistant/ConversationList';
+import AgentModelSelector from '@/components/assistant/AgentModelSelector';
 import EmptyState from '@/components/EmptyState';
 
 const AGENT_NAME = 'tool_advisor';
@@ -187,7 +188,7 @@ export default function AssistantTab() {
           </div>
           <div className="flex flex-wrap items-center justify-between gap-2 text-xs md:text-sm text-gray-500 dark:text-gray-400 mt-3 px-1">
             <span>ההודעה נשמרת כחלק מהיסטוריית השיחה המלאה שלך.</span>
-            <span className="inline-flex items-center gap-1 text-indigo-600 dark:text-indigo-400"><Sparkles className="w-3.5 h-3.5" />Agent</span>
+            <AgentModelSelector />
           </div>
         </div>
       </div>
