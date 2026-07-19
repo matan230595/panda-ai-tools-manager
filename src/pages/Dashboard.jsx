@@ -99,12 +99,15 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-4 md:space-y-6" dir="rtl">
-      <div className="flex items-start justify-between gap-3 px-1 sm:px-0">
-        <div className="text-right">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text mb-1 sm:mb-2">דשבורד</h1>
-          <p className="text-xs sm:text-sm md:text-base text-gray-600 dark:text-gray-400">מבט מרכזי על מאגר הידע שלך לכלי AI</p>
+      <div className="relative overflow-hidden rounded-2xl md:rounded-3xl bg-gradient-to-br from-indigo-600 via-purple-600 to-fuchsia-600 p-4 sm:p-6 shadow-xl shadow-indigo-500/20">
+        <div className="absolute -top-16 -left-16 w-56 h-56 rounded-full bg-white/10 blur-2xl pointer-events-none" />
+        <div className="relative flex items-center justify-between gap-3">
+          <div className="text-right">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white mb-0.5">דשבורד</h1>
+            <p className="text-xs sm:text-sm text-indigo-100/90">מבט מרכזי על מאגר הידע שלך לכלי AI</p>
+          </div>
+          <DashboardCustomizer visible={visible} toggle={toggle} />
         </div>
-        <DashboardCustomizer visible={visible} toggle={toggle} />
       </div>
 
       {visible.stats && (
@@ -127,7 +130,7 @@ export default function Dashboard() {
 
       {visible.charts && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 border border-gray-200 dark:border-gray-700">
+          <div className="bg-white/80 dark:bg-slate-900/70 backdrop-blur-xl rounded-2xl p-4 md:p-6 border border-gray-200/80 dark:border-slate-800 shadow-sm">
             <h2 className="text-base sm:text-lg font-bold mb-4">כלים לפי קטגוריה</h2>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={categoriesData} margin={{ top: 10, right: 10, left: 0, bottom: 40 }}>
@@ -140,7 +143,7 @@ export default function Dashboard() {
             </ResponsiveContainer>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 border border-gray-200 dark:border-gray-700">
+          <div className="bg-white/80 dark:bg-slate-900/70 backdrop-blur-xl rounded-2xl p-4 md:p-6 border border-gray-200/80 dark:border-slate-800 shadow-sm">
             <h2 className="text-base sm:text-lg font-bold mb-4">עלות חודשית לפי מנויים</h2>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={subscriptionCostData} margin={{ top: 10, right: 10, left: 0, bottom: 70 }}>
@@ -156,7 +159,7 @@ export default function Dashboard() {
       )}
 
       {visible.knowledge && knowledgeTrendData.length > 0 && (
-        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 border border-gray-200 dark:border-gray-700">
+        <div className="bg-white/80 dark:bg-slate-900/70 backdrop-blur-xl rounded-2xl p-4 md:p-6 border border-gray-200/80 dark:border-slate-800 shadow-sm">
           <h2 className="text-base sm:text-lg font-bold mb-4">מפת ידע ותחזוקה לכלים</h2>
           <ResponsiveContainer width="100%" height={280}>
             <LineChart data={knowledgeTrendData} margin={{ top: 10, right: 10, left: 0, bottom: 35 }}>
@@ -173,7 +176,7 @@ export default function Dashboard() {
       )}
 
       {visible.roi && roiData.length > 0 && (
-        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 border border-gray-200 dark:border-gray-700">
+        <div className="bg-white/80 dark:bg-slate-900/70 backdrop-blur-xl rounded-2xl p-4 md:p-6 border border-gray-200/80 dark:border-slate-800 shadow-sm">
           <h2 className="text-base sm:text-lg font-bold mb-4">ROI ורווחיות לפי כלי</h2>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={roiData} margin={{ top: 10, right: 10, left: 0, bottom: 70 }}>
@@ -191,12 +194,12 @@ export default function Dashboard() {
 
       {visible.recommendations && (
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6">
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 border border-gray-200 dark:border-gray-700">
+          <div className="bg-white/80 dark:bg-slate-900/70 backdrop-blur-xl rounded-2xl p-4 md:p-6 border border-gray-200/80 dark:border-slate-800 shadow-sm">
             <h2 className="text-base sm:text-lg font-bold mb-4">המלצות חכמות</h2>
             <SmartRecommendations />
           </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 border border-gray-200 dark:border-gray-700 flex flex-col justify-between">
+          <div className="bg-white/80 dark:bg-slate-900/70 backdrop-blur-xl rounded-2xl p-4 md:p-6 border border-gray-200/80 dark:border-slate-800 shadow-sm flex flex-col justify-between">
             <div>
               <h2 className="text-base sm:text-lg font-bold mb-2 flex items-center gap-2"><Calendar className="w-5 h-5 text-indigo-500" />לוח שנה מרוכז</h2>
               <p className="text-sm text-gray-600 dark:text-gray-400 leading-6">
@@ -211,14 +214,14 @@ export default function Dashboard() {
       )}
 
       {visible.highlighted && highlightedTools.length > 0 && (
-        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 border border-gray-200 dark:border-gray-700">
+        <div className="bg-white/80 dark:bg-slate-900/70 backdrop-blur-xl rounded-2xl p-4 md:p-6 border border-gray-200/80 dark:border-slate-800 shadow-sm">
           <h2 className="text-base sm:text-lg font-bold mb-4 flex items-center gap-2">
             <TrendingUp className="w-4 sm:w-5 h-4 sm:h-5 text-green-500" />
             כלים בולטים במאגר
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 md:gap-4">
             {highlightedTools.map((tool) => (
-              <div key={tool.id} className="p-4 bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-lg">
+              <div key={tool.id} className="p-4 bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-xl">
                 <h3 className="font-semibold text-sm mb-2">{tool.name}</h3>
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-gray-600 dark:text-gray-400">דירוג</span>

@@ -114,17 +114,16 @@ export default function StatsTab({ onNavigateToTools }) {
   }
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl md:text-4xl font-bold gradient-text mb-2">
-          סטטיסטיקות ותובנות
-        </h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          מבט כולל על כלי ה-AI שלך
-        </p>
+    <div className="space-y-4 md:space-y-6">
+      <div className="relative overflow-hidden rounded-2xl md:rounded-3xl bg-gradient-to-br from-indigo-600 via-purple-600 to-fuchsia-600 p-4 sm:p-6 shadow-xl shadow-indigo-500/20">
+        <div className="absolute -top-16 -left-16 w-56 h-56 rounded-full bg-white/10 blur-2xl pointer-events-none" />
+        <div className="relative text-right">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white mb-0.5">סטטיסטיקות ותובנות</h1>
+          <p className="text-xs sm:text-sm text-indigo-100/90">מבט כולל על כלי ה-AI שלך</p>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
         <div onClick={() => onNavigateToTools?.({ filter: 'all' })} className="cursor-pointer">
           <StatCard title="סך הכל כלים" value={stats.totalTools} icon={Package} gradient="from-indigo-500 to-purple-600" />
         </div>
@@ -139,9 +138,9 @@ export default function StatsTab({ onNavigateToTools }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="glass-effect rounded-2xl p-6">
-          <h3 className="text-lg font-bold mb-6 text-gray-900 dark:text-white">ROI וחיסכון בזמן לפי חודשים</h3>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-4">
+        <div className="bg-white/80 dark:bg-slate-900/70 backdrop-blur-xl rounded-2xl p-4 md:p-6 border border-gray-200/80 dark:border-slate-800 shadow-sm">
+          <h3 className="text-base sm:text-lg font-bold mb-4 text-gray-900 dark:text-white">ROI וחיסכון בזמן לפי חודשים</h3>
           <ResponsiveContainer width="100%" height={260}>
             <LineChart data={stats.monthlyTrendData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -155,8 +154,8 @@ export default function StatsTab({ onNavigateToTools }) {
           </ResponsiveContainer>
         </div>
 
-        <div className="glass-effect rounded-2xl p-6">
-          <h3 className="text-lg font-bold mb-6 text-gray-900 dark:text-white">התפלגות עלויות הכלים</h3>
+        <div className="bg-white/80 dark:bg-slate-900/70 backdrop-blur-xl rounded-2xl p-4 md:p-6 border border-gray-200/80 dark:border-slate-800 shadow-sm">
+          <h3 className="text-base sm:text-lg font-bold mb-4 text-gray-900 dark:text-white">התפלגות עלויות הכלים</h3>
           <ResponsiveContainer width="100%" height={260}>
             <BarChart data={stats.costBreakdownData} layout="vertical" margin={{ top: 10, right: 10, left: 0, bottom: 10 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -169,11 +168,11 @@ export default function StatsTab({ onNavigateToTools }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-4">
         <CategoryChart tools={tools} />
 
-        <div className="glass-effect rounded-2xl p-6">
-          <h3 className="text-lg font-bold mb-6 text-gray-900 dark:text-white">
+        <div className="bg-white/80 dark:bg-slate-900/70 backdrop-blur-xl rounded-2xl p-4 md:p-6 border border-gray-200/80 dark:border-slate-800 shadow-sm">
+          <h3 className="text-base sm:text-lg font-bold mb-4 text-gray-900 dark:text-white">
             פילוח לפי תמחור
           </h3>
           <ResponsiveContainer width="100%" height={260}>
@@ -205,9 +204,9 @@ export default function StatsTab({ onNavigateToTools }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="glass-effect rounded-2xl p-6">
-          <h3 className="text-lg font-bold mb-6 text-gray-900 dark:text-white flex items-center gap-2">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-4">
+        <div className="bg-white/80 dark:bg-slate-900/70 backdrop-blur-xl rounded-2xl p-4 md:p-6 border border-gray-200/80 dark:border-slate-800 shadow-sm">
+          <h3 className="text-base sm:text-lg font-bold mb-4 text-gray-900 dark:text-white flex items-center gap-2">
             <TrendingUp className="w-5 h-5 text-green-500" />
             הכלים הפופולריים ביותר
           </h3>
@@ -240,8 +239,8 @@ export default function StatsTab({ onNavigateToTools }) {
           </div>
         </div>
 
-        <div className="glass-effect rounded-2xl p-6">
-          <h3 className="text-lg font-bold mb-6 text-gray-900 dark:text-white flex items-center gap-2">
+        <div className="bg-white/80 dark:bg-slate-900/70 backdrop-blur-xl rounded-2xl p-4 md:p-6 border border-gray-200/80 dark:border-slate-800 shadow-sm">
+          <h3 className="text-base sm:text-lg font-bold mb-4 text-gray-900 dark:text-white flex items-center gap-2">
             <Package className="w-5 h-5 text-blue-500" />
             נוספו לאחרונה
           </h3>
@@ -273,8 +272,8 @@ export default function StatsTab({ onNavigateToTools }) {
         </div>
       </div>
 
-      <div className="glass-effect rounded-2xl p-6 bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-950 dark:to-purple-950 border-2 border-indigo-200 dark:border-indigo-800">
-        <h3 className="text-lg font-bold mb-4 text-gray-900 dark:text-white flex items-center gap-2">
+      <div className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-950/40 dark:to-purple-950/40 rounded-2xl p-4 md:p-6 border border-indigo-200/60 dark:border-indigo-800/40 shadow-sm">
+        <h3 className="text-base sm:text-lg font-bold mb-4 text-gray-900 dark:text-white flex items-center gap-2">
           <Sparkles className="w-5 h-5 text-indigo-500" />
           תובנות חכמות
         </h3>

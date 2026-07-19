@@ -112,14 +112,13 @@ export default function SubscriptionsTab() {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl md:text-4xl font-bold gradient-text mb-2">
-          ניהול מנויים
-        </h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          נהל את כל המנויים והפרטים שלך במקום אחד
-        </p>
+    <div className="space-y-4 md:space-y-6">
+      <div className="relative overflow-hidden rounded-2xl md:rounded-3xl bg-gradient-to-br from-indigo-600 via-purple-600 to-fuchsia-600 p-4 sm:p-6 shadow-xl shadow-indigo-500/20">
+        <div className="absolute -top-16 -left-16 w-56 h-56 rounded-full bg-white/10 blur-2xl pointer-events-none" />
+        <div className="relative text-right">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white mb-0.5">ניהול מנויים</h1>
+          <p className="text-xs sm:text-sm text-indigo-100/90">נהל את כל המנויים והפרטים שלך במקום אחד</p>
+        </div>
       </div>
 
       {/* סטטיסטיקות */}

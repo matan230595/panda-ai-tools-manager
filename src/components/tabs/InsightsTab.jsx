@@ -164,40 +164,39 @@ ${JSON.stringify(toolsSummary, null, 2)}
   };
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl md:text-4xl font-bold gradient-text mb-2">
-            תובנות וניתוח AI
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            קבל המלצות מותאמות אישית על סמך הכלים שלך
-          </p>
-        </div>
-        <div className="flex gap-2">
-          {insights && (
-            <Button variant="outline" onClick={exportInsights}>
-              <Download className="w-4 h-4 ml-2" />
-              ייצא דוח
-            </Button>
-          )}
-          <Button
-            onClick={generateInsights}
-            disabled={isGenerating || tools.length === 0}
-            className="bg-gradient-to-r from-purple-500 to-pink-600"
-          >
-            {isGenerating ? (
-              <>
-                <Loader2 className="w-5 h-5 ml-2 animate-spin" />
-                מנתח...
-              </>
-            ) : (
-              <>
-                <Sparkles className="w-5 h-5 ml-2" />
-                צור ניתוח חכם
-              </>
+    <div className="max-w-7xl mx-auto space-y-4 md:space-y-6">
+      <div className="relative overflow-hidden rounded-2xl md:rounded-3xl bg-gradient-to-br from-indigo-600 via-purple-600 to-fuchsia-600 p-4 sm:p-6 shadow-xl shadow-indigo-500/20">
+        <div className="absolute -top-16 -left-16 w-56 h-56 rounded-full bg-white/10 blur-2xl pointer-events-none" />
+        <div className="relative flex items-center justify-between gap-3">
+          <div className="text-right">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white mb-0.5">תובנות וניתוח AI</h1>
+            <p className="text-xs sm:text-sm text-indigo-100/90">קבל המלצות מותאמות אישית על סמך הכלים שלך</p>
+          </div>
+          <div className="flex gap-2 flex-shrink-0">
+            {insights && (
+              <Button variant="outline" onClick={exportInsights} className="bg-white/15 text-white border-white/20 hover:bg-white/25">
+                <Download className="w-4 h-4 ml-2" />
+                ייצא דוח
+              </Button>
             )}
-          </Button>
+            <Button
+              onClick={generateInsights}
+              disabled={isGenerating || tools.length === 0}
+              className="bg-white text-indigo-700 hover:bg-white/90"
+            >
+              {isGenerating ? (
+                <>
+                  <Loader2 className="w-5 h-5 ml-2 animate-spin" />
+                  מנתח...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-5 h-5 ml-2" />
+                  צור ניתוח חכם
+                </>
+              )}
+            </Button>
+          </div>
         </div>
       </div>
 
