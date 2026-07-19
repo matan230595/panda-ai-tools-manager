@@ -208,33 +208,32 @@ export default function BudgetTab() {
   const COLORS = ['#6366f1', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b', '#3b82f6'];
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-3xl md:text-4xl font-bold gradient-text mb-2">
-            ניהול תקציב חכם
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            עקוב אחר ההוצאות וחסוך כסף עם AI
-          </p>
+    <div className="max-w-7xl mx-auto space-y-4 md:space-y-6">
+      <div className="relative overflow-hidden rounded-2xl md:rounded-3xl bg-gradient-to-br from-emerald-600 via-teal-600 to-cyan-600 p-4 sm:p-6 shadow-xl shadow-emerald-500/20">
+        <div className="absolute -top-16 -left-16 w-56 h-56 rounded-full bg-white/10 blur-2xl pointer-events-none" />
+        <div className="relative flex items-center justify-between gap-3">
+          <div className="text-right">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white mb-0.5">ניהול תקציב חכם</h1>
+            <p className="text-xs sm:text-sm text-emerald-100/90">עקוב אחר ההוצאות וחסוך כסף עם AI</p>
+          </div>
+          <Button
+            onClick={generateAIInsights}
+            disabled={aiInsightsLoading}
+            className="bg-white text-emerald-700 hover:bg-white/90 w-full sm:w-auto min-h-[44px] flex-shrink-0"
+          >
+            {aiInsightsLoading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin ml-2" />
+                מנתח...
+              </>
+            ) : (
+              <>
+                <Sparkles className="w-4 h-4 ml-2" />
+                תובנות AI
+              </>
+            )}
+          </Button>
         </div>
-        <Button
-          onClick={generateAIInsights}
-          disabled={aiInsightsLoading}
-          className="bg-gradient-to-r from-purple-500 to-pink-600 w-full sm:w-auto min-h-[44px]"
-        >
-          {aiInsightsLoading ? (
-            <>
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin ml-2" />
-              מנתח...
-            </>
-          ) : (
-            <>
-              <Sparkles className="w-4 h-4 ml-2" />
-              תובנות AI
-            </>
-          )}
-        </Button>
       </div>
 
       <Card>

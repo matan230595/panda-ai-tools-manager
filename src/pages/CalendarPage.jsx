@@ -58,10 +58,13 @@ export default function CalendarPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50 dark:from-gray-950 dark:via-slate-950 dark:to-indigo-950 p-4 md:p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
-        <div className="space-y-2">
-          <h1 className="text-2xl md:text-4xl font-bold gradient-text">לוח שנה לחידושי מנויים ותזכורות</h1>
-          <p className="text-sm md:text-base text-gray-600 dark:text-gray-400">צפייה בכל חידושי המנויים, תזכורות ומשימות במקום אחד עם גרירה ושחרור ועדכון מהיר.</p>
+      <div className="max-w-7xl mx-auto space-y-4 md:space-y-6">
+        <div className="relative overflow-hidden rounded-2xl md:rounded-3xl bg-gradient-to-br from-rose-500 via-pink-600 to-fuchsia-600 p-4 sm:p-6 shadow-xl shadow-pink-500/20">
+          <div className="absolute -top-16 -left-16 w-56 h-56 rounded-full bg-white/10 blur-2xl pointer-events-none" />
+          <div className="relative space-y-1">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white">לוח שנה לחידושי מנויים ותזכורות</h1>
+            <p className="text-xs sm:text-sm text-pink-100/90">צפייה בכל חידושי המנויים, תזכורות ומשימות במקום אחד עם גרירה ושחרור ועדכון מהיר.</p>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-[1.6fr_0.8fr] gap-6 items-start">

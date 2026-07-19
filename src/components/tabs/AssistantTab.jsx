@@ -110,26 +110,27 @@ export default function AssistantTab() {
       </div>
 
       <div className="bg-white dark:bg-slate-900 rounded-[2rem] border border-gray-200 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col min-h-[calc(100vh-12rem)]">
-        <div className="border-b border-gray-200 dark:border-slate-800 px-4 md:px-6 py-4 md:py-5 bg-gradient-to-l from-indigo-50 via-white to-white dark:from-indigo-950/20 dark:via-slate-900 dark:to-slate-900">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div className="relative overflow-hidden border-b border-gray-200 dark:border-slate-800 px-4 md:px-6 py-4 md:py-5 bg-gradient-to-br from-indigo-600 via-violet-600 to-purple-700">
+          <div className="absolute -top-16 -left-16 w-56 h-56 rounded-full bg-white/10 blur-2xl pointer-events-none" />
+          <div className="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div className="min-w-0">
               <div className="flex items-center gap-3 mb-2">
-                <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-sm"><Bot className="w-6 h-6" /></div>
+                <div className="w-11 h-11 rounded-2xl bg-white/20 backdrop-blur flex items-center justify-center text-white shadow-sm"><Bot className="w-6 h-6" /></div>
                 <div className="min-w-0">
-                  <h2 className="text-2xl md:text-3xl font-bold gradient-text truncate">שיחה עם הסוכן</h2>
-                  <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 truncate">{currentConversationName}</p>
+                  <h2 className="text-xl md:text-2xl font-extrabold text-white truncate">שיחה עם הסוכן</h2>
+                  <p className="text-xs md:text-sm text-indigo-100/90 truncate">{currentConversationName}</p>
                 </div>
               </div>
               <div className="flex flex-wrap gap-2 text-xs md:text-sm">
-                <span className="inline-flex items-center gap-1 rounded-full bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300 px-3 py-1.5"><Database className="w-3.5 h-3.5" />גישה לנתוני המערכת</span>
-                <span className="inline-flex items-center gap-1 rounded-full bg-purple-50 text-purple-700 dark:bg-purple-950/40 dark:text-purple-300 px-3 py-1.5"><Wrench className="w-3.5 h-3.5" />פעולות חכמות</span>
-                <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300 px-3 py-1.5"><Clock3 className="w-3.5 h-3.5" />היסטוריה מלאה וברורה</span>
+                <span className="inline-flex items-center gap-1 rounded-full bg-white/15 text-white px-3 py-1.5"><Database className="w-3.5 h-3.5" />גישה לנתוני המערכת</span>
+                <span className="inline-flex items-center gap-1 rounded-full bg-white/15 text-white px-3 py-1.5"><Wrench className="w-3.5 h-3.5" />פעולות חכמות</span>
+                <span className="inline-flex items-center gap-1 rounded-full bg-white/15 text-white px-3 py-1.5"><Clock3 className="w-3.5 h-3.5" />היסטוריה מלאה</span>
               </div>
             </div>
-            <Button variant="outline" onClick={handleNewChat} className="min-h-[50px] rounded-2xl w-full lg:w-auto">שיחה חדשה</Button>
+            <Button onClick={handleNewChat} className="min-h-[50px] rounded-2xl w-full lg:w-auto bg-white text-indigo-700 hover:bg-white/90">שיחה חדשה</Button>
           </div>
 
-          <div className="xl:hidden mt-4">
+          <div className="xl:hidden mt-4 relative">
             <ConversationList
               conversations={orderedConversations.slice(0, 6)}
               currentConversationId={currentConversationId}

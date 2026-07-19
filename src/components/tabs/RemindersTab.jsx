@@ -364,15 +364,18 @@ export default function RemindersTab() {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       {/* Header & Actions */}
-      <div className="flex flex-col sm:flex-row gap-2 justify-between items-start sm:items-center">
-        <div>
-          <h2 className="text-2xl md:text-3xl font-bold gradient-text mb-1">תזכורות</h2>
-          <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400">
-            {activeReminders.length} תזכורות פעילות
-          </p>
+      <div className="relative overflow-hidden rounded-2xl md:rounded-3xl bg-gradient-to-br from-amber-500 via-orange-500 to-red-500 p-4 sm:p-6 shadow-xl shadow-orange-500/20">
+        <div className="absolute -top-16 -left-16 w-56 h-56 rounded-full bg-white/10 blur-2xl pointer-events-none" />
+        <div className="relative flex items-center justify-between gap-3">
+          <div className="text-right">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white mb-0.5">תזכורות</h2>
+            <p className="text-xs sm:text-sm text-amber-100/90">{activeReminders.length} תזכורות פעילות</p>
+          </div>
         </div>
+      </div>
+      <div className="flex flex-col sm:flex-row gap-2 justify-between items-start sm:items-center">
         <div className="flex gap-2 w-full sm:w-auto flex-wrap">
            {FormWrapper}
            <Button 
