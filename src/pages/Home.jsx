@@ -23,6 +23,7 @@ const IntegrationsTab = React.lazy(() => import('@/components/tabs/IntegrationsT
 const CollaborationTab = React.lazy(() => import('@/components/tabs/CollaborationTab'));
 const BudgetTab = React.lazy(() => import('@/components/tabs/BudgetTab'));
 const RemindersTab = React.lazy(() => import('@/components/tabs/RemindersTab'));
+const LearningDashboard = React.lazy(() => import('@/components/tools/LearningDashboard'));
 const DashboardTab = React.lazy(() => import('@/pages/Dashboard'));
 const SubscriptionMgmt = React.lazy(() => import('@/components/subscription/SubscriptionManagementPanel'));
 
@@ -215,6 +216,11 @@ export default function Home() {
           {activeTab === 'reminders' && (
             <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="animate-spin w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full" /></div>}>
               <RemindersTab />
+            </Suspense>
+          )}
+          {activeTab === 'learning' && (
+            <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="animate-spin w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full" /></div>}>
+              <LearningDashboard onToolClick={() => setActiveTab('tools')} />
             </Suspense>
           )}
           {activeTab === 'dashboard' && (

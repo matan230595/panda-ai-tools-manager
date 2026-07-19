@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
+import MonthlySummaryReport from '@/components/tools/MonthlySummaryReport';
 
 export default function InsightsTab() {
   const [isGenerating, setIsGenerating] = useState(false);
@@ -223,12 +224,13 @@ ${JSON.stringify(toolsSummary, null, 2)}
         </Card>
       ) : (
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="overview">סקירה</TabsTrigger>
             <TabsTrigger value="recommendations">המלצות</TabsTrigger>
             <TabsTrigger value="trends">מגמות</TabsTrigger>
             <TabsTrigger value="comparison">השוואות</TabsTrigger>
             <TabsTrigger value="optimization">אופטימיזציה</TabsTrigger>
+            <TabsTrigger value="monthly">סיכום חודשי</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-4 mt-6">
@@ -505,6 +507,9 @@ ${JSON.stringify(toolsSummary, null, 2)}
                 </ul>
               </CardContent>
             </Card>
+          </TabsContent>
+          <TabsContent value="monthly" className="mt-6">
+            <MonthlySummaryReport />
           </TabsContent>
         </Tabs>
       )}

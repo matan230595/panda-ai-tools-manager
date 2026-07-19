@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { getCurrentUser } from '@/components/hooks/userScopedData';
-import { Sparkles, MessageSquare, Settings, BarChart3, DollarSign, Menu, X, Wallet, LayoutDashboard, BellRing, Lightbulb, Cable, Users, CalendarDays, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import { Sparkles, MessageSquare, Settings, BarChart3, DollarSign, Menu, X, Wallet, LayoutDashboard, BellRing, Lightbulb, Cable, Users, CalendarDays, ChevronsLeft, ChevronsRight, GraduationCap } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 
@@ -41,7 +41,8 @@ export default function TabNavigation({ activeTab, onTabChange }) {
   { id: 'assistant', label: 'סוכן', icon: MessageSquare },
   { id: 'subscriptions-mgmt', label: 'מנויים', icon: DollarSign },
   { id: 'stats', label: 'ROI', icon: BarChart3 },
-  { id: 'reminders', label: 'התראות', icon: BellRing }];
+  { id: 'reminders', label: 'התראות', icon: BellRing },
+  { id: 'learning', label: 'למידה', icon: GraduationCap }];
 
 
   const secondaryTabs = [

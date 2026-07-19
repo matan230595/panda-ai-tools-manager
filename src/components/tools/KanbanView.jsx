@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Star, ExternalLink, Edit, Trash2, Key, FlaskConical, CheckCircle2, XCircle, Bookmark } from 'lucide-react';
+import { Star, ExternalLink, Edit, Trash2, Key, FlaskConical, CheckCircle2, XCircle, Bookmark, Wand2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ToolLogo from '@/components/ToolLogo';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
+import TaskTemplatesDialog from '@/components/tools/TaskTemplatesDialog';
 
 const COLUMNS = [
   {
@@ -42,6 +43,7 @@ const COLUMNS = [
 export default function KanbanView({ tools, onEdit, onDelete, onToggleFavorite, onManageSubscription, onToolClick, onStatusChange }) {
   const [localTools, setLocalTools] = useState(tools);
   const [isDraggingAny, setIsDraggingAny] = useState(false);
+  const [showTemplates, setShowTemplates] = useState(false);
 
   useEffect(() => {
     setLocalTools(tools);
@@ -191,6 +193,14 @@ export default function KanbanView({ tools, onEdit, onDelete, onToggleFavorite, 
 
   return (
     <DragDropContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+      <div className="flex items-center justify-between mb-3">
+        <p className="text-sm text-gray-500">גרור כלים בין עמודות או השתמש בכפתורי העברה</p>
+        <Button variant="outline" size="sm" onClick={() => setShowTemplates(true)} className="gap-2">
+          <Wand2 className="w-4 h-4" />
+          תבניות משימות
+        </Button>
+      </div>
+      <TaskTemplatesDialog open={showTemplates} onOpenChange={setShowTemplates} tools={tools} />
       {/* מובייל: גלילה אופקית בין העמודות · דסקטופ: 4 עמודות */}
       <div className="flex gap-3 md:gap-6 overflow-x-auto pb-4 md:grid md:grid-cols-4 md:overflow-visible scrollbar-hide" dir="rtl">
         {COLUMNS.map((column) => {
