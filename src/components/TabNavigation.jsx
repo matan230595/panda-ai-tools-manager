@@ -13,7 +13,7 @@ export default function TabNavigation({ activeTab, onTabChange }) {
   const [collapsed, setCollapsed] = useState(() => localStorage.getItem('sidebarCollapsed') === '1');
 
   useEffect(() => {
-    document.documentElement.style.setProperty('--sidebar-w', collapsed ? '6.75rem' : '21rem');
+    document.documentElement.style.setProperty('--sidebar-w', collapsed ? '5.5rem' : '16rem');
     localStorage.setItem('sidebarCollapsed', collapsed ? '1' : '0');
   }, [collapsed]);
 
@@ -75,10 +75,10 @@ export default function TabNavigation({ activeTab, onTabChange }) {
     return (
       <button
         onClick={onClick}
-        className={`w-full flex items-center gap-3 rounded-2xl transition-all ${compact ? 'flex-col justify-center min-h-[72px] px-1 py-2 text-center' : 'justify-between px-4 py-3'} ${active ? 'bg-indigo-600 text-white shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800'}`}>
+        className={`w-full flex items-center gap-3 rounded-2xl transition-all ${compact ? 'flex-col justify-center min-h-[72px] px-1 py-2 text-center' : 'justify-between px-3 py-2'} ${active ? 'bg-indigo-600 text-white shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800'}`}>
         
         <div className={`flex items-center gap-3 ${compact ? 'flex-col gap-1.5' : ''}`}>
-          <div className={`flex items-center justify-center rounded-2xl ${compact ? 'w-11 h-11' : 'w-9 h-9'} ${active ? 'bg-white/15' : 'bg-gray-100 dark:bg-slate-800'}`}>
+          <div className={`flex items-center justify-center rounded-xl ${compact ? 'w-11 h-11' : 'w-8 h-8'} ${active ? 'bg-white/15' : 'bg-gray-100 dark:bg-slate-800'}`}>
             <Icon className="w-5 h-5" />
           </div>
           <span className={`${compact ? 'text-[11px]' : 'text-sm'} font-medium`}>{tab.label}</span>
@@ -89,7 +89,7 @@ export default function TabNavigation({ activeTab, onTabChange }) {
 
   return (
     <>
-      <aside className={`hidden md:flex fixed top-0 right-0 h-screen z-50 border-l border-gray-200 dark:border-slate-800 bg-white/96 dark:bg-slate-950/96 backdrop-blur-xl flex-col transition-all duration-300 px-1 py-3 ${collapsed ? 'w-[5.75rem]' : 'w-[19rem]'}`} dir="rtl">
+      <aside className={`hidden md:flex fixed top-0 right-0 h-screen z-50 border-l border-gray-200 dark:border-slate-800 bg-white/96 dark:bg-slate-950/96 backdrop-blur-xl flex-col transition-all duration-300 px-1.5 py-3 ${collapsed ? 'w-[5.5rem]' : 'w-[16rem]'}`} dir="rtl">
         <div className={`flex items-center gap-3 rounded-3xl border border-gray-200 dark:border-slate-800 p-2.5 mb-3 bg-slate-50/80 dark:bg-slate-900/80 ${collapsed ? 'justify-center' : ''}`}>
           <div className="w-11 h-11 rounded-2xl overflow-hidden flex items-center justify-center bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30 flex-shrink-0">
             {userLogo ? <img src={userLogo} alt="Logo" className="w-full h-full object-contain" /> : <Sparkles className="w-6 h-6 text-indigo-500" />}
@@ -112,7 +112,7 @@ export default function TabNavigation({ activeTab, onTabChange }) {
           {collapsed ? <ChevronsLeft className="w-4 h-4" /> : <ChevronsRight className="w-4 h-4" />}
         </Button>
 
-        <div className="flex-1 overflow-y-auto overscroll-contain pl-1 -ml-1 space-y-4">
+        <div className="flex-1 overflow-y-auto overscroll-contain scrollbar-hide pl-1 -ml-1 space-y-3">
           <div className="space-y-1.5">
             {!collapsed && <div className="px-2 text-xs font-semibold text-gray-500 dark:text-gray-400">עיקרי</div>}
             {mainTabs.map((tab) => <NavButton key={tab.id} tab={tab} iconOnly={collapsed} active={activeTab === tab.id} onClick={() => onTabChange(tab.id)} />)}
