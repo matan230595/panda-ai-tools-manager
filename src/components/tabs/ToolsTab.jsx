@@ -380,7 +380,7 @@ export default function ToolsTab({ settings, initialFilter }) {
     toast.success('הכלי עודכן');
   };
 
-  const handleMergeTools = async (primaryTool, duplicateTool) => {
+  const handleMergeTools = async (primaryTool, duplicateTool, resolvedDescription) => {
     const mergedFeatures = [...new Set([...(primaryTool.features || []), ...(duplicateTool.features || [])])];
     const mergedTags = [...new Set([...(primaryTool.tags || []), ...(duplicateTool.tags || [])])];
     const mergedIntegrations = [...new Set([...(primaryTool.integrations || []), ...(duplicateTool.integrations || [])])];
@@ -395,10 +395,13 @@ export default function ToolsTab({ settings, initialFilter }) {
       lastUsedDate: primaryTool.usageStats?.lastUsedDate || duplicateTool.usageStats?.lastUsedDate,
     };
 
+    const mergedDetailed = [primaryTool.detailedDescription, duplicateTool.detailedDescription]
+      .filter(Boolean).join('\n\n');
+
     await base44.entities.AiTool.update(primaryTool.id, {
       ...primaryTool,
-      description: primaryTool.description || duplicateTool.description,
-      detailedDescription: primaryTool.detailedDescription || duplicateTool.detailedDescription,
+      description: resolvedDescription ?? (primaryTool.description || duplicateTool.description),
+      detailedDescription: mergedDetailed || primaryTool.detailedDescription || duplicateTool.detailedDescription,
       features: mergedFeatures,
       tags: mergedTags,
       integrations: mergedIntegrations,

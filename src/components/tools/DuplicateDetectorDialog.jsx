@@ -1,8 +1,9 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { AlertTriangle, ArrowLeftRight, Sparkles, Trash2, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import ToolLogo from '@/components/ToolLogo';
+import MergeToolsDialog from '@/components/tools/MergeToolsDialog';
 
 function textSimilarity(a = '', b = '') {
   const first = a.toLowerCase().trim();
@@ -26,6 +27,20 @@ function scorePair(tool, other) {
 }
 
 export default function DuplicateDetectorDialog({ tools, onDelete, onMerge, onClose }) {
+  const [mergePair, setMergePair] = useState(null); // { primary, duplicate }
+  const [isMerging, setIsMerging] = useState(false);
+
+  const handleConfirmMerge = async (resolvedDescription) => {
+    if (!mergePair) return;
+    setIsMerging(true);
+    try {
+      await onMerge?.(mergePair.primary, mergePair.duplicate, resolvedDescription);
+      setMergePair(null);
+    } finally {
+      setIsMerging(false);
+    }
+  };
+
   const duplicateGroups = useMemo(() => {
     const groups = [];
     const seen = new Set();
@@ -109,9 +124,9 @@ export default function DuplicateDetectorDialog({ tools, onDelete, onMerge, onCl
                             <Badge variant="outline">{Math.round((tool.duplicateScore || 0) * 100)}%</Badge>
                           </div>
                           <div className="flex gap-2 mt-3">
-                            <Button size="sm" className="flex-1" onClick={() => onMerge?.(primary, tool)}>
+                            <Button size="sm" className="flex-1" onClick={() => setMergePair({ primary, duplicate: tool })}>
                               <ArrowLeftRight className="w-4 h-4 ml-2" />
-                              מזג לתוך הראשי
+                              אחד לתוך הראשי
                             </Button>
                             <Button size="sm" variant="outline" className="text-red-600" onClick={() => onDelete?.(tool)}>
                               <Trash2 className="w-4 h-4 ml-2" />
@@ -128,6 +143,16 @@ export default function DuplicateDetectorDialog({ tools, onDelete, onMerge, onCl
           )}
         </div>
       </div>
+
+      {mergePair && (
+        <MergeToolsDialog
+          primary={mergePair.primary}
+          duplicate={mergePair.duplicate}
+          isMerging={isMerging}
+          onConfirm={handleConfirmMerge}
+          onCancel={() => setMergePair(null)}
+        />
+      )}
     </div>
   );
 }
