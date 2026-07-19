@@ -9,9 +9,12 @@ import UserCredentialsTab from '@/components/tools/UserCredentialsTab';
 import ToolTasksPanel from '@/components/tools/ToolTasksPanel';
 import ToolLearningPlanPanel from '@/components/tools/ToolLearningPlanPanel';
 import ToolRatingPanel from '@/components/tools/ToolRatingPanel';
+import ToolUsageActivity from '@/components/tools/ToolUsageActivity';
 import { base44 } from '@/api/base44Client';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onToggleFavorite, onManageSubscription, onQuickUpdate }) {
+  const queryClient = useQueryClient();
   // רישום אינטראקציית קליק כשנפתח כרטיס כלי
   React.useEffect(() => {
     if (!tool?.id) return;
@@ -25,6 +28,7 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
           interactionType: 'click',
           userEmail: user.email,
         });
+        queryClient.invalidateQueries({ queryKey: ['toolInteractions', tool.id] });
       } catch { /* התעלם משגיאות מעקב */ }
     })();
   }, [tool?.id]);
@@ -195,7 +199,12 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
               <ToolRatingPanel tool={tool} />
             </TabsContent>
 
-            <TabsContent value="use-cases" className="space-y-4 mt-6">
+            <TabsContent value="use-cases" className="space-y-6 mt-6">
+              <ToolUsageActivity tool={tool} />
+
+              <div className="pt-2 border-t">
+                <h3 className="font-bold text-lg mb-3">דוגמאות שימוש</h3>
+              </div>
               {tool.useCases?.length > 0 ?
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {tool.useCases.map((useCase, idx) =>
