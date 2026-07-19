@@ -27,7 +27,7 @@ export default function TabNavigation({ activeTab, onTabChange }) {
       } catch {
         return null;
       }
-    },
+    }
   });
 
   useEffect(() => {
@@ -36,21 +36,21 @@ export default function TabNavigation({ activeTab, onTabChange }) {
   }, [settings]);
 
   const mainTabs = [
-    { id: 'dashboard', label: 'דשבורד', icon: LayoutDashboard },
-    { id: 'tools', label: 'כלים', icon: Sparkles },
-    { id: 'assistant', label: 'סוכן', icon: MessageSquare },
-    { id: 'subscriptions-mgmt', label: 'מנויים', icon: DollarSign },
-    { id: 'stats', label: 'ROI', icon: BarChart3 },
-    { id: 'reminders', label: 'התראות', icon: BellRing },
-  ];
+  { id: 'dashboard', label: 'דשבורד', icon: LayoutDashboard },
+  { id: 'tools', label: 'כלים', icon: Sparkles },
+  { id: 'assistant', label: 'סוכן', icon: MessageSquare },
+  { id: 'subscriptions-mgmt', label: 'מנויים', icon: DollarSign },
+  { id: 'stats', label: 'ROI', icon: BarChart3 },
+  { id: 'reminders', label: 'התראות', icon: BellRing }];
+
 
   const secondaryTabs = [
-    { id: 'budget', label: 'תקציב', icon: Wallet },
-    { id: 'insights', label: 'תובנות', icon: Lightbulb },
-    { id: 'integrations', label: 'אינטגרציות', icon: Cable },
-    { id: 'collaboration', label: 'שיתוף', icon: Users },
-    { id: 'settings', label: 'הגדרות', icon: Settings },
-  ];
+  { id: 'budget', label: 'תקציב', icon: Wallet },
+  { id: 'insights', label: 'תובנות', icon: Lightbulb },
+  { id: 'integrations', label: 'אינטגרציות', icon: Cable },
+  { id: 'collaboration', label: 'שיתוף', icon: Users },
+  { id: 'settings', label: 'הגדרות', icon: Settings }];
+
 
   const mobileTabs = useMemo(() => mainTabs.slice(0, 4), [mainTabs]);
   const mobileMoreTabs = useMemo(() => [...mainTabs.slice(4), ...secondaryTabs], [mainTabs, secondaryTabs]);
@@ -64,50 +64,50 @@ export default function TabNavigation({ activeTab, onTabChange }) {
           onClick={onClick}
           title={tab.label}
           aria-label={tab.label}
-          className={`w-full flex items-center justify-center rounded-2xl py-2.5 transition-all ${active ? 'bg-indigo-600 text-white shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800'}`}
-        >
+          className={`w-full flex items-center justify-center rounded-2xl py-2.5 transition-all ${active ? 'bg-indigo-600 text-white shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800'}`}>
+          
           <div className={`flex items-center justify-center rounded-2xl w-10 h-10 ${active ? 'bg-white/15' : 'bg-gray-100 dark:bg-slate-800'}`}>
             <Icon className="w-5 h-5" />
           </div>
-        </button>
-      );
+        </button>);
+
     }
     return (
       <button
         onClick={onClick}
-        className={`w-full flex items-center gap-3 rounded-2xl transition-all ${compact ? 'flex-col justify-center min-h-[72px] px-1 py-2 text-center' : 'justify-between px-4 py-3'} ${active ? 'bg-indigo-600 text-white shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800'}`}
-      >
+        className={`w-full flex items-center gap-3 rounded-2xl transition-all ${compact ? 'flex-col justify-center min-h-[72px] px-1 py-2 text-center' : 'justify-between px-4 py-3'} ${active ? 'bg-indigo-600 text-white shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800'}`}>
+        
         <div className={`flex items-center gap-3 ${compact ? 'flex-col gap-1.5' : ''}`}>
           <div className={`flex items-center justify-center rounded-2xl ${compact ? 'w-11 h-11' : 'w-9 h-9'} ${active ? 'bg-white/15' : 'bg-gray-100 dark:bg-slate-800'}`}>
             <Icon className="w-5 h-5" />
           </div>
           <span className={`${compact ? 'text-[11px]' : 'text-sm'} font-medium`}>{tab.label}</span>
         </div>
-      </button>
-    );
+      </button>);
+
   };
 
   return (
     <>
-      <aside className={`hidden md:flex fixed top-0 right-0 h-screen z-50 border-l border-gray-200 dark:border-slate-800 bg-white/96 dark:bg-slate-950/96 backdrop-blur-xl flex-col p-3 transition-all duration-300 ${collapsed ? 'w-[5.75rem]' : 'w-[19rem]'}`} dir="rtl">
+      <aside className={`hidden md:flex fixed top-0 right-0 h-screen z-50 border-l border-gray-200 dark:border-slate-800 bg-white/96 dark:bg-slate-950/96 backdrop-blur-xl flex-col transition-all duration-300 py-3 px-12 ${collapsed ? 'w-[5.75rem]' : 'w-[19rem]'}`} dir="rtl">
         <div className={`flex items-center gap-3 rounded-3xl border border-gray-200 dark:border-slate-800 p-2.5 mb-3 bg-slate-50/80 dark:bg-slate-900/80 ${collapsed ? 'justify-center' : ''}`}>
           <div className="w-11 h-11 rounded-2xl overflow-hidden flex items-center justify-center bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30 flex-shrink-0">
             {userLogo ? <img src={userLogo} alt="Logo" className="w-full h-full object-contain" /> : <Sparkles className="w-6 h-6 text-indigo-500" />}
           </div>
-          {!collapsed && (
-            <div className="min-w-0 text-right">
+          {!collapsed &&
+          <div className="min-w-0 text-right">
               <div className="text-xs text-gray-500 dark:text-gray-400">מערכת ניהול</div>
               <h2 className="font-bold text-base truncate">{appName}</h2>
             </div>
-          )}
+          }
         </div>
 
         <Button
           variant="outline"
           onClick={() => setCollapsed((prev) => !prev)}
           className={`rounded-2xl min-h-[44px] mb-3 ${collapsed ? 'w-full px-0' : 'w-full justify-between'}`}
-          title={collapsed ? 'הרחב תפריט' : 'צמצם תפריט'}
-        >
+          title={collapsed ? 'הרחב תפריט' : 'צמצם תפריט'}>
+          
           {!collapsed && <span>צמצם תפריט</span>}
           {collapsed ? <ChevronsLeft className="w-4 h-4" /> : <ChevronsRight className="w-4 h-4" />}
         </Button>
@@ -171,18 +171,18 @@ export default function TabNavigation({ activeTab, onTabChange }) {
                       onClick={() => {
                         onTabChange(tab.id);
                         setIsMoreOpen(false);
-                      }}
-                    >
+                      }}>
+                      
                       <span>{tab.label}</span>
                       <Icon className="w-4 h-4" />
-                    </Button>
-                  );
+                    </Button>);
+
                 })}
               </div>
             </DrawerContent>
           </Drawer>
         </nav>
       </div>
-    </>
-  );
+    </>);
+
 }
