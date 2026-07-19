@@ -8,8 +8,8 @@ import { Badge } from '@/components/ui/badge';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 
-export default function SmartSearch({ onSearch, tools, quickFilters = [] }) {
-  const [searchTerm, setSearchTerm] = useState('');
+export default function SmartSearch({ onSearch, tools, quickFilters = [], searchTerm: externalSearchTerm }) {
+  const [searchTerm, setSearchTerm] = useState(externalSearchTerm || '');
   const [isListening, setIsListening] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -22,6 +22,13 @@ export default function SmartSearch({ onSearch, tools, quickFilters = [] }) {
       setRecentSearches(JSON.parse(saved));
     }
   }, []);
+
+  // סנכרון עם ערך החיפוש החיצוני (מ-URL)
+  useEffect(() => {
+    if (externalSearchTerm !== undefined && externalSearchTerm !== searchTerm) {
+      setSearchTerm(externalSearchTerm);
+    }
+  }, [externalSearchTerm]);
 
   useEffect(() => {
     if (searchTerm.length > 0) {

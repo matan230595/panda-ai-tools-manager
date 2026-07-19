@@ -9,7 +9,8 @@ import {
 } from '@/components/ui/select';
 import SmartSearch from '@/components/search/SmartSearch';
 
-export default function SearchAndFilters({ 
+export default function SearchAndFilters({
+  searchTerm,
   onSearchChange,
   viewMode,
   onViewModeChange,
@@ -39,6 +40,7 @@ export default function SearchAndFilters({
   return (
     <div className="sticky top-[68px] md:top-4 z-30 bg-white/95 dark:bg-slate-900/90 backdrop-blur-xl rounded-2xl md:rounded-3xl p-3 sm:p-4 shadow-lg shadow-gray-200/40 dark:shadow-black/20 border border-gray-200/80 dark:border-slate-800 space-y-3" dir="rtl">
       <SmartSearch
+        searchTerm={searchTerm}
         onSearch={onSearchChange}
         tools={tools}
         quickFilters={[...new Set(tools.flatMap((tool) => [(tool.customCategory || tool.category)?.replace(/_/g, ' '), ...(tool.tags || []).slice(0, 2)]).filter(Boolean))].slice(0, 6)}

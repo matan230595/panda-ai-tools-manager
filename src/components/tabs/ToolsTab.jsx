@@ -93,7 +93,6 @@ export default function ToolsTab({ settings, initialFilter, quickAddTool, onQuic
   const sortBy = urlFilters.sort;
   const setSortBy = (v) => setUrlFilter('sort', v);
 
-  const [showAddTool, setShowAddTool] = useState(false);
   const [aiAutoCompleteOpen, setAiAutoCompleteOpen] = useState(false);
   const [showQuickAction, setShowQuickAction] = useState(false);
   const [showRecommendations, setShowRecommendations] = useState(false);

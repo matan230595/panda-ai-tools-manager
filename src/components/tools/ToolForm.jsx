@@ -316,7 +316,7 @@ ${formData.url ? `URL: ${formData.url}` : ''}
       customCategory: validCategories.has(normalizedCategory) ? '' : normalizedCategory,
       pricing: validPricing.has(formData.pricing) ? formData.pricing : 'חינם',
       subscriptionType: validSubscriptionTypes.has(formData.subscriptionType) ? formData.subscriptionType : 'חינמי',
-      operationalStatus: ['בבדיקה', 'בשימוש', 'לביטול'].includes(formData.operationalStatus) ? formData.operationalStatus : 'בבדיקה',
+      operationalStatus: ['בבדיקה', 'בשימוש', 'נשמר לסקירה', 'לביטול'].includes(formData.operationalStatus) ? formData.operationalStatus : 'בבדיקה',
       subscriptionPlans: Array.isArray(formData.subscriptionPlans) ? formData.subscriptionPlans.map((plan) => ({
         name: String(plan?.name || ''),
         priceUSD: Number(plan?.priceUSD || 0),

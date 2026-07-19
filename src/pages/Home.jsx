@@ -72,6 +72,7 @@ export default function Home() {
   useEffect(() => {
     if (settings && activeTab !== settings.lastActiveTab) {
       base44.entities.Settings.update(settings.id, { lastActiveTab: activeTab });
+      queryClient.invalidateQueries({ queryKey: ['settings'] });
     }
   }, [activeTab, settings]);
 
