@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { Wand2, CheckCircle2, ListChecks, TrendingUp, FileText } from 'lucide-react';
+import { Wand2, CheckCircle2, ListChecks, TrendingUp, FileText, ShieldCheck, Zap, Users } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -47,6 +47,45 @@ const TEMPLATES = [
       { title: 'מדידת חיסכון זמן', description: 'כימות שעות עבודה שנחסכות הודות לכלי', priority: 'high', frequency: 'one_time' },
       { title: 'חישוב החזר השקעה', description: 'השוואת עלות מול תועלת וחישוב נקודת איזון', priority: 'medium', frequency: 'one_time' },
       { title: 'המלצה סופית', description: 'סיכום: האם הכלי משתלם? המשך / ביטול / שדרוג', priority: 'high', frequency: 'one_time' },
+    ],
+  },
+  {
+    id: 'security_audit',
+    name: 'ביקורת אבטחה',
+    description: 'בדיקת אבטחה ופרטיות לכלי AI',
+    icon: ShieldCheck,
+    color: 'from-red-500 to-rose-600',
+    tasks: [
+      { title: 'סקירת מדיניות פרטיות', description: 'בדיקת מדיניות הפרטיות וטיפול בנתונים של הכלי', priority: 'high', frequency: 'one_time' },
+      { title: 'בדיקת אבטחת API', description: 'ודא שהכלי משתמש בהצפנה ואימות נאותים', priority: 'high', frequency: 'one_time' },
+      { title: 'סקירת הרשאות גישה', description: 'בדיקת מי יכול לגשת לנתונים ואיך מנוהלות הרשאות', priority: 'medium', frequency: 'one_time' },
+      { title: 'תיעוד סיכונים', description: 'תיעוד סיכונים פוטנציאליים ודרכי התמודדות', priority: 'medium', frequency: 'monthly' },
+    ],
+  },
+  {
+    id: 'quick_trial',
+    name: 'ניסוי מהיר',
+    description: 'בדיקה מהירה של כלי חדש תוך שבוע',
+    icon: Zap,
+    color: 'from-yellow-500 to-amber-500',
+    tasks: [
+      { title: 'הרשמה והגדרה ראשונית', description: 'פתיחת חשבון והגדרה בסיסית', priority: 'high', frequency: 'one_time' },
+      { title: 'ניסוי תכונה מרכזית', description: 'בדיקת התכונה העיקרית של הכלי', priority: 'high', frequency: 'one_time' },
+      { title: 'הערכת מחיר', description: 'בדיקת תוכניות המחיר והתאמה לתקציב', priority: 'medium', frequency: 'one_time' },
+      { title: 'החלטה: המשך או ביטול', description: 'סיכום ראשוני והחלטה', priority: 'high', frequency: 'one_time' },
+    ],
+  },
+  {
+    id: 'team_rollout',
+    name: 'הטמעה בצוות',
+    description: 'גלגול כלי חדש לכל הצוות',
+    icon: Users,
+    color: 'from-cyan-500 to-blue-500',
+    tasks: [
+      { title: 'הכשרת מובילים', description: 'הכשרת 2-3 מובילים מוקדמים בצוות', priority: 'high', frequency: 'one_time' },
+      { title: 'יצירת חומר הדרכה', description: 'הכנת מדריך קצר וסרטון הדגמה', priority: 'medium', frequency: 'one_time' },
+      { title: 'סדנת השקה', description: 'העברת סדנה לכל הצוות', priority: 'high', frequency: 'one_time' },
+      { title: 'מעקב אימוץ חודשי', description: 'בדיקת אחוז שימוש ופתרון בעיות', priority: 'medium', frequency: 'monthly' },
     ],
   },
 ];

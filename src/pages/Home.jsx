@@ -15,6 +15,7 @@ import ThemeToggle from '@/components/ThemeToggle';
 import NotificationCenter from '@/components/NotificationCenter';
 import KeyboardShortcutsHelp from '@/components/KeyboardShortcutsHelp';
 import QuickAddFAB from '@/components/QuickAddFAB';
+import OnboardingWizard from '@/components/onboarding/OnboardingWizard';
 import { useSmartNotifications } from '@/components/hooks/useSmartNotifications';
 import { useKeyboardShortcuts } from '@/components/hooks/useKeyboardShortcuts';
 import { Toaster } from 'sonner';
@@ -167,6 +168,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen relative bg-gradient-to-br from-gray-50 via-white to-indigo-50/60 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950/40">
+      <OnboardingWizard />
       <div className="pointer-events-none fixed inset-0 opacity-[0.04] dark:opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, rgb(99 102 241) 1px, transparent 0)', backgroundSize: '24px 24px' }} />
       <a
         href="#main-content"
@@ -190,11 +192,20 @@ export default function Home() {
       {/* תוכן הטאב */}
       <main id="main-content" className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 py-2 sm:py-4 md:py-8 md:pr-[var(--sidebar-w,21rem)] transition-[padding] duration-300 pb-8">
         <div className="flex items-center justify-between gap-2 mb-3 md:mb-5 rounded-2xl border border-gray-200/80 dark:border-slate-800 bg-white/80 dark:bg-slate-900/70 backdrop-blur-xl px-3 py-2.5 shadow-sm">
-          <Link to="/calendar" className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-indigo-500/20 hover:shadow-lg hover:shadow-indigo-500/30 transition-all active:scale-95 min-h-[44px]">
+          <div className="flex items-center gap-2">
+          <Link to="/calendar" className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 px-3 sm:px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-indigo-500/20 hover:shadow-lg hover:shadow-indigo-500/30 transition-all active:scale-95 min-h-[44px]">
             <CalendarDays className="w-4 h-4" />
-            <span className="hidden sm:inline">לוח שנה מנויים</span>
-            <span className="sm:hidden">לוח שנה</span>
+            <span className="hidden lg:inline">לוח שנה מנויים</span>
+            <span className="hidden sm:inline lg:hidden">מנויים</span>
+            <span className="sm:hidden">מנויים</span>
           </Link>
+          <Link to="/tasks-calendar" className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-green-600 px-3 sm:px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-emerald-500/20 hover:shadow-lg hover:shadow-emerald-500/30 transition-all active:scale-95 min-h-[44px]">
+            <CalendarDays className="w-4 h-4" />
+            <span className="hidden lg:inline">לוח שנה משימות</span>
+            <span className="hidden sm:inline lg:hidden">משימות</span>
+            <span className="sm:hidden">משימות</span>
+          </Link>
+        </div>
           <button
             onClick={() => setShowGlobalSearch(true)}
             className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 sm:px-4 py-2.5 text-sm text-gray-500 hover:text-indigo-600 hover:border-indigo-300 transition-all active:scale-95 min-h-[44px]"

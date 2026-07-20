@@ -10,6 +10,7 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import CalendarPage from '@/pages/CalendarPage';
+import TasksCalendar from '@/pages/TasksCalendar';
 import SharedTools from '@/pages/SharedTools';
 
 const { Pages, Layout, mainPage } = pagesConfig;
@@ -63,6 +64,7 @@ const AuthenticatedApp = () => {
         />
       ))}
       <Route path="/calendar" element={<LayoutWrapper currentPageName="calendar"><CalendarPage /></LayoutWrapper>} />
+      <Route path="/tasks-calendar" element={<LayoutWrapper currentPageName="tasks-calendar"><TasksCalendar /></LayoutWrapper>} />
       <Route path="/shared/:token" element={<LayoutWrapper currentPageName="shared"><SharedTools /></LayoutWrapper>} />
       {/* Catalog aliases: /SharedTools and /shared (without token) point to the main tools catalog on Home */}
       <Route path="/SharedTools" element={<Navigate to="/" replace />} />

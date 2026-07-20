@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { getCurrentUser } from '@/components/hooks/userScopedData';
-import { Plus, Trash2, GitCompare, Sparkles, SlidersHorizontal, LayoutGrid, List, Rows3, Table2, Kanban, Copy } from 'lucide-react';
+import { Plus, Trash2, GitCompare, Sparkles, SlidersHorizontal, LayoutGrid, List, Rows3, Table2, Kanban, Copy, CheckSquare } from 'lucide-react';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { Button } from '@/components/ui/button';
 import {
@@ -28,6 +28,7 @@ import DuplicateDetectorDialog from '@/components/tools/DuplicateDetectorDialog'
 import AdvancedFilters from '@/components/tools/AdvancedFilters';
 import ExportImportDialog from '@/components/tools/ExportImportDialog';
 import ShareLinkDialog from '@/components/sharing/ShareLinkDialog';
+import BulkActionsBar from '@/components/tools/BulkActionsBar';
 import CardFieldsCustomizer from '@/components/tools/CardFieldsCustomizer';
 import { useCardFieldConfig } from '@/components/hooks/useCardFieldConfig';
 import { toast } from 'sonner';
@@ -82,6 +83,8 @@ export default function ToolsTab({ settings, initialFilter, quickAddTool, onQuic
   const [selectedForCompare, setSelectedForCompare] = useState([]);
   const [managingSubscription, setManagingSubscription] = useState(null);
   const [selectedTool, setSelectedTool] = useState(null);
+  const [bulkMode, setBulkMode] = useState(false);
+  const [selectedForBulk, setSelectedForBulk] = useState([]);
 
   useEffect(() => {
     if (quickAddTool) {
@@ -375,6 +378,24 @@ export default function ToolsTab({ settings, initialFilter, quickAddTool, onQuic
     });
   };
 
+  const toggleBulkSelection = (tool) => {
+    setSelectedForBulk(prev => {
+      const exists = prev.includes(tool.id);
+      if (exists) {
+        return prev.filter(id => id !== tool.id);
+      }
+      return [...prev, tool.id];
+    });
+  };
+
+  const handleSelectAllBulk = () => {
+    if (selectedForBulk.length === filteredAndSortedTools.length) {
+      setSelectedForBulk([]);
+    } else {
+      setSelectedForBulk(filteredAndSortedTools.map(t => t.id));
+    }
+  };
+
   const handleQuickUpdate = async (toolId, patch) => {
     await base44.entities.AiTool.update(toolId, patch);
     queryClient.invalidateQueries(['tools']);
@@ -566,6 +587,9 @@ export default function ToolsTab({ settings, initialFilter, quickAddTool, onQuic
                 <DropdownMenuItem onClick={() => setCompareMode(true)} disabled={tools.length < 2}>
                   <GitCompare className="w-4 h-4 ml-2" /> השוואת כלים
                 </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => { setBulkMode(true); setSelectedForBulk([]); }}>
+                  <CheckSquare className="w-4 h-4 ml-2" /> בחירה מרובה
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setShowDuplicatesDialog(true)}>
                   <Copy className="w-4 h-4 ml-2" /> ניקוי כפילויות
                 </DropdownMenuItem>
@@ -596,6 +620,17 @@ export default function ToolsTab({ settings, initialFilter, quickAddTool, onQuic
             handleEdit(tool);
           }} />
         </div>
+      )}
+
+      {/* פעולות גורפות */}
+      {bulkMode && (
+        <BulkActionsBar
+          selectedIds={selectedForBulk}
+          tools={tools}
+          onClear={() => { setSelectedForBulk([]); setBulkMode(false); }}
+          onSelectAll={handleSelectAllBulk}
+          totalTools={filteredAndSortedTools.length}
+        />
       )}
 
       {/* חיפוש וסינון */}
@@ -661,8 +696,8 @@ export default function ToolsTab({ settings, initialFilter, quickAddTool, onQuic
                 onToggleFavorite={handleToggleFavorite}
                 onManageSubscription={setManagingSubscription}
                 onClick={setSelectedTool}
-                isSelected={selectedForCompare.some(t => t.id === tool.id)}
-                onToggleSelect={compareMode ? toggleCompareSelection : null}
+                isSelected={bulkMode ? selectedForBulk.includes(tool.id) : selectedForCompare.some(t => t.id === tool.id)}
+                onToggleSelect={bulkMode ? toggleBulkSelection : (compareMode ? toggleCompareSelection : null)}
                 fieldVisibility={cardFieldVisibility}
                 />
                 ))}
