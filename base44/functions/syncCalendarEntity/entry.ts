@@ -75,6 +75,8 @@ async function getRecord(base44, entityName, entityId) {
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
+    const user = await base44.auth.me().catch(() => null);
+    if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
     const payload = await req.json().catch(() => ({}));
     const event = payload.event || {};
     const entityName = event.entity_name || payload.entity_name;
@@ -93,6 +95,9 @@ Deno.serve(async (req) => {
     const ownerEmail = currentData?.created_by || oldData?.created_by;
     if (!ownerEmail) {
       return Response.json({ success: true, skipped: true, reason: 'Missing owner email' });
+    }
+    if (ownerEmail !== user.email) {
+      return Response.json({ error: 'Forbidden: caller does not own this entity' }, { status: 403 });
     }
 
     const integrations = await base44.asServiceRole.entities.Integration.filter({

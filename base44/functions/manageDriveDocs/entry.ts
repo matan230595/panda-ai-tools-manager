@@ -70,6 +70,20 @@ Deno.serve(async (req) => {
     const { accessToken } = await base44.asServiceRole.connectors.getConnection('googledrive');
     const authHeader = { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' };
 
+    // Verify the authenticated user owns the AiTool with the given name
+    async function verifyToolOwnership(toolName) {
+      if (!toolName) return false;
+      const tools = await base44.asServiceRole.entities.AiTool.filter({ name: toolName, created_by_id: user.id });
+      return tools.length > 0;
+    }
+
+    // Verify the fileId belongs to a tool owned by the authenticated user
+    async function verifyFileOwnership(fileId) {
+      if (!fileId) return false;
+      const tools = await base44.asServiceRole.entities.AiTool.filter({ created_by_id: user.id });
+      return tools.some((t) => (t.driveDocs || []).some((d) => d.fileId === fileId));
+    }
+
     // List files from a tool's folder (or global search)
     if (action === 'list') {
       const query = body.query || '';
@@ -86,6 +100,9 @@ Deno.serve(async (req) => {
 
     // List files inside a specific tool folder
     if (action === 'listToolDocs') {
+      if (!(await verifyToolOwnership(body.toolName))) {
+        return Response.json({ error: 'Forbidden: tool not found or not owned by user' }, { status: 403 });
+      }
       const folderId = await getToolFolderId(authHeader, body.toolName);
       const q = encodeURIComponent(`'${folderId}' in parents and trashed=false`);
       const res = await fetch(`${DRIVE_FILES_URL}?pageSize=50&q=${q}&fields=files(id,name,mimeType,iconLink,webViewLink,modifiedTime)&orderBy=modifiedTime desc`, { headers: authHeader });
@@ -97,6 +114,9 @@ Deno.serve(async (req) => {
     if (action === 'createDoc') {
       const { toolName, docName, content } = body;
       if (!docName) return Response.json({ error: 'Missing docName' }, { status: 400 });
+      if (!(await verifyToolOwnership(toolName))) {
+        return Response.json({ error: 'Forbidden: tool not found or not owned by user' }, { status: 403 });
+      }
 
       const folderId = await getToolFolderId(authHeader, toolName);
 
@@ -137,6 +157,9 @@ Deno.serve(async (req) => {
     if (action === 'getDocContent') {
       const { fileId } = body;
       if (!fileId) return Response.json({ error: 'Missing fileId' }, { status: 400 });
+      if (!(await verifyFileOwnership(fileId))) {
+        return Response.json({ error: 'Forbidden: file not found or not owned by user' }, { status: 403 });
+      }
       const res = await fetch(`${DOCS_URL}/${fileId}`, { headers: authHeader });
       const doc = await res.json();
       if (!res.ok) return Response.json({ error: doc.error?.message || 'Failed to fetch content' }, { status: 400 });
@@ -147,6 +170,9 @@ Deno.serve(async (req) => {
     if (action === 'updateDocContent') {
       const { fileId, content } = body;
       if (!fileId) return Response.json({ error: 'Missing fileId' }, { status: 400 });
+      if (!(await verifyFileOwnership(fileId))) {
+        return Response.json({ error: 'Forbidden: file not found or not owned by user' }, { status: 403 });
+      }
 
       // First, get the current document to find its end index
       const docRes = await fetch(`${DOCS_URL}/${fileId}`, { headers: authHeader });
@@ -193,6 +219,9 @@ Deno.serve(async (req) => {
     if (action === 'upload') {
       const { fileName, mimeType, content, toolName } = body;
       if (!fileName || !content) return Response.json({ error: 'Missing fileName or content' }, { status: 400 });
+      if (toolName && !(await verifyToolOwnership(toolName))) {
+        return Response.json({ error: 'Forbidden: tool not found or not owned by user' }, { status: 403 });
+      }
 
       let folderId = null;
       if (toolName) {
