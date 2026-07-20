@@ -83,5 +83,35 @@
   "required": [
     "name",
     "ownerEmail"
-  ]
+  ],
+  "rls": {
+    "create": null,
+    "read": {
+      "$or": [
+        {
+          "data.ownerEmail": "{{user.email}}"
+        },
+        {
+          "data.members": {
+            "$elemMatch": {
+              "email": "{{user.email}}"
+            }
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.ownerEmail": "{{user.email}}"
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        }
+      ]
+    },
+    "delete": {
+      "data.ownerEmail": "{{user.email}}"
+    }
+  }
 }
