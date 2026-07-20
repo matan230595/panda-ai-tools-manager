@@ -121,13 +121,9 @@ export default function TabNavigation({ activeTab, onTabChange }) {
           </div>
         </div>
 
-        <div className="pt-3 flex-shrink-0 space-y-2">
-          <Button variant="outline" className={`w-full rounded-2xl min-h-[48px] ${collapsed ? 'px-0' : 'justify-between'}`} onClick={() => window.location.assign('/calendar')} title="לוח שנה מנויים">
-            {!collapsed && <span>לוח שנה מנויים</span>}
-            <CalendarDays className="w-4 h-4" />
-          </Button>
-          <Button variant="outline" className={`w-full rounded-2xl min-h-[48px] ${collapsed ? 'px-0' : 'justify-between'}`} onClick={() => window.location.assign('/tasks-calendar')} title="לוח שנה משימות">
-            {!collapsed && <span>לוח שנה משימות</span>}
+        <div className="pt-3 flex-shrink-0">
+          <Button variant="outline" className={`w-full rounded-2xl min-h-[48px] ${collapsed ? 'px-0' : 'justify-between'}`} onClick={() => window.location.assign('/calendar')} title="לוח שנה">
+            {!collapsed && <span>לוח שנה</span>}
             <CalendarDays className="w-4 h-4" />
           </Button>
         </div>
@@ -199,13 +195,9 @@ export default function TabNavigation({ activeTab, onTabChange }) {
               })}
             </div>
 
-            <div className="pt-2 border-t border-gray-200 dark:border-slate-800 space-y-2">
+            <div className="pt-2 border-t border-gray-200 dark:border-slate-800">
               <Button variant="outline" className="w-full justify-between rounded-2xl min-h-[48px]" onClick={() => { window.location.assign('/calendar'); }}>
-                <span>לוח שנה מנויים</span>
-                <CalendarDays className="w-4 h-4" />
-              </Button>
-              <Button variant="outline" className="w-full justify-between rounded-2xl min-h-[48px]" onClick={() => { window.location.assign('/tasks-calendar'); }}>
-                <span>לוח שנה משימות</span>
+                <span>לוח שנה</span>
                 <CalendarDays className="w-4 h-4" />
               </Button>
             </div>

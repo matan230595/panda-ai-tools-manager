@@ -35,6 +35,15 @@ export default function CalendarPage() {
     initialData: [],
   });
 
+  const { data: plans = [] } = useQuery({
+    queryKey: ['calendar-page-plans'],
+    queryFn: async () => {
+      const user = await getCurrentUser();
+      return base44.entities.ToolLearningPlan.filter({ created_by_id: user.id }, '-updated_date');
+    },
+    initialData: [],
+  });
+
   const moveReminderMutation = useMutation({
     mutationFn: async ({ id, date }) => {
       const reminder = reminders.find((item) => item.id === id);
@@ -62,8 +71,8 @@ export default function CalendarPage() {
         <div className="relative overflow-hidden rounded-2xl md:rounded-3xl bg-gradient-to-br from-rose-500 via-pink-600 to-fuchsia-600 p-4 sm:p-6 shadow-xl shadow-pink-500/20">
           <div className="absolute -top-16 -left-16 w-56 h-56 rounded-full bg-white/10 blur-2xl pointer-events-none" />
           <div className="relative space-y-1">
-            <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white">לוח שנה לחידושי מנויים ותזכורות</h1>
-            <p className="text-xs sm:text-sm text-pink-100/90">צפייה בכל חידושי המנויים, תזכורות ומשימות במקום אחד עם גרירה ושחרור ועדכון מהיר.</p>
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white">לוח שנה מאוחד</h1>
+            <p className="text-xs sm:text-sm text-pink-100/90">כל התזכורות, חידושי מנויים, משימות ותוכניות למידה במקום אחד — עם צבעים להפרדה, גרירה ועדכון מהיר.</p>
           </div>
         </div>
 
@@ -72,6 +81,7 @@ export default function CalendarPage() {
             reminders={reminders}
             subscriptions={subscriptions}
             tasks={tasks}
+            plans={plans}
             onMoveReminder={(id, date) => moveReminderMutation.mutate({ id, date })}
             onMoveTask={(id, date) => moveTaskMutation.mutate({ id, date })}
           />

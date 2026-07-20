@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { ChevronLeft, ChevronRight, CalendarDays, GripVertical, Bell, CreditCard, ListChecks } from 'lucide-react';
+import { ChevronLeft, ChevronRight, CalendarDays, GripVertical, Bell, CreditCard, ListChecks, GraduationCap, Flag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -36,11 +36,21 @@ function buildWeekDays(currentDate) {
 
 const typeStyles = {
   subscription: 'bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-200',
-  task: 'bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-200',
+  task: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/40 dark:text-indigo-200',
   reminder: 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-200',
+  plan: 'bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-200',
+  step: 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-200',
 };
 
-export default function ReminderCalendarView({ reminders = [], subscriptions = [], tasks = [], onMoveReminder, onMoveTask }) {
+const typeLabels = {
+  subscription: 'מנוי',
+  task: 'משימה',
+  reminder: 'תזכורת',
+  plan: 'תוכנית למידה',
+  step: 'שלב למידה',
+};
+
+export default function ReminderCalendarView({ reminders = [], subscriptions = [], tasks = [], plans = [], onMoveReminder, onMoveTask }) {
   const [viewMode, setViewMode] = useState('month');
   const [currentDate, setCurrentDate] = useState(new Date());
   const [dialogDateKey, setDialogDateKey] = useState(null);
@@ -62,9 +72,15 @@ export default function ReminderCalendarView({ reminders = [], subscriptions = [
     reminders.forEach((reminder) => push(reminder.reminderDate, { ...reminder, itemType: 'reminder' }));
     subscriptions.forEach((subscription) => push(subscription.renewalDate, { ...subscription, itemType: 'subscription' }));
     tasks.forEach((task) => push(task.dueDate, { ...task, itemType: 'task' }));
+    plans.forEach((plan) => {
+      push(plan.targetDate, { ...plan, itemType: 'plan' });
+      (plan.steps || []).forEach((step) => {
+        if (step.dueDate) push(step.dueDate, { ...step, toolName: plan.toolName, planTitle: plan.title, itemType: 'step' });
+      });
+    });
 
     return grouped;
-  }, [reminders, subscriptions, tasks]);
+  }, [reminders, subscriptions, tasks, plans]);
 
   const moveCalendar = (direction) => {
     const next = new Date(currentDate);
@@ -96,7 +112,7 @@ export default function ReminderCalendarView({ reminders = [], subscriptions = [
   const renderDayView = () => {
     const dateKey = formatDateKey(currentDate);
     const dayItems = itemsByDate[dateKey] || [];
-    const iconMap = { subscription: CreditCard, task: ListChecks, reminder: Bell };
+    const iconMap = { subscription: CreditCard, task: ListChecks, reminder: Bell, plan: GraduationCap, step: Flag };
 
     return (
       <div className="rounded-2xl border border-gray-200 dark:border-gray-800 p-4 min-h-[400px]" {...dropHandlers(dateKey)}>
@@ -109,7 +125,7 @@ export default function ReminderCalendarView({ reminders = [], subscriptions = [
           <div className="space-y-2.5">
             {dayItems.map((item) => {
               const Icon = iconMap[item.itemType];
-              const title = item.itemType === 'task' ? item.title : item.toolName;
+              const title = item.itemType === 'task' || item.itemType === 'step' ? (item.title || item.planTitle) : item.itemType === 'plan' ? item.title : item.toolName;
               return (
                 <div
                   key={`${item.itemType}-${item.id}`}
@@ -127,7 +143,7 @@ export default function ReminderCalendarView({ reminders = [], subscriptions = [
                     </div>
                   </div>
                   <Badge variant="outline" className="flex-shrink-0 bg-white/50 dark:bg-black/20">
-                    {item.itemType === 'subscription' ? 'מנוי' : item.itemType === 'task' ? 'משימה' : 'תזכורת'}
+                    {typeLabels[item.itemType]}
                   </Badge>
                 </div>
               );
@@ -169,7 +185,7 @@ export default function ReminderCalendarView({ reminders = [], subscriptions = [
                     className={`rounded-md px-2 py-1 text-[11px] flex items-center gap-1 ${typeStyles[item.itemType]}`}
                   >
                     {item.itemType !== 'subscription' && <GripVertical className="w-3 h-3 flex-shrink-0" />}
-                    <span className="truncate">{item.itemType === 'task' ? item.title : item.toolName}</span>
+                    <span className="truncate">{item.itemType === 'task' || item.itemType === 'step' ? (item.title || item.planTitle) : item.itemType === 'plan' ? item.title : item.toolName}</span>
                   </div>
                 ))}
                 {dayItems.length > 3 && <div className="text-[11px] text-gray-500">+{dayItems.length - 3} נוספים</div>}
@@ -186,12 +202,19 @@ export default function ReminderCalendarView({ reminders = [], subscriptions = [
       <CardHeader className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <CardTitle className="flex items-center gap-2">
           <CalendarDays className="w-5 h-5 text-indigo-500" />
-          לוח תזכורות וחידושי מנויים
+          לוח שנה מאוחד
         </CardTitle>
         <div className="flex gap-1.5 bg-gray-100 dark:bg-gray-800 rounded-xl p-1">
           <Button variant={viewMode === 'day' ? 'default' : 'ghost'} size="sm" className="rounded-lg" onClick={() => setViewMode('day')}>יומי</Button>
           <Button variant={viewMode === 'week' ? 'default' : 'ghost'} size="sm" className="rounded-lg" onClick={() => setViewMode('week')}>שבועי</Button>
           <Button variant={viewMode === 'month' ? 'default' : 'ghost'} size="sm" className="rounded-lg" onClick={() => setViewMode('month')}>חודשי</Button>
+        </div>
+        <div className="flex flex-wrap gap-2 text-[11px] text-gray-600 dark:text-gray-400">
+          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-orange-200 dark:bg-orange-800"></span> מנויים</span>
+          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-blue-200 dark:bg-blue-800"></span> תזכורות</span>
+          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-indigo-200 dark:bg-indigo-800"></span> משימות</span>
+          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-purple-200 dark:bg-purple-800"></span> תוכניות למידה</span>
+          <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-green-200 dark:bg-green-800"></span> שלבי למידה</span>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
