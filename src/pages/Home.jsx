@@ -18,6 +18,8 @@ import NotificationCenter from '@/components/NotificationCenter';
 import KeyboardShortcutsHelp from '@/components/KeyboardShortcutsHelp';
 import QuickAddFAB from '@/components/QuickAddFAB';
 import OnboardingWizard from '@/components/onboarding/OnboardingWizard';
+import MobileBottomNav from '@/components/MobileBottomNav';
+import GlobalSearchModal from '@/components/search/GlobalSearchModal';
 import { useSmartNotifications } from '@/components/hooks/useSmartNotifications';
 import { useKeyboardShortcuts } from '@/components/hooks/useKeyboardShortcuts';
 import { Toaster } from 'sonner';
@@ -40,6 +42,7 @@ export default function Home() {
   const [authStatus, setAuthStatus] = useState('checking');
   const [showKeyboardHelp, setShowKeyboardHelp] = useState(false);
   const [quickAddTool, setQuickAddTool] = useState(false);
+  const [globalSearchOpen, setGlobalSearchOpen] = useState(false);
   const queryClient = useQueryClient();
 
 
@@ -110,14 +113,21 @@ export default function Home() {
   // קיצורי מקלדת חכמים
   useKeyboardShortcuts(settings, {
     onTabChange: setActiveTab,
-    onSearch: () => {
-      if (activeTab === 'tools') {
-        const searchInput = document.querySelector('input[type="search"]');
-        searchInput?.focus();
-      }
-    },
+    onSearch: () => setGlobalSearchOpen(true),
     onHelp: () => setShowKeyboardHelp(true),
   });
+
+  // קיצור Ctrl+K גלובלי
+  useEffect(() => {
+    const handler = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        setGlobalSearchOpen(true);
+      }
+    };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, []);
 
   // התראות חכמות
   useSmartNotifications(settings, queryClient);
@@ -190,9 +200,9 @@ export default function Home() {
       
       {/* ניווט */}
       <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
-      
+
       {/* תוכן הטאב */}
-      <main id="main-content" className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 py-2 sm:py-4 md:py-8 md:pr-[var(--sidebar-w,21rem)] transition-[padding] duration-300 pb-8">
+      <main id="main-content" className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 py-2 sm:py-4 md:py-8 md:pr-[var(--sidebar-w,21rem)] transition-[padding] duration-300 pb-24 md:pb-8">
         <motion.div
           initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -283,6 +293,12 @@ export default function Home() {
         onAddTool={() => { setActiveTab('tools'); setQuickAddTool(true); }}
         onStartChat={() => setActiveTab('assistant')}
       />
+
+      {/* ניווט תחתון למובייל */}
+      <MobileBottomNav activeTab={activeTab} onTabChange={setActiveTab} />
+
+      {/* חיפוש גלובלי */}
+      <GlobalSearchModal open={globalSearchOpen} onClose={() => setGlobalSearchOpen(false)} onNavigate={(tab) => setActiveTab(tab)} />
 
       {/* עזרת קיצורי מקלדת */}
       <KeyboardShortcutsHelp open={showKeyboardHelp} onOpenChange={setShowKeyboardHelp} />
