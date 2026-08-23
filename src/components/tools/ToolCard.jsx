@@ -36,7 +36,7 @@ const CATEGORY_BAR_COLORS = {
 };
 
 const PRICING_COLORS = {
-  'חינם': 'bg-green-500',
+  'חינם': 'bg-emerald-500',
   'בתשלום': 'bg-blue-500',
   'פרימיום': 'bg-purple-500',
   'פרימיום_מוגבל': 'bg-orange-500',
@@ -137,7 +137,7 @@ export default function ToolCard({
       className={`flex items-center justify-center transition-transform active:scale-90 hover:scale-110 ${className}`}
       aria-label={tool.isFavorite ? 'הסר ממועדפים' : 'הוסף למועדפים'}
     >
-      <Star className={`w-5 h-5 transition-all ${tool.isFavorite ? 'fill-yellow-400 text-yellow-400' : 'text-gray-400 hover:text-yellow-400'}`} />
+      <Star className={`w-5 h-5 transition-all ${tool.isFavorite ? 'fill-yellow-400 text-yellow-400' : 'text-slate-500 hover:text-yellow-400'}`} />
     </button>
   );
 
@@ -150,18 +150,18 @@ export default function ToolCard({
       <div
         ref={cardRef}
         className={`
-          group relative flex flex-col rounded-[22px] md:rounded-[26px] p-4 md:p-5 h-full antialiased cursor-pointer overflow-hidden
-          bg-white/90 dark:bg-gray-900/80 backdrop-blur-xl
-          border border-gray-200/70 dark:border-white/10
+          group relative flex flex-col rounded-2xl p-4 md:p-5 h-full antialiased cursor-pointer overflow-hidden
+          bg-[#1a202d]/70 backdrop-blur-xl
+          border border-cyan-400/15
           transition-[transform,box-shadow,border-color] duration-200 ease-out will-change-transform
           active:scale-[0.98] md:active:scale-100
-          hover:border-indigo-300/60 dark:hover:border-indigo-500/30
+          hover:border-cyan-400/40
           ${tilt.active
-            ? 'shadow-[0_50px_80px_-25px_rgba(79,70,229,0.5),0_25px_40px_-20px_rgba(139,92,246,0.3)]'
-            : 'shadow-[0_8px_24px_-12px_rgba(0,0,0,0.18)] md:shadow-[0_20px_40px_-24px_rgba(0,0,0,0.35)] hover:shadow-[0_16px_36px_-16px_rgba(79,70,229,0.30)] md:hover:shadow-[0_28px_50px_-20px_rgba(79,70,229,0.35)]'}
+            ? 'shadow-[0_50px_80px_-25px_rgba(0,212,255,0.25),0_25px_40px_-20px_rgba(52,152,219,0.15)]'
+            : 'shadow-[0_8px_24px_-12px_rgba(0,0,0,0.4)] hover:shadow-[0_16px_36px_-16px_rgba(0,212,255,0.15)]'}
           ${isDragging ? 'opacity-50 scale-95' : 'opacity-100'}
-          ${tool.isFavorite ? 'ring-2 ring-yellow-400/70 shadow-[0_0_24px_-4px_rgba(250,204,21,0.4)]' : ''}
-          ${onToggleSelect && isSelected ? 'ring-2 ring-indigo-500' : ''}
+          ${tool.isFavorite ? 'ring-1 ring-yellow-400/60 shadow-[0_0_24px_-4px_rgba(250,204,21,0.3)]' : ''}
+          ${onToggleSelect && isSelected ? 'ring-1 ring-cyan-400' : ''}
         `}
         style={{
           transform: `rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg) ${tilt.active ? 'scale(1.03)' : 'scale(1)'}`,
@@ -179,34 +179,24 @@ export default function ToolCard({
         onTouchEnd={handleTouchEnd}
         onTouchCancel={cancelLongPress}
       >
-        {/* פס גרדיאנט עליון בצבע הקטגוריה */}
-        <div className={`absolute top-0 inset-x-0 h-1 bg-gradient-to-l ${CATEGORY_BAR_COLORS[tool.category] || CATEGORY_BAR_COLORS['אחר']}`} />
+        {/* פס עליון זוהר בצבע הקטגוריה */}
+        <div className={`absolute top-0 inset-x-0 h-0.5 bg-gradient-to-l ${CATEGORY_BAR_COLORS[tool.category] || CATEGORY_BAR_COLORS['אחר']} opacity-80`} />
 
-        {/* השתקפות זכוכית דינמית שעוקבת אחרי העכבר */}
+        {/* השתקפות זכוכית דינמית */}
         <div
-          className="absolute inset-0 rounded-[22px] md:rounded-[26px] pointer-events-none transition-opacity duration-300"
+          className="absolute inset-0 rounded-2xl pointer-events-none transition-opacity duration-300"
           style={{
-            opacity: tilt.active ? 1 : 0,
-            background: `radial-gradient(420px circle at ${tilt.gx}% ${tilt.gy}%, rgba(255,255,255,0.55), transparent 45%)`,
+            opacity: tilt.active ? 0.15 : 0,
+            background: `radial-gradient(420px circle at ${tilt.gx}% ${tilt.gy}%, rgba(255,255,255,0.5), transparent 45%)`,
           }}
         />
 
-        {/* זוהר צבעוני דינמי שעוקב אחרי העכבר */}
+        {/* זוהר ציאני דינמי */}
         <div
-          className="absolute inset-0 rounded-[22px] md:rounded-[26px] pointer-events-none transition-opacity duration-500"
+          className="absolute inset-0 rounded-2xl pointer-events-none transition-opacity duration-500"
           style={{
-            opacity: tilt.active ? 0.6 : 0,
-            background: `radial-gradient(300px circle at ${tilt.gx}% ${tilt.gy}%, rgba(99,102,241,0.12), transparent 60%)`,
-          }}
-        />
-
-        {/* צל דינמי שזז עם העכבר */}
-        <div
-          className="absolute -inset-1 rounded-[22px] md:rounded-[26px] pointer-events-none transition-opacity duration-300 -z-10"
-          style={{
-            opacity: tilt.active ? 0.4 : 0,
-            background: `radial-gradient(200px circle at ${tilt.gx}% ${tilt.gy}%, rgba(139,92,246,0.25), transparent 70%)`,
-            transform: 'translateZ(-50px)',
+            opacity: tilt.active ? 0.5 : 0,
+            background: `radial-gradient(300px circle at ${tilt.gx}% ${tilt.gy}%, rgba(0,212,255,0.1), transparent 60%)`,
           }}
         />
 
@@ -244,19 +234,19 @@ export default function ToolCard({
                 <img
                   src={tool.logo}
                   alt={`${tool.name} logo`}
-                  className="w-14 h-14 md:w-16 md:h-16 rounded-2xl object-cover shadow-[0_16px_30px_-8px_rgba(79,70,229,0.6)] ring-1 ring-white/60"
+                  className="w-14 h-14 md:w-16 md:h-16 rounded-xl object-cover shadow-[0_0_20px_-4px_rgba(0,212,255,0.3)] ring-1 ring-cyan-400/20"
                   loading="lazy"
                   onError={(e) => {
                     e.target.style.display = 'none';
                     e.target.nextElementSibling.style.display = 'flex';
                   }}
                 />
-                <div className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 items-center justify-center shadow-[0_16px_30px_-8px_rgba(79,70,229,0.6)] ring-1 ring-white/60" style={{ display: 'none' }}>
+                <div className="w-14 h-14 md:w-16 md:h-16 rounded-xl bg-blue-600 items-center justify-center shadow-[0_0_20px_-4px_rgba(37,99,235,0.5)] ring-1 ring-cyan-400/20" style={{ display: 'none' }}>
                   <Package className="w-6 h-6 md:w-7 md:h-7 text-white" />
                 </div>
               </>
             ) : (
-              <div className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-[0_16px_30px_-8px_rgba(79,70,229,0.6)] ring-1 ring-white/60">
+              <div className="w-14 h-14 md:w-16 md:h-16 rounded-xl bg-blue-600 flex items-center justify-center shadow-[0_0_20px_-4px_rgba(37,99,235,0.5)] ring-1 ring-cyan-400/20">
                 <Package className="w-6 h-6 md:w-7 md:h-7 text-white" />
               </div>
             )}
@@ -264,17 +254,17 @@ export default function ToolCard({
 
           <div className="flex-1 min-w-0 text-right">
             <div className="flex items-start justify-between gap-2">
-              <h3 className="font-extrabold text-base md:text-lg text-gray-900 dark:text-white leading-tight line-clamp-2 break-words">
+              <h3 className="font-bold text-base md:text-lg text-white leading-tight line-clamp-2 break-words">
                 {tool.name}
               </h3>
-              {/* מועדפים - אינליין במובייל, מוחלט בדסקטופ */}
-              <div className="md:absolute md:top-3 md:left-3 md:[transform:translateZ(55px)] md:z-20 md:w-10 md:h-10 md:rounded-2xl md:bg-white md:dark:bg-gray-800 md:shadow-lg md:flex md:items-center md:justify-center md:hover:scale-110 flex-shrink-0">
+              {/* מועדפים */}
+              <div className="md:absolute md:top-3 md:left-3 md:[transform:translateZ(55px)] md:z-20 md:w-9 md:h-9 md:rounded-xl md:bg-white/5 md:flex md:items-center md:justify-center md:hover:scale-110 flex-shrink-0">
                 <FavoriteButton className="w-9 h-9 md:w-5 md:h-5" />
               </div>
             </div>
             {/* Badge קטגוריה */}
             {show('category') && (
-              <span className="inline-flex items-center mt-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium text-sky-700 bg-sky-100 border border-sky-200 dark:bg-sky-900/40 dark:text-sky-300 dark:border-sky-800 max-w-full truncate">
+              <span className="inline-flex items-center mt-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium text-cyan-300 bg-cyan-400/10 border border-cyan-400/20 max-w-full truncate">
                 {tool.category?.replace(/_/g, ' ')}
               </span>
             )}
@@ -292,7 +282,7 @@ export default function ToolCard({
                     />
                   ))}
                 </div>
-                <span className="text-xs md:text-sm font-bold text-gray-800 dark:text-gray-100">{tool.rating.toFixed(1)}</span>
+                <span className="text-xs md:text-sm font-bold text-slate-200">{tool.rating.toFixed(1)}</span>
               </div>
             )}
           </div>
@@ -302,7 +292,7 @@ export default function ToolCard({
         <div className="relative flex flex-col flex-1 [transform:translateZ(25px)]">
           {/* תיאור */}
           {show('description') && (
-            <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2 leading-relaxed text-right break-words mb-3">
+            <p className="text-sm text-slate-400 line-clamp-2 leading-relaxed text-right break-words mb-3">
               {tool.description || 'אין תיאור זמין'}
             </p>
           )}
@@ -313,14 +303,14 @@ export default function ToolCard({
               {tool.tags.slice(0, 3).map((tag, index) => (
                 <span
                   key={index}
-                  className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
+                  className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs text-slate-300 bg-white/5 border border-cyan-400/15"
                 >
                   <Tag className="w-2.5 h-2.5" />
                   {tag}
                 </span>
               ))}
               {tool.tags.length > 3 && (
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs text-gray-500 border border-gray-200 dark:border-gray-700">
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs text-slate-500 border border-cyan-400/15">
                   +{tool.tags.length - 3}
                 </span>
               )}
@@ -330,8 +320,8 @@ export default function ToolCard({
           {/* פס תמחור + פופולריות */}
           <div className="flex items-center justify-between gap-2 mb-3 mt-auto">
             {show('popularity') && tool.popularity >= 4 && (
-              <div className="inline-flex items-center gap-1.5 text-xs md:text-sm text-gray-600 dark:text-gray-300">
-                <Flame className="w-4 h-4 text-orange-500" />
+              <div className="inline-flex items-center gap-1.5 text-xs md:text-sm text-slate-400">
+                <Flame className="w-4 h-4 text-orange-400" />
                 <span>פופולרי מאוד</span>
               </div>
             )}
@@ -346,14 +336,13 @@ export default function ToolCard({
           <div className="flex items-center gap-2 [transform:translateZ(30px)]">
             <Button
               onClick={(e) => { e.stopPropagation(); handleVisit(); }}
-              className="flex-1 h-11 rounded-2xl bg-white/80 dark:bg-gray-800 text-gray-800 dark:text-gray-100 border border-gray-200 dark:border-gray-700 shadow-sm hover:bg-white hover:shadow-md font-semibold"
-              variant="ghost"
+              className="flex-1 h-11 rounded-xl bg-blue-600 text-white border border-cyan-400/20 hover:bg-blue-500 hover:shadow-[0_0_16px_-4px_rgba(37,99,235,0.5)] font-semibold"
               aria-label={`בקר באתר ${tool.name}`}
             >
               בקר באתר
             </Button>
 
-            <div onClick={(e) => e.stopPropagation()} className="h-11 w-11 rounded-2xl bg-white/80 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm flex items-center justify-center hover:bg-white transition-colors">
+            <div onClick={(e) => e.stopPropagation()} className="h-11 w-11 rounded-xl bg-white/5 border border-cyan-400/15 flex items-center justify-center hover:bg-white/10 transition-colors">
               <ShareLinkDialog tool={tool} iconOnly />
             </div>
 
@@ -361,7 +350,7 @@ export default function ToolCard({
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
-                  className="h-11 w-11 p-0 rounded-2xl bg-white/80 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm hover:bg-white"
+                  className="h-11 w-11 p-0 rounded-xl bg-white/5 border border-cyan-400/15 hover:bg-white/10 text-slate-300"
                   onClick={(e) => e.stopPropagation()}
                   title="עוד אפשרויות"
                 >
@@ -406,7 +395,7 @@ export default function ToolCard({
 
       {/* תפריט פעולות מהירות בלחיצה ארוכה (מובייל) */}
       <Drawer open={showQuickActions} onOpenChange={setShowQuickActions}>
-        <DrawerContent className="rounded-t-[2rem] bg-white dark:bg-slate-950" dir="rtl">
+        <DrawerContent className="rounded-t-2xl bg-[#0e1118] border-t border-cyan-400/20" dir="rtl">
           <DrawerHeader>
             <DrawerTitle className="text-right">פעולות מהירות — {tool.name}</DrawerTitle>
           </DrawerHeader>

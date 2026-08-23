@@ -128,14 +128,8 @@ export default function Home() {
 
   if (authStatus === 'checking') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-indigo-50/60 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950/40">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.4, ease: 'easeOut' }}
-        >
-          <LoadingSpinner size="lg" />
-        </motion.div>
+      <div className="min-h-screen flex items-center justify-center bg-[#0b0d12]">
+        <div className="w-10 h-10 border-2 border-cyan-400/20 border-t-cyan-400 rounded-full animate-spin" />
       </div>
     );
   }
@@ -143,31 +137,28 @@ export default function Home() {
   // אם לא מאומת - הצג מסך התחברות
   if (authStatus !== 'authenticated') {
     return (
-      <div className="relative min-h-screen flex items-center justify-center p-3 sm:p-4 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500" />
-        <div className="absolute inset-0 opacity-30">
-          <div className="absolute top-[-10%] right-[-5%] w-[30rem] h-[30rem] rounded-full bg-white/20 blur-[80px] animate-aurora" />
-          <div className="absolute bottom-[-10%] left-[-5%] w-[28rem] h-[28rem] rounded-full bg-pink-200/20 blur-[80px] animate-aurora" style={{ animationDelay: '-7s' }} />
-        </div>
+      <div className="relative min-h-screen flex items-center justify-center p-3 sm:p-4 overflow-hidden bg-[#0b0d12]">
+        <div className="absolute inset-0 opacity-[0.07]" style={{ backgroundImage: 'linear-gradient(rgba(52,152,219,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(52,152,219,0.5) 1px, transparent 1px)', backgroundSize: '48px 48px' }} />
+        <div className="absolute top-[-10%] right-[-5%] w-[30rem] h-[30rem] rounded-full bg-cyan-500/10 blur-[100px]" />
         <motion.div
           initial={{ opacity: 0, y: 30, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.5, ease: [0.34, 1.56, 0.64, 1] }}
-          className="relative glass-premium rounded-2xl sm:rounded-3xl shadow-2xl p-5 sm:p-8 w-full max-w-sm text-center"
+          className="relative rounded-2xl border border-cyan-400/20 bg-[#1a202d]/80 backdrop-blur-xl shadow-[0_0_40px_-10px_rgba(0,212,255,0.2)] p-5 sm:p-8 w-full max-w-sm text-center"
         >
           <motion.div
             initial={{ scale: 0, rotate: -180 }}
             animate={{ scale: 1, rotate: 0 }}
             transition={{ delay: 0.2, duration: 0.5, ease: [0.34, 1.56, 0.64, 1] }}
-            className="w-16 sm:w-20 h-16 sm:h-20 mx-auto mb-3 sm:mb-4 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-glow-indigo"
+            className="w-16 sm:w-20 h-16 sm:h-20 mx-auto mb-3 sm:mb-4 rounded-2xl bg-blue-600 flex items-center justify-center shadow-[0_0_30px_-4px_rgba(37,99,235,0.6)]"
           >
             <span className="text-3xl sm:text-4xl">🔐</span>
           </motion.div>
-          <h1 className="text-2xl sm:text-3xl font-bold gradient-text-animated mb-2">AI Tools Manager</h1>
-          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-6">התחבר כדי להמשיך למערכת שלך</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">AI Tools Manager</h1>
+          <p className="text-sm sm:text-base text-slate-400 mb-6">התחבר כדי להמשיך למערכת שלך</p>
           <button
             onClick={() => base44.auth.redirectToLogin(window.location.href)}
-            className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold py-2.5 sm:py-3 rounded-xl hover:shadow-glow-indigo transition-all active:scale-95 min-h-[44px] sm:min-h-[48px] touch-target hover:scale-[1.02]"
+            className="w-full bg-blue-600 text-white font-bold py-2.5 sm:py-3 rounded-xl hover:bg-blue-500 hover:shadow-[0_0_24px_-4px_rgba(37,99,235,0.6)] transition-all active:scale-95 min-h-[44px] sm:min-h-[48px]"
           >
             התחבר עם Base44
           </button>
@@ -177,12 +168,12 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen relative bg-gradient-to-br from-gray-50 via-white to-indigo-50/60 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950/40">
+    <div className="min-h-screen relative bg-[#0b0d12] text-slate-200">
       <OnboardingWizard />
       <AnimatedBackground />
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:right-3 focus:z-[200] focus:rounded-xl focus:bg-indigo-600 focus:px-4 focus:py-2 focus:text-white focus:shadow-lg"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:right-3 focus:z-[200] focus:rounded-xl focus:bg-blue-600 focus:px-4 focus:py-2 focus:text-white"
       >
         דלג לתוכן הראשי
       </a>
@@ -192,7 +183,7 @@ export default function Home() {
         closeButton
         dir="rtl"
         toastOptions={{
-          style: { fontFamily: 'Heebo' }
+          style: { fontFamily: 'Heebo', background: '#1a202d', color: '#e2e8f0', border: '1px solid rgba(52,152,219,0.2)' }
         }}
       />
       
@@ -204,10 +195,10 @@ export default function Home() {
         <motion.div
           initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, ease: 'easeOut' }}
-          className="flex items-center justify-between gap-2 mb-3 md:mb-5 rounded-2xl border border-white/40 dark:border-white/10 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl px-3 py-2.5 shadow-premium"
+          transition={{ duration: 0.3, ease: 'easeOut' }}
+          className="flex items-center justify-between gap-2 mb-3 md:mb-5 rounded-xl border border-cyan-400/15 bg-[#1a202d]/60 backdrop-blur-xl px-3 py-2.5"
         >
-          <Link to="/calendar" className="group inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-indigo-500/20 hover:shadow-glow-indigo transition-all active:scale-95 hover:scale-[1.03] min-h-[44px]">
+          <Link to="/calendar" className="group inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_0_20px_-4px_rgba(37,99,235,0.6)] hover:bg-blue-500 transition-all active:scale-95 min-h-[44px]">
             <CalendarDays className="w-4 h-4 transition-transform group-hover:rotate-12" />
             <span className="hidden sm:inline">לוח שנה</span>
             <CalendarDays className="w-4 h-4 sm:hidden" />

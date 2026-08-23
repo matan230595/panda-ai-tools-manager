@@ -38,7 +38,7 @@ export default function SearchAndFilters({
   ];
 
   return (
-    <div className="sticky top-[68px] md:top-4 z-30 bg-white/95 dark:bg-slate-900/90 backdrop-blur-xl rounded-2xl md:rounded-3xl p-3 sm:p-4 shadow-lg shadow-gray-200/40 dark:shadow-black/20 border border-gray-200/80 dark:border-slate-800 space-y-3" dir="rtl">
+    <div className="sticky top-[68px] md:top-4 z-30 bg-[#1a202d]/60 backdrop-blur-xl rounded-2xl p-3 sm:p-4 border border-cyan-400/15 space-y-3" dir="rtl">
       <SmartSearch
         searchTerm={searchTerm}
         onSearch={onSearchChange}
@@ -49,26 +49,26 @@ export default function SearchAndFilters({
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 min-w-0">
           <Select value={sortBy} onValueChange={onSortChange}>
-            <SelectTrigger className="h-10 rounded-xl text-sm w-[8.5rem] sm:w-[9.5rem] bg-gray-50 dark:bg-slate-950 border-gray-200 dark:border-slate-800 flex-shrink-0">
-              <ArrowUpDown className="w-3.5 h-3.5 ml-1 text-gray-400 flex-shrink-0" />
+            <SelectTrigger className="h-10 rounded-xl text-sm w-[8.5rem] sm:w-[9.5rem] bg-white/5 border-cyan-400/15 text-slate-200 flex-shrink-0">
+              <ArrowUpDown className="w-3.5 h-3.5 ml-1 text-slate-500 flex-shrink-0" />
               <SelectValue placeholder="מיין לפי" />
             </SelectTrigger>
             <SelectContent>{sortOptions.map((opt) => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}</SelectContent>
           </Select>
 
-          <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap truncate">
-            <span className="font-bold text-gray-900 dark:text-white">{resultsCount}</span> כלים
+          <span className="text-xs sm:text-sm text-slate-500 whitespace-nowrap truncate">
+            <span className="font-bold text-cyan-300">{resultsCount}</span> כלים
           </span>
         </div>
 
-        <div className="hidden sm:flex items-center gap-1 rounded-2xl bg-gray-100 dark:bg-slate-950 p-1 border border-gray-200 dark:border-slate-800 flex-shrink-0">
+        <div className="hidden sm:flex items-center gap-1 rounded-xl bg-white/5 p-1 border border-cyan-400/15 flex-shrink-0">
           {viewOptions.map(({ mode, icon: ViewIcon, label }) => (
             <button
               key={mode}
               onClick={() => onViewModeChange(mode)}
               title={label}
               aria-label={`תצוגת ${label}`}
-              className={`flex items-center justify-center h-9 w-9 rounded-xl transition-all ${viewMode === mode ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-gray-500 hover:text-gray-800 dark:hover:text-gray-200'}`}
+              className={`flex items-center justify-center h-9 w-9 rounded-lg transition-all ${viewMode === mode ? 'bg-blue-600 text-white shadow-[0_0_12px_-2px_rgba(37,99,235,0.5)]' : 'text-slate-500 hover:text-cyan-300'}`}
             >
               <ViewIcon className="w-4 h-4" />
             </button>
