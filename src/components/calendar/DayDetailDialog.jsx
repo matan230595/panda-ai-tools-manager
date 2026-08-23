@@ -5,14 +5,16 @@ import { getCurrentUser } from '@/components/hooks/userScopedData';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { CalendarDays, Bell, CreditCard, ListChecks, Plus, Pencil, Trash2, Loader2 } from 'lucide-react';
+import { CalendarDays, Bell, CreditCard, ListChecks, Plus, Pencil, Trash2, Loader2, GraduationCap, Flag } from 'lucide-react';
 import { toast } from 'sonner';
 import DayReminderForm from '@/components/calendar/DayReminderForm';
 
 const typeConfig = {
   subscription: { label: 'חידוש מנוי', icon: CreditCard, color: 'text-orange-600', bg: 'bg-orange-50 dark:bg-orange-950/30 border-orange-200 dark:border-orange-900' },
-  task: { label: 'משימה', icon: ListChecks, color: 'text-purple-600', bg: 'bg-purple-50 dark:bg-purple-950/30 border-purple-200 dark:border-purple-900' },
+  task: { label: 'משימה', icon: ListChecks, color: 'text-indigo-600', bg: 'bg-indigo-50 dark:bg-indigo-950/30 border-indigo-200 dark:border-indigo-900' },
   reminder: { label: 'תזכורת', icon: Bell, color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-900' },
+  plan: { label: 'תוכנית למידה', icon: GraduationCap, color: 'text-purple-600', bg: 'bg-purple-50 dark:bg-purple-950/30 border-purple-200 dark:border-purple-900' },
+  step: { label: 'שלב למידה', icon: Flag, color: 'text-green-600', bg: 'bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-900' },
 };
 
 export default function DayDetailDialog({ open, onOpenChange, dateKey, items = [] }) {
@@ -70,12 +72,15 @@ export default function DayDetailDialog({ open, onOpenChange, dateKey, items = [
   const deleteMutation = useMutation({
     mutationFn: async (item) => {
       const entityMap = { reminder: 'Reminder', task: 'ToolTask', subscription: 'Subscription' };
-      return base44.entities[entityMap[item.itemType]].delete(item.id);
+      const entityName = entityMap[item.itemType];
+      if (!entityName) throw new Error('לא ניתן למחוק פריט מסוג זה מהיומן');
+      return base44.entities[entityName].delete(item.id);
     },
     onSuccess: () => {
       refresh();
       queryClient.invalidateQueries({ queryKey: ['calendar-page-tasks'] });
       queryClient.invalidateQueries({ queryKey: ['calendar-page-subscriptions'] });
+      queryClient.invalidateQueries({ queryKey: ['calendar-page-plans'] });
       toast.success('הפריט נמחק');
     },
     onError: (error) => toast.error(error.message || 'שגיאה במחיקה'),
@@ -113,12 +118,16 @@ export default function DayDetailDialog({ open, onOpenChange, dateKey, items = [
                 {items.map((item) => {
                   const config = typeConfig[item.itemType] || typeConfig.reminder;
                   const Icon = config.icon;
-                  const title = item.itemType === 'task' ? item.title : item.toolName;
+                  const title = item.itemType === 'task' || item.itemType === 'step' ? (item.title || item.planTitle) : item.itemType === 'plan' ? item.title : item.toolName;
                   const subtitle = item.itemType === 'subscription'
                     ? `מנוי ${item.subscriptionType || ''} • תשלום/חידוש`
                     : item.itemType === 'task'
-                      ? `${item.description || 'משימה מקושרת לכלי'} • ${item.reminderTime || '09:00'}`
-                      : `${item.message || ''} • ${item.reminderTime || '09:00'}`;
+                      ? `${item.description || 'משימה מקושרת לכלי'}${item.reminderTime ? ` • ${item.reminderTime}` : ''}`
+                      : item.itemType === 'plan'
+                        ? (item.description || 'תוכנית למידה')
+                        : item.itemType === 'step'
+                          ? (item.description || 'שלב למידה')
+                          : `${item.message || ''}${item.reminderTime ? ` • ${item.reminderTime}` : ''}`;
 
                   return (
                     <div key={`${item.itemType}-${item.id}`} className={`flex items-start gap-3 rounded-xl border p-3 ${config.bg}`}>
@@ -141,16 +150,18 @@ export default function DayDetailDialog({ open, onOpenChange, dateKey, items = [
                               <Pencil className="w-3.5 h-3.5" />
                             </Button>
                           )}
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-7 w-7 text-red-600 dark:text-red-400"
-                            onClick={() => deleteMutation.mutate(item)}
-                            disabled={deleteMutation.isPending}
-                            title="מחק"
-                          >
-                            {deleteMutation.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
-                          </Button>
+                          {item.itemType !== 'plan' && item.itemType !== 'step' && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-7 w-7 text-red-600 dark:text-red-400"
+                              onClick={() => deleteMutation.mutate(item)}
+                              disabled={deleteMutation.isPending}
+                              title="מחק"
+                            >
+                              {deleteMutation.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+                            </Button>
+                          )}
                         </div>
                       </div>
                     </div>

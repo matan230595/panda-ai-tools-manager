@@ -138,8 +138,12 @@ export default function ReminderCalendarView({ reminders = [], subscriptions = [
                   <div className="flex-1 min-w-0 text-right">
                     <div className="font-semibold text-sm truncate">{title}</div>
                     <div className="text-xs opacity-80 mt-0.5 truncate">
-                      {item.itemType === 'subscription' ? 'חידוש/תשלום מנוי' : item.itemType === 'task' ? (item.description || 'משימה') : item.message}
-                      {' • '}{item.reminderTime || '09:00'}
+                      {item.itemType === 'subscription' ? 'חידוש/תשלום מנוי'
+                        : item.itemType === 'task' ? (item.description || 'משימה')
+                        : item.itemType === 'plan' ? (item.description || 'תוכנית למידה')
+                        : item.itemType === 'step' ? (item.description || 'שלב למידה')
+                        : (item.message || 'תזכורת')}
+                      {item.reminderTime ? ` • ${item.reminderTime}` : ''}
                     </div>
                   </div>
                   <Badge variant="outline" className="flex-shrink-0 bg-white/50 dark:bg-black/20">
