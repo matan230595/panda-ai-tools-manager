@@ -151,7 +151,7 @@ export default function ToolCard({
             ? 'shadow-[0_40px_70px_-20px_rgba(79,70,229,0.45)]'
             : 'shadow-[0_8px_24px_-12px_rgba(0,0,0,0.18)] md:shadow-[0_20px_40px_-24px_rgba(0,0,0,0.35)] hover:shadow-[0_16px_36px_-16px_rgba(79,70,229,0.30)] md:hover:shadow-[0_28px_50px_-20px_rgba(79,70,229,0.35)]'}
           ${isDragging ? 'opacity-50 scale-95' : 'opacity-100'}
-          ${tool.isFavorite ? 'ring-2 ring-yellow-400/70' : ''}
+          ${tool.isFavorite ? 'ring-2 ring-yellow-400/70 shadow-[0_0_24px_-4px_rgba(250,204,21,0.4)]' : ''}
           ${onToggleSelect && isSelected ? 'ring-2 ring-indigo-500' : ''}
         `}
         style={{

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { motion, AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { getCurrentUser } from '@/components/hooks/userScopedData';
-import { Sparkles, MessageSquare, Settings, BarChart3, DollarSign, Menu, X, Wallet, LayoutDashboard, BellRing, Lightbulb, Cable, Users, CalendarDays, ChevronsLeft, ChevronsRight, GraduationCap } from 'lucide-react';
+import { Sparkles, MessageSquare, Settings, BarChart3, DollarSign, Menu, Wallet, LayoutDashboard, BellRing, Lightbulb, Cable, Users, CalendarDays, ChevronsLeft, ChevronsRight, GraduationCap } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 
@@ -14,20 +15,22 @@ function NavButton({ tab, active, collapsed, onClick }) {
         onClick={onClick}
         title={tab.label}
         aria-label={tab.label}
-        className={`w-full flex items-center justify-center rounded-2xl py-2.5 transition-all ${active ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/30' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800'}`}>
-        <div className={`flex items-center justify-center rounded-2xl w-10 h-10 ${active ? 'bg-white/15' : 'bg-gray-100 dark:bg-slate-800'}`}>
-          <Icon className="w-5 h-5" />
+        className={`group relative w-full flex items-center justify-center rounded-2xl py-2.5 transition-all duration-300 ${active ? 'bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-glow-indigo' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800'}`}>
+        <div className={`flex items-center justify-center rounded-2xl w-10 h-10 transition-transform duration-300 ${active ? 'bg-white/15' : 'bg-gray-100 dark:bg-slate-800 group-hover:scale-110'}`}>
+          <Icon className={`w-5 h-5 transition-transform duration-300 ${active ? 'scale-110' : 'group-hover:scale-110'}`} />
         </div>
+        {active && <span className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-8 rounded-l-full bg-white/80" />}
       </button>);
   }
   return (
     <button
       onClick={onClick}
-      className={`w-full flex items-center gap-3 rounded-2xl transition-all active:scale-95 px-3 py-2 ${active ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/30' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800'}`}>
-      <div className={`flex items-center justify-center rounded-xl w-8 h-8 ${active ? 'bg-white/15' : 'bg-gray-100 dark:bg-slate-800'}`}>
-        <Icon className="w-5 h-5" />
+      className={`group relative w-full flex items-center gap-3 rounded-2xl transition-all duration-300 active:scale-95 px-3 py-2 ${active ? 'bg-gradient-to-l from-indigo-500 to-purple-600 text-white shadow-glow-indigo' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800'}`}>
+      <div className={`flex items-center justify-center rounded-xl w-8 h-8 transition-transform duration-300 ${active ? 'bg-white/15' : 'bg-gray-100 dark:bg-slate-800 group-hover:scale-110'}`}>
+        <Icon className={`w-5 h-5 transition-transform duration-300 ${active ? 'scale-110' : 'group-hover:scale-110'}`} />
       </div>
       <span className="text-sm font-medium">{tab.label}</span>
+      {active && <span className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-8 rounded-l-full bg-white/80" />}
     </button>);
 }
 
@@ -86,15 +89,15 @@ export default function TabNavigation({ activeTab, onTabChange }) {
 
   return (
     <>
-      <aside className={`hidden md:flex fixed top-0 right-0 h-screen z-50 border-l border-gray-200 dark:border-slate-800 bg-white/96 dark:bg-slate-950/96 backdrop-blur-xl flex-col transition-all duration-300 px-1.5 py-3 ${collapsed ? 'w-[5.5rem]' : 'w-[16rem]'}`} dir="rtl">
-        <div className={`flex items-center gap-3 rounded-3xl border border-gray-200 dark:border-slate-800 p-2.5 mb-3 bg-slate-50/80 dark:bg-slate-900/80 ${collapsed ? 'justify-center' : ''}`}>
-          <div className="w-11 h-11 rounded-2xl overflow-hidden flex items-center justify-center bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30 flex-shrink-0">
-            {userLogo ? <img src={userLogo} alt="Logo" className="w-full h-full object-contain" /> : <Sparkles className="w-6 h-6 text-indigo-500" />}
+      <aside className={`hidden md:flex fixed top-0 right-0 h-screen z-50 border-l border-white/20 dark:border-white/5 bg-white/80 dark:bg-slate-950/80 backdrop-blur-2xl flex-col transition-all duration-300 px-1.5 py-3 ${collapsed ? 'w-[5.5rem]' : 'w-[16rem]'}`} dir="rtl">
+        <div className={`flex items-center gap-3 rounded-3xl border border-white/40 dark:border-white/10 p-2.5 mb-3 bg-gradient-to-br from-indigo-50/80 to-purple-50/80 dark:from-slate-900/80 dark:to-slate-800/80 shadow-premium ${collapsed ? 'justify-center' : ''}`}>
+          <div className="w-11 h-11 rounded-2xl overflow-hidden flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600 flex-shrink-0 shadow-glow-indigo">
+            {userLogo ? <img src={userLogo} alt="Logo" className="w-full h-full object-contain" /> : <Sparkles className="w-6 h-6 text-white animate-float" />}
           </div>
           {!collapsed &&
           <div className="min-w-0 text-right">
               <div className="text-xs text-gray-500 dark:text-gray-400">מערכת ניהול</div>
-              <h2 className="font-bold text-base truncate">{appName}</h2>
+              <h2 className="font-bold text-base truncate gradient-text">{appName}</h2>
             </div>
           }
         </div>
@@ -129,20 +132,20 @@ export default function TabNavigation({ activeTab, onTabChange }) {
         </div>
       </aside>
 
-      <div className="md:hidden sticky top-0 z-40 bg-white/94 dark:bg-slate-950/94 backdrop-blur-xl border-b border-gray-200 dark:border-slate-800 px-3 py-2.5" dir="rtl">
+      <div className="md:hidden sticky top-0 z-40 bg-white/80 dark:bg-slate-950/80 backdrop-blur-2xl border-b border-white/30 dark:border-white/10 px-3 py-2.5 shadow-premium" dir="rtl">
         <div className="flex items-center gap-3">
           <button
             onClick={() => setNavDrawerOpen(true)}
-            className="w-11 h-11 rounded-2xl flex items-center justify-center bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 active:scale-95 transition-all flex-shrink-0"
+            className="w-11 h-11 rounded-2xl flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600 text-white active:scale-95 transition-all flex-shrink-0 shadow-glow-indigo"
             aria-label="פתח תפריט ניווט"
           >
             <Menu className="w-5 h-5" />
           </button>
-          <div className="w-9 h-9 rounded-xl overflow-hidden flex items-center justify-center bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30 flex-shrink-0">
-            {userLogo ? <img src={userLogo} alt="Logo" className="w-full h-full object-contain" /> : <Sparkles className="w-4 h-4 text-indigo-500" />}
+          <div className="w-9 h-9 rounded-xl overflow-hidden flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600 flex-shrink-0 shadow-glow-indigo">
+            {userLogo ? <img src={userLogo} alt="Logo" className="w-full h-full object-contain" /> : <Sparkles className="w-4 h-4 text-white" />}
           </div>
           <div className="min-w-0 flex-1 text-right">
-            <h2 className="font-bold text-sm truncate">{appName}</h2>
+            <h2 className="font-bold text-sm truncate gradient-text">{appName}</h2>
             <div className="text-[11px] text-gray-500 dark:text-gray-400">{allTabs.find((t) => t.id === activeTab)?.label || 'מערכת ניהול'}</div>
           </div>
         </div>
@@ -150,55 +153,64 @@ export default function TabNavigation({ activeTab, onTabChange }) {
 
       {/* תפריט צד נשלף למובייל */}
       <Sheet open={navDrawerOpen} onOpenChange={setNavDrawerOpen}>
-        <SheetContent side="right" className="w-[85vw] max-w-sm p-0 bg-white dark:bg-slate-950" dir="rtl">
-          <SheetHeader className="flex flex-row items-center justify-between border-b border-gray-200 dark:border-slate-800 p-4 space-y-0">
-            <SheetTitle className="text-lg font-bold text-right">תפריט ניווט</SheetTitle>
+        <SheetContent side="right" className="w-[85vw] max-w-sm p-0 bg-white/95 dark:bg-slate-950/95 backdrop-blur-2xl" dir="rtl">
+          <SheetHeader className="flex flex-row items-center justify-between border-b border-white/30 dark:border-white/10 p-4 space-y-0 bg-gradient-to-l from-indigo-50/80 to-purple-50/80 dark:from-slate-900/80 dark:to-slate-800/80">
+            <SheetTitle className="text-lg font-bold text-right gradient-text">תפריט ניווט</SheetTitle>
+            <div className="w-9 h-9 rounded-xl overflow-hidden flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600 shadow-glow-indigo">
+              {userLogo ? <img src={userLogo} alt="Logo" className="w-full h-full object-contain" /> : <Sparkles className="w-4 h-4 text-white" />}
+            </div>
           </SheetHeader>
           <div className="px-3 py-4 overflow-y-auto flex-1 space-y-5 h-[calc(100vh-4rem)]">
             <div className="space-y-1.5">
               <div className="px-2 text-xs font-semibold text-gray-500 dark:text-gray-400">עיקרי</div>
-              {mainTabs.map((tab) => {
+              {mainTabs.map((tab, i) => {
                 const Icon = tab.icon;
                 const active = activeTab === tab.id;
                 return (
-                  <button
+                  <motion.button
                     key={tab.id}
+                    initial={{ opacity: 0, x: 30 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.04, duration: 0.3 }}
                     onClick={() => { onTabChange(tab.id); setNavDrawerOpen(false); }}
-                    className={`w-full flex items-center gap-3 rounded-2xl px-3 py-3 transition-all active:scale-95 ${active ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/30' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800'}`}
+                    className={`group w-full flex items-center gap-3 rounded-2xl px-3 py-3 transition-all active:scale-95 ${active ? 'bg-gradient-to-l from-indigo-500 to-purple-600 text-white shadow-glow-indigo' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800'}`}
                   >
-                    <div className={`flex items-center justify-center rounded-xl w-9 h-9 ${active ? 'bg-white/15' : 'bg-gray-100 dark:bg-slate-800'}`}>
-                      <Icon className="w-5 h-5" />
+                    <div className={`flex items-center justify-center rounded-xl w-9 h-9 transition-transform group-hover:scale-110 ${active ? 'bg-white/15' : 'bg-gray-100 dark:bg-slate-800'}`}>
+                      <Icon className={`w-5 h-5 transition-transform ${active ? 'scale-110' : 'group-hover:scale-110'}`} />
                     </div>
                     <span className="font-medium text-sm">{tab.label}</span>
-                  </button>
+                  </motion.button>
                 );
               })}
             </div>
 
             <div className="space-y-1.5">
               <div className="px-2 text-xs font-semibold text-gray-500 dark:text-gray-400">הגדרות ומערכת</div>
-              {secondaryTabs.map((tab) => {
+              {secondaryTabs.map((tab, i) => {
                 const Icon = tab.icon;
                 const active = activeTab === tab.id;
                 return (
-                  <button
+                  <motion.button
                     key={tab.id}
+                    initial={{ opacity: 0, x: 30 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: (i + mainTabs.length) * 0.04, duration: 0.3 }}
                     onClick={() => { onTabChange(tab.id); setNavDrawerOpen(false); }}
-                    className={`w-full flex items-center gap-3 rounded-2xl px-3 py-3 transition-all active:scale-95 ${active ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/30' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800'}`}
+                    className={`group w-full flex items-center gap-3 rounded-2xl px-3 py-3 transition-all active:scale-95 ${active ? 'bg-gradient-to-l from-indigo-500 to-purple-600 text-white shadow-glow-indigo' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800'}`}
                   >
-                    <div className={`flex items-center justify-center rounded-xl w-9 h-9 ${active ? 'bg-white/15' : 'bg-gray-100 dark:bg-slate-800'}`}>
-                      <Icon className="w-5 h-5" />
+                    <div className={`flex items-center justify-center rounded-xl w-9 h-9 transition-transform group-hover:scale-110 ${active ? 'bg-white/15' : 'bg-gray-100 dark:bg-slate-800'}`}>
+                      <Icon className={`w-5 h-5 transition-transform ${active ? 'scale-110' : 'group-hover:scale-110'}`} />
                     </div>
                     <span className="font-medium text-sm">{tab.label}</span>
-                  </button>
+                  </motion.button>
                 );
               })}
             </div>
 
             <div className="pt-2 border-t border-gray-200 dark:border-slate-800">
-              <Button variant="outline" className="w-full justify-between rounded-2xl min-h-[48px]" onClick={() => { window.location.assign('/calendar'); }}>
+              <Button variant="outline" className="group w-full justify-between rounded-2xl min-h-[48px] hover:shadow-md transition-all" onClick={() => { window.location.assign('/calendar'); }}>
                 <span>לוח שנה</span>
-                <CalendarDays className="w-4 h-4" />
+                <CalendarDays className="w-4 h-4 transition-transform group-hover:rotate-12" />
               </Button>
             </div>
           </div>
