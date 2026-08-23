@@ -37,6 +37,7 @@ export default function GlobalSearchBar({ onNavigateTool, onFocus }) {
       const user = await getCurrentUser();
       return base44.entities.AiTool.filter({ created_by_id: user.id });
     },
+    enabled: open,
   });
 
   const { data: tasks = [] } = useQuery({
@@ -45,6 +46,7 @@ export default function GlobalSearchBar({ onNavigateTool, onFocus }) {
       const user = await getCurrentUser();
       return base44.entities.ToolTask.filter({ created_by_id: user.id });
     },
+    enabled: open,
   });
 
   const { data: plans = [] } = useQuery({
@@ -53,6 +55,7 @@ export default function GlobalSearchBar({ onNavigateTool, onFocus }) {
       const user = await getCurrentUser();
       return base44.entities.ToolLearningPlan.filter({ created_by_id: user.id });
     },
+    enabled: open,
   });
 
   // פתיחה בלחיצה על השדה

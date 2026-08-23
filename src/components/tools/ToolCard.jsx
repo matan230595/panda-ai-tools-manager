@@ -64,18 +64,25 @@ export default function ToolCard({
   const [tilt, setTilt] = useState({ rx: 0, ry: 0, active: false, gx: 50, gy: 50 });
   const isTouch = typeof window !== 'undefined' && window.matchMedia('(max-width: 767px), (pointer: coarse)').matches;
 
+  const rafRef = useRef(null);
   const handleMouseMove = (e) => {
     const el = cardRef.current;
     if (!el || isDragging || isTouch) return;
-    const rect = el.getBoundingClientRect();
-    const px = (e.clientX - rect.left) / rect.width;
-    const py = (e.clientY - rect.top) / rect.height;
-    const ry = (px - 0.5) * 18;
-    const rx = (0.5 - py) * 18;
-    setTilt({ rx, ry, active: true, gx: px * 100, gy: py * 100 });
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(() => {
+      const rect = el.getBoundingClientRect();
+      const px = (e.clientX - rect.left) / rect.width;
+      const py = (e.clientY - rect.top) / rect.height;
+      const ry = (px - 0.5) * 16;
+      const rx = (0.5 - py) * 16;
+      setTilt({ rx, ry, active: true, gx: px * 100, gy: py * 100 });
+    });
   };
 
-  const resetTilt = () => setTilt({ rx: 0, ry: 0, active: false, gx: 50, gy: 50 });
+  const resetTilt = () => {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    setTilt({ rx: 0, ry: 0, active: false, gx: 50, gy: 50 });
+  };
 
   const handleVisit = () => {
     window.open(tool.url, '_blank', 'noopener,noreferrer');
