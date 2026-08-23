@@ -659,6 +659,10 @@ export default function ToolsTab({ settings, initialFilter, quickAddTool, onQuic
         onSortChange={setSortBy}
         resultsCount={filteredAndSortedTools.length}
         tools={tools}
+        masteryFilter={masteryFilter}
+        onMasteryFilterChange={setMasteryFilter}
+        priorityFilter={priorityFilter}
+        onPriorityFilterChange={setPriorityFilter}
       />
 
       {/* רשימת כלים */}

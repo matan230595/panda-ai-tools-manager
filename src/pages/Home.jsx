@@ -30,6 +30,7 @@ const CollaborationTab = React.lazy(() => import('@/components/tabs/Collaboratio
 const BudgetTab = React.lazy(() => import('@/components/tabs/BudgetTab'));
 const RemindersTab = React.lazy(() => import('@/components/tabs/RemindersTab'));
 const LearningDashboard = React.lazy(() => import('@/components/tools/LearningDashboard'));
+const WeeklyReport = React.lazy(() => import('@/components/tools/WeeklyReport'));
 const DashboardTab = React.lazy(() => import('@/pages/Dashboard'));
 const SubscriptionMgmt = React.lazy(() => import('@/components/subscription/SubscriptionManagementPanel'));
 
@@ -253,6 +254,11 @@ export default function Home() {
             {activeTab === 'learning' && (
               <Suspense fallback={<SuspenseFallback />}>
                 <LearningDashboard onToolClick={() => setActiveTab('tools')} />
+              </Suspense>
+            )}
+            {activeTab === 'weekly-report' && (
+              <Suspense fallback={<SuspenseFallback />}>
+                <WeeklyReport onToolClick={() => setActiveTab('tools')} />
               </Suspense>
             )}
             {activeTab === 'dashboard' && (

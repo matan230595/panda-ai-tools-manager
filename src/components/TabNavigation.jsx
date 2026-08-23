@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { getCurrentUser } from '@/components/hooks/userScopedData';
-import { Sparkles, MessageSquare, Settings, BarChart3, DollarSign, Menu, Wallet, LayoutDashboard, BellRing, Lightbulb, Cable, Users, CalendarDays, ChevronsLeft, ChevronsRight, GraduationCap } from 'lucide-react';
+import { Sparkles, MessageSquare, Settings, BarChart3, DollarSign, Menu, Wallet, LayoutDashboard, BellRing, Lightbulb, Cable, Users, CalendarDays, ChevronsLeft, ChevronsRight, GraduationCap, CalendarRange } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 
@@ -43,7 +43,8 @@ const MAIN_TABS = [
   { id: 'subscriptions-mgmt', label: 'מנויים', icon: DollarSign },
   { id: 'stats', label: 'ROI', icon: BarChart3 },
   { id: 'reminders', label: 'התראות', icon: BellRing },
-  { id: 'learning', label: 'למידה', icon: GraduationCap }
+  { id: 'learning', label: 'למידה', icon: GraduationCap },
+  { id: 'weekly-report', label: 'דוח שבועי', icon: CalendarRange }
 ];
 
 const SECONDARY_TABS = [

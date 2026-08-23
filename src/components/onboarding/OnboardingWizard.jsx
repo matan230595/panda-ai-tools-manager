@@ -16,8 +16,8 @@ const STEPS = [
     title: 'ברוכים הבאים ל-AI Tools Manager',
     subtitle: 'מערכת ניהול מקיפה לכלי ה-AI שלך',
     description: 'כאן תוכל לנהל, להשוות, ולייעל את כל כלי ה-AI שלך במקום אחד. בואו נתחיל!',
-    gradient: 'from-indigo-500 via-purple-500 to-fuchsia-500',
-    accent: '#6366f1',
+    gradient: 'from-blue-600 via-cyan-500 to-blue-400',
+    accent: '#3b82f6',
   },
   {
     id: 'tools',
@@ -52,8 +52,8 @@ const STEPS = [
     title: 'ניתוח ROI ותובנות',
     subtitle: 'קבל החלטות מבוססות נתונים',
     description: 'עקוב אחר עלויות, חיסכון בזמן, והחזר השקעה לכל כלי. קבל תובנות חכמות והמלצות מהמערכת.',
-    gradient: 'from-purple-500 via-pink-500 to-rose-500',
-    accent: '#8b5cf6',
+    gradient: 'from-cyan-500 via-blue-500 to-indigo-500',
+    accent: '#06b6d4',
   },
 ];
 
@@ -74,7 +74,7 @@ export default function OnboardingWizard({ onComplete }) {
       particleCount: 120,
       spread: 90,
       origin: { y: 0.6 },
-      colors: ['#6366f1', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b'],
+      colors: ['#3b82f6', '#06b6d4', '#10b981', '#f59e0b', '#8b5cf6'],
     });
     setVisible(false);
     onComplete?.();
