@@ -55,14 +55,15 @@ export default function LearningDashboard({ onToolClick }) {
 
   return (
     <div className="space-y-4">
-      <div className="rounded-2xl bg-gradient-to-br from-indigo-600 via-purple-600 to-fuchsia-600 p-4 sm:p-6 shadow-xl">
-        <div className="flex items-center gap-3 text-white">
-          <div className="w-12 h-12 rounded-2xl bg-white/15 flex items-center justify-center">
-            <GraduationCap className="w-6 h-6" />
+      <div className="relative overflow-hidden rounded-2xl border border-cyan-400/15 bg-[#1a202d]/60 backdrop-blur-xl p-4 sm:p-6">
+        <div className="absolute -top-12 -left-12 w-48 h-48 rounded-full bg-cyan-500/5 blur-2xl pointer-events-none" />
+        <div className="relative flex items-center gap-3">
+          <div className="w-12 h-12 rounded-2xl bg-blue-600/20 border border-cyan-400/20 flex items-center justify-center">
+            <GraduationCap className="w-6 h-6 text-cyan-300" />
           </div>
           <div className="text-right">
-            <h1 className="text-xl sm:text-2xl font-extrabold">לוח בקרת למידה</h1>
-            <p className="text-sm text-indigo-100/90">מעקב התקדמות למידה לכל הכלים</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-white">לוח בקרת למידה</h1>
+            <p className="text-sm text-slate-400">מעקב התקדמות למידה לכל הכלים</p>
           </div>
         </div>
       </div>

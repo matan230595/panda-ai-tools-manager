@@ -12,6 +12,7 @@ import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import CalendarPage from '@/pages/CalendarPage';
 import SharedTools from '@/pages/SharedTools';
 import ToolMastery from '@/pages/ToolMastery';
+import WeeklyReport from '@/components/tools/WeeklyReport';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -66,6 +67,7 @@ const AuthenticatedApp = () => {
       <Route path="/calendar" element={<LayoutWrapper currentPageName="calendar"><CalendarPage /></LayoutWrapper>} />
       <Route path="/shared/:token" element={<LayoutWrapper currentPageName="shared"><SharedTools /></LayoutWrapper>} />
       <Route path="/tool-mastery/:toolId" element={<LayoutWrapper currentPageName="tool-mastery"><ToolMastery /></LayoutWrapper>} />
+      <Route path="/weekly-report" element={<LayoutWrapper currentPageName="weekly-report"><WeeklyReport /></LayoutWrapper>} />
       {/* Catalog aliases: /SharedTools and /shared (without token) point to the main tools catalog on Home */}
       <Route path="/SharedTools" element={<Navigate to="/" replace />} />
       <Route path="/shared" element={<Navigate to="/" replace />} />

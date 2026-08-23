@@ -106,6 +106,8 @@ export default function ToolsTab({ settings, initialFilter, quickAddTool, onQuic
     aiGenerated: null,
   });
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [masteryFilter, setMasteryFilter] = useState('all');
+  const [priorityFilter, setPriorityFilter] = useState('all');
   const PAGE_SIZE = 30;
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
@@ -275,6 +277,16 @@ export default function ToolsTab({ settings, initialFilter, quickAddTool, onQuic
       filtered = filtered.filter(tool => tool.aiGenerated === advancedFilters.aiGenerated);
     }
 
+    // סינון לפי רמת שליטה
+    if (masteryFilter && masteryFilter !== 'all') {
+      filtered = filtered.filter(tool => (tool.masteryLevel || 'מתחיל') === masteryFilter);
+    }
+
+    // סינון לפי עדיפות למידה
+    if (priorityFilter && priorityFilter !== 'all') {
+      filtered = filtered.filter(tool => (tool.learningPriority || 'רגיל שלי') === priorityFilter);
+    }
+
     // מיון
     filtered.sort((a, b) => {
       switch(sortBy) {
@@ -292,13 +304,17 @@ export default function ToolsTab({ settings, initialFilter, quickAddTool, onQuic
           return (b.usageStats?.timesUsed || 0) - (a.usageStats?.timesUsed || 0);
         case 'cost':
           return (b.usageStats?.totalCostPerMonth || 0) - (a.usageStats?.totalCostPerMonth || 0);
+        case 'mastery': {
+          const order = { 'מתחיל': 0, 'בינוני': 1, 'מומחה': 2 };
+          return (order[b.masteryLevel || 'מתחיל'] || 0) - (order[a.masteryLevel || 'מתחיל'] || 0);
+        }
         default:
           return 0;
       }
     });
 
     return filtered;
-  }, [tools, searchTerm, selectedCategory, selectedPricing, selectedRating, showFavoritesOnly, sortBy, advancedFilters]);
+  }, [tools, searchTerm, selectedCategory, selectedPricing, selectedRating, showFavoritesOnly, sortBy, advancedFilters, masteryFilter, priorityFilter]);
 
   // פעולות
   const handleSave = (data) => {
