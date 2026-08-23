@@ -125,6 +125,7 @@ export default function Home() {
     onTabChange: setActiveTab,
     onSearch: () => setGlobalSearchOpen(true),
     onHelp: () => setShowKeyboardHelp(true),
+    onClose: () => { setGlobalSearchOpen(false); setShowKeyboardHelp(false); },
   });
 
   // קיצור Ctrl+K גלובלי
@@ -212,7 +213,7 @@ export default function Home() {
       <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
 
       {/* תוכן הטאב */}
-      <main id="main-content" className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 py-2 sm:py-4 md:py-8 md:pr-[var(--sidebar-w,21rem)] transition-[padding] duration-300 pb-24 md:pb-8">
+      <main id="main-content" data-active-tab={activeTab} className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 py-2 sm:py-4 md:py-8 md:pr-[var(--sidebar-w,21rem)] transition-[padding] duration-300 pb-24 md:pb-8">
         <motion.div
           initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}

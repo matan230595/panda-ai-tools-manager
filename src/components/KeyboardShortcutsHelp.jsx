@@ -1,50 +1,53 @@
 import React from 'react';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { KEYBOARD_SHORTCUTS } from '@/components/hooks/useKeyboardShortcuts';
 
 export default function KeyboardShortcutsHelp({ open, onOpenChange }) {
-  const groupedShortcuts = KEYBOARD_SHORTCUTS.reduce((acc, shortcut) => {
-    if (!acc[shortcut.category]) {
-      acc[shortcut.category] = [];
-    }
-    acc[shortcut.category].push(shortcut);
+  const grouped = KEYBOARD_SHORTCUTS.reduce((acc, s) => {
+    (acc[s.category] = acc[s.category] || []).push(s);
     return acc;
   }, {});
 
+  const CATEGORY_ICONS = {
+    'ניווט': '🧭',
+    'חיפוש': '🔍',
+    'עזרה': '❓',
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-2xl bg-[#1a202d]/95 border-cyan-400/20 backdrop-blur-xl">
         <DialogHeader>
-          <DialogTitle>⌨️ קיצורי מקלדת</DialogTitle>
-          <DialogDescription>
-            השתמש בקיצורים אלה כדי לנווט במהירות ברחבי האפליקציה
-          </DialogDescription>
+          <DialogTitle className="text-white text-xl flex items-center gap-2">
+            <span>⌨️</span> קיצורי מקלדת
+          </DialogTitle>
+          <p className="text-slate-400 text-sm">
+            נווט במהירות ברחבי המערכת בלי לגעת בעכבר
+          </p>
         </DialogHeader>
 
-        <div className="space-y-6 max-h-96 overflow-y-auto">
-          {Object.entries(groupedShortcuts).map(([category, shortcuts]) => (
+        <div className="space-y-5 max-h-[60vh] overflow-y-auto pr-1">
+          {Object.entries(grouped).map(([category, shortcuts]) => (
             <div key={category}>
-              <h3 className="font-semibold text-sm text-gray-700 dark:text-gray-300 mb-3">
+              <h3 className="font-semibold text-sm text-cyan-400 mb-3 flex items-center gap-2">
+                <span>{CATEGORY_ICONS[category]}</span>
                 {category}
               </h3>
               <div className="space-y-2">
-                {shortcuts.map((shortcut, idx) => (
+                {shortcuts.map((s, idx) => (
                   <div
                     key={idx}
-                    className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg"
+                    className="flex items-center justify-between p-2.5 rounded-lg bg-[#0b0d12]/60 border border-cyan-400/5"
                   >
-                    <span className="text-sm">{shortcut.description}</span>
+                    <span className="text-sm text-slate-300">{s.description}</span>
                     <div className="flex gap-1">
-                      {shortcut.keys.map((key, keyIdx) => (
-                        <div key={keyIdx} className="flex items-center gap-1">
-                          <kbd className="px-3 py-1 bg-white dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 text-xs font-medium">
+                      {s.keys.map((key, i) => (
+                        <React.Fragment key={i}>
+                          <kbd className="px-2.5 py-1 bg-[#0b0d12] rounded-md border border-cyan-400/30 text-xs font-medium text-cyan-300 shadow-[0_0_8px_-2px_rgba(0,212,255,0.3)]">
                             {key}
                           </kbd>
-                          {keyIdx < shortcut.keys.length - 1 && (
-                            <span className="text-gray-400">+</span>
-                          )}
-                        </div>
+                          {i < s.keys.length - 1 && <span className="text-slate-500 self-center">+</span>}
+                        </React.Fragment>
                       ))}
                     </div>
                   </div>
