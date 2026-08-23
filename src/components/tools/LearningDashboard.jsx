@@ -1,16 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { getCurrentUser } from '@/components/hooks/userScopedData';
-import { GraduationCap, Target, Clock, CheckCircle2, AlertCircle, Loader2, ChevronLeft, ArrowLeft } from 'lucide-react';
+import { GraduationCap, Target, Clock, CheckCircle2, AlertCircle, Loader2, ChevronLeft, ArrowLeft, LayoutGrid, KanbanSquare, GalleryHorizontalEnd } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import ToolLogo from '@/components/ToolLogo';
 import moment from 'moment';
+import MasteryKanban from '@/components/tools/MasteryKanban';
+import MasteryGallery from '@/components/tools/MasteryGallery';
+
+const VIEW_MODES = [
+  { id: 'list', label: 'רשימה', icon: LayoutGrid },
+  { id: 'kanban', label: 'קאנבן', icon: KanbanSquare },
+  { id: 'gallery', label: 'גלריה', icon: GalleryHorizontalEnd },
+];
 
 export default function LearningDashboard({ onToolClick }) {
+  const [viewMode, setViewMode] = useState('list');
   const { data: plans = [], isLoading } = useQuery({
     queryKey: ['learningPlansDashboard'],
     queryFn: async () => {
@@ -57,16 +66,39 @@ export default function LearningDashboard({ onToolClick }) {
     <div className="space-y-4">
       <div className="relative overflow-hidden rounded-2xl border border-cyan-400/15 bg-[#1a202d]/60 backdrop-blur-xl p-4 sm:p-6">
         <div className="absolute -top-12 -left-12 w-48 h-48 rounded-full bg-cyan-500/5 blur-2xl pointer-events-none" />
-        <div className="relative flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-blue-600/20 border border-cyan-400/20 flex items-center justify-center">
-            <GraduationCap className="w-6 h-6 text-cyan-300" />
+        <div className="relative flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-2xl bg-blue-600/20 border border-cyan-400/20 flex items-center justify-center">
+              <GraduationCap className="w-6 h-6 text-cyan-300" />
+            </div>
+            <div className="text-right">
+              <h1 className="text-xl sm:text-2xl font-bold text-white">לוח בקרת למידה</h1>
+              <p className="text-sm text-slate-400">מעקב התקדמות למידה לכל הכלים</p>
+            </div>
           </div>
-          <div className="text-right">
-            <h1 className="text-xl sm:text-2xl font-bold text-white">לוח בקרת למידה</h1>
-            <p className="text-sm text-slate-400">מעקב התקדמות למידה לכל הכלים</p>
+          {/* מתג תצוגה */}
+          <div className="flex items-center gap-1 bg-white/5 rounded-xl p-1 border border-white/10">
+            {VIEW_MODES.map((mode) => {
+              const Icon = mode.icon;
+              return (
+                <button
+                  key={mode.id}
+                  onClick={() => setViewMode(mode.id)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                    viewMode === mode.id ? 'bg-cyan-500/20 text-cyan-300' : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  <Icon className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">{mode.label}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
+
+      {viewMode === 'kanban' && <MasteryKanban onToolClick={onToolClick} />}
+      {viewMode === 'gallery' && <MasteryGallery onToolClick={onToolClick} />}
 
       <div className="grid grid-cols-3 gap-3">
         <Card>
@@ -92,7 +124,7 @@ export default function LearningDashboard({ onToolClick }) {
         </Card>
       </div>
 
-      {plans.length === 0 ? (
+      {viewMode !== 'list' ? null : plans.length === 0 ? (
         <Card className="border-2 border-dashed">
           <CardContent className="flex flex-col items-center justify-center py-12">
             <GraduationCap className="w-12 h-12 text-gray-300 mb-3" />

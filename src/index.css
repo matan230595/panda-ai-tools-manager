@@ -173,6 +173,14 @@
   outline-offset: 2px;
 }
 
+/* Contrast safety net: ensure text on light-badge backgrounds is readable */
+.badge-contrast-light {
+  color: #0f172a !important;
+}
+.badge-contrast-dark {
+  color: #ffffff !important;
+}
+
 button, a {
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
