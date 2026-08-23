@@ -18,7 +18,8 @@ import NotificationCenter from '@/components/NotificationCenter';
 import KeyboardShortcutsHelp from '@/components/KeyboardShortcutsHelp';
 import QuickAddFAB from '@/components/QuickAddFAB';
 import OnboardingWizard from '@/components/onboarding/OnboardingWizard';
-import MobileBottomNav from '@/components/MobileBottomNav';
+import MobileBottomNav, { SWIPE_TABS } from '@/components/MobileBottomNav';
+import { useSwipeNavigation } from '@/components/hooks/useSwipeNavigation';
 import GlobalSearchModal from '@/components/search/GlobalSearchModal';
 import { useSmartNotifications } from '@/components/hooks/useSmartNotifications';
 import { useKeyboardShortcuts } from '@/components/hooks/useKeyboardShortcuts';
@@ -109,6 +110,15 @@ export default function Home() {
     base44.entities.Settings.update(settings.id, { notifications: [] });
     queryClient.invalidateQueries({ queryKey: ['settings'] });
   };
+
+  // החלקה בין טאבים במובייל
+  const swipeToIndex = (delta) => {
+    const currentIdx = SWIPE_TABS.findIndex(t => t.id === activeTab);
+    if (currentIdx === -1) return;
+    const nextIdx = Math.max(0, Math.min(SWIPE_TABS.length - 1, currentIdx + delta));
+    if (nextIdx !== currentIdx) setActiveTab(SWIPE_TABS[nextIdx].id);
+  };
+  useSwipeNavigation(() => swipeToIndex(1), () => swipeToIndex(-1));
 
   // קיצורי מקלדת חכמים
   useKeyboardShortcuts(settings, {
