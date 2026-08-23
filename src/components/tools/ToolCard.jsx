@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import {
   Star, ExternalLink, Edit, Trash2, Tag, Flame,
-  GripVertical, Package, MoreHorizontal, Check, Copy, Share2, Link2
+  GripVertical, Package, MoreHorizontal, Check, Copy, Share2, Link2, GraduationCap
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/drawer';
 import ShareLinkDialog from '@/components/sharing/ShareLinkDialog';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 
 const CATEGORY_BAR_COLORS = {
   'עיבוד_שפה': 'from-blue-500 to-blue-400',
@@ -57,6 +58,7 @@ export default function ToolCard({
   const [showQuickActions, setShowQuickActions] = useState(false);
   const longPressTimer = useRef(null);
   const longPressTriggered = useRef(false);
+  const navigate = useNavigate();
 
   const cardRef = useRef(null);
   const [tilt, setTilt] = useState({ rx: 0, ry: 0, active: false, gx: 50, gy: 50 });
@@ -68,8 +70,8 @@ export default function ToolCard({
     const rect = el.getBoundingClientRect();
     const px = (e.clientX - rect.left) / rect.width;
     const py = (e.clientY - rect.top) / rect.height;
-    const ry = (px - 0.5) * 14;
-    const rx = (0.5 - py) * 14;
+    const ry = (px - 0.5) * 18;
+    const rx = (0.5 - py) * 18;
     setTilt({ rx, ry, active: true, gx: px * 100, gy: py * 100 });
   };
 
@@ -134,7 +136,7 @@ export default function ToolCard({
 
   return (
     <div
-      className="h-full md:[perspective:1400px] py-1.5 md:py-2"
+      className="h-full md:[perspective:1600px] py-1.5 md:py-2"
       onMouseMove={handleMouseMove}
       onMouseLeave={resetTilt}
     >
@@ -142,20 +144,20 @@ export default function ToolCard({
         ref={cardRef}
         className={`
           group relative flex flex-col rounded-[22px] md:rounded-[26px] p-4 md:p-5 h-full antialiased cursor-pointer overflow-hidden
-          bg-white/85 dark:bg-gray-900/75 backdrop-blur-xl
+          bg-white/90 dark:bg-gray-900/80 backdrop-blur-xl
           border border-gray-200/70 dark:border-white/10
           transition-[transform,box-shadow,border-color] duration-200 ease-out will-change-transform
           active:scale-[0.98] md:active:scale-100
           hover:border-indigo-300/60 dark:hover:border-indigo-500/30
           ${tilt.active
-            ? 'shadow-[0_40px_70px_-20px_rgba(79,70,229,0.45)]'
+            ? 'shadow-[0_50px_80px_-25px_rgba(79,70,229,0.5),0_25px_40px_-20px_rgba(139,92,246,0.3)]'
             : 'shadow-[0_8px_24px_-12px_rgba(0,0,0,0.18)] md:shadow-[0_20px_40px_-24px_rgba(0,0,0,0.35)] hover:shadow-[0_16px_36px_-16px_rgba(79,70,229,0.30)] md:hover:shadow-[0_28px_50px_-20px_rgba(79,70,229,0.35)]'}
           ${isDragging ? 'opacity-50 scale-95' : 'opacity-100'}
           ${tool.isFavorite ? 'ring-2 ring-yellow-400/70 shadow-[0_0_24px_-4px_rgba(250,204,21,0.4)]' : ''}
           ${onToggleSelect && isSelected ? 'ring-2 ring-indigo-500' : ''}
         `}
         style={{
-          transform: `rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg) ${tilt.active ? 'scale(1.02)' : 'scale(1)'}`,
+          transform: `rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg) ${tilt.active ? 'scale(1.03)' : 'scale(1)'}`,
           transformStyle: 'preserve-3d',
         }}
         dir="rtl"
@@ -179,6 +181,25 @@ export default function ToolCard({
           style={{
             opacity: tilt.active ? 1 : 0,
             background: `radial-gradient(420px circle at ${tilt.gx}% ${tilt.gy}%, rgba(255,255,255,0.55), transparent 45%)`,
+          }}
+        />
+
+        {/* זוהר צבעוני דינמי שעוקב אחרי העכבר */}
+        <div
+          className="absolute inset-0 rounded-[22px] md:rounded-[26px] pointer-events-none transition-opacity duration-500"
+          style={{
+            opacity: tilt.active ? 0.6 : 0,
+            background: `radial-gradient(300px circle at ${tilt.gx}% ${tilt.gy}%, rgba(99,102,241,0.12), transparent 60%)`,
+          }}
+        />
+
+        {/* צל דינמי שזז עם העכבר */}
+        <div
+          className="absolute -inset-1 rounded-[22px] md:rounded-[26px] pointer-events-none transition-opacity duration-300 -z-10"
+          style={{
+            opacity: tilt.active ? 0.4 : 0,
+            background: `radial-gradient(200px circle at ${tilt.gx}% ${tilt.gy}%, rgba(139,92,246,0.25), transparent 70%)`,
+            transform: 'translateZ(-50px)',
           }}
         />
 
@@ -350,6 +371,10 @@ export default function ToolCard({
                   <Link2 className="w-4 h-4 ml-2" />
                   העתק קישור
                 </DropdownMenuItem>
+                <DropdownMenuItem onClick={(e) => { e.stopPropagation(); navigate(`/tool-mastery/${tool.id}`); }}>
+                  <GraduationCap className="w-4 h-4 ml-2" />
+                  סיכום מיומנות
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onEdit(tool); }}>
                   <Edit className="w-4 h-4 ml-2" />
                   עריכה
@@ -394,6 +419,14 @@ export default function ToolCard({
             >
               <span>העתק קישור</span>
               <Copy className="w-5 h-5" />
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full justify-between rounded-2xl min-h-[54px]"
+              onClick={() => { setShowQuickActions(false); navigate(`/tool-mastery/${tool.id}`); }}
+            >
+              <span>סיכום מיומנות</span>
+              <GraduationCap className="w-5 h-5" />
             </Button>
             <Button
               variant="outline"

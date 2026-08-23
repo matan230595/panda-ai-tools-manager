@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { CalendarDays, Search } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import AnimatedBackground from '@/components/effects/AnimatedBackground';
-import GlobalSearch from '@/components/search/GlobalSearch';
+import GlobalSearchBar from '@/components/GlobalSearchBar';
 import TabNavigation from '@/components/TabNavigation';
 import ToolsTab from '@/components/tabs/ToolsTab';
 import AssistantTab from '@/components/tabs/AssistantTab';
@@ -39,20 +39,7 @@ export default function Home() {
   const [authStatus, setAuthStatus] = useState('checking');
   const [showKeyboardHelp, setShowKeyboardHelp] = useState(false);
   const [quickAddTool, setQuickAddTool] = useState(false);
-  const [showGlobalSearch, setShowGlobalSearch] = useState(false);
   const queryClient = useQueryClient();
-
-  // קיצור מקלדת גלובלי לחיפוש (Ctrl+K / Cmd+K)
-  useEffect(() => {
-    const handler = (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-        e.preventDefault();
-        setShowGlobalSearch(true);
-      }
-    };
-    window.addEventListener('keydown', handler);
-    return () => window.removeEventListener('keydown', handler);
-  }, []);
 
 
   // בדיקת אימות Base44
@@ -220,22 +207,12 @@ export default function Home() {
           transition={{ duration: 0.4, ease: 'easeOut' }}
           className="flex items-center justify-between gap-2 mb-3 md:mb-5 rounded-2xl border border-white/40 dark:border-white/10 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl px-3 py-2.5 shadow-premium"
         >
-          <div className="flex items-center gap-2">
           <Link to="/calendar" className="group inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-indigo-500/20 hover:shadow-glow-indigo transition-all active:scale-95 hover:scale-[1.03] min-h-[44px]">
             <CalendarDays className="w-4 h-4 transition-transform group-hover:rotate-12" />
             <span className="hidden sm:inline">לוח שנה</span>
             <CalendarDays className="w-4 h-4 sm:hidden" />
           </Link>
-        </div>
-          <button
-            onClick={() => setShowGlobalSearch(true)}
-            className="group inline-flex items-center justify-center gap-2 rounded-xl border border-gray-200 dark:border-slate-700 bg-white/80 dark:bg-slate-900/80 px-3 sm:px-4 py-2.5 text-sm text-gray-500 hover:text-indigo-600 hover:border-indigo-300 hover:shadow-md transition-all active:scale-95 min-h-[44px]"
-            aria-label="חיפוש גלובלי"
-          >
-            <Search className="w-4 h-4 transition-transform group-hover:scale-110" />
-            <span className="hidden md:inline">חיפוש כלים, משימות...</span>
-            <kbd className="hidden md:inline-flex items-center gap-0.5 text-[10px] text-gray-400 bg-gray-100 dark:bg-slate-800 px-1.5 py-0.5 rounded mr-1">Ctrl+K</kbd>
-          </button>
+          <GlobalSearchBar onNavigateTool={() => setActiveTab('tools')} />
           <div className="flex items-center gap-1.5">
             <NotificationCenter 
               notifications={settings?.notifications || []}
@@ -313,12 +290,6 @@ export default function Home() {
       {/* עזרת קיצורי מקלדת */}
       <KeyboardShortcutsHelp open={showKeyboardHelp} onOpenChange={setShowKeyboardHelp} />
 
-      {/* חיפוש גלובלי */}
-      <GlobalSearch
-        open={showGlobalSearch}
-        onOpenChange={setShowGlobalSearch}
-        onNavigateTool={() => setActiveTab('tools')}
-      />
     </div>
   );
 }

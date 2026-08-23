@@ -117,12 +117,38 @@ export function useSmartNotifications(settings, queryClient) {
     for (const task of toolTasks.filter((item) => !item.isCompleted && item.dueDate)) {
       const dueDate = new Date(task.dueDate);
       dueDate.setHours(0, 0, 0, 0);
+      const daysLeft = Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
+
       if (dueDate < today) {
         await addNotification({
           title: '📝 משימה באיחור',
           message: `המשימה "${task.title}" עבור ${task.toolName} עברה את תאריך היעד.`,
           type: 'warning',
         });
+      } else if (daysLeft <= 3 && daysLeft > 0) {
+        await addNotification({
+          title: '⏰ משימת למידה מתקרבת',
+          message: `המשימה "${task.title}" עבור ${task.toolName} מתקרבת לדדליין — נותרו ${daysLeft} ימים.`,
+          type: daysLeft === 1 ? 'warning' : 'info',
+        });
+        // שליחת תזכורת באימייל למשימות דחופות
+        if (daysLeft === 1 && settings?.enableNotifications) {
+          try {
+            const user = await getCurrentUser();
+            if (user?.email) {
+              await base44.integrations.Core.SendEmail({
+                to: user.email,
+                subject: `⏰ תזכורת: "${task.title}" מחר`,
+                body: `<div dir="rtl" style="font-family:Arial,sans-serif;padding:20px;background:#f8fafc;border-radius:12px;">
+                  <h2 style="color:#6366f1;">תזכורת משימת למידה</h2>
+                  <p>המשימה <strong>"${task.title}"</strong> עבור <strong>${task.toolName}</strong> מתקרבת לדדליין.</p>
+                  <p>נותר יום אחד בלבד להשלמת המשימה.</p>
+                  <p style="color:#6b7280;font-size:14px;">מערכת AI Tools Manager</p>
+                </div>`,
+              });
+            }
+          } catch (e) { /* שתיקת שגיאות אימייל */ }
+        }
       }
     }
   }, [addNotification]);
