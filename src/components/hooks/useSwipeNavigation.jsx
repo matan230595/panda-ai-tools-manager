@@ -1,29 +1,44 @@
 import { useRef, useEffect, useCallback } from 'react';
 
+const INTERACTIVE_SELECTORS = 'button, a, input, textarea, select, [role="button"], [data-swipe-ignore], [contenteditable="true"]';
+
 /**
- * זיהוי החלקה אופקית למעבר בין טאבים במובייל.
- * משדר navigator.vibrate קל (10ms) למשוב הפטי בעת מעבר.
+ * זיהוי החלקה אופקית למעבר חלק בין טאבים במובייל.
  *
- * @param {Function} onSwipeLeft  - נקראת כשהמשתמש מחליק שמאלה (← הטאב הבא ב-RTL)
- * @param {Function} onSwipeRight - נקראת כשהמשתמש מחליק ימינה (→ הטאב הקודם ב-RTL)
+ * תכונות:
+ *  - משוב חזותי חי: onSwipeProgress(-1..1) בזמן ההחלקה
+ *  - ניווט מעגלי (wrap) בין הטאב הראשון לאחרון
+ *  - התעלמות מהחלקות שמתחילות על אלמנטים אינטראקטיביים
+ *  - משוב הפטי (navigator.vibrate) בעת מעבר
+ *
+ * @param {Function} onSwipeLeft  - החלקה שמאלה (← הטאב הבא ב-RTL)
+ * @param {Function} onSwipeRight - החלקה ימינה (→ הטאב הקודם ב-RTL)
  * @param {Object} options
- *   - threshold: מינימום מרחק כדי להחשיב החלקה (px, ברירת מחדל 60)
- *   - maxDuration: מקסימום זמן מגע (ms, ברירת מחדל 600)
- *   - velocityThreshold: מהירות מינימלית (px/ms, ברירת מחדל 0.3)
+ *   - threshold: מינימום מרחק (px, ברירת מחדל 50)
+ *   - maxDuration: מקסימום זמן מגע (ms, ברירת מחדל 700)
+ *   - velocityThreshold: מהירות מינימלית (px/ms, ברירת מחדל 0.25)
+ *   - onSwipeProgress: קולבק חי עם ערך -1..1 במהלך ההחלקה
  */
 export function useSwipeNavigation(onSwipeLeft, onSwipeRight, options = {}) {
-  const { threshold = 60, maxDuration = 600, velocityThreshold = 0.3 } = options;
+  const {
+    threshold = 50,
+    maxDuration = 700,
+    velocityThreshold = 0.25,
+    onSwipeProgress,
+  } = options;
+
   const touch = useRef({ x: 0, y: 0, t: 0, active: false, identifier: null });
-  const callbacks = useRef({ onSwipeLeft, onSwipeRight });
+  const callbacks = useRef({ onSwipeLeft, onSwipeRight, onSwipeProgress });
 
   useEffect(() => {
-    callbacks.current = { onSwipeLeft, onSwipeRight };
+    callbacks.current = { onSwipeLeft, onSwipeRight, onSwipeProgress };
   });
 
   const onTouchStart = useCallback((e) => {
-    // רק מגע אחד
     if (e.touches.length !== 1) return;
     const t = e.touches[0];
+    // התעלם ממגע שמתחיל על אלמנט אינטראקטיבי
+    if (t.target.closest?.(INTERACTIVE_SELECTORS)) return;
     touch.current = {
       x: t.clientX,
       y: t.clientY,
@@ -33,10 +48,23 @@ export function useSwipeNavigation(onSwipeLeft, onSwipeRight, options = {}) {
     };
   }, []);
 
+  const onTouchMove = useCallback((e) => {
+    const tc = touch.current;
+    if (!tc.active) return;
+    const t = Array.from(e.touches).find(t => t.identifier === tc.identifier);
+    if (!t) return;
+    const dx = t.clientX - tc.x;
+    const dy = t.clientY - tc.y;
+    // דווח רק החלקה אופקית
+    if (Math.abs(dx) < Math.abs(dy)) return;
+    const w = window.innerWidth || 375;
+    const progress = Math.max(-1, Math.min(1, dx / (w * 0.35)));
+    callbacks.current.onSwipeProgress?.(progress);
+  }, []);
+
   const onTouchEnd = useCallback((e) => {
     const tc = touch.current;
     if (!tc.active) return;
-    // מצא את המגע שהסתיים
     const ended = Array.from(e.changedTouches).find(t => t.identifier === tc.identifier);
     if (!ended) return;
 
@@ -46,10 +74,9 @@ export function useSwipeNavigation(onSwipeLeft, onSwipeRight, options = {}) {
 
     touch.current.active = false;
     touch.current.identifier = null;
+    callbacks.current.onSwipeProgress?.(0);
 
-    // בדיקת תקפות
     if (dt > maxDuration) return;
-    // חייבת להיות החלקה אופקית יותר מאנכית
     if (Math.abs(dx) < Math.abs(dy)) return;
     if (Math.abs(dx) < threshold) return;
 
@@ -59,10 +86,10 @@ export function useSwipeNavigation(onSwipeLeft, onSwipeRight, options = {}) {
     // ב-RTL: החלקה שמאלה = הטאב הבא; ימינה = הקודם
     if (dx < 0) {
       callbacks.current.onSwipeLeft?.();
-      if (navigator.vibrate) navigator.vibrate(10);
+      if (navigator.vibrate) navigator.vibrate(12);
     } else {
       callbacks.current.onSwipeRight?.();
-      if (navigator.vibrate) navigator.vibrate(10);
+      if (navigator.vibrate) navigator.vibrate(12);
     }
   }, [threshold, maxDuration, velocityThreshold]);
 
@@ -71,11 +98,13 @@ export function useSwipeNavigation(onSwipeLeft, onSwipeRight, options = {}) {
     if (!el) return;
 
     el.addEventListener('touchstart', onTouchStart, { passive: true });
+    el.addEventListener('touchmove', onTouchMove, { passive: true });
     el.addEventListener('touchend', onTouchEnd, { passive: true });
 
     return () => {
       el.removeEventListener('touchstart', onTouchStart);
+      el.removeEventListener('touchmove', onTouchMove);
       el.removeEventListener('touchend', onTouchEnd);
     };
-  }, [onTouchStart, onTouchEnd]);
+  }, [onTouchStart, onTouchMove, onTouchEnd]);
 }

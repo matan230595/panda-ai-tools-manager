@@ -112,13 +112,18 @@ export default function Home() {
   };
 
   // החלקה בין טאבים במובייל
+  const [swipeProgress, setSwipeProgress] = useState(0);
+  const [navDrawerOpen, setNavDrawerOpen] = useState(false);
   const swipeToIndex = (delta) => {
     const currentIdx = SWIPE_TABS.findIndex(t => t.id === activeTab);
     if (currentIdx === -1) return;
-    const nextIdx = Math.max(0, Math.min(SWIPE_TABS.length - 1, currentIdx + delta));
-    if (nextIdx !== currentIdx) setActiveTab(SWIPE_TABS[nextIdx].id);
+    const len = SWIPE_TABS.length;
+    const nextIdx = (currentIdx + delta + len) % len;
+    setActiveTab(SWIPE_TABS[nextIdx].id);
   };
-  useSwipeNavigation(() => swipeToIndex(1), () => swipeToIndex(-1));
+  useSwipeNavigation(() => swipeToIndex(1), () => swipeToIndex(-1), {
+    onSwipeProgress: (p) => setSwipeProgress(prev => Math.abs(p - prev) > 0.025 ? p : prev),
+  });
 
   // קיצורי מקלדת חכמים
   useKeyboardShortcuts(settings, {
@@ -210,7 +215,7 @@ export default function Home() {
       />
       
       {/* ניווט */}
-      <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
+      <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} open={navDrawerOpen} onOpenChange={setNavDrawerOpen} />
 
       {/* תוכן הטאב */}
       <main id="main-content" data-active-tab={activeTab} className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 py-2 sm:py-4 md:py-8 md:pr-[var(--sidebar-w,21rem)] transition-[padding] duration-300 pb-24 md:pb-8">
@@ -306,7 +311,7 @@ export default function Home() {
       />
 
       {/* ניווט תחתון למובייל */}
-      <MobileBottomNav activeTab={activeTab} onTabChange={setActiveTab} />
+      <MobileBottomNav activeTab={activeTab} onTabChange={setActiveTab} onMore={() => setNavDrawerOpen(true)} swipeProgress={swipeProgress} />
 
       {/* חיפוש גלובלי */}
       <GlobalSearchModal open={globalSearchOpen} onClose={() => setGlobalSearchOpen(false)} onNavigate={(tab) => setActiveTab(tab)} />

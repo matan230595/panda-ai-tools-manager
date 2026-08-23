@@ -3,9 +3,10 @@ import { useQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { getCurrentUser } from '@/components/hooks/userScopedData';
-import { Sparkles, MessageSquare, Settings, BarChart3, DollarSign, Menu, Wallet, LayoutDashboard, BellRing, Lightbulb, Cable, Users, CalendarDays, ChevronsLeft, ChevronsRight, GraduationCap, CalendarRange } from 'lucide-react';
+import { Sparkles, MessageSquare, Settings, BarChart3, DollarSign, Menu, Wallet, LayoutDashboard, BellRing, Lightbulb, Cable, Users, CalendarDays, ChevronsLeft, ChevronsRight, GraduationCap, CalendarRange, Search } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
 function NavButton({ tab, active, collapsed, onClick }) {
   const Icon = tab.icon;
@@ -57,11 +58,14 @@ const SECONDARY_TABS = [
 
 const ALL_TABS = [...MAIN_TABS, ...SECONDARY_TABS];
 
-export default function TabNavigation({ activeTab, onTabChange }) {
+export default function TabNavigation({ activeTab, onTabChange, open: controlledOpen, onOpenChange: controlledOnOpenChange }) {
   const [userLogo, setUserLogo] = useState('');
   const [appName, setAppName] = useState('AI Tools Manager');
-  const [navDrawerOpen, setNavDrawerOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
+  const navDrawerOpen = controlledOpen ?? internalOpen;
+  const setNavDrawerOpen = controlledOnOpenChange ?? setInternalOpen;
   const [collapsed, setCollapsed] = useState(() => localStorage.getItem('sidebarCollapsed') === '1');
+  const [menuSearch, setMenuSearch] = useState('');
 
   useEffect(() => {
     document.documentElement.style.setProperty('--sidebar-w', collapsed ? '5.5rem' : '16rem');
@@ -171,9 +175,18 @@ export default function TabNavigation({ activeTab, onTabChange }) {
             </div>
           </SheetHeader>
           <div className="px-3 py-4 overflow-y-auto flex-1 space-y-5 h-[calc(100vh-4rem)]">
+            <div className="relative mb-4">
+              <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none" />
+              <Input
+                value={menuSearch}
+                onChange={(e) => setMenuSearch(e.target.value)}
+                placeholder="חפש טאב..."
+                className="pr-9 bg-white/[0.03] border-cyan-400/20 text-white placeholder:text-slate-500 focus-visible:border-cyan-400/50"
+              />
+            </div>
             <div className="space-y-1">
               <div className="px-2 text-[11px] font-semibold text-slate-600 uppercase tracking-wide">עיקרי</div>
-              {mainTabs.map((tab, i) => {
+              {mainTabs.filter(t => t.label.includes(menuSearch.trim())).map((tab, i) => {
                 const Icon = tab.icon;
                 const active = activeTab === tab.id;
                 return (
@@ -196,7 +209,7 @@ export default function TabNavigation({ activeTab, onTabChange }) {
 
             <div className="space-y-1">
               <div className="px-2 text-[11px] font-semibold text-slate-600 uppercase tracking-wide">הגדרות ומערכת</div>
-              {secondaryTabs.map((tab, i) => {
+              {secondaryTabs.filter(t => t.label.includes(menuSearch.trim())).map((tab, i) => {
                 const Icon = tab.icon;
                 const active = activeTab === tab.id;
                 return (

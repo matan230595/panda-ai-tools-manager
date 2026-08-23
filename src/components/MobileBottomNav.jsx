@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { LayoutDashboard, Sparkles, MessageSquare, BellRing, GraduationCap } from 'lucide-react';
+import { LayoutDashboard, Sparkles, MessageSquare, BellRing, GraduationCap, LayoutGrid } from 'lucide-react';
 
 export const SWIPE_TABS = [
   { id: 'dashboard', label: 'דשבורד', icon: LayoutDashboard },
@@ -10,8 +10,9 @@ export const SWIPE_TABS = [
   { id: 'learning', label: 'למידה', icon: GraduationCap },
 ];
 
-export default function MobileBottomNav({ activeTab, onTabChange }) {
+export default function MobileBottomNav({ activeTab, onTabChange, onMore, swipeProgress = 0 }) {
   const activeIndex = SWIPE_TABS.findIndex(t => t.id === activeTab);
+  const slot = 100 / (SWIPE_TABS.length + 1); // 5 טאבים + כפתור "עוד"
 
   return (
     <motion.nav
@@ -27,13 +28,24 @@ export default function MobileBottomNav({ activeTab, onTabChange }) {
       <motion.div
         className="absolute top-0 h-0.5 bg-cyan-400 rounded-full"
         style={{ filter: 'drop-shadow(0 0 4px rgba(0,212,255,0.8))' }}
-        animate={{
-          right: `calc(${activeIndex * 20}% + 2%)`,
-          width: '16%',
-        }}
+        animate={{ right: `calc(${activeIndex * slot}% + 1.5%)`, width: '12%' }}
         transition={{ type: 'spring', stiffness: 350, damping: 30 }}
       />
-      {SWIPE_TABS.map((item, idx) => {
+
+      {/* אינדיקטור החלקה חי */}
+      {Math.abs(swipeProgress) > 0.02 && (
+        <div
+          className="absolute top-0 h-0.5 bg-cyan-300 rounded-full pointer-events-none"
+          style={{
+            [swipeProgress < 0 ? 'right' : 'left']: 0,
+            width: `${Math.abs(swipeProgress) * 45}%`,
+            filter: 'drop-shadow(0 0 6px rgba(0,212,255,0.9))',
+            transition: 'opacity 0.12s ease-out',
+          }}
+        />
+      )}
+
+      {SWIPE_TABS.map((item) => {
         const Icon = item.icon;
         const active = activeTab === item.id;
         return (
@@ -60,9 +72,7 @@ export default function MobileBottomNav({ activeTab, onTabChange }) {
                 style={active ? { filter: 'drop-shadow(0 0 6px rgba(0,212,255,0.6))' } : {}}
               />
             </motion.div>
-            <span
-              className={`text-[10px] font-medium transition-colors ${active ? 'text-cyan-400' : 'text-slate-500'}`}
-            >
+            <span className={`text-[10px] font-medium transition-colors ${active ? 'text-cyan-400' : 'text-slate-500'}`}>
               {item.label}
             </span>
             {active && (
@@ -75,6 +85,22 @@ export default function MobileBottomNav({ activeTab, onTabChange }) {
           </motion.button>
         );
       })}
+
+      {/* כפתור "עוד" — פותח את כל הטאבים */}
+      <motion.button
+        role="button"
+        aria-label="עוד טאבים"
+        onClick={() => {
+          if (navigator.vibrate) navigator.vibrate(8);
+          onMore?.();
+        }}
+        whileTap={{ scale: 0.85 }}
+        transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+        className="relative flex flex-col items-center justify-center gap-0.5 flex-1 h-full touch-manipulation"
+      >
+        <LayoutGrid className="w-5 h-5 text-slate-500" />
+        <span className="text-[10px] font-medium text-slate-500">עוד</span>
+      </motion.button>
     </motion.nav>
   );
 }
