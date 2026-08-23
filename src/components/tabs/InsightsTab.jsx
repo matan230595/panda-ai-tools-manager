@@ -10,6 +10,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import MonthlySummaryReport from '@/components/tools/MonthlySummaryReport';
+import ToolHealthMonitor from '@/components/tools/ToolHealthMonitor';
+import UsageHeatMap from '@/components/analytics/UsageHeatMap';
 
 const PRIORITY_COLORS = {
   'גבוהה': 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300',
@@ -201,6 +203,16 @@ ${JSON.stringify(toolsSummary, null, 2)}
             </Button>
           </div>
         </div>
+      </div>
+
+      {/* ניטור בריאות ומפת חום — תמיד זמינים */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+        <Card className="bg-[#1a202d]/60 backdrop-blur-xl border-cyan-400/15">
+          <CardContent className="pt-4"><ToolHealthMonitor /></CardContent>
+        </Card>
+        <Card className="bg-[#1a202d]/60 backdrop-blur-xl border-cyan-400/15">
+          <CardContent className="pt-4"><UsageHeatMap /></CardContent>
+        </Card>
       </div>
 
       {!insights ? (

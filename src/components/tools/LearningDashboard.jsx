@@ -11,6 +11,7 @@ import ToolLogo from '@/components/ToolLogo';
 import moment from 'moment';
 import MasteryKanban from '@/components/tools/MasteryKanban';
 import MasteryGallery from '@/components/tools/MasteryGallery';
+import GamificationPanel from '@/components/learning/GamificationPanel';
 
 const VIEW_MODES = [
   { id: 'list', label: 'רשימה', icon: LayoutGrid },
@@ -123,6 +124,8 @@ export default function LearningDashboard({ onToolClick }) {
           </CardContent>
         </Card>
       </div>
+
+      {viewMode === 'list' && <GamificationPanel />}
 
       {viewMode !== 'list' ? null : plans.length === 0 ? (
         <Card className="border-2 border-dashed">

@@ -11,6 +11,7 @@ import {
 import { Search, Sparkles, Wrench, CheckSquare, GraduationCap, FileText, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import NaturalLanguageSearch from '@/components/search/NaturalLanguageSearch';
 
 const RESULT_LIMIT = 6;
 
@@ -23,6 +24,7 @@ const TYPE_CONFIG = {
 export default function GlobalSearch({ open, onOpenChange, onNavigateTool }) {
   const [query, setQuery] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);
+  const [nlMode, setNlMode] = useState(false);
   const inputRef = useRef(null);
 
   const { data: tools = [] } = useQuery({
@@ -120,11 +122,28 @@ export default function GlobalSearch({ open, onOpenChange, onNavigateTool }) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl p-0 gap-0 overflow-hidden" dir="rtl">
         <DialogHeader className="px-4 pt-4 pb-0">
-          <DialogTitle className="text-base flex items-center gap-2">
-            <Search className="w-4 h-4 text-indigo-500" />
-            חיפוש גלובלי
+          <DialogTitle className="text-base flex items-center justify-between">
+            <span className="flex items-center gap-2">
+              <Search className="w-4 h-4 text-indigo-500" />
+              חיפוש גלובלי
+            </span>
+            <button
+              onClick={() => setNlMode(!nlMode)}
+              className={`flex items-center gap-1 text-xs px-2.5 py-1 rounded-full transition-all ${
+                nlMode ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-400/30' : 'text-slate-400 hover:text-white border border-white/10'
+              }`}
+            >
+              <Sparkles className="w-3 h-3" />
+              חיפוש חכם
+            </button>
           </DialogTitle>
         </DialogHeader>
+        {nlMode ? (
+          <div className="px-4 pt-3 pb-4">
+            <NaturalLanguageSearch onToolClick={(tool) => { onNavigateTool?.(tool); onOpenChange(false); }} />
+          </div>
+        ) : (
+        <>
         <div className="relative px-4 pt-3">
           <Search className="absolute right-7 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
           <Input
@@ -202,6 +221,8 @@ export default function GlobalSearch({ open, onOpenChange, onNavigateTool }) {
               לבחירה
             </span>
           </div>
+        )}
+        </>
         )}
       </DialogContent>
     </Dialog>

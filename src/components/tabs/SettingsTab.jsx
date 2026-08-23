@@ -21,6 +21,8 @@ import LanguageSwitcher from '../LanguageSwitcher.jsx';
 import CollaborationPanel from '../CollaborationPanel.jsx';
 import GoogleCalendarSync from '../GoogleCalendarSync.jsx';
 import AdvancedAnalytics from '../analytics/AdvancedAnalytics.jsx';
+import ApiKeyVaultPanel from '@/components/tools/ApiKeyVaultPanel';
+import BackupRestore from '@/components/tools/BackupRestore';
 
 export default function SettingsTab({ settings, onLogout }) {
   const queryClient = useQueryClient();
@@ -560,6 +562,15 @@ export default function SettingsTab({ settings, onLogout }) {
         </TabsContent>
           </Tabs>
         </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+        <Card className="bg-[#1a202d]/60 backdrop-blur-xl border-cyan-400/15">
+          <CardContent className="pt-4"><ApiKeyVaultPanel /></CardContent>
+        </Card>
+        <Card className="bg-[#1a202d]/60 backdrop-blur-xl border-cyan-400/15">
+          <CardContent className="pt-4"><BackupRestore /></CardContent>
+        </Card>
       </div>
 
       <div className="flex justify-end">
