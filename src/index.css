@@ -213,6 +213,14 @@
   color: #ffffff !important;
 }
 
+/* Auto-contrast text: applies optimal text color based on --bg-color CSS var */
+.auto-contrast-text {
+  color: #ffffff;
+}
+.auto-contrast-text[data-contrast="dark"] {
+  color: #0f172a;
+}
+
 button, a {
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;

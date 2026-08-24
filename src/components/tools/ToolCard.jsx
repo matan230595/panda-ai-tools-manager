@@ -18,6 +18,7 @@ import {
   DrawerTitle,
 } from '@/components/ui/drawer';
 import ShareLinkDialog from '@/components/sharing/ShareLinkDialog';
+import { getContrastText } from '@/utils/contrast';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 
@@ -36,10 +37,10 @@ const CATEGORY_BAR_COLORS = {
 };
 
 const PRICING_COLORS = {
-  'חינם': 'bg-emerald-500',
-  'בתשלום': 'bg-blue-500',
-  'פרימיום': 'bg-purple-500',
-  'פרימיום_מוגבל': 'bg-orange-500',
+  'חינם': '#10b981',
+  'בתשלום': '#3b82f6',
+  'פרימיום': '#a855f7',
+  'פרימיום_מוגבל': '#f97316',
 };
 
 export default function ToolCard({
@@ -329,7 +330,10 @@ export default function ToolCard({
               </div>
             )}
             {show('pricing') && (
-              <span className={`mr-auto inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold text-white ${PRICING_COLORS[tool.pricing] || 'bg-gray-500'}`}>
+              <span
+                className="mr-auto inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold"
+                style={{ backgroundColor: PRICING_COLORS[tool.pricing] || '#6b7280', color: getContrastText(PRICING_COLORS[tool.pricing] || '#6b7280') }}
+              >
                 {tool.pricing?.replace(/_/g, ' ')}
               </span>
             )}

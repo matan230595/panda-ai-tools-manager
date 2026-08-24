@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import ToolLogo from '@/components/ToolLogo';
 import MergeToolsDialog from '@/components/tools/MergeToolsDialog';
+import { getContrastText } from '@/utils/contrast';
 
 function textSimilarity(a = '', b = '') {
   const first = a.toLowerCase().trim();
@@ -94,7 +95,7 @@ export default function DuplicateDetectorDialog({ tools, onDelete, onMerge, onCl
               return (
                 <div key={primary.id} className="rounded-2xl border border-orange-200 dark:border-orange-800 p-5 bg-orange-50/50 dark:bg-orange-950/20">
                   <div className="flex items-center justify-between mb-4">
-                    <Badge className="bg-orange-500 text-white">קבוצה {index + 1}</Badge>
+                    <Badge style={{ backgroundColor: '#f97316', color: getContrastText('#f97316') }}>קבוצה {index + 1}</Badge>
                     <div className="text-xs text-gray-500">הכלי הראשי נשמר, והאחרים מוצעים למיזוג או מחיקה</div>
                   </div>
 
