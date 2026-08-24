@@ -132,6 +132,38 @@
   50% { box-shadow: 0 0 24px -4px rgba(0, 212, 255, 0.3); }
 }
 
+/* Subtle ambient lighting sweep on tool cards */
+@keyframes ambientSweep {
+  0% { transform: translateX(-120%); }
+  100% { transform: translateX(120%); }
+}
+
+.tool-card-ambient {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 40%;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 0%, rgba(0, 212, 255, 0.06) 45%, rgba(0, 212, 255, 0.12) 50%, rgba(0, 212, 255, 0.06) 55%, transparent 100%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.group:hover .tool-card-ambient {
+  opacity: 1;
+  animation: ambientSweep 1.8s ease-in-out;
+}
+
+/* Smooth tab content transition */
+.tab-content-enter {
+  animation: tabContentEnter 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes tabContentEnter {
+  from { opacity: 0; transform: translateY(12px) scale(0.995); filter: blur(4px); }
+  to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+
 /* Parallax background layers */
 @keyframes parallaxFloat {
   0%, 100% { transform: translate3d(0, 0, 0); }

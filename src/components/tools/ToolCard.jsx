@@ -200,6 +200,9 @@ export default function ToolCard({
           }}
         />
 
+        {/* תאורה סביבתית עדינה במעבר עכבר */}
+        <div className="tool-card-ambient rounded-2xl" />
+
         {/* Drag Handle - desktop only */}
         <div
           {...dragHandleProps}
