@@ -27,7 +27,7 @@ export function useSmartNotifications(settings, queryClient) {
       notifications: [...existingNotifications, newNotification],
     });
 
-    queryClient.invalidateQueries(['settings']);
+    queryClient.invalidateQueries({ queryKey: ['settings'] });
 
     if (notification.type === 'warning' || notification.type === 'error') {
       toast.warning(notification.message, { duration: 6000 });
