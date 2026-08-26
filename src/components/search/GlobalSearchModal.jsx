@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { getCurrentUser } from '@/components/hooks/userScopedData';
 import { Sparkles, BellRing, GraduationCap, DollarSign, LayoutDashboard, BarChart3, Settings as SettingsIcon } from 'lucide-react';
+import VoiceSearchButton from '@/components/search/VoiceSearchButton';
 
 const TAB_DESTINATIONS = [
   { id: 'dashboard', label: 'דשבורד', icon: LayoutDashboard, desc: 'תצוגה כללית של המערכת' },
@@ -80,6 +81,7 @@ export default function GlobalSearchModal({ open, onClose, onNavigate }) {
                 placeholder="חפש כלי, דף, או פעולה..."
                 className="flex-1 bg-transparent text-white placeholder:text-slate-500 outline-none text-sm"
               />
+              <VoiceSearchButton onResult={setQuery} />
               <kbd className="text-[10px] text-slate-500 bg-white/5 px-1.5 py-0.5 rounded border border-white/10">ESC</kbd>
               <button onClick={onClose} className="text-slate-400 hover:text-white transition-colors">
                 <X className="w-4 h-4" />

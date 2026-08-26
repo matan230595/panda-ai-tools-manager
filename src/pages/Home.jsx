@@ -20,6 +20,7 @@ const StatsTab = React.lazy(() => import('@/components/tabs/StatsTab'));
 const SettingsTab = React.lazy(() => import('@/components/tabs/SettingsTab'));
 const OnboardingWizard = React.lazy(() => import('@/components/onboarding/OnboardingWizard'));
 import { useSwipeNavigation } from '@/components/hooks/useSwipeNavigation';
+import { useOnlineStatus } from '@/components/hooks/useOfflineCache';
 import GlobalSearchModal from '@/components/search/GlobalSearchModal';
 import { useSmartNotifications } from '@/components/hooks/useSmartNotifications';
 import { useKeyboardShortcuts } from '@/components/hooks/useKeyboardShortcuts';
@@ -45,6 +46,7 @@ export default function Home() {
   const [quickAddTool, setQuickAddTool] = useState(false);
   const [globalSearchOpen, setGlobalSearchOpen] = useState(false);
   const queryClient = useQueryClient();
+  const isOnline = useOnlineStatus();
 
 
   // בדיקת אימות Base44
@@ -202,6 +204,11 @@ export default function Home() {
     <div className="min-h-screen relative bg-[#0b0d12] text-slate-200">
       <React.Suspense fallback={null}><OnboardingWizard /></React.Suspense>
       <AnimatedBackground />
+      {!isOnline && (
+        <div className="fixed top-0 inset-x-0 z-[150] bg-amber-500/90 text-white text-center text-xs py-1.5 font-medium">
+          מצב לא-מקוון — מציג נתונים מהמטמון המקומי
+        </div>
+      )}
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:right-3 focus:z-[200] focus:rounded-xl focus:bg-blue-600 focus:px-4 focus:py-2 focus:text-white"

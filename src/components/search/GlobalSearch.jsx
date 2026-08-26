@@ -12,6 +12,7 @@ import { Search, Sparkles, Wrench, CheckSquare, GraduationCap, FileText, X } fro
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import NaturalLanguageSearch from '@/components/search/NaturalLanguageSearch';
+import VoiceSearchButton from '@/components/search/VoiceSearchButton';
 
 const RESULT_LIMIT = 6;
 
@@ -162,6 +163,7 @@ export default function GlobalSearch({ open, onOpenChange, onNavigateTool }) {
               <X className="w-4 h-4" />
             </button>
           )}
+          <VoiceSearchButton onResult={setQuery} className="absolute left-12 top-1/2 -translate-y-1/2 w-8 h-8" />
         </div>
 
         <div className="max-h-[400px] overflow-y-auto p-2">

@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer';
 import { toast } from 'sonner';
 import ReminderCalendarView from '@/components/calendar/ReminderCalendarView';
+import DailyPracticeReminders from '@/components/reminders/DailyPracticeReminders';
 
 export default function RemindersTab() {
   const queryClient = useQueryClient();
@@ -397,6 +398,10 @@ export default function RemindersTab() {
              </Button>
            )}
          </div>
+      </div>
+
+      <div className="rounded-xl border border-cyan-400/15 bg-[#1a202d]/60 backdrop-blur-xl p-4">
+        <DailyPracticeReminders />
       </div>
 
       <ReminderCalendarView

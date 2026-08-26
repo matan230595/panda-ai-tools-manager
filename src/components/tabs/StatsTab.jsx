@@ -7,6 +7,7 @@ import StatCard from '@/components/stats/StatCard';
 import CategoryChart from '@/components/stats/CategoryChart';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend } from 'recharts';
 import EmptyState from '@/components/EmptyState';
+import MasteryDashboard from '@/components/stats/MasteryDashboard';
 
 export default function StatsTab({ onNavigateToTools }) {
   const { data: tools = [], isLoading } = useQuery({
@@ -115,6 +116,7 @@ export default function StatsTab({ onNavigateToTools }) {
 
   return (
     <div className="space-y-4 md:space-y-6">
+      <MasteryDashboard tools={tools} learningPlans={[]} />
       <div className="relative overflow-hidden rounded-2xl md:rounded-3xl bg-gradient-to-br from-indigo-600 via-purple-600 to-fuchsia-600 p-4 sm:p-6 shadow-xl shadow-indigo-500/20">
         <div className="absolute -top-16 -left-16 w-56 h-56 rounded-full bg-white/10 blur-2xl pointer-events-none" />
         <div className="relative text-right">
