@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 
-const webkitSpeechRecognition = window.webkitSpeechRecognition;
 import { Search, Mic, X, Sparkles, TrendingUp } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -17,9 +16,13 @@ export default function SmartSearch({ onSearch, tools, quickFilters = [], search
   const [liveResults, setLiveResults] = useState([]);
 
   useEffect(() => {
-    const saved = localStorage.getItem('recentSearches');
-    if (saved) {
-      setRecentSearches(JSON.parse(saved));
+    try {
+      const saved = localStorage.getItem('recentSearches');
+      const parsed = saved ? JSON.parse(saved) : [];
+      setRecentSearches(Array.isArray(parsed) ? parsed.filter(item => typeof item === 'string').slice(0, 5) : []);
+    } catch {
+      localStorage.removeItem('recentSearches');
+      setRecentSearches([]);
     }
   }, []);
 
@@ -121,7 +124,8 @@ export default function SmartSearch({ onSearch, tools, quickFilters = [], search
       return;
     }
 
-    const recognition = new webkitSpeechRecognition();
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
     recognition.lang = 'he-IL';
     recognition.continuous = false;
 
@@ -172,7 +176,7 @@ export default function SmartSearch({ onSearch, tools, quickFilters = [], search
           type="search"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' && handleSearch(searchTerm)}
+          onKeyDown={(e) => e.key === 'Enter' && handleSearch(searchTerm)}
           onFocus={() => setShowSuggestions(true)}
           placeholder="חיפוש חכם — נסה 'כלי לעיצוב', 'כתיבת תוכן'..."
           className="h-12 pr-11 pl-24 text-base rounded-2xl bg-gray-50 dark:bg-slate-950 border-gray-200 dark:border-slate-800 focus-visible:ring-2 focus-visible:ring-indigo-500/60 focus-visible:border-indigo-400 transition-all"
