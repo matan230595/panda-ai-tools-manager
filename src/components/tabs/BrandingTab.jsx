@@ -18,7 +18,7 @@ export default function BrandingTab({ settings }) {
   const updateSettings = useMutation({
     mutationFn: (data) => base44.entities.Settings.update(settings.id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries(['settings']);
+      queryClient.invalidateQueries({ queryKey: ['settings'] });
       toast.success('הברנדינג עודכן בהצלחה! 🎨');
       // עדכן favicon
       updateFavicon(logoUrl);
