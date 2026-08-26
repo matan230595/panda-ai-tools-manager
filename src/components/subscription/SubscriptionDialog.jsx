@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { Key, Calendar, CreditCard, Eye, EyeOff, Save, Trash2 } from 'lucide-react';
+import { Key, Calendar, CreditCard, Save, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -13,7 +13,6 @@ import { toast } from 'sonner';
 
 export default function SubscriptionDialog({ tool, onClose }) {
   const queryClient = useQueryClient();
-  const [showPassword, setShowPassword] = useState(false);
   
   const { data: subscriptions = [] } = useQuery({
     queryKey: ['subscriptions', tool?.id],
@@ -26,7 +25,6 @@ export default function SubscriptionDialog({ tool, onClose }) {
   const [formData, setFormData] = useState({
     email: '',
     username: '',
-    password: '',
     subscriptionType: 'חינמי',
     priceMonthly: tool?.priceILS || 0,
     startDate: new Date().toISOString().split('T')[0],
@@ -35,7 +33,6 @@ export default function SubscriptionDialog({ tool, onClose }) {
     autoRenewal: true,
     paymentMethod: '',
     notes: '',
-    apiKey: '',
   });
 
   // סנכרון נתוני הטופס כשהמנוי הקיים נטען מהשרת
@@ -44,7 +41,6 @@ export default function SubscriptionDialog({ tool, onClose }) {
       setFormData({
         email: existingSub.email || '',
         username: existingSub.username || '',
-        password: existingSub.password || '',
         subscriptionType: existingSub.subscriptionType || 'חינמי',
         priceMonthly: existingSub.priceMonthly || tool?.priceILS || 0,
         startDate: existingSub.startDate || new Date().toISOString().split('T')[0],
@@ -53,7 +49,6 @@ export default function SubscriptionDialog({ tool, onClose }) {
         autoRenewal: existingSub.autoRenewal ?? true,
         paymentMethod: existingSub.paymentMethod || '',
         notes: existingSub.notes || '',
-        apiKey: existingSub.apiKey || '',
       });
     }
   }, [existingSub]);
@@ -131,35 +126,8 @@ export default function SubscriptionDialog({ tool, onClose }) {
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label>סיסמה</Label>
-                <div className="flex gap-2">
-                  <Input
-                    type={showPassword ? 'text' : 'password'}
-                    value={formData.password}
-                    onChange={(e) => handleChange('password', e.target.value)}
-                    placeholder="••••••••"
-                    className="flex-1"
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </Button>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label>מפתח API (אם רלוונטי)</Label>
-                <Input
-                  type={showPassword ? 'text' : 'password'}
-                  value={formData.apiKey}
-                  onChange={(e) => handleChange('apiKey', e.target.value)}
-                  placeholder="API Key"
-                />
+              <div className="md:col-span-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800 dark:border-amber-900 dark:bg-amber-950/20 dark:text-amber-200">
+                מטעמי אבטחה, סיסמאות ומפתחות API אינם נשמרים ברשומת המנוי.
               </div>
             </div>
           </div>
