@@ -263,7 +263,7 @@ function ToolCard({
 
           <div className="flex-1 min-w-0 text-right">
             <div className="flex items-start justify-between gap-2">
-              <h3 className="font-bold text-lg md:text-lg text-white leading-snug line-clamp-2 break-words">
+              <h3 className="font-bold text-lg md:text-lg text-white leading-snug break-words">
                 {tool.name}
               </h3>
               {/* מועדפים */}
@@ -273,7 +273,7 @@ function ToolCard({
             </div>
             {/* Badge קטגוריה */}
             {show('category') && (
-              <span className="inline-flex items-center mt-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium text-cyan-300 bg-cyan-400/10 border border-cyan-400/20 max-w-full truncate">
+              <span className="inline-flex items-center mt-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium text-cyan-300 bg-cyan-400/10 border border-cyan-400/20 max-w-full whitespace-normal break-words">
                 {tool.category?.replace(/_/g, ' ')}
               </span>
             )}
