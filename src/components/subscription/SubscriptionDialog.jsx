@@ -65,9 +65,9 @@ export default function SubscriptionDialog({ tool, onClose }) {
       });
     },
     onSuccess: async () => {
-      queryClient.invalidateQueries(['subscriptions']);
+      queryClient.invalidateQueries({ queryKey: ['subscriptions'] });
       await base44.entities.AiTool.update(tool.id, { hasSubscription: true });
-      queryClient.invalidateQueries(['tools']);
+      queryClient.invalidateQueries({ queryKey: ['tools'] });
       toast.success('המנוי נשמר בהצלחה! 🎉');
       onClose();
     },
@@ -76,9 +76,9 @@ export default function SubscriptionDialog({ tool, onClose }) {
   const deleteMutation = useMutation({
     mutationFn: () => base44.entities.Subscription.delete(existingSub.id),
     onSuccess: async () => {
-      queryClient.invalidateQueries(['subscriptions']);
+      queryClient.invalidateQueries({ queryKey: ['subscriptions'] });
       await base44.entities.AiTool.update(tool.id, { hasSubscription: false });
-      queryClient.invalidateQueries(['tools']);
+      queryClient.invalidateQueries({ queryKey: ['tools'] });
       toast.success('המנוי נמחק');
       onClose();
     },
