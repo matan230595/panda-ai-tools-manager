@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.38';
+import { createClientFromRequest } from 'npm:@base44/sdk';
 
 function toDateOnly(date) {
   return date.toISOString().split('T')[0];
@@ -19,17 +19,17 @@ function subtractDays(value, days) {
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
+    const user = await base44.auth.me().catch(() => null);
+    if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+
     const today = startOfDay(new Date());
 
-    const subscriptions = await base44.asServiceRole.entities.Subscription.filter({ isActive: true });
-    const existingReminders = await base44.asServiceRole.entities.Reminder.filter({
+    const subscriptions = await base44.entities.Subscription.filter({ isActive: true });
+    const existingReminders = await base44.entities.Reminder.filter({
       reminderType: 'subscription_expiry',
       isCompleted: false,
       isActive: true,
     });
-    const users = await base44.asServiceRole.entities.User.list();
-    const userMap = Object.fromEntries(users.map((user) => [user.id, user]));
-
     let created = 0;
     let updated = 0;
     let skipped = 0;
@@ -46,8 +46,8 @@ Deno.serve(async (req) => {
         continue;
       }
 
-      const owner = userMap[subscription.created_by_id];
-      if (!owner?.email) {
+      const owner = user;
+      if (!owner.email) {
         skipped++;
         continue;
       }
@@ -75,10 +75,10 @@ Deno.serve(async (req) => {
       );
 
       if (existingReminder) {
-        await base44.asServiceRole.entities.Reminder.update(existingReminder.id, payload);
+        await base44.entities.Reminder.update(existingReminder.id, payload);
         updated++;
       } else {
-        await base44.asServiceRole.entities.Reminder.create(payload);
+        await base44.entities.Reminder.create(payload);
         created++;
       }
     }
@@ -91,6 +91,6 @@ Deno.serve(async (req) => {
       skipped,
     });
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ error: 'Subscription check failed' }, { status: 500 });
   }
 });
