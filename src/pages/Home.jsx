@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { getCurrentUser } from '@/components/hooks/userScopedData';
 import { Link } from 'react-router-dom';
-import { CalendarDays, Search } from 'lucide-react';
+import { CalendarDays, Search, Download, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import AnimatedBackground from '@/components/effects/AnimatedBackground';
 import GlobalSearchBar from '@/components/GlobalSearchBar';
@@ -13,6 +13,7 @@ import ThemeToggle from '@/components/ThemeToggle';
 import NotificationCenter from '@/components/NotificationCenter';
 import KeyboardShortcutsHelp from '@/components/KeyboardShortcutsHelp';
 import QuickAddFAB from '@/components/QuickAddFAB';
+import QuickSideBar from '@/components/QuickSideBar';
 const ToolsTab = React.lazy(() => import('@/components/tabs/ToolsTab'));
 const AssistantTab = React.lazy(() => import('@/components/tabs/AssistantTab'));
 const SubscriptionsTab = React.lazy(() => import('@/components/tabs/SubscriptionsTab'));
@@ -229,7 +230,7 @@ export default function Home() {
       <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} open={navDrawerOpen} onOpenChange={setNavDrawerOpen} settings={settings} />
 
       {/* תוכן הטאב */}
-      <main id="main-content" data-active-tab={activeTab} className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 py-2 sm:py-4 md:py-8 md:pr-[var(--sidebar-w,21rem)] transition-[padding] duration-300 pb-32 md:pb-8">
+      <main id="main-content" data-active-tab={activeTab} className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 py-2 sm:py-4 md:py-8 md:pr-[var(--sidebar-w,21rem)] transition-[padding] duration-300 pb-32 md:pb-8 pl-14 md:pl-6">
         <div
           className="flex items-center justify-between gap-2 mb-3 md:mb-5 rounded-xl border border-cyan-400/15 bg-[#1a202d]/80 md:bg-[#1a202d]/60 md:backdrop-blur-xl px-3 py-2.5"
         >
@@ -331,6 +332,13 @@ export default function Home() {
       </main>
       
 
+
+      {/* סרגל קיצורים צף בצד */}
+      <QuickSideBar
+        onVoiceSearch={() => setGlobalSearchOpen(true)}
+        onAddTool={() => { setActiveTab('tools'); setQuickAddTool(true); }}
+        onSettings={() => setActiveTab('settings')}
+      />
 
       {/* כפתור פעולה מהירה במובייל */}
       <QuickAddFAB
