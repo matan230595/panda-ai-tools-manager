@@ -166,8 +166,8 @@ export default function ToolsTab({ settings, initialFilter, quickAddTool, onQuic
       return tool;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['tools']);
-      queryClient.invalidateQueries(['toolTasks']);
+      queryClient.invalidateQueries({ queryKey: ['tools'] });
+      queryClient.invalidateQueries({ queryKey: ['toolTasks'] });
       toast.success('הכלי נוסף עם 5 משימות עבודה מוכנות! 🎉');
       setShowForm(false);
       setEditingTool(null);
@@ -178,7 +178,7 @@ export default function ToolsTab({ settings, initialFilter, quickAddTool, onQuic
   const updateMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.AiTool.update(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries(['tools']);
+      queryClient.invalidateQueries({ queryKey: ['tools'] });
       toast.success('הכלי עודכן בהצלחה! ✅');
       setShowForm(false);
       setEditingTool(null);
@@ -189,7 +189,7 @@ export default function ToolsTab({ settings, initialFilter, quickAddTool, onQuic
   const deleteMutation = useMutation({
     mutationFn: (id) => base44.entities.AiTool.delete(id),
     onSuccess: () => {
-      queryClient.invalidateQueries(['tools']);
+      queryClient.invalidateQueries({ queryKey: ['tools'] });
       toast.success('הכלי נמחק בהצלחה');
       setDeletingTool(null);
     },
@@ -373,7 +373,7 @@ export default function ToolsTab({ settings, initialFilter, quickAddTool, onQuic
         });
 
         await base44.entities.AiTool.bulkCreate(cleanedTools);
-        queryClient.invalidateQueries(['tools']);
+        queryClient.invalidateQueries({ queryKey: ['tools'] });
         toast.success(`${importedTools.length} כלים יובאו בהצלחה! 📤`);
       } catch (error) {
         toast.error('שגיאה בייבוא הקובץ');
@@ -432,18 +432,18 @@ export default function ToolsTab({ settings, initialFilter, quickAddTool, onQuic
 
   const handleQuickUpdate = async (toolId, patch) => {
     await base44.entities.AiTool.update(toolId, patch);
-    queryClient.invalidateQueries(['tools']);
+    queryClient.invalidateQueries({ queryKey: ['tools'] });
     toast.success('הכלי עודכן');
   };
 
   const handleKanbanStatusChange = async (toolId, masteryLevel) => {
     try {
       await base44.entities.AiTool.update(toolId, { masteryLevel });
-      queryClient.invalidateQueries(['tools']);
+      queryClient.invalidateQueries({ queryKey: ['tools'] });
       toast.success('שלב הלמידה עודכן');
     } catch {
       toast.error('שגיאה בעדכון הסטטוס');
-      queryClient.invalidateQueries(['tools']);
+      queryClient.invalidateQueries({ queryKey: ['tools'] });
     }
   };
 
@@ -453,7 +453,7 @@ export default function ToolsTab({ settings, initialFilter, quickAddTool, onQuic
     const [moved] = reordered.splice(source.index, 1);
     reordered.splice(destination.index, 0, moved);
     await base44.entities.AiTool.bulkUpdate(reordered.map((tool, index) => ({ id: tool.id, sortOrder: index })));
-    queryClient.invalidateQueries(['tools']);
+    queryClient.invalidateQueries({ queryKey: ['tools'] });
     toast.success('סדר הכלים נשמר');
   };
 
@@ -490,7 +490,7 @@ export default function ToolsTab({ settings, initialFilter, quickAddTool, onQuic
     });
 
     await base44.entities.AiTool.delete(duplicateTool.id);
-    queryClient.invalidateQueries(['tools']);
+    queryClient.invalidateQueries({ queryKey: ['tools'] });
     toast.success(`בוצע מיזוג של ${duplicateTool.name} לתוך ${primaryTool.name}`);
   };
 
@@ -654,7 +654,7 @@ export default function ToolsTab({ settings, initialFilter, quickAddTool, onQuic
             <div className="flex-shrink-0">
               <ExportImportDialog
                 tools={tools}
-                onImportComplete={() => queryClient.invalidateQueries(['tools'])}
+                onImportComplete={() => queryClient.invalidateQueries({ queryKey: ['tools'] })}
               />
             </div>
 
