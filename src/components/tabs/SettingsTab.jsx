@@ -27,14 +27,6 @@ import BackupRestore from '@/components/tools/BackupRestore';
 export default function SettingsTab({ settings, onLogout }) {
   const queryClient = useQueryClient();
   const [formData, setFormData] = useState({
-    geminiApiKey: settings?.geminiApiKey || '',
-    groqApiKey: settings?.groqApiKey || '',
-    mistralApiKey: settings?.mistralApiKey || '',
-    cohereApiKey: settings?.cohereApiKey || '',
-    huggingfaceApiKey: settings?.huggingfaceApiKey || '',
-    togetherApiKey: settings?.togetherApiKey || '',
-    claudeApiKey: settings?.claudeApiKey || '',
-    openaiApiKey: settings?.openaiApiKey || '',
     ollamaEndpoint: settings?.ollamaEndpoint || 'http://localhost:11434',
     localaiBudget: settings?.localaiBudget || 'http://localhost:8080',
     preferredModel: settings?.preferredModel || 'groq',
@@ -48,7 +40,6 @@ export default function SettingsTab({ settings, onLogout }) {
     enableKeyboardShortcuts: settings?.enableKeyboardShortcuts ?? true,
   });
   const [showResetDialog, setShowResetDialog] = useState(false);
-  const [visibleKeys, setVisibleKeys] = useState({});
   const [mobileSection, setMobileSection] = useState('branding');
   const [providerConnectionStates, setProviderConnectionStates] = useState({});
 
@@ -65,9 +56,13 @@ export default function SettingsTab({ settings, onLogout }) {
     onError: () => toast.error('שגיאה בשמירת ההגדרות'),
   });
 
-  const handleSave = () => updateSettings.mutate(formData);
+  const handleSave = () => {
+    const safeSettings = Object.fromEntries(
+      Object.entries(formData).filter(([key]) => !key.toLowerCase().includes('apikey'))
+    );
+    updateSettings.mutate(safeSettings);
+  };
   const handleChange = (field, value) => setFormData(prev => ({ ...prev, [field]: value }));
-  const toggleKeyVisibility = (key) => setVisibleKeys(prev => ({ ...prev, [key]: !prev[key] }));
 
   const providerStatuses = useMemo(() => {
     const getValue = (key) => String(formData[key] || '').trim();
@@ -132,7 +127,19 @@ export default function SettingsTab({ settings, onLogout }) {
       const user = await getCurrentUser();
       const tools = await base44.entities.AiTool.filter({ created_by_id: user.id });
       const conversations = await base44.entities.Conversation.filter({ created_by_id: user.id });
-      const exportData = { tools, conversations, settings: formData, exportDate: new Date().toISOString() };
+      const safeTools = tools.map(({ userCredentials, ...tool }) => ({
+        ...tool,
+        userCredentials: userCredentials ? {
+          email: userCredentials.email || '',
+          username: userCredentials.username || '',
+          phoneNumber: userCredentials.phoneNumber || '',
+          googleConnected: !!userCredentials.googleConnected,
+        } : undefined,
+      }));
+      const safeSettings = Object.fromEntries(
+        Object.entries(formData).filter(([key]) => !key.toLowerCase().includes('apikey'))
+      );
+      const exportData = { tools: safeTools, conversations, settings: safeSettings, exportDate: new Date().toISOString() };
       const dataStr = JSON.stringify(exportData, null, 2);
       const dataBlob = new Blob([dataStr], { type: 'application/json' });
       const url = URL.createObjectURL(dataBlob);
@@ -376,14 +383,14 @@ export default function SettingsTab({ settings, onLogout }) {
                       </CardHeader>
                       <CardContent className="space-y-4">
                         <div className="space-y-2">
-                          <Label>מפתח API</Label>
+                          <Label>מפתח API — מנוהל מחוץ למערכת</Label>
                           <div className="flex flex-col sm:flex-row gap-2">
                             <div className="flex-1 space-y-2">
                               <Input
-                                type={visibleKeys[provider.key] ? 'text' : 'password'}
-                                value={formData[provider.key]}
-                                onChange={(e) => handleChange(provider.key, e.target.value)}
-                                placeholder={`הדבק ${provider.name} API key...`}
+                                type="password"
+                                value=""
+                                disabled
+                                placeholder="מטעמי אבטחה, מפתחות אינם נשמרים כאן"
                                 className="flex-1"
                               />
                               <div className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${providerStatusMap[provider.id]?.status === 'connected' ? 'bg-green-100 text-green-700 dark:bg-green-950/40 dark:text-green-300' : providerStatusMap[provider.id]?.status === 'configured' ? 'bg-blue-100 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300' : providerStatusMap[provider.id]?.status === 'failed' || providerStatusMap[provider.id]?.status === 'invalid' ? 'bg-amber-100 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300' : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300'}`}>
@@ -391,9 +398,7 @@ export default function SettingsTab({ settings, onLogout }) {
                                 <span>{providerStatusMap[provider.id]?.status === 'connected' ? 'מפתח שמור' : providerStatusMap[provider.id]?.status === 'configured' ? 'מוגדר' : providerStatusMap[provider.id]?.status === 'failed' || providerStatusMap[provider.id]?.status === 'invalid' ? 'צריך תיקון' : 'לא הוגדר'}</span>
                               </div>
                             </div>
-                            <Button variant="outline" onClick={() => toggleKeyVisibility(provider.key)} className="min-h-[44px] sm:w-auto">
-                              {visibleKeys[provider.key] ? '🙈' : '👁️'}
-                            </Button>
+                            <span className="inline-flex min-h-[44px] items-center rounded-md border px-3 text-xs text-gray-500">לא נשמר במערכת</span>
                           </div>
                         </div>
                         <div className="text-xs space-y-1 text-gray-600 dark:text-gray-400">
