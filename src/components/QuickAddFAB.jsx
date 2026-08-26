@@ -5,7 +5,7 @@ export default function QuickAddFAB({ onAddTool, onStartChat }) {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-[95] flex flex-col items-center gap-2" dir="rtl">
+    <div className="md:hidden fixed bottom-24 right-4 z-[95] flex flex-col items-center gap-2" dir="rtl">
       {open && (
         <div className="flex flex-col gap-2 mb-2 animate-slide-in w-[200px]">
           <button
@@ -30,7 +30,7 @@ export default function QuickAddFAB({ onAddTool, onStartChat }) {
       )}
       <button
         onClick={() => setOpen(!open)}
-        className={`w-14 h-14 rounded-full shadow-2xl flex items-center justify-center text-white transition-all active:scale-90 ${open ? 'bg-rose-500 rotate-45' : 'bg-gradient-to-br from-indigo-500 to-purple-600'}`}
+        className={`w-12 h-12 sm:w-14 sm:h-14 rounded-full shadow-2xl flex items-center justify-center text-white transition-all active:scale-90 ${open ? 'bg-rose-500 rotate-45' : 'bg-gradient-to-br from-indigo-500 to-purple-600'}`}
         aria-label={open ? 'סגור תפריט' : 'פעולה מהירה'}
       >
         {open ? <X className="w-6 h-6" /> : <Plus className="w-6 h-6" />}

@@ -208,10 +208,10 @@ export default function BudgetTab() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto space-y-4 md:space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <div className="relative overflow-hidden rounded-2xl md:rounded-3xl bg-gradient-to-br from-emerald-600 via-teal-600 to-cyan-600 p-4 sm:p-6 shadow-xl shadow-emerald-500/20">
         <div className="absolute -top-16 -left-16 w-56 h-56 rounded-full bg-white/10 blur-2xl pointer-events-none" />
-        <div className="relative flex items-center justify-between gap-3">
+        <div className="relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div className="text-right">
             <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white mb-0.5">ניהול תקציב חכם</h1>
             <p className="text-xs sm:text-sm text-emerald-100/90">עקוב אחר ההוצאות וחסוך כסף עם AI</p>
@@ -257,7 +257,7 @@ export default function BudgetTab() {
       </Card>
 
       {/* סטטיסטיקות ראשיות */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">
@@ -438,7 +438,7 @@ export default function BudgetTab() {
       )}
 
       {/* גרפים */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         <Card>
           <CardHeader>
             <CardTitle>תחזית הוצאות (6 חודשים)</CardTitle>
@@ -450,7 +450,7 @@ export default function BudgetTab() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={230}>
+            <ResponsiveContainer width="100%" height={200} className="sm:!h-[230px]">
               <LineChart data={budgetAnalysis.forecast} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" />
@@ -471,7 +471,7 @@ export default function BudgetTab() {
             <CardDescription>היכן הכסף הולך</CardDescription>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={230}>
+            <ResponsiveContainer width="100%" height={200} className="sm:!h-[230px]">
               <RePieChart>
                 <Pie
                   data={budgetAnalysis.categoryData}

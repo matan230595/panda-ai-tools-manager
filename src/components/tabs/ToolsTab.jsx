@@ -493,33 +493,33 @@ export default function ToolsTab({ settings, initialFilter, quickAddTool, onQuic
   return (
     <div className="space-y-3 sm:space-y-4 md:space-y-6">
       {/* באנר ראש עמוד — הולוגרפי */}
-      <div className="relative overflow-hidden rounded-2xl border border-cyan-400/15 bg-[#1a202d]/60 backdrop-blur-xl p-4 sm:p-6 md:p-8">
+      <div className="relative overflow-hidden rounded-2xl border border-cyan-400/15 bg-[#1a202d]/60 backdrop-blur-xl p-3.5 sm:p-6 md:p-8">
         <div className="absolute -top-16 -left-16 w-56 h-56 rounded-full bg-cyan-500/5 blur-2xl pointer-events-none" />
         <div className="absolute -bottom-20 -right-10 w-64 h-64 rounded-full bg-blue-600/5 blur-3xl pointer-events-none" />
-        <div className="relative flex items-center gap-3 sm:gap-4 text-right" dir="rtl">
+        <div className="relative flex items-center gap-3 text-right" dir="rtl">
           {userLogo && (
-            <img src={userLogo} alt={appName} className="w-11 h-11 sm:w-14 md:w-16 sm:h-14 md:h-16 object-contain rounded-xl bg-white/5 backdrop-blur p-1.5 flex-shrink-0" />
+            <img src={userLogo} alt={appName} className="w-10 h-10 sm:w-14 md:w-16 sm:h-14 md:h-16 object-contain rounded-xl bg-white/5 backdrop-blur p-1.5 flex-shrink-0" />
           )}
           <div className="min-w-0 flex-1">
-            <h1 className="text-xl sm:text-2xl md:text-4xl font-bold text-white mb-0.5 break-words">
+            <h1 className="text-lg sm:text-2xl md:text-4xl font-bold text-white mb-0.5 break-words">
               כלי AI שלי
             </h1>
             <p className="text-xs sm:text-sm md:text-base text-slate-400">
               נהל את כל כלי ה-AI שלך במקום אחד
             </p>
           </div>
-          <div className="flex gap-2 sm:gap-3 flex-shrink-0">
-            <div className="rounded-xl bg-white/5 border border-cyan-400/10 backdrop-blur px-3 sm:px-4 py-1.5 sm:py-2.5 text-center min-w-[56px] sm:min-w-[70px]">
-              <div className="text-lg sm:text-2xl font-bold text-cyan-300 leading-tight">{tools.length}</div>
-              <div className="text-[10px] sm:text-[11px] text-slate-500">כלים</div>
+          <div className="flex gap-1.5 sm:gap-3 flex-shrink-0">
+            <div className="rounded-lg sm:rounded-xl bg-white/5 border border-cyan-400/10 px-2 sm:px-4 py-1 sm:py-2.5 text-center min-w-[44px] sm:min-w-[70px]">
+              <div className="text-base sm:text-2xl font-bold text-cyan-300 leading-tight">{tools.length}</div>
+              <div className="text-[9px] sm:text-[11px] text-slate-500">כלים</div>
             </div>
-            <div className="rounded-xl bg-white/5 border border-cyan-400/10 backdrop-blur px-3 sm:px-4 py-1.5 sm:py-2.5 text-center min-w-[56px] sm:min-w-[70px]">
-              <div className="text-lg sm:text-2xl font-bold text-cyan-300 leading-tight">{tools.filter(t => t.isFavorite).length}</div>
-              <div className="text-[10px] sm:text-[11px] text-slate-500">מועדפים</div>
+            <div className="rounded-lg sm:rounded-xl bg-white/5 border border-cyan-400/10 px-2 sm:px-4 py-1 sm:py-2.5 text-center min-w-[44px] sm:min-w-[70px]">
+              <div className="text-base sm:text-2xl font-bold text-cyan-300 leading-tight">{tools.filter(t => t.isFavorite).length}</div>
+              <div className="text-[9px] sm:text-[11px] text-slate-500">מועדפים</div>
             </div>
-            <div className="rounded-xl bg-white/5 border border-cyan-400/10 backdrop-blur px-3 sm:px-4 py-1.5 sm:py-2.5 text-center min-w-[56px] sm:min-w-[70px] hidden sm:block">
-              <div className="text-lg sm:text-2xl font-bold text-cyan-300 leading-tight">{allCategories.length}</div>
-              <div className="text-[10px] sm:text-[11px] text-slate-500">קטגוריות</div>
+            <div className="rounded-lg sm:rounded-xl bg-white/5 border border-cyan-400/10 px-2 sm:px-4 py-1 sm:py-2.5 text-center min-w-[44px] sm:min-w-[70px] hidden sm:block">
+              <div className="text-base sm:text-2xl font-bold text-cyan-300 leading-tight">{allCategories.length}</div>
+              <div className="text-[9px] sm:text-[11px] text-slate-500">קטגוריות</div>
             </div>
           </div>
         </div>
@@ -553,7 +553,7 @@ export default function ToolsTab({ settings, initialFilter, quickAddTool, onQuic
               size="sm"
             >
               <Plus className="w-4 h-4 ml-1.5" />
-              הוסף כלי
+              <span className="hidden sm:inline">הוסף כלי</span>
             </Button>
 
             <Button
@@ -563,7 +563,7 @@ export default function ToolsTab({ settings, initialFilter, quickAddTool, onQuic
               className="flex-shrink-0"
             >
               <Sparkles className="w-4 h-4 ml-1.5" />
-              המלצות
+              <span className="hidden sm:inline">המלצות</span>
             </Button>
 
             <div className="flex-1 min-w-[20px]" />
@@ -588,19 +588,19 @@ export default function ToolsTab({ settings, initialFilter, quickAddTool, onQuic
               <DropdownMenuContent align="start" className="w-52" dir="rtl">
                 <DropdownMenuLabel>תצוגה</DropdownMenuLabel>
                 <DropdownMenuItem onClick={() => setViewMode('grid')} className={viewMode === 'grid' ? 'bg-accent' : ''}>
-                  <LayoutGrid className="w-4 h-4 ml-2" /> רשת
+                  <LayoutGrid className="w-4 h-4 ml-2" /> <span className="text-sm">רשת</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setViewMode('list')} className={viewMode === 'list' ? 'bg-accent' : ''}>
-                  <List className="w-4 h-4 ml-2" /> רשימה
+                  <List className="w-4 h-4 ml-2" /> <span className="text-sm">רשימה</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setViewMode('compact')} className={viewMode === 'compact' ? 'bg-accent' : ''}>
-                  <Rows3 className="w-4 h-4 ml-2" /> צפוף
+                  <Rows3 className="w-4 h-4 ml-2" /> <span className="text-sm">צפוף</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setViewMode('table')} className={viewMode === 'table' ? 'bg-accent' : ''}>
-                  <Table2 className="w-4 h-4 ml-2" /> טבלה
+                  <Table2 className="w-4 h-4 ml-2" /> <span className="text-sm">טבלה</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setViewMode('kanban')} className={viewMode === 'kanban' ? 'bg-accent' : ''}>
-                  <Kanban className="w-4 h-4 ml-2" /> קאנבן
+                  <Kanban className="w-4 h-4 ml-2" /> <span className="text-sm">קאנבן</span>
                 </DropdownMenuItem>
 
                 <DropdownMenuSeparator />

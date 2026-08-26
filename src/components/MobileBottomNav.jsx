@@ -23,6 +23,7 @@ export default function MobileBottomNav({ activeTab, onTabChange, onMore, swipeP
       dir="rtl"
       aria-label="ניווט מובייל"
       role="tablist"
+      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
       {/* אינדיקטור רקע זז */}
       <motion.div

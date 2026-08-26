@@ -180,7 +180,8 @@
   display: flex;
   align-items: center;
   justify-content: space-around;
-  height: 64px;
+  height: 60px;
+  padding-bottom: env(safe-area-inset-bottom);
   background: hsl(222 47% 7% / 0.9);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);

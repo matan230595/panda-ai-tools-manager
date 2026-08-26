@@ -144,25 +144,25 @@ function ToolCard({
 
   return (
     <div
-      className="h-full md:[perspective:1600px] py-1.5 md:py-2"
+      className="h-full py-1 md:py-2 md:[perspective:1600px]"
       onMouseMove={handleMouseMove}
       onMouseLeave={resetTilt}
     >
       <div
         ref={cardRef}
         className={`
-          group relative flex flex-col rounded-2xl p-4 md:p-5 h-full antialiased cursor-pointer overflow-hidden
-          bg-[#1a202d]/90 md:bg-[#1a202d]/70 md:backdrop-blur-xl
-          border border-cyan-400/15
-          transition-[transform,box-shadow,border-color] duration-200 ease-out will-change-transform
-          active:scale-[0.98] md:active:scale-100
-          hover:border-cyan-400/40
-          ${tilt.active
-            ? 'shadow-[0_50px_80px_-25px_rgba(0,212,255,0.25),0_25px_40px_-20px_rgba(52,152,219,0.15)]'
-            : 'shadow-[0_8px_24px_-12px_rgba(0,0,0,0.4)] hover:shadow-[0_16px_36px_-16px_rgba(0,212,255,0.15)]'}
-          ${isDragging ? 'opacity-50 scale-95' : 'opacity-100'}
-          ${tool.isFavorite ? 'ring-1 ring-yellow-400/60 shadow-[0_0_24px_-4px_rgba(250,204,21,0.3)]' : ''}
-          ${onToggleSelect && isSelected ? 'ring-1 ring-cyan-400' : ''}
+        group relative flex flex-col rounded-2xl p-3.5 sm:p-4 md:p-5 h-full antialiased cursor-pointer overflow-hidden
+        bg-[#1a202d]/90 md:bg-[#1a202d]/70 md:backdrop-blur-xl
+        border border-cyan-400/15
+        transition-[transform,box-shadow,border-color] duration-200 ease-out will-change-transform
+        active:scale-[0.98] md:active:scale-100
+        hover:border-cyan-400/40
+        ${tilt.active
+          ? 'shadow-[0_50px_80px_-25px_rgba(0,212,255,0.25),0_25px_40px_-20px_rgba(52,152,219,0.15)]'
+          : 'shadow-[0_8px_24px_-12px_rgba(0,0,0,0.4)] hover:shadow-[0_16px_36px_-16px_rgba(0,212,255,0.15)]'}
+        ${isDragging ? 'opacity-50 scale-95' : 'opacity-100'}
+        ${tool.isFavorite ? 'ring-1 ring-yellow-400/60 shadow-[0_0_24px_-4px_rgba(250,204,21,0.3)]' : ''}
+        ${onToggleSelect && isSelected ? 'ring-1 ring-cyan-400' : ''}
         `}
         style={{
           transform: `rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg) ${tilt.active ? 'scale(1.03)' : 'scale(1)'}`,

@@ -17,10 +17,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 const RESULT_LIMIT = 5;
 
 const TYPE_CONFIG = {
-  tool: { label: 'כלי', icon: Wrench, color: 'text-indigo-600 bg-indigo-50 dark:bg-indigo-950/40', border: 'border-indigo-200 dark:border-indigo-800' },
-  task: { label: 'משימה', icon: CheckSquare, color: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40', border: 'border-emerald-200 dark:border-emerald-800' },
-  plan: { label: 'תוכנית למידה', icon: GraduationCap, color: 'text-purple-600 bg-purple-50 dark:bg-purple-950/40', border: 'border-purple-200 dark:border-purple-800' },
-  doc: { label: 'מסמך', icon: FileText, color: 'text-sky-600 bg-sky-50 dark:bg-sky-950/40', border: 'border-sky-200 dark:border-sky-800' },
+  tool: { label: 'כלי', icon: Wrench, color: 'text-cyan-400 bg-cyan-400/10', border: 'border-cyan-400/30' },
+  task: { label: 'משימה', icon: CheckSquare, color: 'text-emerald-400 bg-emerald-400/10', border: 'border-emerald-400/30' },
+  plan: { label: 'תוכנית למידה', icon: GraduationCap, color: 'text-purple-400 bg-purple-400/10', border: 'border-purple-400/30' },
+  doc: { label: 'מסמך', icon: FileText, color: 'text-sky-400 bg-sky-400/10', border: 'border-sky-400/30' },
 };
 
 export default function GlobalSearchBar({ onNavigateTool, onFocus }) {
@@ -137,40 +137,38 @@ export default function GlobalSearchBar({ onNavigateTool, onFocus }) {
   };
 
   return (
-    <div ref={containerRef} className="relative flex-1 max-w-xl mx-auto">
-      {/* שדה החיפוש התמיד-גלוי */}
+    <div ref={containerRef} className="relative flex-1 min-w-0 mx-auto">
       <div className={`relative transition-all duration-300 ${open ? 'scale-[1.01]' : ''}`}>
-        <Search className={`absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none transition-colors ${open ? 'text-indigo-500' : 'text-gray-400'}`} />
+        <Search className={`absolute right-2.5 sm:right-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none transition-colors ${open ? 'text-cyan-400' : 'text-slate-500'}`} />
         <Input
           ref={inputRef}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={handleFocus}
           onKeyDown={handleKeyDown}
-          placeholder="חפש כלי, משימה, תוכנית למידה או מסמך..."
-          className={`h-11 pr-10 pl-16 text-sm rounded-2xl border transition-all duration-300 ${
+          placeholder="חיפוש..."
+          className={`h-9 sm:h-11 pr-9 sm:pr-10 pl-8 sm:pl-12 text-xs sm:text-sm rounded-xl border transition-all duration-300 min-w-0 ${
             open
-              ? 'border-indigo-400 bg-white dark:bg-slate-900 shadow-[0_0_0_4px_rgba(99,102,241,0.1),0_8px_24px_-8px_rgba(99,102,241,0.3)]'
-              : 'border-gray-200 dark:border-slate-700 bg-white/80 dark:bg-slate-900/80 hover:border-indigo-300 hover:shadow-md'
-          }`}
+              ? 'border-cyan-400/50 bg-[#0e1118] shadow-[0_0_0_3px_rgba(0,212,255,0.08),0_8px_24px_-8px_rgba(0,212,255,0.2)]'
+              : 'border-cyan-400/15 bg-[#0e1118]/80 hover:border-cyan-400/30'
+          } text-slate-200 placeholder:text-slate-600`}
         />
-        <div className="absolute left-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+        <div className="absolute left-1.5 sm:left-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
           {query ? (
             <button
               onClick={() => setQuery('')}
-              className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors"
+              className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg flex items-center justify-center text-slate-500 hover:text-slate-300 hover:bg-white/5 transition-colors"
             >
               <X className="w-3.5 h-3.5" />
             </button>
           ) : (
-            <kbd className="hidden sm:flex items-center text-[10px] text-gray-400 bg-gray-100 dark:bg-slate-800 px-1.5 py-0.5 rounded font-mono">
+            <kbd className="hidden md:flex items-center text-[10px] text-slate-600 bg-white/5 px-1.5 py-0.5 rounded font-mono border border-cyan-400/10">
               ⌘K
             </kbd>
           )}
         </div>
       </div>
 
-      {/* תפריט תוצאות נפתח */}
       <AnimatePresence>
         {open && (query.trim() !== '' || true) && (
           <motion.div
@@ -180,30 +178,30 @@ export default function GlobalSearchBar({ onNavigateTool, onFocus }) {
             transition={{ duration: 0.15 }}
             className="absolute top-full mt-2 inset-x-0 z-50"
           >
-            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.25)] border border-gray-100 dark:border-slate-800 overflow-hidden">
+            <div className="bg-[#0e1118]/95 backdrop-blur-xl rounded-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] border border-cyan-400/20 overflow-hidden">
               {query.trim() === '' ? (
-                <div className="p-4">
-                  <div className="text-xs font-semibold text-gray-400 mb-3">חיפוש מהיר</div>
+                <div className="p-3 sm:p-4">
+                  <div className="text-xs font-semibold text-slate-500 mb-3">חיפוש מהיר</div>
                   <div className="flex flex-wrap gap-2">
                     {Object.values(TYPE_CONFIG).map((cfg) => (
-                      <Badge key={cfg.label} variant="outline" className={`gap-1.5 py-1.5 px-3 cursor-default ${cfg.border}`}>
+                      <Badge key={cfg.label} variant="outline" className={`gap-1.5 py-1.5 px-3 cursor-default ${cfg.border} bg-white/5`}>
                         <cfg.icon className="w-3.5 h-3.5" />
                         {cfg.label}
                       </Badge>
                     ))}
                   </div>
-                  <div className="mt-3 flex items-center gap-2 text-xs text-gray-400">
+                  <div className="mt-3 flex items-center gap-2 text-xs text-slate-500">
                     <Sparkles className="w-3.5 h-3.5" />
                     <span>התחל להקליד כדי לחפש בכל המערכת</span>
                   </div>
                 </div>
               ) : results.length === 0 ? (
-                <div className="p-6 flex flex-col items-center justify-center text-gray-400">
+                <div className="p-6 flex flex-col items-center justify-center text-slate-500">
                   <Search className="w-8 h-8 mb-2 opacity-40" />
                   <p className="text-sm">לא נמצאו תוצאות עבור "{query}"</p>
                 </div>
               ) : (
-                <div className="max-h-[400px] overflow-y-auto p-2">
+                <div className="max-h-[60vh] overflow-y-auto p-2">
                   {results.map((result, idx) => {
                     const cfg = TYPE_CONFIG[result.type];
                     const Icon = cfg.icon;
@@ -214,28 +212,28 @@ export default function GlobalSearchBar({ onNavigateTool, onFocus }) {
                         onClick={() => handleSelect(result)}
                         onMouseEnter={() => setActiveIndex(idx)}
                         className={`w-full flex items-center gap-3 p-2.5 rounded-xl transition-all text-right ${
-                          isActive ? 'bg-indigo-50 dark:bg-indigo-950/30 ring-1 ring-indigo-200 dark:ring-indigo-800' : 'hover:bg-gray-50 dark:hover:bg-slate-800'
+                          isActive ? 'bg-cyan-400/10 ring-1 ring-cyan-400/30' : 'hover:bg-white/5'
                         }`}
                       >
                         <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${cfg.color}`}>
                           <Icon className="w-4 h-4" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="font-medium text-sm truncate">{result.title}</div>
-                          <div className="text-xs text-gray-500 truncate">{result.subtitle}</div>
+                          <div className="font-medium text-sm truncate text-slate-200">{result.title}</div>
+                          <div className="text-xs text-slate-500 truncate">{result.subtitle}</div>
                         </div>
-                        <Badge variant="outline" className="text-[10px] flex-shrink-0">{cfg.label}</Badge>
-                        {isActive && <ArrowRight className="w-4 h-4 text-indigo-400 flex-shrink-0" />}
+                        <Badge variant="outline" className="text-[10px] flex-shrink-0 border-cyan-400/20 text-slate-400">{cfg.label}</Badge>
+                        {isActive && <ArrowRight className="w-4 h-4 text-cyan-400 flex-shrink-0" />}
                       </button>
                     );
                   })}
                   {results.length > 0 && (
-                    <div className="border-t border-gray-100 dark:border-slate-800 px-3 py-2 flex items-center justify-between text-[11px] text-gray-400">
+                    <div className="border-t border-cyan-400/10 px-3 py-2 flex items-center justify-between text-[11px] text-slate-500">
                       <span>{results.length} תוצאות</span>
-                      <span className="flex items-center gap-1">
-                        <kbd className="px-1.5 py-0.5 rounded bg-gray-100 dark:bg-slate-800 border border-gray-200 dark:border-slate-700">↑↓</kbd>
+                      <span className="hidden sm:flex items-center gap-1">
+                        <kbd className="px-1.5 py-0.5 rounded bg-white/5 border border-cyan-400/10">↑↓</kbd>
                         ניווט
-                        <kbd className="px-1.5 py-0.5 rounded bg-gray-100 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 mr-1">↵</kbd>
+                        <kbd className="px-1.5 py-0.5 rounded bg-white/5 border border-cyan-400/10 mr-1">↵</kbd>
                         בחירה
                       </span>
                     </div>

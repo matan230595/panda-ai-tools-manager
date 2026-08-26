@@ -57,7 +57,7 @@ export default function SearchAndFilters({
   ];
 
   return (
-    <div className="sticky top-[68px] md:top-4 z-30 bg-[#1a202d]/60 backdrop-blur-xl rounded-2xl p-3 sm:p-4 border border-cyan-400/15 space-y-3" dir="rtl">
+    <div className="sticky top-14 md:top-4 z-30 bg-[#1a202d]/80 backdrop-blur-xl rounded-2xl p-2.5 sm:p-4 border border-cyan-400/15 space-y-2.5 sm:space-y-3" dir="rtl">
       <SmartSearch
         searchTerm={searchTerm}
         onSearch={onSearchChange}
