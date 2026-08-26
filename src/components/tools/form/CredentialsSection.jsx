@@ -19,7 +19,7 @@ export default function CredentialsSection({ hasSubscription, credentials, onTog
           </span>
           <div>
             <Label htmlFor="hasSubscription" className="text-sm font-semibold cursor-pointer">יש לי מנוי פעיל</Label>
-            <p className="text-xs text-gray-500 dark:text-gray-400">שמור פרטי גישה מאובטחים לכלי זה</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">שמור פרטי חשבון שאינם סודיים</p>
           </div>
         </div>
         <Switch
@@ -33,7 +33,7 @@ export default function CredentialsSection({ hasSubscription, credentials, onTog
         <div className="space-y-4 pt-2 border-t border-indigo-200/60 dark:border-indigo-900/60">
           <div className="flex items-center gap-2 text-xs text-indigo-700 dark:text-indigo-300">
             <KeyRound className="w-3.5 h-3.5" />
-            <span>הפרטים נשמרים באופן מאובטח ומשויכים לחשבון שלך בלבד</span>
+            <span>מטעמי אבטחה, אין לשמור כאן סיסמאות או מפתחות API</span>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
@@ -53,17 +53,6 @@ export default function CredentialsSection({ hasSubscription, credentials, onTog
                 value={cred.username || ''}
                 onChange={(e) => onCredentialChange('username', e.target.value)}
                 placeholder="שם המשתמש שלך"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="cred-password">סיסמה</Label>
-              <Input
-                id="cred-password"
-                type="password"
-                value={cred.password || ''}
-                onChange={(e) => onCredentialChange('password', e.target.value)}
-                placeholder="••••••••"
-                autoComplete="new-password"
               />
             </div>
             <div className="space-y-2">
