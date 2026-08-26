@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
+import { createClientFromRequest } from 'npm:@base44/sdk';
 
 // Deterministic Google event id per source record — MUST match syncGoogleCalendar
 // so manual and automatic sync always target the SAME calendar event (no duplicates).
@@ -181,7 +181,8 @@ Deno.serve(async (req) => {
 
     if (!response.ok) {
       const errorText = await response.text();
-      return Response.json({ error: errorText || 'Failed to sync Google Calendar event' }, { status: 500 });
+      console.error('Google Calendar API error:', response.status, errorText);
+      return Response.json({ error: 'Failed to sync Google Calendar event' }, { status: 502 });
     }
 
     const responseData = await response.json();
@@ -193,6 +194,6 @@ Deno.serve(async (req) => {
     });
   } catch (error) {
     console.error('Error:', error);
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ error: 'Failed to sync calendar event' }, { status: 500 });
   }
 });
