@@ -40,7 +40,7 @@ export default function BulkActionsBar({
       await base44.entities.AiTool.deleteMany({ id: { $in: ids } });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['tools']);
+      queryClient.invalidateQueries({ queryKey: ['tools'] });
       toast.success(`${selectedIds.length} כלים נמחקו בהצלחה`);
       onClear();
       setShowDeleteConfirm(false);
@@ -53,7 +53,7 @@ export default function BulkActionsBar({
       await base44.entities.AiTool.updateMany({ id: { $in: ids } }, { $set: { category } });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['tools']);
+      queryClient.invalidateQueries({ queryKey: ['tools'] });
       toast.success(`${selectedIds.length} כלים הועברו לקטגוריה`);
       onClear();
       setTargetCategory('');
@@ -66,7 +66,7 @@ export default function BulkActionsBar({
       await base44.entities.AiTool.updateMany({ id: { $in: ids } }, { $set: { isFavorite: favorite } });
     },
     onSuccess: (_, { favorite }) => {
-      queryClient.invalidateQueries(['tools']);
+      queryClient.invalidateQueries({ queryKey: ['tools'] });
       toast.success(`${selectedIds.length} כלים ${favorite ? 'סומנו כמועדפים' : 'הוסרו ממועדפים'}`);
       onClear();
     },
@@ -76,7 +76,7 @@ export default function BulkActionsBar({
   const bulkMarkLearned = useMutation({
     mutationFn: (ids) => base44.entities.AiTool.updateMany({ id: { $in: ids } }, { $set: { masteryLevel: 'מומחה' } }),
     onSuccess: () => {
-      queryClient.invalidateQueries(['tools']);
+      queryClient.invalidateQueries({ queryKey: ['tools'] });
       toast.success(`${selectedIds.length} כלים סומנו כנלמדו`);
       onClear();
     },
