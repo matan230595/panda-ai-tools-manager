@@ -1,16 +1,19 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { getCurrentUser } from '@/components/hooks/userScopedData';
-import { Sparkles, Loader2, ExternalLink, Globe, ArrowLeft, Star } from 'lucide-react';
+import { Sparkles, Loader2, ExternalLink, Globe, ArrowLeft, Star, Plus, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import ToolLogo from '@/components/ToolLogo';
 
 export default function SimilarTools({ currentTool, onSelectTool }) {
+  const queryClient = useQueryClient();
   const [isSearching, setIsSearching] = useState(false);
   const [isSearchingExternal, setIsSearchingExternal] = useState(false);
+  const [isAddingTool, setIsAddingTool] = useState(null);
+  const [addedTools, setAddedTools] = useState([]);
   const [similarTools, setSimilarTools] = useState([]);
   const [externalTools, setExternalTools] = useState([]);
   const resultsRef = useRef(null);
@@ -144,7 +147,23 @@ ${existingNames}
       "name": "שם הכלי",
       "url": "https://...",
       "description": "תיאור קצר בעברית",
-      "pricing": "חינם/בתשלום/פרימיום",
+      "category": "קטגוריה קצרה בעברית",
+      "pricing": "חינם/בתשלום/פרימיום/פרימיום_מוגבל",
+      "subscriptionType": "חינמי/פרימיום/גולד",
+      "priceUSD": מספר או null,
+      "priceILS": מספר או null,
+      "detailedDescription": "תיאור מפורט בעברית",
+      "features": ["תכונה"],
+      "integrations": ["אינטגרציה"],
+      "tags": ["תגית"],
+      "targetAudience": "קהל יעד",
+      "languagesSupported": ["עברית"],
+      "platforms": ["דפדפן"],
+      "useCases": [{"title": "מקרה שימוש", "description": "תיאור"}],
+      "prosAndCons": {"pros": ["יתרון"], "cons": ["חיסרון"]},
+      "logo": "כתובת לוגו ציבורית או מחרוזת ריקה",
+      "rating": מספר בין 0 ל-5,
+      "popularity": מספר שלם בין 1 ל-5,
       "reason": "למה הכלי הזה דומה ושווה לבדוק אותו"
     }
   ]
@@ -165,7 +184,23 @@ ${existingNames}
                   name: { type: 'string' },
                   url: { type: 'string' },
                   description: { type: 'string' },
+                  category: { type: 'string' },
                   pricing: { type: 'string' },
+                  subscriptionType: { type: 'string' },
+                  priceUSD: { type: 'number' },
+                  priceILS: { type: 'number' },
+                  detailedDescription: { type: 'string' },
+                  features: { type: 'array', items: { type: 'string' } },
+                  integrations: { type: 'array', items: { type: 'string' } },
+                  tags: { type: 'array', items: { type: 'string' } },
+                  targetAudience: { type: 'string' },
+                  languagesSupported: { type: 'array', items: { type: 'string' } },
+                  platforms: { type: 'array', items: { type: 'string' } },
+                  useCases: { type: 'array', items: { type: 'object', properties: { title: { type: 'string' }, description: { type: 'string' } } } },
+                  prosAndCons: { type: 'object', properties: { pros: { type: 'array', items: { type: 'string' } }, cons: { type: 'array', items: { type: 'string' } } } },
+                  logo: { type: 'string' },
+                  rating: { type: 'number' },
+                  popularity: { type: 'number' },
                   reason: { type: 'string' }
                 }
               }
@@ -181,6 +216,42 @@ ${existingNames}
       toast.error('שגיאה בחיפוש כלים דומים מחוץ למערכת');
     } finally {
       setIsSearchingExternal(false);
+    }
+  };
+
+  const addExternalTool = async (tool) => {
+    setIsAddingTool(tool.name);
+    try {
+      const savedTool = await base44.entities.AiTool.create({
+        name: tool.name,
+        url: tool.url,
+        category: tool.category || currentTool.category || 'אחר',
+        description: tool.description || '',
+        detailedDescription: tool.detailedDescription || tool.description || '',
+        features: tool.features || [],
+        integrations: tool.integrations || [],
+        tags: tool.tags || [],
+        pricing: tool.pricing || 'חינם',
+        subscriptionType: tool.subscriptionType || 'חינמי',
+        priceUSD: tool.priceUSD,
+        priceILS: tool.priceILS,
+        targetAudience: tool.targetAudience || '',
+        languagesSupported: tool.languagesSupported || [],
+        platforms: tool.platforms || ['דפדפן'],
+        useCases: tool.useCases || [],
+        prosAndCons: tool.prosAndCons,
+        logo: tool.logo || '',
+        rating: tool.rating || 0,
+        popularity: tool.popularity || 0,
+        aiGenerated: true,
+      });
+      setAddedTools((current) => [...current, tool.name]);
+      queryClient.invalidateQueries({ queryKey: ['tools'] });
+      toast.success(`${savedTool.name} נוסף למאגר עם פרטים מלאים`);
+    } catch {
+      toast.error('לא ניתן היה להוסיף את הכלי');
+    } finally {
+      setIsAddingTool(null);
     }
   };
 
@@ -301,10 +372,21 @@ ${existingNames}
                   <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 leading-6 mb-3">{tool.reason}</p>
                   <div className="flex items-center justify-between gap-2 pt-2 border-t border-gray-100 dark:border-gray-800">
                     <Badge variant="outline" className="text-xs">{tool.pricing?.replace(/_/g, ' ')}</Badge>
-                    <Button size="sm" variant="outline" onClick={() => window.open(tool.url, '_blank', 'noopener,noreferrer')}>
-                      <ExternalLink className="w-4 h-4 ml-2" />
-                      פתח אתר
-                    </Button>
+                    <div className="flex items-center gap-2">
+                      <Button size="sm" variant="outline" onClick={() => window.open(tool.url, '_blank', 'noopener,noreferrer')}>
+                        <ExternalLink className="w-4 h-4 ml-2" />
+                        פתח אתר
+                      </Button>
+                      <Button
+                        size="sm"
+                        onClick={() => addExternalTool(tool)}
+                        disabled={isAddingTool === tool.name || addedTools.includes(tool.name)}
+                        aria-label={`הוסף את ${tool.name} למאגר`}
+                      >
+                        {addedTools.includes(tool.name) ? <Check className="w-4 h-4 ml-2" /> : isAddingTool === tool.name ? <Loader2 className="w-4 h-4 ml-2 animate-spin" /> : <Plus className="w-4 h-4 ml-2" />}
+                        {addedTools.includes(tool.name) ? 'נוסף' : 'הוסף למאגר'}
+                      </Button>
+                    </div>
                   </div>
                 </div>
               ))}

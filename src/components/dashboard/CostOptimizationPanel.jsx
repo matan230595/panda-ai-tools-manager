@@ -73,7 +73,7 @@ export default function CostOptimizationPanel({ tools = [], onManageTool }) {
                   ₪{Math.round(totalSavings).toLocaleString('he-IL')}
                 </p>
               </div>
-              <div className="text-left">
+              <div className="text-left" dir="ltr">
                 <p className="text-xs text-gray-500 dark:text-gray-400">בשנה</p>
                 <p className="text-lg font-bold text-orange-600 dark:text-orange-400">
                   ₪{Math.round(totalSavings * 12).toLocaleString('he-IL')}
@@ -101,7 +101,7 @@ export default function CostOptimizationPanel({ tools = [], onManageTool }) {
                         : 'שימוש נמוך'}
                     </p>
                   </div>
-                  <div className="text-left flex-shrink-0">
+                  <div className="text-left flex-shrink-0" dir="ltr">
                     <p className="text-sm font-bold text-amber-600 dark:text-amber-400">₪{Math.round(cost)}</p>
                     <p className="text-[10px] text-gray-400">לחודש</p>
                   </div>
