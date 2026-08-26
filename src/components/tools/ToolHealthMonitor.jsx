@@ -2,13 +2,16 @@ import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { getCurrentUser } from '@/components/hooks/userScopedData';
-import { Activity, RefreshCw, CheckCircle2, AlertTriangle, XCircle, Globe } from 'lucide-react';
+import { Activity, RefreshCw, CheckCircle2, AlertTriangle, XCircle, Globe, Clock3 } from 'lucide-react';
+import { toast } from 'sonner';
 
 const STATUS_CFG = {
   active: { icon: CheckCircle2, color: 'text-emerald-400', bg: 'bg-emerald-500/10', label: 'פעיל' },
   warning: { icon: AlertTriangle, color: 'text-amber-400', bg: 'bg-amber-500/10', label: 'אזהרה' },
   down: { icon: XCircle, color: 'text-red-400', bg: 'bg-red-500/10', label: 'לא זמין' },
   no_url: { icon: Globe, color: 'text-slate-500', bg: 'bg-slate-500/10', label: 'ללא כתובת' },
+  invalid_url: { icon: AlertTriangle, color: 'text-orange-400', bg: 'bg-orange-500/10', label: 'כתובת לא תקינה' },
+  timeout: { icon: Clock3, color: 'text-amber-400', bg: 'bg-amber-500/10', label: 'תם הזמן' },
 };
 
 export default function ToolHealthMonitor() {
@@ -28,9 +31,10 @@ export default function ToolHealthMonitor() {
     setResults(null);
     try {
       const res = await base44.functions.invoke('checkToolHealth', {});
-      setResults(res);
+      setResults(res.data);
     } catch (e) {
       console.error('Health check failed:', e);
+      toast.error(e?.response?.data?.error || 'בדיקת זמינות הכלים נכשלה');
     } finally {
       setLoading(false);
     }
@@ -60,7 +64,7 @@ export default function ToolHealthMonitor() {
 
       {results && (
         <>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
             {Object.entries(STATUS_CFG).map(([key, cfg]) => (
               <div key={key} className={`rounded-lg ${cfg.bg} p-2.5 text-center`}>
                 <cfg.icon className={`w-4 h-4 mx-auto mb-1 ${cfg.color}`} />
