@@ -1,20 +1,21 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.38';
+import { createClientFromRequest } from 'npm:@base44/sdk';
 
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
+    const currentUser = await base44.auth.me().catch(() => null);
+    if (!currentUser) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-    // Get all registered users
-    const users = await base44.asServiceRole.entities.User.list();
+    const users = [currentUser];
     let sentCount = 0;
 
     for (const user of users) {
       if (!user.email) continue;
 
       // Fetch user's data
-      const tools = await base44.asServiceRole.entities.AiTool.filter({ created_by_id: user.id });
-      const learningPlans = await base44.asServiceRole.entities.ToolLearningPlan.filter({ created_by_id: user.id });
-      const subscriptions = await base44.asServiceRole.entities.Subscription.filter({ created_by_id: user.id, isActive: true });
+      const tools = await base44.entities.AiTool.filter({ created_by_id: user.id });
+      const learningPlans = await base44.entities.ToolLearningPlan.filter({ created_by_id: user.id });
+      const subscriptions = await base44.entities.Subscription.filter({ created_by_id: user.id, isActive: true });
 
       // Skip users with no activity
       if (tools.length === 0 && learningPlans.length === 0) continue;
@@ -113,6 +114,6 @@ ${upcomingRenewals.map(s => `• ${s.toolName} — חידוש ב-${s.renewalDate
 
     return Response.json({ success: true, sent: sentCount, totalUsers: users.length });
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ error: 'Weekly report failed' }, { status: 500 });
   }
 });
