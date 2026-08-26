@@ -1,6 +1,7 @@
 import React from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import { getCurrentUser } from '@/components/hooks/userScopedData';
 import { Button } from '@/components/ui/button';
 import { Globe } from 'lucide-react';
 
@@ -10,7 +11,8 @@ export default function LanguageSwitcher() {
   const { data: settings } = useQuery({
     queryKey: ['settings'],
     queryFn: async () => {
-      const list = await base44.entities.Settings.list();
+      const user = await getCurrentUser();
+      const list = await base44.entities.Settings.filter({ created_by_id: user.id });
       return list[0];
     },
   });
@@ -23,9 +25,10 @@ export default function LanguageSwitcher() {
         return base44.entities.Settings.create({ language });
       }
     },
-    onSuccess: () => {
+    onSuccess: (_data, language) => {
       queryClient.invalidateQueries({ queryKey: ['settings'] });
-      document.documentElement.lang = settings?.language === 'en' ? 'en' : 'he';
+      document.documentElement.lang = language === 'en' ? 'en' : 'he';
+      document.documentElement.dir = language === 'en' ? 'ltr' : 'rtl';
     }
   });
 
