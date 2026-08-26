@@ -98,7 +98,7 @@ export default function TemplatesTab() {
 
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.AiTool.create(data),
-    onSuccess: () => queryClient.invalidateQueries(['tools'])
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['tools'] })
   });
 
   const handleImportTemplate = async (template) => {
