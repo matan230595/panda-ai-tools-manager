@@ -122,7 +122,7 @@ export default function IntegrationsTab() {
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.Integration.create(data),
     onSuccess: () => {
-      queryClient.invalidateQueries(['integrations']);
+      queryClient.invalidateQueries({ queryKey: ['integrations'] });
       toast.success('האינטגרציה הופעלה בהצלחה! 🎉');
       setConfiguring(null);
       setWebhookUrl('');
@@ -133,7 +133,7 @@ export default function IntegrationsTab() {
   const updateMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.Integration.update(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries(['integrations']);
+      queryClient.invalidateQueries({ queryKey: ['integrations'] });
       toast.success('האינטגרציה עודכנה בהצלחה! ✅');
     },
   });
@@ -141,7 +141,7 @@ export default function IntegrationsTab() {
   const deleteMutation = useMutation({
     mutationFn: (id) => base44.entities.Integration.delete(id),
     onSuccess: () => {
-      queryClient.invalidateQueries(['integrations']);
+      queryClient.invalidateQueries({ queryKey: ['integrations'] });
       toast.success('האינטגרציה הוסרה');
     },
   });
