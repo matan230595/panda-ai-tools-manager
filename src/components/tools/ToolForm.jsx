@@ -43,7 +43,7 @@ export default function ToolForm({ tool, onClose, onSave }) {
     popularity: 3,
     isFavorite: false,
     hasSubscription: false,
-    userCredentials: { email: '', username: '', password: '', phoneNumber: '', googleConnected: false },
+    userCredentials: { email: '', username: '', phoneNumber: '', googleConnected: false },
     logo: '',
     screenshots: [],
     videoDemo: '',
