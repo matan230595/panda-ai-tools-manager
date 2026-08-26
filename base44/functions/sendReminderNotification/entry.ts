@@ -21,11 +21,8 @@ Deno.serve(async (req) => {
       return Response.json({ success: true, sent: 0, failed: 0, total: 0 });
     }
 
-    const allReminders = await base44.asServiceRole.entities.Reminder.list();
-    const reminders = allReminders.filter((reminder) => {
-      if (!reminderIds.includes(reminder.id)) return false;
-      return reminder.created_by_id === user.id || reminder.created_by === user.email;
-    });
+    const ownedReminders = await base44.asServiceRole.entities.Reminder.filter({ created_by_id: user.id });
+    const reminders = ownedReminders.filter((reminder) => reminderIds.includes(reminder.id));
 
     let successCount = 0;
     let failureCount = 0;
