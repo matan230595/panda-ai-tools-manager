@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 
 const EXPORT_ENTITIES = [
   'AiTool', 'ToolTask', 'Subscription', 'Reminder',
-  'ToolLearningPlan', 'ApiKeyVault', 'UserToolRating', 'Settings'
+  'ToolLearningPlan', 'UserToolRating', 'Settings'
 ];
 
 export default function QuickSideBar({ onVoiceSearch, onAddTool, onSettings }) {
