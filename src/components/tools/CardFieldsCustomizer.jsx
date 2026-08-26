@@ -57,7 +57,7 @@ export default function CardFieldsCustomizer() {
           await base44.entities.FieldConfig.create(payload);
         }
       }
-      queryClient.invalidateQueries(['fieldConfigs']);
+      queryClient.invalidateQueries({ queryKey: ['fieldConfigs'] });
       toast.success('תצוגת הכרטיסים עודכנה');
       setOpen(false);
     } catch {
