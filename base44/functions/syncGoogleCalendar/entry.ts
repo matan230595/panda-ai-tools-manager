@@ -1,6 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
-
-const CONNECTOR_ID = '6a8e697708e1076300e61a70';
+import { createClientFromRequest } from 'npm:@base44/sdk';
 
 function toEventId(prefix, rawId) {
   const cleaned = String(rawId || '').toLowerCase().split('').map((char) => /[a-v0-9]/.test(char) ? char : '0').join('');
@@ -8,14 +6,14 @@ function toEventId(prefix, rawId) {
   return id.length < 5 ? `${id}00000` : id.slice(0, 1024);
 }
 
-export default async function(req) {
+Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
     const body = await req.json().catch(() => ({}));
-    const { accessToken } = await base44.asServiceRole.connectors.getCurrentAppUserConnection(CONNECTOR_ID);
+    const { accessToken } = await base44.asServiceRole.connectors.getConnection('googlecalendar');
     const headers = { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' };
 
     if (body.action === 'status') {
@@ -61,4 +59,4 @@ export default async function(req) {
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }
-}
+});
