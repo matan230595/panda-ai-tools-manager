@@ -342,10 +342,9 @@ ${formData.url ? `URL: ${formData.url}` : ''}
       userCredentials: formData.hasSubscription ? {
         email: String(formData.userCredentials?.email || ''),
         username: String(formData.userCredentials?.username || ''),
-        password: String(formData.userCredentials?.password || ''),
         phoneNumber: String(formData.userCredentials?.phoneNumber || ''),
         googleConnected: !!formData.userCredentials?.googleConnected,
-      } : { email: '', username: '', password: '', phoneNumber: '', googleConnected: false },
+      } : { email: '', username: '', phoneNumber: '', googleConnected: false },
       logo: String(formData.logo || ''),
       screenshots: Array.isArray(formData.screenshots) ? formData.screenshots.filter(Boolean).map(String) : [],
       videoDemo: String(formData.videoDemo || ''),
