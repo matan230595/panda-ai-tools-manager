@@ -1,21 +1,18 @@
 import React, { useState } from 'react';
-import { Lock, Eye, EyeOff, Plus, Trash2, Check } from 'lucide-react';
+import { Lock, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 
 export default function UserCredentialsTab({ tool, onSave }) {
   const [credentials, setCredentials] = useState(tool?.userCredentials || {
     email: '',
     username: '',
-    password: '',
     phoneNumber: '',
     googleConnected: false,
   });
 
-  const [showPassword, setShowPassword] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
   const handleChange = (field, value) => {
@@ -25,7 +22,13 @@ export default function UserCredentialsTab({ tool, onSave }) {
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      await onSave({ userCredentials: credentials });
+      const safeCredentials = {
+        email: credentials.email || '',
+        username: credentials.username || '',
+        phoneNumber: credentials.phoneNumber || '',
+        googleConnected: !!credentials.googleConnected,
+      };
+      await onSave({ userCredentials: safeCredentials });
       toast.success('פרטי הגישה שמורו בהצלחה 🔒');
     } catch (error) {
       toast.error('שגיאה בשמירת פרטי הגישה');
@@ -78,34 +81,6 @@ export default function UserCredentialsTab({ tool, onSave }) {
           placeholder="שם משתמש..."
           className="text-right"
         />
-      </div>
-
-      {/* שדה סיסמה */}
-      <div className="space-y-2">
-        <Label htmlFor="password" className="flex items-center gap-2">
-          🔐 סיסמה
-          {credentials.password && (
-            <Badge className="bg-green-500">שמור</Badge>
-          )}
-        </Label>
-        <div className="relative">
-          <Input
-            id="password"
-            type={showPassword ? 'text' : 'password'}
-            value={credentials.password}
-            onChange={(e) => handleChange('password', e.target.value)}
-            placeholder="סיסמה..."
-            className="text-right pr-10"
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
-          >
-            {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-          </button>
-        </div>
-        <p className="text-xs text-gray-500">⚠️ הסיסמה מוצפנת במכשירך בלבד</p>
       </div>
 
       {/* שדה מספר טלפון */}
@@ -161,7 +136,7 @@ export default function UserCredentialsTab({ tool, onSave }) {
       {/* הערה אבטחה */}
       <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-4 border border-yellow-200 dark:border-yellow-800 text-right">
         <p className="text-xs text-yellow-800 dark:text-yellow-200">
-          <span className="font-semibold">🛡️ הערה אבטחה:</span> הנתונים שלך מוצפנים ומאוחסנים בטוח. אנו לעולם לא נשתף זאת עם צדדים שלישיים.
+          <span className="font-semibold">🛡️ הערת אבטחה:</span> שמור כאן רק אימייל, שם משתמש וטלפון. סיסמאות ומפתחות API אינם נשמרים במסך זה.
         </p>
       </div>
     </div>
