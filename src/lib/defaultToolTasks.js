@@ -1,4 +1,5 @@
 import { base44 } from '@/api/base44Client';
+import { syncToolTasks } from '@/lib/googleTasksSync';
 
 const DEFAULT_TASKS = [
   ['ניסוי ראשוני והרשמה', 'פתיחת חשבון וסיור ראשוני בכלי', 'high'],
@@ -26,5 +27,7 @@ export async function createDefaultToolTasks(tool) {
     };
   });
 
-  return base44.entities.ToolTask.bulkCreate(tasks);
+  const createdTasks = await base44.entities.ToolTask.bulkCreate(tasks);
+  await syncToolTasks(createdTasks);
+  return createdTasks;
 }

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import { syncToolTasks } from '@/lib/googleTasksSync';
 import { Wand2, CheckCircle2, ListChecks, TrendingUp, FileText, ShieldCheck, Zap, Users } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -118,7 +119,9 @@ export default function TaskTemplatesDialog({ open, onOpenChange, tools = [] }) 
         };
       });
 
-      return base44.entities.ToolTask.bulkCreate(tasks);
+      const createdTasks = await base44.entities.ToolTask.bulkCreate(tasks);
+      await syncToolTasks(createdTasks);
+      return createdTasks;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['toolTasks'] });

@@ -5,6 +5,7 @@ import { getCurrentUser } from '@/components/hooks/userScopedData';
 import ReminderCalendarView from '@/components/calendar/ReminderCalendarView';
 import GoogleCalendarSync from '@/components/GoogleCalendarSync';
 import PersonalCalendarConnection from '@/components/calendar/PersonalCalendarConnection';
+import PersonalGoogleTasksConnection from '@/components/calendar/PersonalGoogleTasksConnection';
 import DailyPracticeReminders from '@/components/reminders/DailyPracticeReminders';
 
 export default function CalendarPage() {
@@ -92,6 +93,7 @@ export default function CalendarPage() {
           </div>
           <div className="order-1 space-y-4 xl:order-2">
             <PersonalCalendarConnection onConnectionChange={setIsCalendarConnected} />
+            <PersonalGoogleTasksConnection />
             <DailyPracticeReminders isCalendarConnected={isCalendarConnected} />
             <GoogleCalendarSync />
           </div>

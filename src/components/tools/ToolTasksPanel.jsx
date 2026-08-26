@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import { syncToolTasks } from '@/lib/googleTasksSync';
 import { getCurrentUser } from '@/components/hooks/userScopedData';
 import { CheckCircle2, Plus, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -31,7 +32,11 @@ export default function ToolTasksPanel({ tool }) {
   });
 
   const createTask = useMutation({
-    mutationFn: (data) => base44.entities.ToolTask.create(data),
+    mutationFn: async (data) => {
+      const task = await base44.entities.ToolTask.create(data);
+      await syncToolTasks([task]);
+      return task;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['toolTasks', tool.id] });
       queryClient.invalidateQueries({ queryKey: ['toolTasks'] });
@@ -48,7 +53,11 @@ export default function ToolTasksPanel({ tool }) {
   });
 
   const updateTask = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.ToolTask.update(id, data),
+    mutationFn: async ({ id, data }) => {
+      const task = await base44.entities.ToolTask.update(id, data);
+      await syncToolTasks([task]);
+      return task;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['toolTasks', tool.id] });
       queryClient.invalidateQueries({ queryKey: ['toolTasks'] });

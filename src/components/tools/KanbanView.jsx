@@ -194,7 +194,7 @@ export default function KanbanView({ tools, onEdit, onDelete, onToggleFavorite, 
       </div>
       <TaskTemplatesDialog open={showTemplates} onOpenChange={setShowTemplates} tools={tools} />
       {/* מובייל: גלילה אופקית בין העמודות · דסקטופ: 4 עמודות */}
-      <div className="flex gap-3 md:gap-6 overflow-x-auto pb-4 md:grid md:grid-cols-4 md:overflow-visible scrollbar-hide" dir="rtl">
+      <div className="flex gap-3 md:gap-6 overflow-x-auto pb-4 md:grid md:grid-cols-3 md:overflow-visible scrollbar-hide" dir="rtl">
         {COLUMNS.map((column) => {
           const columnTools = localTools.filter((t) => getStatus(t) === column.id);
           const ColIcon = column.Icon;
