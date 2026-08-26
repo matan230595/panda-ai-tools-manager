@@ -44,6 +44,6 @@ Deno.serve(async (req: Request): Promise<Response> => {
 
     return Response.json({ success: true, synced: synced.length });
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ error: 'Failed to sync Google Tasks' }, { status: 500 });
   }
 });
