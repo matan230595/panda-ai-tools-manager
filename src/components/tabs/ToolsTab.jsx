@@ -32,6 +32,7 @@ import BulkActionsBar from '@/components/tools/BulkActionsBar';
 import CardFieldsCustomizer from '@/components/tools/CardFieldsCustomizer';
 import TaskTemplatesDialog from '@/components/tools/TaskTemplatesDialog';
 import { useCardFieldConfig } from '@/components/hooks/useCardFieldConfig';
+import { createDefaultToolTasks } from '@/lib/defaultToolTasks';
 import { toast } from 'sonner';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import {
@@ -159,10 +160,15 @@ export default function ToolsTab({ settings, initialFilter, quickAddTool, onQuic
 
   // מוטציות
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.AiTool.create(data),
+    mutationFn: async (data) => {
+      const tool = await base44.entities.AiTool.create(data);
+      await createDefaultToolTasks(tool);
+      return tool;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries(['tools']);
-      toast.success('הכלי נוסף בהצלחה! 🎉');
+      queryClient.invalidateQueries(['toolTasks']);
+      toast.success('הכלי נוסף עם 5 משימות עבודה מוכנות! 🎉');
       setShowForm(false);
       setEditingTool(null);
     },

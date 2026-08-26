@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import ToolLogo from '@/components/ToolLogo';
+import { createDefaultToolTasks } from '@/lib/defaultToolTasks';
 
 export default function SimilarTools({ currentTool, onSelectTool }) {
   const queryClient = useQueryClient();
@@ -245,9 +246,11 @@ ${existingNames}
         popularity: tool.popularity || 0,
         aiGenerated: true,
       });
+      await createDefaultToolTasks(savedTool);
       setAddedTools((current) => [...current, tool.name]);
       queryClient.invalidateQueries({ queryKey: ['tools'] });
-      toast.success(`${savedTool.name} נוסף למאגר עם פרטים מלאים`);
+      queryClient.invalidateQueries({ queryKey: ['toolTasks'] });
+      toast.success(`${savedTool.name} נוסף עם 5 משימות עבודה מוכנות`);
     } catch {
       toast.error('לא ניתן היה להוסיף את הכלי');
     } finally {
