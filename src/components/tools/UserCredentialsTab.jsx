@@ -29,7 +29,7 @@ export default function UserCredentialsTab({ tool, onSave }) {
         googleConnected: !!credentials.googleConnected,
       };
       await onSave({ userCredentials: safeCredentials });
-      toast.success('פרטי הגישה שמורו בהצלחה 🔒');
+      toast.success('פרטי הגישה נשמרו בהצלחה 🔒');
     } catch (error) {
       toast.error('שגיאה בשמירת פרטי הגישה');
     } finally {
@@ -51,7 +51,7 @@ export default function UserCredentialsTab({ tool, onSave }) {
           פרטי גישה
         </h3>
         <p className="text-sm text-gray-600 dark:text-gray-400">
-          שמור את נתונים שלך בטוח לגישה מהירה
+          שמור את פרטי הזיהוי הלא־סודיים שלך לגישה מהירה
         </p>
       </div>
 
