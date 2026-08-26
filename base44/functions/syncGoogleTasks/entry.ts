@@ -1,16 +1,14 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
-
-const CONNECTOR_ID = '6a8ea70f39dbfd8eb27f4dbc';
+import { createClientFromRequest } from 'npm:@base44/sdk';
 const TASKS_URL = 'https://tasks.googleapis.com/tasks/v1/lists/@default/tasks';
 
-export default async function(req: Request): Promise<Response> {
+Deno.serve(async (req: Request): Promise<Response> => {
   try {
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
     const body = await req.json().catch(() => ({}));
-    const { accessToken } = await base44.asServiceRole.connectors.getCurrentAppUserConnection(CONNECTOR_ID);
+    const { accessToken } = await base44.asServiceRole.connectors.getConnection('googletasks');
     const headers = { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' };
 
     if (body.action === 'status') {
@@ -48,4 +46,4 @@ export default async function(req: Request): Promise<Response> {
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }
-}
+});
