@@ -121,8 +121,8 @@ export default function ToolForm({ tool, onClose, onSave }) {
         if (!formData.logo) {
           handleChange('logo', faviconUrl);
         }
-      } catch (error) {
-        console.log('שגיאה בחילוץ metadata:', error);
+      } catch {
+        // URL לא תקין — המשתמש יכול להזין לוגו ידנית
       } finally {
         setIsAutoFetchingMeta(false);
       }
