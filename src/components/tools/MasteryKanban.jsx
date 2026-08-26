@@ -32,7 +32,7 @@ export default function MasteryKanban({ onToolClick }) {
       queryClient.setQueryData(['tools'], (prev) =>
         (prev || []).map((t) => (t.id === toolId ? { ...t, masteryLevel: newLevel } : t))
       );
-      queryClient.invalidateQueries(['tools']);
+      queryClient.invalidateQueries({ queryKey: ['tools'] });
       if (navigator.vibrate) navigator.vibrate(15);
     } catch (e) {
       console.error('Failed to update mastery:', e);
