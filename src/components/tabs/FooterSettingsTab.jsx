@@ -39,7 +39,7 @@ export default function FooterSettingsTab({ settings }) {
   const updateSettings = useMutation({
     mutationFn: (data) => base44.entities.Settings.update(settings.id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries(['settings']);
+      queryClient.invalidateQueries({ queryKey: ['settings'] });
       toast.success('הגדרות Footer נשמרו בהצלחה! ✅');
     },
     onError: () => toast.error('שגיאה בשמירת ההגדרות'),
