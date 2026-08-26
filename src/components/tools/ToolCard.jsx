@@ -152,7 +152,7 @@ function ToolCard({
       <div
         ref={cardRef}
         className={`
-        group relative flex flex-col rounded-2xl p-6 sm:p-5 md:p-5 h-full antialiased cursor-pointer overflow-hidden
+        group relative flex flex-col rounded-2xl p-4 sm:p-5 md:p-5 h-full antialiased cursor-pointer overflow-hidden
         bg-[#1a202d]/90 md:bg-[#1a202d]/70 md:backdrop-blur-xl
         border border-cyan-400/15
         transition-[transform,box-shadow,border-color] duration-200 ease-out will-change-transform
@@ -232,7 +232,7 @@ function ToolCard({
         )}
 
         {/* כותרת: לוגו + שם + מועדפים */}
-        <div className="flex items-start gap-4 mb-5 md:mb-4 [transform:translateZ(35px)]">
+        <div className="flex items-start gap-3 mb-4 md:mb-4 [transform:translateZ(35px)]">
           {/* לוגו */}
           <div
             className="relative flex-shrink-0"

@@ -10,9 +10,10 @@ export const SWIPE_TABS = [
   { id: 'learning', label: 'למידה', icon: GraduationCap },
 ];
 
-export default function MobileBottomNav({ activeTab, onTabChange, onMore, swipeProgress = 0 }) {
-  const activeIndex = SWIPE_TABS.findIndex(t => t.id === activeTab);
-  const slot = 100 / (SWIPE_TABS.length + 1); // 5 טאבים + כפתור "עוד"
+export default function MobileBottomNav({ activeTab, onTabChange, onAddTool, onMore, swipeProgress = 0 }) {
+  const mobileTabs = SWIPE_TABS.filter((tab) => tab.id !== 'reminders');
+  const activeIndex = mobileTabs.findIndex(t => t.id === activeTab);
+  const slot = 100 / (mobileTabs.length + 2); // 4 טאבים + כפתור הוספה + כפתור עוד
 
   return (
     <motion.nav
@@ -46,7 +47,7 @@ export default function MobileBottomNav({ activeTab, onTabChange, onMore, swipeP
         />
       )}
 
-      {SWIPE_TABS.map((item) => {
+      {mobileTabs.map((item) => {
         const Icon = item.icon;
         const active = activeTab === item.id;
         return (
@@ -86,6 +87,19 @@ export default function MobileBottomNav({ activeTab, onTabChange, onMore, swipeP
           </motion.button>
         );
       })}
+
+      <motion.button
+        type="button"
+        aria-label="הוסף כלי חדש"
+        onClick={() => {
+          if (navigator.vibrate) navigator.vibrate(8);
+          onAddTool?.();
+        }}
+        whileTap={{ scale: 0.9 }}
+        className="relative -mt-6 flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl border border-cyan-300/40 bg-blue-600 text-white shadow-[0_0_22px_-4px_rgba(37,99,235,0.9)]"
+      >
+        <span className="text-3xl font-light leading-none">+</span>
+      </motion.button>
 
       {/* כפתור "עוד" — פותח את כל הטאבים */}
       <motion.button

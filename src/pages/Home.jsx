@@ -12,7 +12,6 @@ import MobileBottomNav, { SWIPE_TABS } from '@/components/MobileBottomNav';
 import ThemeToggle from '@/components/ThemeToggle';
 import NotificationCenter from '@/components/NotificationCenter';
 import KeyboardShortcutsHelp from '@/components/KeyboardShortcutsHelp';
-import QuickAddFAB from '@/components/QuickAddFAB';
 import QuickSideBar from '@/components/QuickSideBar';
 const ToolsTab = React.lazy(() => import('@/components/tabs/ToolsTab'));
 const AssistantTab = React.lazy(() => import('@/components/tabs/AssistantTab'));
@@ -377,14 +376,14 @@ export default function Home() {
         onSettings={() => setActiveTab('settings')}
       />
 
-      {/* כפתור פעולה מהירה במובייל */}
-      <QuickAddFAB
-        onAddTool={() => { setActiveTab('tools'); setQuickAddTool(true); }}
-        onStartChat={() => setActiveTab('assistant')}
-      />
-
       {/* ניווט תחתון למובייל */}
-      <MobileBottomNav activeTab={activeTab} onTabChange={setActiveTab} onMore={() => setNavDrawerOpen(true)} swipeProgress={swipeProgress} />
+      <MobileBottomNav
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        onAddTool={() => { setActiveTab('tools'); setQuickAddTool(true); }}
+        onMore={() => setNavDrawerOpen(true)}
+        swipeProgress={swipeProgress}
+      />
 
       {/* חיפוש גלובלי */}
       <GlobalSearchModal open={globalSearchOpen} onClose={() => setGlobalSearchOpen(false)} onNavigate={(tab) => setActiveTab(tab)} />
