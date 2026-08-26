@@ -47,7 +47,7 @@ export default function QuickSideBar({ onVoiceSearch, onAddTool, onSettings }) {
 
   return (
     <div
-      className="fixed left-1.5 z-[90] flex flex-col gap-1.5 sm:gap-2 bottom-24 md:bottom-auto md:top-1/2 md:-translate-y-1/2"
+      className="hidden md:flex fixed left-1.5 z-[90] flex-col gap-2 bottom-auto top-1/2 -translate-y-1/2"
       dir="rtl"
       aria-label="סרגל קיצורים צף"
     >

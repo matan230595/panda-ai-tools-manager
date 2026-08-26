@@ -160,6 +160,35 @@ export default function Home() {
     setActiveTab('tools');
   };
 
+  // גיבוי מהיר של כל נתוני המערכת
+  const [backupLoading, setBackupLoading] = useState(false);
+  const handleQuickBackup = async () => {
+    setBackupLoading(true);
+    try {
+      const user = await getCurrentUser();
+      const EXPORT_ENTITIES = ['AiTool', 'ToolTask', 'Subscription', 'Reminder', 'ToolLearningPlan', 'ApiKeyVault', 'UserToolRating', 'Settings'];
+      const data = { exportedAt: new Date().toISOString(), user: user.email, entities: {} };
+      for (const entity of EXPORT_ENTITIES) {
+        try {
+          const records = await base44.entities[entity].filter({ created_by_id: user.id });
+          data.entities[entity] = records;
+        } catch { data.entities[entity] = []; }
+      }
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `panda-ai-backup-${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      import('sonner').then(({ toast }) => toast.success('הגיבוי הורד בהצלחה'));
+    } catch {
+      import('sonner').then(({ toast }) => toast.error('שגיאה בגיבוי הנתונים'));
+    } finally {
+      setBackupLoading(false);
+    }
+  };
+
   if (authStatus === 'checking') {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#0b0d12]">
@@ -230,7 +259,7 @@ export default function Home() {
       <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} open={navDrawerOpen} onOpenChange={setNavDrawerOpen} settings={settings} />
 
       {/* תוכן הטאב */}
-      <main id="main-content" data-active-tab={activeTab} className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 py-2 sm:py-4 md:py-8 md:pr-[var(--sidebar-w,21rem)] transition-[padding] duration-300 pb-32 md:pb-8 pl-16 md:pl-6">
+      <main id="main-content" data-active-tab={activeTab} className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 py-2 sm:py-4 md:py-8 md:pr-[var(--sidebar-w,21rem)] transition-[padding] duration-300 pb-28 md:pb-8">
         <div
           className="flex items-center justify-between gap-2 mb-3 md:mb-5 rounded-xl border border-cyan-400/15 bg-[#1a202d]/80 md:bg-[#1a202d]/60 md:backdrop-blur-xl px-2.5 sm:px-3 py-2"
         >
@@ -246,6 +275,15 @@ export default function Home() {
               onClearAll={handleClearAllNotifications}
             />
             <ThemeToggle />
+            <button
+              onClick={handleQuickBackup}
+              disabled={backupLoading}
+              className="md:hidden inline-flex items-center justify-center w-9 h-9 rounded-lg bg-emerald-600/20 border border-emerald-400/30 text-emerald-400 active:scale-95 transition-all flex-shrink-0"
+              aria-label="גיבוי כל הנתונים"
+              title="גיבוי כל הנתונים"
+            >
+              {backupLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+            </button>
           </div>
         </div>
         <AnimatePresence mode="wait">

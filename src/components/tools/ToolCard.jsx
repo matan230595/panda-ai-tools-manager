@@ -151,7 +151,7 @@ function ToolCard({
       <div
         ref={cardRef}
         className={`
-        group relative flex flex-col rounded-2xl p-3.5 sm:p-4 md:p-5 h-full antialiased cursor-pointer overflow-hidden
+        group relative flex flex-col rounded-2xl p-4 sm:p-4 md:p-5 h-full antialiased cursor-pointer overflow-hidden
         bg-[#1a202d]/90 md:bg-[#1a202d]/70 md:backdrop-blur-xl
         border border-cyan-400/15
         transition-[transform,box-shadow,border-color] duration-200 ease-out will-change-transform
@@ -238,27 +238,27 @@ function ToolCard({
                 <img
                   src={tool.logo}
                   alt={`${tool.name} logo`}
-                  className="w-14 h-14 md:w-16 md:h-16 rounded-xl object-cover shadow-[0_0_20px_-4px_rgba(0,212,255,0.3)] ring-1 ring-cyan-400/20"
+                  className="w-11 h-11 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-xl object-cover shadow-[0_0_20px_-4px_rgba(0,212,255,0.3)] ring-1 ring-cyan-400/20"
                   loading="lazy"
                   onError={(e) => {
                     e.target.style.display = 'none';
                     e.target.nextElementSibling.style.display = 'flex';
                   }}
                 />
-                <div className="w-14 h-14 md:w-16 md:h-16 rounded-xl bg-blue-600 items-center justify-center shadow-[0_0_20px_-4px_rgba(37,99,235,0.5)] ring-1 ring-cyan-400/20" style={{ display: 'none' }}>
-                  <Package className="w-6 h-6 md:w-7 md:h-7 text-white" />
+                <div className="w-11 h-11 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-xl bg-blue-600 items-center justify-center shadow-[0_0_20px_-4px_rgba(37,99,235,0.5)] ring-1 ring-cyan-400/20" style={{ display: 'none' }}>
+                  <Package className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 text-white" />
                 </div>
               </>
             ) : (
-              <div className="w-14 h-14 md:w-16 md:h-16 rounded-xl bg-blue-600 flex items-center justify-center shadow-[0_0_20px_-4px_rgba(37,99,235,0.5)] ring-1 ring-cyan-400/20">
-                <Package className="w-6 h-6 md:w-7 md:h-7 text-white" />
+              <div className="w-11 h-11 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-xl bg-blue-600 flex items-center justify-center shadow-[0_0_20px_-4px_rgba(37,99,235,0.5)] ring-1 ring-cyan-400/20">
+                <Package className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 text-white" />
               </div>
             )}
           </div>
 
           <div className="flex-1 min-w-0 text-right">
             <div className="flex items-start justify-between gap-2">
-              <h3 className="font-bold text-base md:text-lg text-white leading-tight line-clamp-2 break-words">
+              <h3 className="font-bold text-base md:text-lg text-white leading-snug line-clamp-2 break-words">
                 {tool.name}
               </h3>
               {/* מועדפים */}
@@ -296,7 +296,7 @@ function ToolCard({
         <div className="relative flex flex-col flex-1 [transform:translateZ(25px)]">
           {/* תיאור */}
           {show('description') && (
-            <p className="text-sm text-slate-400 line-clamp-2 leading-relaxed text-right break-words mb-3">
+            <p className="text-[13px] sm:text-sm text-slate-400 line-clamp-3 leading-relaxed text-right break-words mb-3">
               {tool.description || 'אין תיאור זמין'}
             </p>
           )}
@@ -343,13 +343,13 @@ function ToolCard({
           <div className="flex items-center gap-2 [transform:translateZ(30px)]">
             <Button
               onClick={(e) => { e.stopPropagation(); handleVisit(); }}
-              className="flex-1 h-11 rounded-xl bg-blue-600 text-white border border-cyan-400/20 hover:bg-blue-500 hover:shadow-[0_0_16px_-4px_rgba(37,99,235,0.5)] font-semibold"
+              className="flex-1 h-10 sm:h-11 rounded-xl bg-blue-600 text-white border border-cyan-400/20 hover:bg-blue-500 hover:shadow-[0_0_16px_-4px_rgba(37,99,235,0.5)] font-semibold text-sm"
               aria-label={`בקר באתר ${tool.name}`}
             >
               בקר באתר
             </Button>
 
-            <div onClick={(e) => e.stopPropagation()} className="h-11 w-11 rounded-xl bg-white/5 border border-cyan-400/15 flex items-center justify-center hover:bg-white/10 transition-colors">
+            <div onClick={(e) => e.stopPropagation()} className="h-10 w-10 sm:h-11 sm:w-11 rounded-xl bg-white/5 border border-cyan-400/15 flex items-center justify-center hover:bg-white/10 transition-colors flex-shrink-0">
               <ShareLinkDialog tool={tool} iconOnly />
             </div>
 
@@ -357,7 +357,7 @@ function ToolCard({
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
-                  className="h-11 w-11 p-0 rounded-xl bg-white/5 border border-cyan-400/15 hover:bg-white/10 text-slate-300"
+                  className="h-10 w-10 sm:h-11 sm:w-11 p-0 rounded-xl bg-white/5 border border-cyan-400/15 hover:bg-white/10 text-slate-300 flex-shrink-0"
                   onClick={(e) => e.stopPropagation()}
                   title="עוד אפשרויות"
                 >
