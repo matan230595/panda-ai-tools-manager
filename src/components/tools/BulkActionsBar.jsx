@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { Trash2, FolderInput, X, CheckSquare, Star, Tag } from 'lucide-react';
+import { Trash2, FolderInput, X, CheckSquare, Star, GraduationCap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Select,
@@ -73,6 +73,16 @@ export default function BulkActionsBar({
     onError: () => toast.error('שגיאה בעדכון מועדפים'),
   });
 
+  const bulkMarkLearned = useMutation({
+    mutationFn: (ids) => base44.entities.AiTool.updateMany({ id: { $in: ids } }, { $set: { masteryLevel: 'מומחה' } }),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['tools']);
+      toast.success(`${selectedIds.length} כלים סומנו כנלמדו`);
+      onClear();
+    },
+    onError: () => toast.error('שגיאה בסימון הכלים כנלמדו'),
+  });
+
   return (
     <>
       <div className="flex items-center gap-2 rounded-2xl border border-indigo-200 dark:border-indigo-900 bg-indigo-50/80 dark:bg-indigo-950/40 p-2 animate-slide-in" dir="rtl">
@@ -117,6 +127,17 @@ export default function BulkActionsBar({
         >
           <Star className="w-3.5 h-3.5 ml-1" />
           הוסף למועדפים
+        </Button>
+
+        <Button
+          variant="ghost"
+          size="sm"
+          className="text-xs"
+          onClick={() => bulkMarkLearned.mutate(selectedIds)}
+          disabled={selectedIds.length === 0 || bulkMarkLearned.isPending}
+        >
+          <GraduationCap className="w-3.5 h-3.5 ml-1" />
+          סמן כנלמד
         </Button>
 
         {/* מחיקה */}

@@ -25,6 +25,7 @@ export default function SearchAndFilters({
 }) {
   const sortOptions = [
     { value: 'updated', label: 'עדכון אחרון' },
+    { value: 'custom', label: 'סידור ידני — גרירה' },
     { value: 'created', label: 'תאריך יצירה' },
     { value: 'name', label: 'שם (א-ת)' },
     { value: 'rating', label: 'דירוג גבוה' },
@@ -57,7 +58,7 @@ export default function SearchAndFilters({
   ];
 
   return (
-    <div className="sticky top-14 md:top-4 z-30 bg-[#1a202d]/80 backdrop-blur-xl rounded-2xl p-2.5 sm:p-4 border border-cyan-400/15 space-y-2.5 sm:space-y-3" dir="rtl">
+    <div className="md:sticky md:top-4 z-20 bg-[#1a202d]/95 md:bg-[#1a202d]/80 backdrop-blur-xl rounded-2xl p-3 sm:p-4 border border-cyan-400/15 space-y-3" dir="rtl">
       <SmartSearch
         searchTerm={searchTerm}
         onSearch={onSearchChange}

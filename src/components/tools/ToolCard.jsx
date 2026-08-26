@@ -53,6 +53,7 @@ function ToolCard({
   dragHandleProps = {},
   isSelected = false,
   onToggleSelect,
+  isReorderable = false,
   fieldVisibility = {}
 }) {
   const show = (field) => fieldVisibility[field] !== false;
@@ -151,7 +152,7 @@ function ToolCard({
       <div
         ref={cardRef}
         className={`
-        group relative flex flex-col rounded-2xl p-4 sm:p-4 md:p-5 h-full antialiased cursor-pointer overflow-hidden
+        group relative flex flex-col rounded-2xl p-5 sm:p-4 md:p-5 h-full antialiased cursor-pointer overflow-hidden
         bg-[#1a202d]/90 md:bg-[#1a202d]/70 md:backdrop-blur-xl
         border border-cyan-400/15
         transition-[transform,box-shadow,border-color] duration-200 ease-out will-change-transform
@@ -204,14 +205,18 @@ function ToolCard({
         {/* תאורה סביבתית עדינה במעבר עכבר */}
         <div className="tool-card-ambient rounded-2xl" />
 
-        {/* Drag Handle - desktop only */}
-        <div
-          {...dragHandleProps}
-          className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing hidden md:flex [transform:translateZ(50px)] z-20"
-          aria-label="גרור לסידור מחדש"
-        >
-          <GripVertical className="w-5 h-5 text-gray-400" />
-        </div>
+        {/* ידית גרירה לסידור ידני */}
+        {isReorderable && (
+          <button
+            {...dragHandleProps}
+            type="button"
+            onClick={(event) => event.stopPropagation()}
+            className="absolute top-3 left-3 z-20 flex h-11 w-11 items-center justify-center rounded-xl border border-cyan-400/20 bg-[#101827]/90 text-slate-300 cursor-grab active:cursor-grabbing md:opacity-0 md:group-hover:opacity-100 transition-opacity"
+            aria-label={`גרור את ${tool.name} לסידור מחדש`}
+          >
+            <GripVertical className="w-5 h-5" />
+          </button>
+        )}
 
         {/* checkbox - visible in compare mode */}
         {onToggleSelect && (
@@ -258,7 +263,7 @@ function ToolCard({
 
           <div className="flex-1 min-w-0 text-right">
             <div className="flex items-start justify-between gap-2">
-              <h3 className="font-bold text-base md:text-lg text-white leading-snug line-clamp-2 break-words">
+              <h3 className="font-bold text-lg md:text-lg text-white leading-snug line-clamp-2 break-words">
                 {tool.name}
               </h3>
               {/* מועדפים */}
@@ -296,7 +301,7 @@ function ToolCard({
         <div className="relative flex flex-col flex-1 [transform:translateZ(25px)]">
           {/* תיאור */}
           {show('description') && (
-            <p className="text-[13px] sm:text-sm text-slate-400 line-clamp-3 leading-relaxed text-right break-words mb-3">
+            <p className="text-base sm:text-sm text-slate-300 leading-7 text-right break-words mb-4">
               {tool.description || 'אין תיאור זמין'}
             </p>
           )}
@@ -343,13 +348,13 @@ function ToolCard({
           <div className="flex items-center gap-2 [transform:translateZ(30px)]">
             <Button
               onClick={(e) => { e.stopPropagation(); handleVisit(); }}
-              className="flex-1 h-10 sm:h-11 rounded-xl bg-blue-600 text-white border border-cyan-400/20 hover:bg-blue-500 hover:shadow-[0_0_16px_-4px_rgba(37,99,235,0.5)] font-semibold text-sm"
+              className="flex-1 h-12 sm:h-11 rounded-xl bg-blue-600 text-white border border-cyan-400/20 hover:bg-blue-500 hover:shadow-[0_0_16px_-4px_rgba(37,99,235,0.5)] font-semibold text-base sm:text-sm"
               aria-label={`בקר באתר ${tool.name}`}
             >
               בקר באתר
             </Button>
 
-            <div onClick={(e) => e.stopPropagation()} className="h-10 w-10 sm:h-11 sm:w-11 rounded-xl bg-white/5 border border-cyan-400/15 flex items-center justify-center hover:bg-white/10 transition-colors flex-shrink-0">
+            <div onClick={(e) => e.stopPropagation()} className="h-12 w-12 sm:h-11 sm:w-11 rounded-xl bg-white/5 border border-cyan-400/15 flex items-center justify-center hover:bg-white/10 transition-colors flex-shrink-0">
               <ShareLinkDialog tool={tool} iconOnly />
             </div>
 
@@ -357,7 +362,7 @@ function ToolCard({
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
-                  className="h-10 w-10 sm:h-11 sm:w-11 p-0 rounded-xl bg-white/5 border border-cyan-400/15 hover:bg-white/10 text-slate-300 flex-shrink-0"
+                  className="h-12 w-12 sm:h-11 sm:w-11 p-0 rounded-xl bg-white/5 border border-cyan-400/15 hover:bg-white/10 text-slate-300 flex-shrink-0"
                   onClick={(e) => e.stopPropagation()}
                   title="עוד אפשרויות"
                 >

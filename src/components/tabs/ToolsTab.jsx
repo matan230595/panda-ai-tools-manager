@@ -32,6 +32,7 @@ import BulkActionsBar from '@/components/tools/BulkActionsBar';
 import CardFieldsCustomizer from '@/components/tools/CardFieldsCustomizer';
 import { useCardFieldConfig } from '@/components/hooks/useCardFieldConfig';
 import { toast } from 'sonner';
+import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -297,6 +298,8 @@ export default function ToolsTab({ settings, initialFilter, quickAddTool, onQuic
       switch(sortBy) {
         case 'name':
           return (a.name || '').localeCompare(b.name || '');
+        case 'custom':
+          return (a.sortOrder ?? Number.MAX_SAFE_INTEGER) - (b.sortOrder ?? Number.MAX_SAFE_INTEGER) || new Date(a.created_date) - new Date(b.created_date);
         case 'created':
           return new Date(b.created_date) - new Date(a.created_date);
         case 'updated':
@@ -434,6 +437,16 @@ export default function ToolsTab({ settings, initialFilter, quickAddTool, onQuic
     }
   };
 
+  const handleToolReorder = async ({ source, destination }) => {
+    if (!destination || source.index === destination.index) return;
+    const reordered = [...filteredAndSortedTools];
+    const [moved] = reordered.splice(source.index, 1);
+    reordered.splice(destination.index, 0, moved);
+    await base44.entities.AiTool.bulkUpdate(reordered.map((tool, index) => ({ id: tool.id, sortOrder: index })));
+    queryClient.invalidateQueries(['tools']);
+    toast.success('סדר הכלים נשמר');
+  };
+
   const handleMergeTools = async (primaryTool, duplicateTool, resolvedDescription) => {
     const mergedFeatures = [...new Set([...(primaryTool.features || []), ...(duplicateTool.features || [])])];
     const mergedTags = [...new Set([...(primaryTool.tags || []), ...(duplicateTool.tags || [])])];
@@ -479,6 +492,9 @@ export default function ToolsTab({ settings, initialFilter, quickAddTool, onQuic
     table: '',
     kanban: '',
   };
+
+  const visibleTools = filteredAndSortedTools.slice(0, visibleCount);
+  const canReorder = sortBy === 'custom' && !compareMode && !bulkMode;
 
   if (isLoading) {
     return (
@@ -609,7 +625,7 @@ export default function ToolsTab({ settings, initialFilter, quickAddTool, onQuic
                   <GitCompare className="w-4 h-4 ml-2" /> השוואת כלים
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => { setBulkMode(true); setSelectedForBulk([]); }}>
-                  <CheckSquare className="w-4 h-4 ml-2" /> בחירה מרובה
+                  <CheckSquare className="w-4 h-4 ml-2" /> בחירה מרובה ופעולות גורפות
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setShowDuplicatesDialog(true)}>
                   <Copy className="w-4 h-4 ml-2" /> ניקוי כפילויות
@@ -711,29 +727,44 @@ export default function ToolsTab({ settings, initialFilter, quickAddTool, onQuic
           onStatusChange={handleKanbanStatusChange}
         />
       ) : (
-        <div className={gridClasses[viewMode]}>
-          {filteredAndSortedTools.slice(0, visibleCount).map((tool) => (
-            <ToolCard
-                key={tool.id}
-                tool={tool}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-                onToggleFavorite={handleToggleFavorite}
-                onManageSubscription={setManagingSubscription}
-                onClick={setSelectedTool}
-                isSelected={bulkMode ? selectedForBulk.includes(tool.id) : selectedForCompare.some(t => t.id === tool.id)}
-                onToggleSelect={bulkMode ? toggleBulkSelection : (compareMode ? toggleCompareSelection : null)}
-                fieldVisibility={cardFieldVisibility}
-                />
+        <DragDropContext onDragEnd={handleToolReorder}>
+          <Droppable droppableId="tools-collection" isDropDisabled={!canReorder}>
+            {(dropProvided) => (
+              <div ref={dropProvided.innerRef} {...dropProvided.droppableProps} className={gridClasses[viewMode]}>
+                {visibleTools.map((tool, index) => (
+                  <Draggable key={tool.id} draggableId={tool.id} index={index} isDragDisabled={!canReorder}>
+                    {(dragProvided, dragSnapshot) => (
+                      <div ref={dragProvided.innerRef} {...dragProvided.draggableProps} style={dragProvided.draggableProps.style}>
+                        <ToolCard
+                          tool={tool}
+                          onEdit={handleEdit}
+                          onDelete={handleDelete}
+                          onToggleFavorite={handleToggleFavorite}
+                          onManageSubscription={setManagingSubscription}
+                          onClick={setSelectedTool}
+                          isDragging={dragSnapshot.isDragging}
+                          dragHandleProps={dragProvided.dragHandleProps}
+                          isReorderable={canReorder}
+                          isSelected={bulkMode ? selectedForBulk.includes(tool.id) : selectedForCompare.some(t => t.id === tool.id)}
+                          onToggleSelect={bulkMode ? toggleBulkSelection : (compareMode ? toggleCompareSelection : null)}
+                          fieldVisibility={cardFieldVisibility}
+                        />
+                      </div>
+                    )}
+                  </Draggable>
                 ))}
-          {filteredAndSortedTools.length > visibleCount && (
-            <div className="col-span-full flex justify-center pt-2 pb-4">
-              <Button variant="outline" size="sm" onClick={() => setVisibleCount(c => c + PAGE_SIZE)}>
-                טען עוד {Math.min(PAGE_SIZE, filteredAndSortedTools.length - visibleCount)} כלים
-              </Button>
-            </div>
-          )}
-        </div>
+                {dropProvided.placeholder}
+                {filteredAndSortedTools.length > visibleCount && (
+                  <div className="col-span-full flex justify-center pt-2 pb-4">
+                    <Button variant="outline" size="sm" onClick={() => setVisibleCount(c => c + PAGE_SIZE)}>
+                      טען עוד {Math.min(PAGE_SIZE, filteredAndSortedTools.length - visibleCount)} כלים
+                    </Button>
+                  </div>
+                )}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
       )}
 
       {/* זיהוי כפילויות */}
