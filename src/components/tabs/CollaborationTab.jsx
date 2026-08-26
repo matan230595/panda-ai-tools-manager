@@ -45,7 +45,7 @@ export default function CollaborationTab() {
   const createWorkspaceMutation = useMutation({
     mutationFn: (data) => base44.entities.Workspace.create(data),
     onSuccess: (workspace) => {
-      queryClient.invalidateQueries(['workspaces']);
+      queryClient.invalidateQueries({ queryKey: ['workspaces'] });
       setSelectedWorkspace(workspace.id);
       setNewWorkspaceName('');
       toast.success('המרחב נוצר בהצלחה');
@@ -55,14 +55,14 @@ export default function CollaborationTab() {
   const updateWorkspaceMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.Workspace.update(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries(['workspaces']);
+      queryClient.invalidateQueries({ queryKey: ['workspaces'] });
     },
   });
 
   const deleteWorkspaceMutation = useMutation({
     mutationFn: (id) => base44.entities.Workspace.delete(id),
     onSuccess: () => {
-      queryClient.invalidateQueries(['workspaces']);
+      queryClient.invalidateQueries({ queryKey: ['workspaces'] });
       setSelectedWorkspace('');
       toast.success('המרחב נמחק');
     },
