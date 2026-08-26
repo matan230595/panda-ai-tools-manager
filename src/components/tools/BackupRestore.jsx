@@ -4,7 +4,20 @@ import { base44 } from '@/api/base44Client';
 import { getCurrentUser } from '@/components/hooks/userScopedData';
 import { Download, Upload, Database, Loader2, CheckCircle2 } from 'lucide-react';
 
-const ENTITIES = ['AiTool', 'ToolTask', 'Subscription', 'Reminder', 'ToolLearningPlan', 'ApiKeyVault', 'UserToolRating'];
+const ENTITIES = ['AiTool', 'ToolTask', 'Subscription', 'Reminder', 'ToolLearningPlan', 'UserToolRating'];
+
+const sanitizeRecord = (entity, record) => {
+  const sanitized = { ...record };
+  if (entity === 'AiTool' && sanitized.userCredentials) {
+    const { password, ...safeCredentials } = sanitized.userCredentials;
+    sanitized.userCredentials = safeCredentials;
+  }
+  if (entity === 'Subscription') {
+    delete sanitized.password;
+    delete sanitized.apiKey;
+  }
+  return sanitized;
+};
 
 export default function BackupRestore() {
   const queryClient = useQueryClient();
@@ -21,7 +34,7 @@ export default function BackupRestore() {
       for (const entity of ENTITIES) {
         try {
           const records = await base44.entities[entity].filter({ created_by_id: user.id });
-          data.entities[entity] = records;
+          data.entities[entity] = records.map(record => sanitizeRecord(entity, record));
         } catch (e) { data.entities[entity] = []; }
       }
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -45,7 +58,7 @@ export default function BackupRestore() {
         const records = data.entities?.[entity] || [];
         let created = 0;
         for (const record of records) {
-          const { id, created_date, updated_date, created_by_id, ...rest } = record;
+          const { id, created_date, updated_date, created_by_id, ...rest } = sanitizeRecord(entity, record);
           try {
             await base44.entities[entity].create(rest);
             created++;
@@ -54,7 +67,7 @@ export default function BackupRestore() {
         result[entity] = created;
       }
       setImportResult(result);
-      ENTITIES.forEach(e => queryClient.invalidateQueries([e]));
+      ENTITIES.forEach(e => queryClient.invalidateQueries({ queryKey: [e] }));
     } finally { setImporting(false); }
   };
 
