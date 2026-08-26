@@ -23,7 +23,8 @@ export default function QuickSideBar({ onVoiceSearch, onAddTool, onSettings }) {
           data.entities[entity] = records.map((record) => {
             const sanitized = { ...record };
             if (entity === 'AiTool' && sanitized.userCredentials) {
-              const { password, ...safeCredentials } = sanitized.userCredentials;
+              const safeCredentials = { ...sanitized.userCredentials };
+              delete safeCredentials.password;
               sanitized.userCredentials = safeCredentials;
             }
             if (entity === 'Subscription') {
