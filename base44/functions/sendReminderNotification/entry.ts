@@ -1,4 +1,13 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
+import { createClientFromRequest } from 'npm:@base44/sdk';
+
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
 
 Deno.serve(async (req) => {
   try {
@@ -15,7 +24,7 @@ Deno.serve(async (req) => {
     const allReminders = await base44.asServiceRole.entities.Reminder.list();
     const reminders = allReminders.filter((reminder) => {
       if (!reminderIds.includes(reminder.id)) return false;
-      return reminder.created_by === user.email || reminder.recipientEmail === user.email;
+      return reminder.created_by_id === user.id || reminder.created_by === user.email;
     });
 
     let successCount = 0;
@@ -23,7 +32,7 @@ Deno.serve(async (req) => {
 
     for (const reminder of reminders) {
       try {
-        const recipientEmail = reminder.recipientEmail || reminder.created_by;
+        const recipientEmail = user.email;
 
         if (!recipientEmail) {
           failureCount++;
@@ -32,14 +41,16 @@ Deno.serve(async (req) => {
 
         await base44.asServiceRole.integrations.Core.SendEmail({
           to: recipientEmail,
-          subject: `תזכורת: ${reminder.toolName}`,
+          subject: `תזכורת: ${String(reminder.toolName || 'כלי AI').slice(0, 120)}`,
           body: `
-            <h2>תזכורת: ${reminder.toolName}</h2>
-            <p><strong>הודעה:</strong> ${reminder.message}</p>
-            <p><strong>סוג:</strong> ${reminder.reminderType}</p>
-            <p><strong>עדיפות:</strong> ${reminder.priority}</p>
-            <hr>
-            <p>תאריך: ${reminder.reminderDate} בשעה ${reminder.reminderTime || '09:00'}</p>
+            <div dir="rtl">
+              <h2>תזכורת: ${escapeHtml(reminder.toolName || 'כלי AI')}</h2>
+              <p><strong>הודעה:</strong> ${escapeHtml(reminder.message)}</p>
+              <p><strong>סוג:</strong> ${escapeHtml(reminder.reminderType)}</p>
+              <p><strong>עדיפות:</strong> ${escapeHtml(reminder.priority)}</p>
+              <hr>
+              <p>תאריך: ${escapeHtml(reminder.reminderDate)} בשעה ${escapeHtml(reminder.reminderTime || '09:00')}</p>
+            </div>
           `,
         });
 
@@ -63,6 +74,6 @@ Deno.serve(async (req) => {
     });
   } catch (error) {
     console.error('Error:', error);
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ error: 'Failed to send reminders' }, { status: 500 });
   }
 });
