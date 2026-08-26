@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
-import { base44 } from '@/api/base44Client';
-import { getCurrentUser } from '@/components/hooks/userScopedData';
 import { Sparkles, MessageSquare, Settings, BarChart3, DollarSign, Menu, Wallet, LayoutDashboard, BellRing, Lightbulb, Cable, Users, CalendarDays, ChevronsLeft, ChevronsRight, GraduationCap, CalendarRange, Search } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
@@ -58,7 +55,7 @@ const SECONDARY_TABS = [
 
 const ALL_TABS = [...MAIN_TABS, ...SECONDARY_TABS];
 
-export default function TabNavigation({ activeTab, onTabChange, open: controlledOpen, onOpenChange: controlledOnOpenChange }) {
+export default function TabNavigation({ activeTab, onTabChange, open: controlledOpen, onOpenChange: controlledOnOpenChange, settings }) {
   const [userLogo, setUserLogo] = useState('');
   const [appName, setAppName] = useState('AI Tools Manager');
   const [internalOpen, setInternalOpen] = useState(false);
@@ -71,19 +68,6 @@ export default function TabNavigation({ activeTab, onTabChange, open: controlled
     document.documentElement.style.setProperty('--sidebar-w', collapsed ? '5.5rem' : '16rem');
     localStorage.setItem('sidebarCollapsed', collapsed ? '1' : '0');
   }, [collapsed]);
-
-  const { data: settings } = useQuery({
-    queryKey: ['settings'],
-    queryFn: async () => {
-      try {
-        const user = await getCurrentUser();
-        const list = await base44.entities.Settings.filter({ created_by_id: user.id });
-        return list[0] || null;
-      } catch {
-        return null;
-      }
-    }
-  });
 
   useEffect(() => {
     if (settings?.userLogo) setUserLogo(settings.userLogo);

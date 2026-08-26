@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, Suspense, useRef } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { getCurrentUser } from '@/components/hooks/userScopedData';
@@ -8,17 +8,17 @@ import { motion, AnimatePresence } from 'framer-motion';
 import AnimatedBackground from '@/components/effects/AnimatedBackground';
 import GlobalSearchBar from '@/components/GlobalSearchBar';
 import TabNavigation from '@/components/TabNavigation';
-import ToolsTab from '@/components/tabs/ToolsTab';
-import AssistantTab from '@/components/tabs/AssistantTab';
-import SubscriptionsTab from '@/components/tabs/SubscriptionsTab';
-import StatsTab from '@/components/tabs/StatsTab';
-import SettingsTab from '@/components/tabs/SettingsTab';
+import MobileBottomNav, { SWIPE_TABS } from '@/components/MobileBottomNav';
 import ThemeToggle from '@/components/ThemeToggle';
 import NotificationCenter from '@/components/NotificationCenter';
 import KeyboardShortcutsHelp from '@/components/KeyboardShortcutsHelp';
 import QuickAddFAB from '@/components/QuickAddFAB';
-import OnboardingWizard from '@/components/onboarding/OnboardingWizard';
-import MobileBottomNav, { SWIPE_TABS } from '@/components/MobileBottomNav';
+const ToolsTab = React.lazy(() => import('@/components/tabs/ToolsTab'));
+const AssistantTab = React.lazy(() => import('@/components/tabs/AssistantTab'));
+const SubscriptionsTab = React.lazy(() => import('@/components/tabs/SubscriptionsTab'));
+const StatsTab = React.lazy(() => import('@/components/tabs/StatsTab'));
+const SettingsTab = React.lazy(() => import('@/components/tabs/SettingsTab'));
+const OnboardingWizard = React.lazy(() => import('@/components/onboarding/OnboardingWizard'));
 import { useSwipeNavigation } from '@/components/hooks/useSwipeNavigation';
 import GlobalSearchModal from '@/components/search/GlobalSearchModal';
 import { useSmartNotifications } from '@/components/hooks/useSmartNotifications';
@@ -80,13 +80,17 @@ export default function Home() {
     }
   });
 
-  // שמירת טאב אחרון
+  // שמירת טאב אחרון — מבוצעת ב-debounce כדי למנוע ריענון מיותר
+  const saveTabRef = useRef(null);
   useEffect(() => {
-    if (settings && activeTab !== settings.lastActiveTab) {
+    if (!settings || activeTab === settings.lastActiveTab) return;
+    if (saveTabRef.current) clearTimeout(saveTabRef.current);
+    saveTabRef.current = setTimeout(() => {
       base44.entities.Settings.update(settings.id, { lastActiveTab: activeTab });
-      queryClient.invalidateQueries({ queryKey: ['settings'] });
-    }
-  }, [activeTab, settings]);
+      queryClient.setQueryData(['settings'], (prev) => prev ? { ...prev, lastActiveTab: activeTab } : prev);
+    }, 800);
+    return () => { if (saveTabRef.current) clearTimeout(saveTabRef.current); };
+  }, [activeTab, settings, queryClient]);
 
   // טעינת טאב אחרון בהפעלה
   useEffect(() => {
@@ -196,7 +200,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen relative bg-[#0b0d12] text-slate-200">
-      <OnboardingWizard />
+      <React.Suspense fallback={null}><OnboardingWizard /></React.Suspense>
       <AnimatedBackground />
       <a
         href="#main-content"
@@ -215,15 +219,12 @@ export default function Home() {
       />
       
       {/* ניווט */}
-      <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} open={navDrawerOpen} onOpenChange={setNavDrawerOpen} />
+      <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} open={navDrawerOpen} onOpenChange={setNavDrawerOpen} settings={settings} />
 
       {/* תוכן הטאב */}
       <main id="main-content" data-active-tab={activeTab} className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 py-2 sm:py-4 md:py-8 md:pr-[var(--sidebar-w,21rem)] transition-[padding] duration-300 pb-24 md:pb-8">
-        <motion.div
-          initial={{ opacity: 0, y: -12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, ease: 'easeOut' }}
-          className="flex items-center justify-between gap-2 mb-3 md:mb-5 rounded-xl border border-cyan-400/15 bg-[#1a202d]/60 backdrop-blur-xl px-3 py-2.5"
+        <div
+          className="flex items-center justify-between gap-2 mb-3 md:mb-5 rounded-xl border border-cyan-400/15 bg-[#1a202d]/80 md:bg-[#1a202d]/60 md:backdrop-blur-xl px-3 py-2.5"
         >
           <Link to="/calendar" className="group inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_0_20px_-4px_rgba(37,99,235,0.6)] hover:bg-blue-500 transition-all active:scale-95 min-h-[44px]">
             <CalendarDays className="w-4 h-4 transition-transform group-hover:rotate-12" />
@@ -239,19 +240,35 @@ export default function Home() {
             />
             <ThemeToggle />
           </div>
-        </motion.div>
+        </div>
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}
-            initial={{ opacity: 0, y: 16, filter: 'blur(6px)' }}
-            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-            exit={{ opacity: 0, y: -8, filter: 'blur(4px)' }}
-            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
           >
-            {activeTab === 'tools' && <ToolsTab settings={settings} initialFilter={toolsFilter} quickAddTool={quickAddTool} onQuickAddDone={() => setQuickAddTool(false)} />}
-            {activeTab === 'assistant' && <AssistantTab />}
-            {activeTab === 'subscriptions' && <SubscriptionsTab />}
-            {activeTab === 'stats' && <StatsTab onNavigateToTools={handleNavigateToTools} />}
+            {activeTab === 'tools' && (
+              <Suspense fallback={<SuspenseFallback />}>
+                <ToolsTab settings={settings} initialFilter={toolsFilter} quickAddTool={quickAddTool} onQuickAddDone={() => setQuickAddTool(false)} />
+              </Suspense>
+            )}
+            {activeTab === 'assistant' && (
+              <Suspense fallback={<SuspenseFallback />}>
+                <AssistantTab />
+              </Suspense>
+            )}
+            {activeTab === 'subscriptions' && (
+              <Suspense fallback={<SuspenseFallback />}>
+                <SubscriptionsTab />
+              </Suspense>
+            )}
+            {activeTab === 'stats' && (
+              <Suspense fallback={<SuspenseFallback />}>
+                <StatsTab onNavigateToTools={handleNavigateToTools} />
+              </Suspense>
+            )}
             {activeTab === 'insights' && (
               <Suspense fallback={<SuspenseFallback />}>
                 <InsightsTab />
@@ -297,7 +314,11 @@ export default function Home() {
                 <SubscriptionMgmt />
               </Suspense>
             )}
-            {activeTab === 'settings' && <SettingsTab settings={settings} onLogout={() => base44.auth.logout(window.location.href)} />}
+            {activeTab === 'settings' && (
+              <Suspense fallback={<SuspenseFallback />}>
+                <SettingsTab settings={settings} onLogout={() => base44.auth.logout(window.location.href)} />
+              </Suspense>
+            )}
           </motion.div>
         </AnimatePresence>
       </main>

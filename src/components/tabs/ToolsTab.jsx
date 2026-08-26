@@ -111,6 +111,11 @@ export default function ToolsTab({ settings, initialFilter, quickAddTool, onQuic
   const PAGE_SIZE = 30;
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
+  // איפוס עמוד כשמשתנים הפילטרים
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [searchTerm, selectedCategory, selectedPricing, selectedRating, showFavoritesOnly, sortBy, advancedFilters, masteryFilter, priorityFilter]);
+
   // הגדרות תצוגת שדות בכרטיס
   const { visibility: cardFieldVisibility } = useCardFieldConfig();
 
@@ -337,7 +342,7 @@ export default function ToolsTab({ settings, initialFilter, quickAddTool, onQuic
   const handleToggleFavorite = (tool) => {
     updateMutation.mutate({
       id: tool.id,
-      data: { ...tool, isFavorite: !tool.isFavorite }
+      data: { isFavorite: !tool.isFavorite }
     });
   };
 
@@ -376,9 +381,9 @@ export default function ToolsTab({ settings, initialFilter, quickAddTool, onQuic
     (advancedFilters.ratingRange[0] > 0 || advancedFilters.ratingRange[1] < 5 ? 1 : 0) +
     (advancedFilters.popularityRange[0] > 1 || advancedFilters.popularityRange[1] < 5 ? 1 : 0);
 
-  // כל התגיות והקטגוריות
-  const allCategories = [...new Set(tools.map(t => t.customCategory || t.category).filter(Boolean))].sort();
-  const allTags = [...new Set(tools.flatMap(t => t.tags || []))].sort();
+  // כל התגיות והקטגוריות — ממומנז
+  const allCategories = useMemo(() => [...new Set(tools.map(t => t.customCategory || t.category).filter(Boolean))].sort(), [tools]);
+  const allTags = useMemo(() => [...new Set(tools.flatMap(t => t.tags || []))].sort(), [tools]);
 
   const toggleCompareSelection = (tool) => {
     setSelectedForCompare(prev => {
@@ -477,9 +482,9 @@ export default function ToolsTab({ settings, initialFilter, quickAddTool, onQuic
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
         {[...Array(6)].map((_, i) => (
-          <div key={i} className="skeleton h-64 w-full" />
+          <div key={i} className="skeleton h-48 w-full rounded-2xl" />
         ))}
       </div>
     );
@@ -707,7 +712,7 @@ export default function ToolsTab({ settings, initialFilter, quickAddTool, onQuic
         />
       ) : (
         <div className={gridClasses[viewMode]}>
-          {filteredAndSortedTools.map((tool) => (
+          {filteredAndSortedTools.slice(0, visibleCount).map((tool) => (
             <ToolCard
                 key={tool.id}
                 tool={tool}
@@ -721,6 +726,13 @@ export default function ToolsTab({ settings, initialFilter, quickAddTool, onQuic
                 fieldVisibility={cardFieldVisibility}
                 />
                 ))}
+          {filteredAndSortedTools.length > visibleCount && (
+            <div className="col-span-full flex justify-center pt-2 pb-4">
+              <Button variant="outline" size="sm" onClick={() => setVisibleCount(c => c + PAGE_SIZE)}>
+                טען עוד {Math.min(PAGE_SIZE, filteredAndSortedTools.length - visibleCount)} כלים
+              </Button>
+            </div>
+          )}
         </div>
       )}
 

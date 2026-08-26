@@ -2,18 +2,18 @@ import React, { useRef, useEffect } from 'react';
 
 export default function AnimatedBackground({ variant = 'default' }) {
   const layer1 = useRef(null);
-  const layer2 = useRef(null);
-  const layer3 = useRef(null);
 
   useEffect(() => {
+    // דלג על פרלקסה במובייל — ביצועים
+    const isMobile = window.matchMedia('(max-width: 767px)').matches;
+    if (isMobile) return;
+
     let raf;
     const handleScroll = () => {
       cancelAnimationFrame(raf);
       raf = requestAnimationFrame(() => {
         const y = window.scrollY;
         if (layer1.current) layer1.current.style.transform = `translate3d(0, ${y * 0.15}px, 0)`;
-        if (layer2.current) layer2.current.style.transform = `translate3d(0, ${y * 0.3}px, 0)`;
-        if (layer3.current) layer3.current.style.transform = `translate3d(0, ${y * 0.45}px, 0)`;
       });
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -26,10 +26,10 @@ export default function AnimatedBackground({ variant = 'default' }) {
       <div className="absolute inset-0 bg-[#0b0d12]" />
       <div className="absolute inset-0 bg-gradient-to-b from-[#0b0d12] via-[#0e1118] to-[#12161f]" />
 
-      {/* שכבת פרלקסה 1 — רשת איזומטרית */}
+      {/* שכבת רשת — סטטית במובייל, פרלקסה בדסקטופ */}
       <div
         ref={layer1}
-        className="absolute inset-0 opacity-[0.07]"
+        className="absolute inset-0 opacity-[0.05] md:opacity-[0.07]"
         style={{
           backgroundImage: `
             linear-gradient(rgba(52,152,219,0.5) 1px, transparent 1px),
@@ -40,28 +40,10 @@ export default function AnimatedBackground({ variant = 'default' }) {
         }}
       />
 
-      {/* שכבת פרלקסה 2 — רשת מתכנסת תלת-מימדית */}
-      <div
-        ref={layer2}
-        className="absolute bottom-0 inset-x-0 h-[50vh] opacity-[0.12]"
-        style={{
-          backgroundImage: `
-            linear-gradient(rgba(0,212,255,0.4) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0,212,255,0.3) 1px, transparent 1px)
-          `,
-          backgroundSize: '48px 48px',
-          transform: 'perspective(400px) rotateX(60deg)',
-          transformOrigin: 'bottom',
-          maskImage: 'linear-gradient(to top, rgba(0,0,0,1), transparent 80%)',
-          WebkitMaskImage: 'linear-gradient(to top, rgba(0,0,0,1), transparent 80%)',
-          willChange: 'transform',
-        }}
-      />
-
-      {/* שכבת פרלקסה 3 — כדורי זוהר צפים */}
-      <div ref={layer3} className="absolute inset-0" style={{ willChange: 'transform' }}>
-        <div className="absolute top-[-10%] right-[-5%] w-[40rem] h-[40rem] rounded-full bg-cyan-500/5 blur-[120px] animate-pulse" style={{ animationDuration: '8s' }} />
-        <div className="absolute bottom-[-10%] left-[-5%] w-[35rem] h-[35rem] rounded-full bg-blue-600/5 blur-[120px] animate-pulse" style={{ animationDuration: '6s' }} />
+      {/* כדורי זוהר — מופחתים במובייל */}
+      <div className="absolute inset-0">
+        <div className="absolute top-[-10%] right-[-5%] w-[40rem] h-[40rem] rounded-full bg-cyan-500/5 blur-[120px] hidden md:block" />
+        <div className="absolute bottom-[-10%] left-[-5%] w-[35rem] h-[35rem] rounded-full bg-blue-600/5 blur-[120px] hidden md:block" />
       </div>
 
       {/* קו אופק זוהר */}

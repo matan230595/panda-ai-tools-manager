@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo, memo } from 'react';
 import {
   Star, ExternalLink, Edit, Trash2, Tag, Flame,
   GripVertical, Package, MoreHorizontal, Check, Copy, Share2, Link2, GraduationCap
@@ -43,7 +43,7 @@ const PRICING_COLORS = {
   'פרימיום_מוגבל': '#f97316',
 };
 
-export default function ToolCard({
+function ToolCard({
   tool,
   onEdit,
   onDelete,
@@ -63,7 +63,7 @@ export default function ToolCard({
 
   const cardRef = useRef(null);
   const [tilt, setTilt] = useState({ rx: 0, ry: 0, active: false, gx: 50, gy: 50 });
-  const isTouch = typeof window !== 'undefined' && window.matchMedia('(max-width: 767px), (pointer: coarse)').matches;
+  const isTouch = useMemo(() => typeof window !== 'undefined' && window.matchMedia('(max-width: 767px), (pointer: coarse)').matches, []);
 
   const rafRef = useRef(null);
   const handleMouseMove = (e) => {
@@ -152,7 +152,7 @@ export default function ToolCard({
         ref={cardRef}
         className={`
           group relative flex flex-col rounded-2xl p-4 md:p-5 h-full antialiased cursor-pointer overflow-hidden
-          bg-[#1a202d]/70 backdrop-blur-xl
+          bg-[#1a202d]/90 md:bg-[#1a202d]/70 md:backdrop-blur-xl
           border border-cyan-400/15
           transition-[transform,box-shadow,border-color] duration-200 ease-out will-change-transform
           active:scale-[0.98] md:active:scale-100
@@ -461,3 +461,5 @@ export default function ToolCard({
     </div>
   );
 }
+
+export default memo(ToolCard);
