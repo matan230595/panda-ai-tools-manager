@@ -1,9 +1,12 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.38';
+import { createClientFromRequest } from 'npm:@base44/sdk';
 
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const tools = await base44.asServiceRole.entities.AiTool.list();
+    const user = await base44.auth.me().catch(() => null);
+    if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+
+    const tools = await base44.asServiceRole.entities.AiTool.filter({ created_by_id: user.id }, 'name', 100);
 
     const results = [];
     for (const tool of tools) {
