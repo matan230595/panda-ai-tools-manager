@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { getCurrentUser } from '@/components/hooks/userScopedData';
-import { Plus, Trash2, GitCompare, Sparkles, SlidersHorizontal, LayoutGrid, List, Rows3, Table2, Kanban, Copy, CheckSquare } from 'lucide-react';
+import { Plus, Trash2, GitCompare, Sparkles, SlidersHorizontal, LayoutGrid, List, Rows3, Table2, Kanban, Copy, CheckSquare, Wand2 } from 'lucide-react';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { Button } from '@/components/ui/button';
 import {
@@ -30,6 +30,7 @@ import ExportImportDialog from '@/components/tools/ExportImportDialog';
 import ShareLinkDialog from '@/components/sharing/ShareLinkDialog';
 import BulkActionsBar from '@/components/tools/BulkActionsBar';
 import CardFieldsCustomizer from '@/components/tools/CardFieldsCustomizer';
+import TaskTemplatesDialog from '@/components/tools/TaskTemplatesDialog';
 import { useCardFieldConfig } from '@/components/hooks/useCardFieldConfig';
 import { toast } from 'sonner';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
@@ -95,6 +96,7 @@ export default function ToolsTab({ settings, initialFilter, quickAddTool, onQuic
     }
   }, [quickAddTool]);
   const [showDuplicatesDialog, setShowDuplicatesDialog] = useState(false);
+  const [showTaskTemplates, setShowTaskTemplates] = useState(false);
   const [advancedFilters, setAdvancedFilters] = useState({
     categories: [],
     pricing: [],
@@ -293,8 +295,10 @@ export default function ToolsTab({ settings, initialFilter, quickAddTool, onQuic
       filtered = filtered.filter(tool => (tool.learningPriority || 'רגיל שלי') === priorityFilter);
     }
 
-    // מיון
+    // כלים בעלי דירוג גבוה תמיד מופיעים קודם.
     filtered.sort((a, b) => {
+      const ratingDifference = (b.rating || 0) - (a.rating || 0);
+      if (ratingDifference) return ratingDifference;
       switch(sortBy) {
         case 'name':
           return (a.name || '').localeCompare(b.name || '');
@@ -426,11 +430,11 @@ export default function ToolsTab({ settings, initialFilter, quickAddTool, onQuic
     toast.success('הכלי עודכן');
   };
 
-  const handleKanbanStatusChange = async (toolId, operationalStatus) => {
+  const handleKanbanStatusChange = async (toolId, masteryLevel) => {
     try {
-      await base44.entities.AiTool.update(toolId, { operationalStatus });
+      await base44.entities.AiTool.update(toolId, { masteryLevel });
       queryClient.invalidateQueries(['tools']);
-      toast.success(`הכלי הועבר ל"${operationalStatus}"`);
+      toast.success('שלב הלמידה עודכן');
     } catch {
       toast.error('שגיאה בעדכון הסטטוס');
       queryClient.invalidateQueries(['tools']);
@@ -580,6 +584,10 @@ export default function ToolsTab({ settings, initialFilter, quickAddTool, onQuic
             >
               <Sparkles className="w-4 h-4 ml-1.5" />
               <span className="hidden sm:inline">המלצות</span>
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => setShowTaskTemplates(true)} className="flex-shrink-0">
+              <Wand2 className="w-4 h-4 ml-1.5" />
+              <span className="hidden sm:inline">תבניות עבודה</span>
             </Button>
 
             <div className="flex-1 min-w-[20px]" />
@@ -766,6 +774,8 @@ export default function ToolsTab({ settings, initialFilter, quickAddTool, onQuic
           </Droppable>
         </DragDropContext>
       )}
+
+      <TaskTemplatesDialog open={showTaskTemplates} onOpenChange={setShowTaskTemplates} tools={tools} />
 
       {/* זיהוי כפילויות */}
       {showDuplicatesDialog && (

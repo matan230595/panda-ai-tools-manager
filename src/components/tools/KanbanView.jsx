@@ -7,36 +7,28 @@ import TaskTemplatesDialog from '@/components/tools/TaskTemplatesDialog';
 
 const COLUMNS = [
   {
-    id: 'בבדיקה',
-    title: 'בבדיקה',
+    id: 'מתחיל',
+    title: 'ללמידה',
     Icon: FlaskConical,
     color: 'from-amber-500 to-orange-500',
     ring: 'border-amber-300 dark:border-amber-800',
     dropBg: 'bg-amber-50/70 dark:bg-amber-900/20',
   },
   {
-    id: 'בשימוש',
-    title: 'בשימוש',
+    id: 'בינוני',
+    title: 'בתהליך',
     Icon: CheckCircle2,
+    color: 'from-blue-500 to-cyan-500',
+    ring: 'border-blue-300 dark:border-blue-800',
+    dropBg: 'bg-blue-50/70 dark:bg-blue-900/20',
+  },
+  {
+    id: 'מומחה',
+    title: 'מומחה',
+    Icon: Bookmark,
     color: 'from-emerald-500 to-green-600',
     ring: 'border-emerald-300 dark:border-emerald-800',
     dropBg: 'bg-emerald-50/70 dark:bg-emerald-900/20',
-  },
-  {
-    id: 'נשמר לסקירה',
-    title: 'נשמר לסקירה',
-    Icon: Bookmark,
-    color: 'from-violet-500 to-purple-600',
-    ring: 'border-violet-300 dark:border-violet-800',
-    dropBg: 'bg-violet-50/70 dark:bg-violet-900/20',
-  },
-  {
-    id: 'לביטול',
-    title: 'לביטול',
-    Icon: XCircle,
-    color: 'from-rose-500 to-red-600',
-    ring: 'border-rose-300 dark:border-rose-800',
-    dropBg: 'bg-rose-50/70 dark:bg-rose-900/20',
   },
 ];
 
@@ -49,7 +41,7 @@ export default function KanbanView({ tools, onEdit, onDelete, onToggleFavorite, 
     setLocalTools(tools);
   }, [tools]);
 
-  const getStatus = (tool) => tool.operationalStatus || 'בבדיקה';
+  const getStatus = (tool) => tool.masteryLevel || 'מתחיל';
 
   const handleDragStart = () => {
     setIsDraggingAny(true);
@@ -68,7 +60,7 @@ export default function KanbanView({ tools, onEdit, onDelete, onToggleFavorite, 
 
     // עדכון אופטימי מיידי בממשק
     setLocalTools((prev) =>
-      prev.map((tool) => (tool.id === draggableId ? { ...tool, operationalStatus: newStatus } : tool))
+      prev.map((tool) => (tool.id === draggableId ? { ...tool, masteryLevel: newStatus } : tool))
     );
 
     // שמירה בשרת — רק השדה שהשתנה כדי לא לדרוס מידע אחר
@@ -180,7 +172,7 @@ export default function KanbanView({ tools, onEdit, onDelete, onToggleFavorite, 
             onClick={(e) => {
               e.stopPropagation();
               onStatusChange?.(tool.id, c.id);
-              setLocalTools((prev) => prev.map((t) => (t.id === tool.id ? { ...t, operationalStatus: c.id } : t)));
+              setLocalTools((prev) => prev.map((t) => (t.id === tool.id ? { ...t, masteryLevel: c.id } : t)));
             }}
             className="text-[11px] px-2 py-1 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
           >
@@ -194,7 +186,7 @@ export default function KanbanView({ tools, onEdit, onDelete, onToggleFavorite, 
   return (
     <DragDropContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <div className="flex items-center justify-between mb-3">
-        <p className="text-sm text-gray-500">גרור כלים בין עמודות או השתמש בכפתורי העברה</p>
+        <p className="text-sm text-gray-500">גרור כלים בין שלבי הלמידה או השתמש בכפתורי העברה</p>
         <Button variant="outline" size="sm" onClick={() => setShowTemplates(true)} className="gap-2">
           <Wand2 className="w-4 h-4" />
           תבניות משימות
