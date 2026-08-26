@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.39';
+import { createClientFromRequest } from 'npm:@base44/sdk';
 
 Deno.serve(async (req) => {
   try {
@@ -111,6 +111,6 @@ Deno.serve(async (req) => {
     });
   } catch (error) {
     console.error('Error:', error);
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ error: 'Failed to export data to Google Sheets' }, { status: 500 });
   }
 });
