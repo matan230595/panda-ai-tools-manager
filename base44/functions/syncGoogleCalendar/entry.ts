@@ -57,6 +57,6 @@ Deno.serve(async (req) => {
 
     return Response.json({ success: true, synced: created + updated, created, updated });
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ error: 'Failed to sync Google Calendar' }, { status: 500 });
   }
 });
