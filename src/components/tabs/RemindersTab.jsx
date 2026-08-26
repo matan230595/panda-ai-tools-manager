@@ -70,7 +70,7 @@ export default function RemindersTab() {
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.Reminder.create(data),
     onSuccess: () => {
-      queryClient.invalidateQueries(['reminders']);
+      queryClient.invalidateQueries({ queryKey: ['reminders'] });
       setShowForm(false);
       resetForm();
       toast.success('תזכורת נוספה בהצלחה! 🔔');
@@ -82,7 +82,7 @@ export default function RemindersTab() {
   const updateMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.Reminder.update(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries(['reminders']);
+      queryClient.invalidateQueries({ queryKey: ['reminders'] });
       setShowForm(false);
       setEditingReminder(null);
       resetForm();
@@ -95,7 +95,7 @@ export default function RemindersTab() {
   const deleteMutation = useMutation({
     mutationFn: (id) => base44.entities.Reminder.delete(id),
     onSuccess: () => {
-      queryClient.invalidateQueries(['reminders']);
+      queryClient.invalidateQueries({ queryKey: ['reminders'] });
       toast.success('התזכורת נמחקה');
     },
     onError: () => toast.error('שגיאה במחיקת התזכורת'),
@@ -105,7 +105,7 @@ export default function RemindersTab() {
   const completeMutation = useMutation({
     mutationFn: ({ id, reminder }) => base44.entities.Reminder.update(id, { ...reminder, isCompleted: !reminder.isCompleted, completedDate: !reminder.isCompleted ? new Date().toISOString() : null }),
     onSuccess: () => {
-      queryClient.invalidateQueries(['reminders']);
+      queryClient.invalidateQueries({ queryKey: ['reminders'] });
       toast.success('התזכורת עודכנה! ✓');
     }
   });
@@ -114,7 +114,7 @@ export default function RemindersTab() {
   const sendRemindersMutation = useMutation({
     mutationFn: (reminderIds) => base44.functions.invoke('sendReminderNotification', { reminderIds }),
     onSuccess: (res) => {
-      queryClient.invalidateQueries(['reminders']);
+      queryClient.invalidateQueries({ queryKey: ['reminders'] });
       toast.success(`נשלחו ${res.data.sent} תזכורות בדוא"ל ✉️`);
     },
     onError: () => toast.error('שגיאה בשליחת התזכורות')
