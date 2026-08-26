@@ -3,7 +3,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { getCurrentUser } from '@/components/hooks/userScopedData';
 import { Button } from '@/components/ui/button';
-import { Globe } from 'lucide-react';
 
 export default function LanguageSwitcher() {
   const queryClient = useQueryClient();
