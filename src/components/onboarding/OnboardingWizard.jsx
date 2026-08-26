@@ -147,7 +147,7 @@ export default function OnboardingWizard({ onComplete }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[200] flex items-center justify-center p-4"
+          className="fixed inset-0 z-[200] flex items-center justify-center p-4 overflow-y-auto pb-24 md:pb-4"
         >
           <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={handleSkip} />
 
@@ -156,7 +156,7 @@ export default function OnboardingWizard({ onComplete }) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.96 }}
             transition={{ duration: 0.3, ease: [0.34, 1.56, 0.64, 1] }}
-            className="relative w-full max-w-lg rounded-2xl overflow-hidden border border-cyan-400/20 bg-[#1a202d]/95 backdrop-blur-2xl shadow-[0_0_60px_-10px_rgba(0,212,255,0.25)]"
+            className="relative w-full max-w-lg max-h-[calc(100vh-7rem)] overflow-y-auto rounded-2xl border border-cyan-400/20 bg-[#1a202d]/95 backdrop-blur-2xl shadow-[0_0_60px_-10px_rgba(0,212,255,0.25)]"
           >
             {/* כותרת עם גרדיאנט */}
             <div className={`relative h-32 bg-gradient-to-br ${step.gradient} flex items-center justify-center`}>
