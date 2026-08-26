@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.38';
+import { createClientFromRequest } from 'npm:@base44/sdk';
 
 const MAIN_FOLDER_NAME = 'AI Tools Manager';
 const DRIVE_FILES_URL = 'https://www.googleapis.com/drive/v3/files';
@@ -84,17 +84,25 @@ Deno.serve(async (req) => {
       return tools.some((t) => (t.driveDocs || []).some((d) => d.fileId === fileId));
     }
 
-    // List files from a tool's folder (or global search)
+    // Search only inside this app's managed Drive folder.
     if (action === 'list') {
-      const query = body.query || '';
-      const pageSize = body.pageSize || 20;
-      let url = `${DRIVE_FILES_URL}?pageSize=${pageSize}&fields=files(id,name,mimeType,iconLink,webViewLink,modifiedTime)&orderBy=modifiedTime desc&q=trashed=false`;
+      const query = String(body.query || '').slice(0, 120);
+      const pageSize = Math.max(1, Math.min(50, Number(body.pageSize) || 20));
+      const mainFolderId = await getMainFolderId(authHeader);
+      let driveQuery = `'${mainFolderId}' in parents and trashed=false`;
       if (query) {
         const escaped = query.replace(/'/g, "\\'");
-        url += ` and name contains '${escaped}'`;
+        driveQuery += ` and name contains '${escaped}'`;
       }
-      const res = await fetch(url, { headers: authHeader });
+      const params = new URLSearchParams({
+        pageSize: String(pageSize),
+        fields: 'files(id,name,mimeType,iconLink,webViewLink,modifiedTime)',
+        orderBy: 'modifiedTime desc',
+        q: driveQuery,
+      });
+      const res = await fetch(`${DRIVE_FILES_URL}?${params}`, { headers: authHeader });
       const data = await res.json();
+      if (!res.ok) return Response.json({ error: data.error?.message || 'Drive search failed' }, { status: 502 });
       return Response.json({ files: data.files || [] });
     }
 
