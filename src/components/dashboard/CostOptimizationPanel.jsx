@@ -91,7 +91,7 @@ export default function CostOptimizationPanel({ tools = [], onManageTool }) {
                     <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-semibold truncate">{tool.name}</p>
+                    <p className="text-sm font-semibold truncate" dir="ltr">{tool.name}</p>
                     <p className="text-[11px] text-gray-500 dark:text-gray-400 flex items-center gap-1">
                       <Clock className="w-3 h-3" />
                       {daysSince !== null

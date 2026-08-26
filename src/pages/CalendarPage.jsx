@@ -1,12 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { getCurrentUser } from '@/components/hooks/userScopedData';
 import ReminderCalendarView from '@/components/calendar/ReminderCalendarView';
 import GoogleCalendarSync from '@/components/GoogleCalendarSync';
+import PersonalCalendarConnection from '@/components/calendar/PersonalCalendarConnection';
+import DailyPracticeReminders from '@/components/reminders/DailyPracticeReminders';
 
 export default function CalendarPage() {
   const queryClient = useQueryClient();
+  const [isCalendarConnected, setIsCalendarConnected] = useState(false);
 
   const { data: reminders = [] } = useQuery({
     queryKey: ['calendar-page-reminders'],
@@ -77,15 +80,21 @@ export default function CalendarPage() {
         </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-[1.6fr_0.8fr] gap-6 items-start">
-          <ReminderCalendarView
-            reminders={reminders}
-            subscriptions={subscriptions}
-            tasks={tasks}
-            plans={plans}
-            onMoveReminder={(id, date) => moveReminderMutation.mutate({ id, date })}
-            onMoveTask={(id, date) => moveTaskMutation.mutate({ id, date })}
-          />
-          <GoogleCalendarSync />
+          <div className="order-2 xl:order-1">
+            <ReminderCalendarView
+              reminders={reminders}
+              subscriptions={subscriptions}
+              tasks={tasks}
+              plans={plans}
+              onMoveReminder={(id, date) => moveReminderMutation.mutate({ id, date })}
+              onMoveTask={(id, date) => moveTaskMutation.mutate({ id, date })}
+            />
+          </div>
+          <div className="order-1 space-y-4 xl:order-2">
+            <PersonalCalendarConnection onConnectionChange={setIsCalendarConnected} />
+            <DailyPracticeReminders isCalendarConnected={isCalendarConnected} />
+            <GoogleCalendarSync />
+          </div>
         </div>
       </div>
     </div>

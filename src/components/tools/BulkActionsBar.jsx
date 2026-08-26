@@ -85,7 +85,7 @@ export default function BulkActionsBar({
 
   return (
     <>
-      <div className="flex items-center gap-2 rounded-2xl border border-indigo-200 dark:border-indigo-900 bg-indigo-50/80 dark:bg-indigo-950/40 p-2 animate-slide-in" dir="rtl">
+      <div className="grid grid-cols-2 items-center gap-2 rounded-2xl border border-indigo-200 dark:border-indigo-900 bg-indigo-50/80 dark:bg-indigo-950/40 p-3 animate-slide-in sm:flex" dir="rtl" aria-live="polite">
         <CheckSquare className="w-5 h-5 text-indigo-600 flex-shrink-0" />
         <span className="text-sm font-medium text-indigo-700 dark:text-indigo-300 flex-1 pr-1">
           נבחרו {selectedIds.length} מתוך {totalTools} כלים
@@ -95,6 +95,7 @@ export default function BulkActionsBar({
           variant="ghost"
           size="sm"
           className="text-xs"
+          aria-label="בחירת כל הכלים המסוננים"
           onClick={onSelectAll}
         >
           בחר הכל
@@ -102,12 +103,12 @@ export default function BulkActionsBar({
 
         {/* העברה לקטגוריה */}
         <div className="flex items-center gap-1">
-          <FolderInput className="w-4 h-4 text-indigo-500" />
+          <FolderInput className="w-4 h-4 text-indigo-500" aria-hidden="true" />
           <Select value={targetCategory} onValueChange={(v) => {
             setTargetCategory(v);
             bulkMoveCategory.mutate({ ids: selectedIds, category: v });
           }}>
-            <SelectTrigger className="h-8 w-36 text-xs">
+            <SelectTrigger className="h-10 w-full text-xs sm:w-36" aria-label="העברת הכלים הנבחרים לקטגוריה">
               <SelectValue placeholder="העבר לקטגוריה..." />
             </SelectTrigger>
             <SelectContent>
@@ -123,6 +124,7 @@ export default function BulkActionsBar({
           variant="ghost"
           size="sm"
           className="text-xs"
+          aria-label="הוספת הכלים הנבחרים למועדפים"
           onClick={() => bulkFavorite.mutate({ ids: selectedIds, favorite: true })}
         >
           <Star className="w-3.5 h-3.5 ml-1" />
@@ -133,6 +135,7 @@ export default function BulkActionsBar({
           variant="ghost"
           size="sm"
           className="text-xs"
+          aria-label="סימון הכלים הנבחרים כנלמדו"
           onClick={() => bulkMarkLearned.mutate(selectedIds)}
           disabled={selectedIds.length === 0 || bulkMarkLearned.isPending}
         >
@@ -145,13 +148,14 @@ export default function BulkActionsBar({
           variant="ghost"
           size="sm"
           className="text-xs text-red-600"
+          aria-label="מחיקת הכלים הנבחרים"
           onClick={() => setShowDeleteConfirm(true)}
         >
           <Trash2 className="w-3.5 h-3.5 ml-1" />
           מחק
         </Button>
 
-        <Button variant="ghost" size="sm" className="text-xs" onClick={onClear}>
+        <Button variant="ghost" size="sm" className="text-xs" aria-label="ביטול בחירה מרובה" onClick={onClear}>
           <X className="w-3.5 h-3.5 ml-1" />
           ביטול
         </Button>

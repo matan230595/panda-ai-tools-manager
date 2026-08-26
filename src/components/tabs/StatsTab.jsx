@@ -125,25 +125,26 @@ export default function StatsTab({ onNavigateToTools }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-        <div onClick={() => onNavigateToTools?.({ filter: 'all' })} className="cursor-pointer">
-          <StatCard title="סך הכל כלים" value={stats.totalTools} icon={Package} gradient="from-indigo-500 to-purple-600" />
+      <section className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4" aria-label="מדדי ליבה: הכנסה, עלות, החזר השקעה וחיסכון צפוי">
+        <div onClick={() => onNavigateToTools?.({ filter: 'all' })} className="cursor-pointer" role="button" tabIndex={0} aria-label="הכנסה חודשית משוערת">
+          <StatCard title="הכנסה חודשית" value={`₪${stats.totalMonthlyValue.toFixed(0)}`} icon={TrendingUp} gradient="from-emerald-500 to-green-600" />
         </div>
-        <div onClick={() => onNavigateToTools?.({ filter: 'favorites' })} className="cursor-pointer">
-          <StatCard title="ROI כולל" value={`${stats.totalRoi}%`} icon={TrendingUp} gradient="from-green-500 to-emerald-600" />
-        </div>
-        <div onClick={() => onNavigateToTools?.({ filter: 'highRated' })} className="cursor-pointer">
-          <StatCard title="חיסכון זמן" value={`${stats.totalTimeSaved} ש׳`} icon={Clock3} gradient="from-cyan-500 to-blue-600" />
-        </div>
-        <div onClick={() => onNavigateToTools?.({ filter: 'categories' })} className="cursor-pointer">
+        <div onClick={() => onNavigateToTools?.({ filter: 'categories' })} className="cursor-pointer" role="button" tabIndex={0} aria-label="עלות חודשית">
           <StatCard title="עלות חודשית" value={`₪${stats.totalMonthlyCost.toFixed(0)}`} icon={Wallet} gradient="from-pink-500 to-rose-600" />
         </div>
-      </div>
+        <div onClick={() => onNavigateToTools?.({ filter: 'favorites' })} className="cursor-pointer" role="button" tabIndex={0} aria-label="החזר השקעה כולל">
+          <StatCard title="ROI כולל" value={`${stats.totalRoi}%`} icon={TrendingUp} gradient="from-indigo-500 to-purple-600" />
+        </div>
+        <div onClick={() => onNavigateToTools?.({ filter: 'highRated' })} className="cursor-pointer" role="button" tabIndex={0} aria-label="חיסכון זמן צפוי">
+          <StatCard title="חיסכון צפוי" value={`${stats.totalTimeSaved} ש׳`} icon={Clock3} gradient="from-cyan-500 to-blue-600" />
+        </div>
+      </section>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-4">
         <div className="bg-white/80 dark:bg-slate-900/70 backdrop-blur-xl rounded-2xl p-4 md:p-6 border border-gray-200/80 dark:border-slate-800 shadow-sm">
           <h3 className="text-base sm:text-lg font-bold mb-4 text-gray-900 dark:text-white">ROI וחיסכון בזמן לפי חודשים</h3>
-          <ResponsiveContainer width="100%" height={260}>
+          <div role="img" aria-label="גרף קו המציג החזר השקעה וחיסכון זמן לפי חודשים">
+            <ResponsiveContainer width="100%" height={260}>
             <LineChart data={stats.monthlyTrendData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
               <XAxis dataKey="month" />
@@ -154,10 +155,12 @@ export default function StatsTab({ onNavigateToTools }) {
               <Line type="monotone" dataKey="roi" stroke="#22c55e" strokeWidth={3} name="ROI" />
             </LineChart>
           </ResponsiveContainer>
+          </div>
         </div>
 
         <div className="bg-white/80 dark:bg-slate-900/70 backdrop-blur-xl rounded-2xl p-4 md:p-6 border border-gray-200/80 dark:border-slate-800 shadow-sm">
           <h3 className="text-base sm:text-lg font-bold mb-4 text-gray-900 dark:text-white">התפלגות עלויות הכלים</h3>
+          <div role="img" aria-label="גרף עמודות המציג עלות חודשית לכל כלי">
           <ResponsiveContainer width="100%" height={260}>
             <BarChart data={stats.costBreakdownData} layout="vertical" margin={{ top: 10, right: 10, left: 0, bottom: 10 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -167,6 +170,7 @@ export default function StatsTab({ onNavigateToTools }) {
               <Bar dataKey="cost" fill="#8b5cf6" radius={[0, 8, 8, 0]} />
             </BarChart>
           </ResponsiveContainer>
+          </div>
         </div>
       </div>
 
@@ -229,7 +233,7 @@ export default function StatsTab({ onNavigateToTools }) {
                   </div>
                 )}
                 <div className="flex-1 min-w-0">
-                  <h4 className="font-medium text-gray-900 dark:text-white truncate">{tool.name}</h4>
+                  <h4 className="font-medium text-gray-900 dark:text-white truncate" dir="ltr">{tool.name}</h4>
                   <p className="text-sm text-gray-500 dark:text-gray-400">{tool.category?.replace(/_/g, ' ')}</p>
                 </div>
                 <div className="flex items-center gap-1">
@@ -260,7 +264,7 @@ export default function StatsTab({ onNavigateToTools }) {
                   </div>
                 )}
                 <div className="flex-1 min-w-0">
-                  <h4 className="font-medium text-gray-900 dark:text-white truncate">{tool.name}</h4>
+                  <h4 className="font-medium text-gray-900 dark:text-white truncate" dir="ltr">{tool.name}</h4>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
                     {new Date(tool.created_date).toLocaleDateString('he-IL')}
                   </p>

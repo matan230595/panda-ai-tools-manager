@@ -23,7 +23,6 @@ export default function MobileBottomNav({ activeTab, onTabChange, onAddTool, onM
       className="mobile-bottom-nav"
       dir="rtl"
       aria-label="ניווט מובייל"
-      role="tablist"
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
       {/* אינדיקטור רקע זז */}
@@ -53,8 +52,6 @@ export default function MobileBottomNav({ activeTab, onTabChange, onAddTool, onM
         return (
           <motion.button
             key={item.id}
-            role="tab"
-            aria-selected={active}
             aria-label={item.label}
             aria-current={active ? 'page' : undefined}
             onClick={() => {
