@@ -65,9 +65,9 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
   const masteryConfig = MASTERY_CONFIG[tool?.masteryLevel] || MASTERY_CONFIG['מתחיל'];
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex items-end md:items-center justify-center p-0 md:p-4" onClick={onClose}>
+    <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-md flex items-end md:items-center justify-center p-0 md:p-4" onClick={onClose}>
       <div
-        className="bg-[#0f1318] border border-cyan-400/15 rounded-t-3xl md:rounded-2xl shadow-2xl w-full max-w-4xl max-h-[94vh] overflow-hidden flex flex-col text-right"
+        className="bg-[#0f1318] border border-cyan-400/15 rounded-none md:rounded-2xl shadow-2xl w-full max-w-4xl h-[100dvh] md:h-auto md:max-h-[94vh] overflow-y-auto md:overflow-hidden flex flex-col text-right"
         dir="rtl"
         onClick={(e) => e.stopPropagation()}>
 
@@ -89,7 +89,7 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
             }
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-2">
-                <h2 className="text-2xl font-bold text-white">{tool.name}</h2>
+                <h2 className="min-w-0 text-xl md:text-2xl font-bold leading-tight text-white break-words">{tool.name}</h2>
                 <button
                   onClick={() => onToggleFavorite(tool)}
                   className="p-1 hover:scale-110 transition-transform"
@@ -155,7 +155,7 @@ export default function ToolDetailDialog({ tool, onClose, onEdit, onDelete, onTo
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-6">
+        <div className="flex-1 p-4 pb-24 md:p-6 md:overflow-y-auto">
           <Tabs defaultValue="overview" className="w-full">
             <TabsList className="grid w-full grid-cols-2 md:grid-cols-6 xl:grid-cols-12 gap-2 h-auto bg-transparent p-0">
               <TabsTrigger value="overview" className="text-slate-400 data-[state=active]:text-cyan-300 data-[state=active]:bg-cyan-400/10">סקירה</TabsTrigger>
