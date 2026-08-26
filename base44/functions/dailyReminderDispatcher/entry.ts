@@ -1,14 +1,18 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
+import { createClientFromRequest } from 'npm:@base44/sdk';
 
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
+    const user = await base44.auth.me().catch(() => null);
+    if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+
     const today = new Date().toISOString().split('T')[0];
 
     const dueReminders = await base44.asServiceRole.entities.Reminder.filter({
       isActive: true,
       isCompleted: false,
       reminderDate: today,
+      created_by_id: user.id,
     });
 
     if (dueReminders.length === 0) {
@@ -22,6 +26,6 @@ Deno.serve(async (req) => {
     return Response.json(response.data);
   } catch (error) {
     console.error('Error:', error);
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ error: 'Reminder dispatch failed' }, { status: 500 });
   }
 });
