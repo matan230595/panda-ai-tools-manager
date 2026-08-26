@@ -76,7 +76,7 @@ export default function GoogleCalendarSync() {
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['integrations']);
+      queryClient.invalidateQueries({ queryKey: ['integrations'] });
       toast.success('סנכרון היומן הופעל');
     },
   });
@@ -133,7 +133,7 @@ export default function GoogleCalendarSync() {
       return response;
     },
     onSuccess: (res) => {
-      queryClient.invalidateQueries(['integrations']);
+      queryClient.invalidateQueries({ queryKey: ['integrations'] });
       const created = res.data.created || 0;
       const updated = res.data.updated || 0;
       toast.success(`סונכרנו ${res.data.synced} אירועים ללא כפילויות (${created} חדשים, ${updated} עודכנו)`);
