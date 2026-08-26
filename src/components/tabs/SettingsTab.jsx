@@ -156,9 +156,7 @@ export default function SettingsTab({ settings, onLogout }) {
   const handleResetAll = async () => {
     try {
       const user = await getCurrentUser();
-      const tools = await base44.entities.AiTool.filter({ created_by_id: user.id });
       await base44.entities.AiTool.deleteMany({ created_by_id: user.id });
-      const conversations = await base44.entities.Conversation.filter({ created_by_id: user.id });
       await base44.entities.Conversation.deleteMany({ created_by_id: user.id });
       queryClient.invalidateQueries();
       toast.success('כל הנתונים נמחקו בהצלחה');
