@@ -152,7 +152,7 @@ function ToolCard({
       <div
         ref={cardRef}
         className={`
-        group relative flex flex-col rounded-2xl p-5 sm:p-4 md:p-5 h-full antialiased cursor-pointer overflow-hidden
+        group relative flex flex-col rounded-2xl p-6 sm:p-5 md:p-5 h-full antialiased cursor-pointer overflow-hidden
         bg-[#1a202d]/90 md:bg-[#1a202d]/70 md:backdrop-blur-xl
         border border-cyan-400/15
         transition-[transform,box-shadow,border-color] duration-200 ease-out will-change-transform
@@ -232,7 +232,7 @@ function ToolCard({
         )}
 
         {/* כותרת: לוגו + שם + מועדפים */}
-        <div className="flex items-start gap-3 mb-3 md:mb-4 [transform:translateZ(35px)]">
+        <div className="flex items-start gap-4 mb-5 md:mb-4 [transform:translateZ(35px)]">
           {/* לוגו */}
           <div
             className="relative flex-shrink-0"
@@ -263,7 +263,7 @@ function ToolCard({
 
           <div className="flex-1 min-w-0 text-right">
             <div className="flex items-start justify-between gap-2">
-              <h3 className="font-bold text-lg md:text-lg text-white leading-snug break-words">
+              <h3 className="font-bold text-xl md:text-lg text-white leading-relaxed break-words">
                 {tool.name}
               </h3>
               {/* מועדפים */}
@@ -273,7 +273,7 @@ function ToolCard({
             </div>
             {/* Badge קטגוריה */}
             {show('category') && (
-              <span className="inline-flex items-center mt-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium text-cyan-300 bg-cyan-400/10 border border-cyan-400/20 max-w-full whitespace-normal break-words">
+              <span className="inline-flex items-center mt-2 px-3 py-1 rounded-full text-sm md:text-xs font-medium text-cyan-300 bg-cyan-400/10 border border-cyan-400/20 max-w-full whitespace-normal break-words">
                 {tool.category?.replace(/_/g, ' ')}
               </span>
             )}
@@ -301,7 +301,7 @@ function ToolCard({
         <div className="relative flex flex-col flex-1 [transform:translateZ(25px)]">
           {/* תיאור */}
           {show('description') && (
-            <p className="text-base sm:text-sm text-slate-300 leading-7 text-right break-words mb-4">
+            <p className="text-[17px] sm:text-sm text-slate-200 leading-8 text-right break-words mb-5">
               {tool.description || 'אין תיאור זמין'}
             </p>
           )}
@@ -312,7 +312,7 @@ function ToolCard({
               {tool.tags.slice(0, 3).map((tag, index) => (
                 <span
                   key={index}
-                  className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs text-slate-300 bg-white/5 border border-cyan-400/15"
+                  className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm md:text-xs text-slate-300 bg-white/5 border border-cyan-400/15 max-w-full break-all"
                 >
                   <Tag className="w-2.5 h-2.5" />
                   {tag}
@@ -327,7 +327,7 @@ function ToolCard({
           )}
 
           {/* פס תמחור + פופולריות */}
-          <div className="flex items-center justify-between gap-2 mb-3 mt-auto">
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-4 mt-auto">
             {show('popularity') && tool.popularity >= 4 && (
               <div className="inline-flex items-center gap-1.5 text-xs md:text-sm text-slate-400">
                 <Flame className="w-4 h-4 text-orange-400" />
