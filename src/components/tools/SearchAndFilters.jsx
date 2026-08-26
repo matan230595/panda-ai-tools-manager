@@ -66,10 +66,10 @@ export default function SearchAndFilters({
         quickFilters={[...new Set(tools.flatMap((tool) => [(tool.customCategory || tool.category)?.replace(/_/g, ' '), ...(tool.tags || []).slice(0, 2)]).filter(Boolean))].slice(0, 6)}
       />
 
-      <div className="flex items-center justify-between gap-2 flex-wrap">
-        <div className="flex items-center gap-2 min-w-0 flex-wrap">
+      <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center sm:justify-between sm:flex-wrap">
+        <div className="contents sm:flex sm:items-center sm:gap-2 sm:min-w-0 sm:flex-wrap">
           <Select value={sortBy} onValueChange={onSortChange}>
-            <SelectTrigger className="h-10 rounded-xl text-sm w-[8.5rem] sm:w-[9.5rem] bg-white/5 border-cyan-400/15 text-slate-200 flex-shrink-0">
+            <SelectTrigger className="h-10 rounded-xl text-sm w-full sm:w-[9.5rem] bg-white/5 border-cyan-400/15 text-slate-200 flex-shrink-0">
               <ArrowUpDown className="w-3.5 h-3.5 ml-1 text-slate-500 flex-shrink-0" />
               <SelectValue placeholder="מיין לפי" />
             </SelectTrigger>
@@ -78,7 +78,7 @@ export default function SearchAndFilters({
 
           {onMasteryFilterChange && (
             <Select value={masteryFilter || 'all'} onValueChange={onMasteryFilterChange}>
-              <SelectTrigger className="h-10 rounded-xl text-sm w-[8rem] bg-white/5 border-cyan-400/15 text-slate-200 flex-shrink-0">
+              <SelectTrigger className="h-10 rounded-xl text-sm w-full sm:w-[8rem] bg-white/5 border-cyan-400/15 text-slate-200 flex-shrink-0">
                 <GraduationCap className="w-3.5 h-3.5 ml-1 text-slate-500 flex-shrink-0" />
                 <SelectValue placeholder="רמת שליטה" />
               </SelectTrigger>
@@ -88,7 +88,7 @@ export default function SearchAndFilters({
 
           {onPriorityFilterChange && (
             <Select value={priorityFilter || 'all'} onValueChange={onPriorityFilterChange}>
-              <SelectTrigger className="h-10 rounded-xl text-sm w-[8rem] bg-white/5 border-cyan-400/15 text-slate-200 flex-shrink-0">
+              <SelectTrigger className="h-10 rounded-xl text-sm w-full sm:w-[8rem] bg-white/5 border-cyan-400/15 text-slate-200 flex-shrink-0">
                 <Zap className="w-3.5 h-3.5 ml-1 text-slate-500 flex-shrink-0" />
                 <SelectValue placeholder="עדיפות" />
               </SelectTrigger>
@@ -96,7 +96,7 @@ export default function SearchAndFilters({
             </Select>
           )}
 
-          <span className="text-xs sm:text-sm text-slate-500 whitespace-nowrap truncate">
+          <span className="col-span-2 sm:col-auto text-xs sm:text-sm text-slate-500 whitespace-nowrap truncate">
             <span className="font-bold text-cyan-300">{resultsCount}</span> כלים
           </span>
         </div>

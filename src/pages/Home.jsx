@@ -260,14 +260,16 @@ export default function Home() {
       {/* תוכן הטאב */}
       <main id="main-content" data-active-tab={activeTab} className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 py-2 sm:py-4 md:py-8 md:pr-[var(--sidebar-w,21rem)] transition-[padding] duration-300 pb-28 md:pb-8">
         <div
-          className="flex items-center justify-between gap-2 mb-3 md:mb-5 rounded-xl border border-cyan-400/15 bg-[#1a202d]/80 md:bg-[#1a202d]/60 md:backdrop-blur-xl px-2.5 sm:px-3 py-2"
+          className="flex flex-wrap items-center gap-2 mb-3 md:mb-5 rounded-xl border border-cyan-400/15 bg-[#1a202d]/80 md:bg-[#1a202d]/60 md:backdrop-blur-xl px-2.5 sm:px-3 py-2"
         >
-          <Link to="/calendar" className="group inline-flex items-center justify-center gap-1.5 rounded-lg bg-blue-600 px-3 sm:px-4 py-2 text-sm font-semibold text-white shadow-[0_0_20px_-4px_rgba(37,99,235,0.6)] hover:bg-blue-500 transition-all active:scale-95 min-h-[40px] sm:min-h-[44px] flex-shrink-0">
+          <Link to="/calendar" className="order-1 group inline-flex items-center justify-center gap-1.5 rounded-lg bg-blue-600 px-3 sm:px-4 py-2 text-sm font-semibold text-white shadow-[0_0_20px_-4px_rgba(37,99,235,0.6)] hover:bg-blue-500 transition-all active:scale-95 min-h-[40px] sm:min-h-[44px] flex-shrink-0">
             <CalendarDays className="w-4 h-4 transition-transform group-hover:rotate-12" />
             <span className="hidden sm:inline">לוח שנה</span>
           </Link>
-          <GlobalSearchBar onNavigateTool={() => setActiveTab('tools')} />
-          <div className="flex items-center gap-1 flex-shrink-0">
+          <div className="order-3 basis-full md:order-2 md:basis-auto md:flex-1">
+            <GlobalSearchBar onNavigateTool={() => setActiveTab('tools')} />
+          </div>
+          <div className="order-2 md:order-3 flex items-center gap-1 flex-shrink-0 mr-auto md:mr-0">
             <NotificationCenter
               notifications={settings?.notifications || []}
               onMarkAsRead={handleMarkAsRead}

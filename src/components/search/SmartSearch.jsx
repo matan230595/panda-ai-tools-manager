@@ -202,7 +202,7 @@ export default function SmartSearch({ onSearch, tools, quickFilters = [], search
       </div>
 
       {quickFilters.length > 0 && (
-        <div className="flex flex-wrap gap-2 mt-2.5" dir="rtl">
+        <div className="grid grid-cols-2 gap-2 mt-2.5" dir="rtl">
           {quickFilters.map((filter) => (
             <button
               key={filter}
