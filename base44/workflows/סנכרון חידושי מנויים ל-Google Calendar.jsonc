@@ -1,0 +1,39 @@
+{
+  "name": "\u05e1\u05e0\u05db\u05e8\u05d5\u05df \u05d7\u05d9\u05d3\u05d5\u05e9\u05d9 \u05de\u05e0\u05d5\u05d9\u05d9\u05dd \u05dc-Google Calendar",
+  "description": "\u05de\u05e1\u05e0\u05db\u05e8\u05df \u05d0\u05d5\u05d8\u05d5\u05de\u05d8\u05d9\u05ea \u05db\u05dc \u05d9\u05e6\u05d9\u05e8\u05d4, \u05e2\u05d3\u05db\u05d5\u05df \u05d0\u05d5 \u05de\u05d7\u05d9\u05e7\u05d4 \u05e9\u05dc \u05de\u05e0\u05d5\u05d9 (\u05ea\u05d0\u05e8\u05d9\u05da \u05d7\u05d9\u05d3\u05d5\u05e9) \u05dc\u05d9\u05d5\u05de\u05df Google, \u05dc\u05dc\u05d0 \u05db\u05e4\u05d9\u05dc\u05d5\u05d9\u05d5\u05ea",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "entity",
+      "events": [
+        "create",
+        "update",
+        "delete"
+      ],
+      "entity_name": "Subscription"
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "google_calendar",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "run_function": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "syncCalendarEntity",
+            "args": {}
+          },
+          "then": "end"
+        }
+      }
+    ]
+  },
+  "x-base44-migrated-from-automation": {
+    "legacy_payload_function": "syncCalendarEntity"
+  }
+}
