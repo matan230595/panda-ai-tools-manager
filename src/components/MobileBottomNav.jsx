@@ -26,12 +26,12 @@ export default function MobileBottomNav({ activeTab, onTabChange, onAddTool, onM
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
       {/* אינדיקטור רקע זז */}
-      <motion.div
+      {activeIndex >= 0 && <motion.div
         className="absolute top-0 h-0.5 bg-cyan-400 rounded-full"
         style={{ filter: 'drop-shadow(0 0 4px rgba(0,212,255,0.8))' }}
         animate={{ right: `calc(${activeIndex * slot}% + 1.5%)`, width: '12%' }}
         transition={{ type: 'spring', stiffness: 350, damping: 30 }}
-      />
+      />}
 
       {/* אינדיקטור החלקה חי */}
       {Math.abs(swipeProgress) > 0.02 && (
@@ -93,7 +93,7 @@ export default function MobileBottomNav({ activeTab, onTabChange, onAddTool, onM
           onAddTool?.();
         }}
         whileTap={{ scale: 0.9 }}
-        className="relative -mt-6 flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl border border-cyan-300/40 bg-blue-600 text-white shadow-[0_0_22px_-4px_rgba(37,99,235,0.9)]"
+        className="relative flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl border border-cyan-300/40 bg-blue-600 text-white shadow-[0_0_22px_-4px_rgba(37,99,235,0.9)]"
       >
         <span className="text-3xl font-light leading-none">+</span>
       </motion.button>

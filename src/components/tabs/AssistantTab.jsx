@@ -99,7 +99,7 @@ export default function AssistantTab() {
   };
 
   return (
-    <div className="grid grid-cols-1 xl:grid-cols-[20rem_minmax(0,1fr)] gap-4 md:gap-6 min-h-[calc(100vh-11rem)]" dir="rtl">
+    <div className="grid grid-cols-[minmax(0,1fr)] xl:grid-cols-[20rem_minmax(0,1fr)] gap-4 md:gap-6 min-w-0 w-full min-h-[calc(100vh-11rem)]" dir="rtl">
       <div className="hidden xl:block">
         <ConversationList
           conversations={orderedConversations}
@@ -109,7 +109,7 @@ export default function AssistantTab() {
         />
       </div>
 
-      <div className="bg-white dark:bg-slate-900 rounded-[2rem] border border-gray-200 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col min-h-[calc(100vh-12rem)]">
+      <div className="min-w-0 w-full bg-white dark:bg-slate-900 rounded-[2rem] border border-gray-200 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col min-h-[calc(100vh-12rem)]">
         <div className="relative overflow-hidden border-b border-gray-200 dark:border-slate-800 px-4 md:px-6 py-4 md:py-5 bg-gradient-to-br from-indigo-600 via-violet-600 to-purple-700">
           <div className="absolute -top-16 -left-16 w-56 h-56 rounded-full bg-white/10 blur-2xl pointer-events-none" />
           <div className="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
@@ -130,14 +130,15 @@ export default function AssistantTab() {
             <Button onClick={handleNewChat} className="min-h-[50px] rounded-2xl w-full lg:w-auto bg-white text-indigo-700 hover:bg-white/90">שיחה חדשה</Button>
           </div>
 
-          <div className="xl:hidden mt-4 relative">
+          <details className="xl:hidden mt-4 relative rounded-2xl bg-background/80 text-foreground">
+            <summary className="cursor-pointer px-4 py-3 font-medium">שיחות אחרונות</summary>
             <ConversationList
               conversations={orderedConversations.slice(0, 6)}
               currentConversationId={currentConversationId}
               onSelect={setCurrentConversationId}
               onNewChat={handleNewChat}
             />
-          </div>
+          </details>
         </div>
 
         <div className="flex-1 overflow-y-auto px-3 md:px-6 lg:px-8 py-4 md:py-6 space-y-5 bg-slate-50/60 dark:bg-slate-950/30">

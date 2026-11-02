@@ -152,7 +152,7 @@ export default function TabNavigation({ activeTab, onTabChange, open: controlled
       {/* תפריט צד נשלף למובייל */}
       <Sheet open={navDrawerOpen} onOpenChange={setNavDrawerOpen}>
         <SheetContent side="right" className="w-[85vw] max-w-sm p-0 bg-[#0e1118]/95 backdrop-blur-2xl border-l border-cyan-400/15" dir="rtl">
-          <SheetHeader className="flex flex-row items-center justify-between border-b border-cyan-400/15 p-4 space-y-0">
+          <SheetHeader className="flex flex-row items-center justify-between border-b border-cyan-400/15 p-4 pr-14 space-y-0">
             <SheetTitle className="text-lg font-bold text-right text-white">תפריט ניווט</SheetTitle>
             <div className="w-9 h-9 rounded-lg overflow-hidden flex items-center justify-center bg-blue-600 shadow-[0_0_20px_-4px_rgba(37,99,235,0.6)]">
               {userLogo ? <img src={userLogo} alt="Logo" className="w-full h-full object-contain" /> : <Sparkles className="w-4 h-4 text-white" />}

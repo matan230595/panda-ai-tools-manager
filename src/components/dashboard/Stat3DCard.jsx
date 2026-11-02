@@ -40,7 +40,7 @@ export default function Stat3DCard({ title, value, icon, gradient, subtitle, del
         transitionTimingFunction: 'cubic-bezier(0.4,0,0.2,1)',
         animation: `fadeSlideIn 0.5s cubic-bezier(0.4,0,0.2,1) ${delay}ms both`,
       }}
-      className="relative overflow-hidden rounded-2xl border border-white/40 dark:border-white/10 bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl p-4 shadow-lg will-change-transform group"
+      className="relative min-w-0 overflow-hidden rounded-2xl border border-white/40 dark:border-white/10 bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl p-3 md:p-4 shadow-lg will-change-transform group"
     >
       {/* זוהר עוקב עכבר */}
       <div
@@ -62,7 +62,7 @@ export default function Stat3DCard({ title, value, icon, gradient, subtitle, del
         {title}
       </p>
       <p
-        className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white leading-none"
+        className="text-xl md:text-3xl font-bold text-gray-900 dark:text-white leading-none break-words"
         style={{ transform: 'translateZ(35px)' }}
       >
         {value}

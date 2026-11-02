@@ -111,7 +111,7 @@ export default function Dashboard() {
       </div>
 
       {visible.stats && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 md:gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-2 md:gap-4">
           <Stat3DCard title="סך הכלים" value={stats.totalTools} icon={<Package className="w-5 h-5" />} gradient="from-blue-500 to-cyan-500" delay={0} />
           <Stat3DCard title="עלות חודשית" value={`₪${stats.totalMonthlyCost.toLocaleString('he-IL')}`} icon={<DollarSign className="w-5 h-5" />} gradient="from-rose-500 to-red-600" delay={70} />
           <Stat3DCard title="עם מנוי" value={stats.toolsWithSubscription} icon={<Calendar className="w-5 h-5" />} gradient="from-violet-500 to-purple-600" delay={140} />

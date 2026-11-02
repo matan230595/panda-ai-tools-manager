@@ -105,6 +105,7 @@ function ToolCard({
   };
 
   const startLongPress = (e) => {
+    if (e.target.closest('button, a, input, [role="button"]')) return;
     longPressTriggered.current = false;
     longPressTimer.current = setTimeout(() => {
       if (!longPressTriggered.current) {
@@ -205,13 +206,14 @@ function ToolCard({
         {/* תאורה סביבתית עדינה במעבר עכבר */}
         <div className="tool-card-ambient rounded-2xl" />
 
+        {(isReorderable || onToggleSelect) && <div className="relative z-20 flex items-center justify-between gap-2 mb-3">
         {/* ידית גרירה לסידור ידני */}
         {isReorderable && (
           <button
             {...dragHandleProps}
             type="button"
             onClick={(event) => event.stopPropagation()}
-            className="absolute top-3 left-3 z-20 flex h-11 w-11 items-center justify-center rounded-xl border border-cyan-400/20 bg-[#101827]/90 text-slate-300 cursor-grab active:cursor-grabbing md:opacity-0 md:group-hover:opacity-100 transition-opacity"
+            className="flex h-11 w-11 items-center justify-center rounded-xl border border-cyan-400/20 bg-[#101827]/90 text-slate-300 cursor-grab active:cursor-grabbing"
             aria-label={`גרור את ${tool.name} לסידור מחדש`}
           >
             <GripVertical className="w-5 h-5" />
@@ -222,7 +224,7 @@ function ToolCard({
         {onToggleSelect && (
           <button
             onClick={(e) => { e.stopPropagation(); onToggleSelect(tool); }}
-            className={`absolute top-4 right-4 z-20 w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all [transform:translateZ(50px)] ${
+            className={`w-11 h-11 rounded-md border-2 flex items-center justify-center transition-all ${
               isSelected ? 'bg-indigo-500 border-indigo-600' : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600'
             }`}
             aria-label={`${isSelected ? 'בטל בחירה' : 'בחר'} ${tool.name}`}
@@ -230,6 +232,8 @@ function ToolCard({
             {isSelected && <Check className="w-4 h-4 text-white" />}
           </button>
         )}
+
+        </div>}
 
         {/* כותרת: לוגו + שם + מועדפים */}
         <div className="flex items-start gap-3 mb-4 md:mb-4 [transform:translateZ(35px)]">
@@ -352,6 +356,10 @@ function ToolCard({
               aria-label={`בקר באתר ${tool.name}`}
             >
               בקר באתר
+            </Button>
+
+            <Button onClick={(e) => { e.stopPropagation(); onEdit(tool); }} variant="outline" className="md:hidden h-12 w-12 p-0 rounded-xl flex-shrink-0" aria-label={`עריכת ${tool.name}`}>
+              <Edit className="w-5 h-5" />
             </Button>
 
             <div onClick={(e) => e.stopPropagation()} className="h-12 w-12 sm:h-11 sm:w-11 rounded-xl bg-white/5 border border-cyan-400/15 flex items-center justify-center hover:bg-white/10 transition-colors flex-shrink-0">

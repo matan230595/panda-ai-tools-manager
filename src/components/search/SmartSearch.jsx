@@ -206,12 +206,12 @@ export default function SmartSearch({ onSearch, tools, quickFilters = [], search
       </div>
 
       {quickFilters.length > 0 && (
-        <div className="grid grid-cols-2 gap-2 mt-2.5" dir="rtl">
+        <div className="grid grid-cols-[repeat(2,minmax(0,1fr))] gap-2 mt-2.5" dir="rtl">
           {quickFilters.map((filter) => (
             <button
               key={filter}
               onClick={() => { setSearchTerm(filter); handleSearch(filter); }}
-              className="flex-shrink-0 whitespace-nowrap rounded-full border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 min-h-[40px] text-[13px] font-medium text-gray-700 dark:text-gray-300 hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700 dark:hover:bg-indigo-950/30 active:scale-95 transition-all"
+              className="min-w-0 whitespace-normal break-words rounded-full border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 min-h-[44px] text-[13px] font-medium text-gray-700 dark:text-gray-300 hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700 dark:hover:bg-indigo-950/30 active:scale-95 transition-all"
             >
               {filter}
             </button>

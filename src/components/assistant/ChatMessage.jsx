@@ -18,8 +18,8 @@ export default function ChatMessage({ message }) {
   return (
     <div className={`flex items-end gap-2 md:gap-4 ${isUser ? 'justify-end' : 'justify-start'}`} dir="rtl">
       {!isUser && <div className="flex-shrink-0 w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-sm"><Bot className="w-5 h-5" /></div>}
-      <div className={`max-w-[94%] md:max-w-[85%] xl:max-w-[48rem] ${isUser ? 'items-end' : 'items-start'} flex flex-col`}>
-        <div className={`relative group rounded-[1.75rem] px-4 md:px-5 py-3 md:py-4 shadow-sm border ${isUser ? 'bg-gradient-to-br from-indigo-500 to-purple-600 text-white border-transparent rounded-bl-md' : 'bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-800 rounded-br-md'}`}>
+      <div className={`min-w-0 max-w-[calc(100%-3rem)] md:max-w-[85%] xl:max-w-[48rem] ${isUser ? 'items-end' : 'items-start'} flex flex-col`}>
+        <div className={`relative group min-w-0 max-w-full rounded-[1.75rem] px-4 md:px-5 py-3 md:py-4 shadow-sm border ${isUser ? 'bg-gradient-to-br from-indigo-500 to-purple-600 text-white border-transparent rounded-bl-md' : 'bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-800 rounded-br-md'}`}>
           {isUser ? (
             <p className="text-sm md:text-base leading-7 whitespace-pre-wrap break-words">{message.content}</p>
           ) : (
@@ -27,7 +27,8 @@ export default function ChatMessage({ message }) {
               <ReactMarkdown
                 components={{
                   a: ({ children, href, ...props }) => <a href={href} target="_blank" rel="noopener noreferrer" className="text-indigo-600 dark:text-indigo-400 hover:underline" {...props}>{children}</a>,
-                  code: ({ inline, className, children, ...props }) => !inline ? <pre><code className={className} {...props}>{children}</code></pre> : <code className="px-1.5 py-0.5 rounded-md bg-gray-100 dark:bg-slate-800">{children}</code>,
+                  pre: ({ children }) => <pre className="max-w-full overflow-x-auto whitespace-pre-wrap break-all rounded-2xl bg-slate-950 p-3" data-swipe-ignore>{children}</pre>,
+                  code: ({ className, children, ...props }) => <code className={className || 'break-all rounded-md bg-muted px-1'} {...props}>{children}</code>,
                   blockquote: ({ children }) => <blockquote className="border-r-4 border-indigo-500 pr-4 my-3 text-gray-700 dark:text-gray-300">{children}</blockquote>,
                 }}
               >
